@@ -21,7 +21,7 @@ public class HomeController {
             // 로그인 폼에서 전달된 userId와 password로 인증
             if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
                 model.addAttribute("error", "User ID is required");
-                return "Login"; // userId가 없으면 오류 반환
+                return "/UserForm/Login"; // userId가 없으면 오류 반환
             }
 
             UserDTO authenticatedUser = userService.authenticate(userDTO.getUserId(), userDTO.getPassword(), userDTO.getUserType());
@@ -38,7 +38,7 @@ public class HomeController {
         } catch (IllegalArgumentException e) {
             // 예외 발생 시 오류 메시지 추가
             model.addAttribute("error", e.getMessage());
-            return "Login";
+            return "/UserForm/Login";
         }
     }
 
@@ -60,6 +60,6 @@ public class HomeController {
     @GetMapping("")
     public String showLoginForm(Model model) {
         model.addAttribute("userDTO", new UserDTO());
-        return "Login";
+        return "/UserForm/Login";
     }
 }

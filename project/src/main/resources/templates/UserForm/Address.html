@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>주소 검색</title>
+  <style>
+    /* 전체 배경 및 폰트 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+    }
+
+    /* 검색창 스타일 */
+    #search {
+      border: 2px solid #bfaa80;
+      padding: 8px;
+      width: 70%; /* 입력란 폭 조정 */
+      font-size: 16px;
+      box-sizing: border-box;
+      height: 40px; /* 버튼과 동일한 높이로 설정 */
+    }
+
+    /* 버튼 스타일 */
+    #searchBtn {
+      background-color: #bfaa80;
+      color: white;
+      border: none;
+      padding: 0 20px; /* 좌우 여백만 추가 */
+      font-size: 16px;
+      cursor: pointer;
+      height: 40px; /* 입력란과 동일한 높이 */
+      vertical-align: top; /* 버튼과 입력란이 1자로 정렬되도록 설정 */
+    }
+
+    /* 검색창 및 버튼을 감싸는 컨테이너 스타일 */
+    .search-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* 테이블 스타일 */
+    #results {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #results th, #results td {
+      padding: 10px;
+      border: 1px solid #bfaa80;
+    }
+
+    #results th {
+      background-color: #bfaa80;
+      color: white;
+      font-weight: bold;
+    }
+
+    #results td {
+      background-color: #fff;
+    }
+
+    /* 선택 버튼 스타일 */
+    #results button {
+      background-color: #bfaa80;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #results button:hover {
+      background-color: #a69366;
+    }
+  </style>
+</head>
+<body>
+<h1 style="text-align: center; color: #333;">주소 검색</h1> <!-- 제목 스타일 -->
+
+<div class="search-container">
+  <input type="text" id="search" placeholder="도로명주소 또는 건물번호를 입력하세요">
+  <button id="searchBtn">검색</button>
+</div>
+
+<table id="results" th:if="${addressList != null and addressList.size() > 0}">
+  <thead>
+  <tr>
+    <th>주소</th>
+    <th>선택</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="address : ${addressList}">
+    <td th:text="${address.province} + ' ' + ${address.cityDistrict} + ' ' + ${address.roadName} + ' ' + ${address.mainBuildingNumber} + ' ' + ${address.subBuildingNumber} + ' ' + ${address.cityDistrictBuildingName}"></td>
+    <td>
+      <button
+              th:data-full-address="${address.province} + ' ' + ${address.cityDistrict} + ' ' + ${address.roadName} + ' ' + ${address.mainBuildingNumber} + ' ' + ${address.subBuildingNumber} + ' ' + ${address.cityDistrictBuildingName}"
+              onclick="selectAddress(this)">선택</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div th:if="${addressList == null or addressList.size() == 0}" style="margin-top: 20px; text-align: center;">
+  <p>검색 결과가 없습니다.</p>
+</div>
+
+<script>
+  function selectAddress(button) {
+    const fullAddress = button.getAttribute('data-full-address');
+    window.opener.document.getElementById('address').value = fullAddress;
+    window.close();
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', function() {
+    const query = document.getElementById('search').value;
+    window.location.href = `/addresses/search?query=${encodeURIComponent(query)}`;
+  });
+</script>
+</body>
+</html>

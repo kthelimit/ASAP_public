@@ -15,13 +15,20 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
+    // 로그인 폼 표시
+    @GetMapping("/")
+    public String showLoginForm(Model model) {
+        model.addAttribute("userDTO", new UserDTO());
+        return "/UserForm/Login";
+    }
+
+    // 로그인 처리
     @PostMapping("/login")
     public String login(@ModelAttribute UserDTO userDTO, HttpServletRequest request, Model model) {
         try {
-            // 로그인 폼에서 전달된 userId와 password로 인증
             if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
                 model.addAttribute("error", "User ID is required");
-                return "/UserForm/Login"; // userId가 없으면 오류 반환
+                return "/UserForm/Login";
             }
 
             UserDTO authenticatedUser = userService.authenticate(userDTO.getUserId(), userDTO.getPassword(), userDTO.getUserType());
@@ -30,36 +37,45 @@ public class HomeController {
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(60 * 60 * 12); // 세션 유효시간을 12시간으로 설정
                 session.setAttribute("user", authenticatedUser);
-                return "redirect:/Main"; // 메인으로
+                return "redirect:/Index/Main";
             } else {
                 model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
-                return "Login";
+                return "/UserForm/Login";
             }
         } catch (IllegalArgumentException e) {
-            // 예외 발생 시 오류 메시지 추가
             model.addAttribute("error", e.getMessage());
             return "/UserForm/Login";
         }
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // 세션 무효화
-        }
-        return "redirect:/";
+    // 회원가입 폼 표시
+    @GetMapping("/signup")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("userDTO", new UserDTO());
+        return "/UserForm/SignUp";
     }
 
+    // 회원가입 처리
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute UserDTO userDTO) {
+        userService.createUser(userDTO); // 사용자 생성 로직
+        return "redirect:/"; // 회원가입 성공 시 로그인 페이지로 이동
+    }
+
+    // ID 중복 확인 처리
     @GetMapping("/checkUserId")
     @ResponseBody
     public boolean checkUserId(@RequestParam String userId) {
         return !userService.isUserIdExists(userId);
     }
 
-    @GetMapping("")
-    public String showLoginForm(Model model) {
-        model.addAttribute("userDTO", new UserDTO());
-        return "/UserForm/Login";
+    // 로그아웃 처리
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/login";
     }
 }

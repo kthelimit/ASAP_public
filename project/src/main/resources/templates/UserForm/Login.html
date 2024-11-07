@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>로그인</title>
     <style>
-        /* 전체 화면 배경 */
+        /* 스타일은 기존 스타일 그대로 유지합니다 */
         body {
             display: flex;
             align-items: center;
@@ -14,8 +14,6 @@
             background-color: #f0f0f5;
             font-family: Arial, sans-serif;
         }
-
-        /* 컨테이너 스타일 */
         .container {
             background-color: #ffffff;
             padding: 20px 40px;
@@ -24,14 +22,11 @@
             width: 300px;
             text-align: center;
         }
-
-        /* 토글 버튼 스타일 */
         .toggle-container {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
         }
-
         .toggle-button {
             flex: 1;
             padding: 10px;
@@ -42,20 +37,16 @@
             border-radius: 5px 5px 0 0;
             transition: background-color 0.3s;
         }
-
         .toggle-button.active {
             background-color: #4CAF50;
             color: #fff;
         }
-
-        /* 폼 필드 스타일 */
         label {
             display: block;
             font-weight: bold;
             margin-top: 15px;
             color: #333;
         }
-
         input[type="text"],
         input[type="password"] {
             width: 100%;
@@ -67,8 +58,6 @@
             box-sizing: border-box;
             font-size: 16px;
         }
-
-        /* 로그인 버튼 스타일 */
         button[type="submit"] {
             width: 100%;
             padding: 10px;
@@ -81,11 +70,9 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         button[type="submit"]:hover {
             background-color: #45a049;
         }
-
         a {
             margin: 10px;
         }
@@ -94,11 +81,11 @@
 <body>
 
 <div class="container">
-    <form th:action="@{/login}" method="post" class="login-container" th:object="${UserDTO}">
+    <form th:action="@{/login}" method="post" th:object="${userDTO}">
         <!-- 토글 버튼 -->
         <div class="toggle-container">
-            <div id="adminToggle" class="toggle-button active" onclick="toggleLoginType('adminToggle')">관리자 로그인</div>
-            <div id="partnerToggle" class="toggle-button" onclick="toggleLoginType('partnerToggle')">협력사 로그인</div>
+            <div id="adminToggle" class="toggle-button active" onclick="toggleLoginType('ADMIN')">관리자 로그인</div>
+            <div id="partnerToggle" class="toggle-button" onclick="toggleLoginType('PARTNER')">협력사 로그인</div>
         </div>
 
         <!-- 로그인 폼 입력 필드 -->
@@ -111,31 +98,23 @@
         <input type="hidden" id="loginType" name="userType" value="ADMIN" />
 
         <button type="submit">로그인</button>
+
+        <!-- 에러 메시지 표시 -->
         <div th:if="${error}" th:text="${error}" style="color: red; margin-top: 10px;"></div>
     </form>
-    <a href="#">회원가입</a> |
+    <a href="/signup">회원가입</a> |
     <a href="#">아이디 찾기</a> |
     <a href="#">비밀번호 찾기</a>
-
 </div>
 
 <script>
     // 자바스크립트로 토글 활성화
-    function toggleLoginType(selectedType) {
-        document.getElementById('adminToggle').classList.remove('active');
-        document.getElementById('partnerToggle').classList.remove('active');
-        document.getElementById(selectedType).classList.add('active');
+    function toggleLoginType(userType) {
+        document.getElementById('adminToggle').classList.toggle('active', userType === 'ADMIN');
+        document.getElementById('partnerToggle').classList.toggle('active', userType === 'PARTNER');
 
         // 선택한 로그인 타입을 hidden input에 설정
-        document.getElementById('loginType').value = selectedType === 'adminToggle' ? 'ADMIN' : 'PARTNER';
-    }
-
-    // 페이지 로드 후 오류 메시지 알림
-    window.onload = function() {
-        const errorMessage = "[[${error}]]";
-        if (errorMessage && errorMessage !== 'null') {
-            alert(errorMessage);
-        }
+        document.getElementById('loginType').value = userType;
     }
 </script>
 

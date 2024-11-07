@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자재 품목 리스트</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+            text-align: right;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .button-container button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            max-width: 850px;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #333;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .pagination .active {
+            font-weight: bold;
+            color: white;
+            background-color: #4CAF50;
+        }
+
+        .thumbnail {
+            width: 50px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<h2>자재 품목 리스트</h2>
+
+<!-- 등록 버튼 -->
+<div class="button-container">
+    <button onclick="location.href='/materials/register'">자재 품목 등록</button>
+</div>
+
+<!-- 자재 품목 테이블 -->
+<table>
+    <thead>
+    <tr>
+        <th>이미지</th>
+        <th>자재 ID</th>
+        <th>자재 이름</th>
+        <th>자재 코드</th>
+        <th>자재 유형</th>
+        <th>단위</th>
+        <th>단가</th>
+        <th>수량</th>
+        <th>공급사</th>
+        <th>승인</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="material : ${materials}">
+        <td><img th:src="${material.imageUrl}" alt="이미지" class="thumbnail"/></td>
+        <td th:text="${material.materialId}">1</td>
+        <td th:text="${material.materialName}">Sample Name</td>
+        <td th:text="${material.materialCode}">M001</td>
+        <td th:text="${material.materialType}">MAIN</td>
+        <td th:text="${material.unit}">pcs</td>
+        <td th:text="${material.unitPrice}">100.0</td>
+        <td th:text="${material.quantity}">50</td>
+        <td th:text="${material.supplierName}">Supplier A</td>
+        <td><button type="submit">승 인</button></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이징 처리 -->
+<ul class="pagination">
+    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a th:href="@{/materials/list(page=${i})}"
+           th:text="${i}"
+           th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+    </li>
+</ul>
+
+</body>
+</html>

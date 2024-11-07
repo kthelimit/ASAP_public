@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자재 품목 등록</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>자재 품목 등록</h2>
+    <form th:action="@{/materials/register}" th:object="${materialDTO}" method="post" enctype="multipart/form-data">
+        <!-- 자재 이름 -->
+        <label for="materialName">자재 이름</label>
+        <input type="text" id="materialName" th:field="*{materialName}" required />
+
+        <!-- 자재 코드 -->
+        <label for="materialCode">자재 코드</label>
+        <input type="text" id="materialCode" th:field="*{materialCode}" required />
+
+        <!-- 자재 유형 -->
+        <label for="materialType">자재 유형</label>
+        <select id="materialType" th:field="*{materialType}" required>
+            <option value="MAIN">대부품</option>
+            <option value="SUB">소부품</option>
+        </select>
+
+        <!-- 단위 -->
+        <label for="unit">단위</label>
+        <input type="text" id="unit" th:field="*{unit}" placeholder="e.g., pcs, kg" required />
+
+        <!-- 단가 -->
+        <label for="unitPrice">단가</label>
+        <input type="number" id="unitPrice" th:field="*{unitPrice}" step="0.01" min="0" required />
+
+
+
+        <!-- 공급사 이름 (자동 설정) -->
+        <label for="supplierName">공급사</label>
+        <input type="text" id="supplierName" th:field="*{supplierName}" readonly />
+
+        <!-- 수량 -->
+        <label for="quantity">수량</label>
+        <input type="number" id="quantity" th:field="*{quantity}" min="1" required />
+
+        <!-- 이미지 업로드 -->
+        <label for="imageUrl">이미지</label>
+        <input type="file" id="imageUrl" name="imageFile" required />
+
+        <button type="submit">등록하기</button>
+    </form>
+</div>
+</body>
+</html>

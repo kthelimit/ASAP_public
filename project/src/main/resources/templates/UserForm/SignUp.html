@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원가입</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px; /* 제목 글씨 크기 조정 */
+        }
+        .content {
+            margin: 40px 0; /* 헤더와 푸터 사이에 마진 추가 */
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ff862f; /* 폼 테두리 색상 적용 */
+            max-width: 50%; /* 페이지 너비의 50% */
+            margin: 0 auto;
+        }
+        div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 16px; /* 레이블 글씨 크기 조정 */
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"] {
+            width: calc(100% - 120px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 15px; /* 입력 필드 글씨 크기 조정 */
+            display: inline-block;
+        }
+        button {
+            background-color: #bfaa80;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: inline-block;
+            width: 100px;
+            font-size: 15px; /* 버튼 글씨 크기 조정 */
+            text-align: center;
+        }
+        button:hover {
+            background-color: #a69366;
+        }
+        .submit-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            font-size: 14px; /* 링크 글씨 크기 조정 */
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #passwordError {
+            color: red;
+            display: none;
+            font-size: 14px; /* 에러 메시지 글씨 크기 조정 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <form id="signupForm" action="/users/signup" method="post" th:object="${userDTO}">
+
+        <h1>회원가입</h1>
+        <div>
+            <label>이름:</label>
+            <input type="text" th:field="*{username}" name="username" required />
+        </div>
+        <div>
+            <label>아이디:</label>
+            <div style="display: flex; align-items: center;">
+                <input type="text" th:field="*{userId}" name="userId" required />
+                <button type="button" onclick="checkUserId()">ID 중복 조회</button>
+            </div>
+        </div>
+        <div>
+            <label>비밀번호:</label>
+            <input type="password" th:field="*{password}" name="password" id="password" required />
+        </div>
+        <div>
+            <label>비밀번호 확인:</label>
+            <input type="password" name="confirm_password" id="confirm_password" required oninput="checkPasswordMatch()" />
+            <span id="passwordError">비밀번호가 일치하지 않습니다.</span>
+        </div>
+        <div>
+            <label>이메일:</label>
+            <input type="email" th:field="*{email}" name="email" required />
+        </div>
+        <div>
+            <label>휴대폰 번호:</label>
+            <input type="tel" th:field="*{phone}" name="phone" required />
+        </div>
+        <div>
+            <label>생년월일:</label>
+            <input type="date" th:field="*{birthdate}" name="birthdate" required />
+        </div>
+        <div>
+            <label for="address">주소</label>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="address" placeholder="주소 검색을 통해 주소를 입력하세요" required readonly>
+                <button type="button" onclick="findPostcode()">주소 검색</button>
+            </div>
+        </div>
+        <div>
+            <label for="detail_address">상세주소</label>
+            <input type="text" id="detail_address" placeholder="상세주소를 입력하세요" oninput="updateCombinedAddress()">
+        </div>
+        <input type="hidden" id="combined_address" th:field="*{userAddress}" name="userAddress">
+
+        <div class="submit-button">
+            <button type="submit">가입하기</button>
+        </div>
+        <a href="/login">로그인 페이지로</a>
+    </form>
+</div>
+
+<script>
+    function findPostcode() {
+        window.open('/address', '주소 검색', 'width=600,height=400');
+    }
+
+    function updateCombinedAddress() {
+        const address = document.getElementById('address').value;
+        const detailAddress = document.getElementById('detail_address').value;
+        const combinedAddress = address + ' ' + detailAddress;
+        document.getElementById('combined_address').value = combinedAddress.trim();
+    }
+
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const errorMessage = document.getElementById('passwordError');
+
+        if (password !== confirmPassword) {
+            errorMessage.style.display = 'block';
+        } else {
+            errorMessage.style.display = 'none';
+        }
+    }
+
+    function checkUserId() {
+        const userId = $("input[name='userId']").val();
+
+        if (!userId) {
+            alert("아이디를 입력하세요.");
+            return;
+        }
+
+        $.ajax({
+            url: '/users/checkUserId',
+            method: 'GET',
+            data: { userId: userId },
+            success: function(response) {
+                if (response) {
+                    alert("사용 가능한 아이디입니다.");
+                } else {
+                    alert("이미 사용 중인 아이디입니다.");
+                }
+            },
+            error: function() {
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#signupForm').on('submit', function(e) {
+            const password = $('#password').val();
+            const confirmPassword = $('#confirm_password').val();
+
+            if (password !== confirmPassword) {
+                alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    alert("회원 가입이 완료되었습니다. 로그인 해주세요.");
+                    window.location.href = '/';
+                },
+                error: function() {
+                    alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

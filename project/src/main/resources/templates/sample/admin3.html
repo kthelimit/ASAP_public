@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <!-- 관리자 -->
+        <!-- 생산 부서 -->
         <!-- ========== section start ========== -->
         <section class="section">
             <div class="container-fluid">
@@ -11,7 +11,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <div class="title">
-                                <h2>관리자 Dashboard</h2>
+                                <h2>생산 부서 Dashboard</h2>
                             </div>
                         </div>
                         <!-- end col -->
@@ -32,14 +32,14 @@
                 </div>
                 <!-- ========== title-wrapper end ========== -->
 
-                <div class="alert-box danger-alert pl-100">
+                <div class="alert-box success-alert pl-100">
                     <div class="left">
                         <h5 class="text-bold">!IMPORTANT!</h5>
                     </div>
                     <div class="alert">
                         <h4 class="alert-heading">중요 알림</h4>
                         <p class="text-medium">
-                            승인 대기 중인 업체가 N건 있습니다.
+                            ○월 ○일에 요청한 출고 요청이 승인 되었습니다.
                         </p>
                     </div>
                 </div>
@@ -68,8 +68,8 @@
                                 <i class="lni lni-credit-cards"></i>
                             </div>
                             <div class="content">
-                                <h6 class="mb-10">이번 달 발주 건수</h6>
-                                <h3 class="text-bold mb-10">18</h3>
+                                <h6 class="mb-10">대기 중인 출고 요청 건수</h6>
+                                <h3 class="text-bold mb-10">5</h3>
                                 <p class="text-sm text-danger">
                                     <span class="text-gray">더 보기</span>
                                 </p>
@@ -84,7 +84,7 @@
                                 <i class="lni lni-user"></i>
                             </div>
                             <div class="content">
-                                <h6 class="mb-10">이번 달 입고 건수</h6>
+                                <h6 class="mb-10">승인된 출고 요청 건수</h6>
                                 <h3 class="text-bold mb-10">3</h3>
                                 <p class="text-sm text-danger">
                                     <span class="text-gray"> 더 보기</span>
@@ -100,8 +100,8 @@
                                 <i class="lni lni-dollar"></i>
                             </div>
                             <div class="content">
-                                <h6 class="mb-10">이번달 입고 예정 건수</h6>
-                                <h3 class="text-bold mb-10">15</h3>
+                                <h6 class="mb-10">불출 완료된 건수</h6>
+                                <h3 class="text-bold mb-10">4</h3>
                                 <p class="text-sm text-success">
                                     <span class="text-gray">더 보기</span>
                                 </p>
@@ -111,72 +111,6 @@
                     </div>
                     <!-- End Col -->
                 </div>
-                <!-- End Row --> <div class="row">
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon purple">
-                            <i class="lni lni-cart-full"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">입고 검수 예정 건수</h6>
-                            <h3 class="text-bold mb-10">3</h3>
-                            <p class="text-sm text-success">
-                                <span class="text-gray">더 보기</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon primary">
-                            <i class="lni lni-credit-cards"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">대기 중인 출고 요청 건수</h6>
-                            <h3 class="text-bold mb-10">5</h3>
-                            <p class="text-sm text-danger">
-                                <span class="text-gray">더 보기</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon orange">
-                            <i class="lni lni-user"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">승인된 출고 요청 건수</h6>
-                            <h3 class="text-bold mb-10">3</h3>
-                            <p class="text-sm text-danger">
-                                <span class="text-gray"> 더 보기</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon success">
-                            <i class="lni lni-dollar"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">불출 완료된 건수</h6>
-                            <h3 class="text-bold mb-10">15</h3>
-                            <p class="text-sm text-success">
-                                <span class="text-gray">더 보기</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-            </div>
                 <!-- End Row -->
                 <div class="row">
                     <!-- 달력 -->

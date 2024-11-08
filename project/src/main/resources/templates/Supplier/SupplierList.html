@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+  <th:block th:fragment="content">
+
+  <head>
+  <meta charset="UTF-8">
+  <title>업체 정보 리스트</title>
+<style>
+  /* 페이징 스타일 */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    gap: 5px;
+  }
+
+  .pagination li a {
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .pagination li a:hover {
+    background-color: #cccccc;
+  }
+
+  .pagination li a.active {
+    font-weight: bold;
+    color: white;
+    background-color: #007BFF;
+  }
+</style>
+  </head>
+<body>
+
+<h2>업체 정보 리스트</h2>
+
+<div class="row">
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6" th:each="supplier : ${suppliers}">
+    <div class="card-style-3 mb-30">
+      <div class="card-content">
+        <h3 th:text="${supplier.supplierName}">업체 이름</h3>
+        <p th:text="'사업자 번호: ' + ${supplier.businessRegistrationNumber}">사업자 번호</p>
+        <p th:text="'연락처: ' + ${supplier.contactInfo}">연락처</p>
+        <p th:text="'주소: ' + ${supplier.address}">주소</p>
+        <p th:text="'사업 유형: ' + ${supplier.businessType}">사업 유형</p>
+        <p><a th:href="@{/suppliers/{id}/transactionDetails(id=${supplier.id})}">거래 명세서 확인</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 페이징 처리 -->
+<ul class="pagination">
+  <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+    <a th:href="@{/suppliers/list(page=${i})}"
+       th:text="${i}"
+       th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+  </li>
+</ul>
+
+</body>
+</th:block>
+</th:block>

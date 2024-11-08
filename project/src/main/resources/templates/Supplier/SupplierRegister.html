@@ -1,87 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+  <th:block th:fragment="content">
+
+  <head>
   <meta charset="UTF-8">
   <title>업체 정보 등록</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
 
-    .container {
-      width: 400px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 20px;
-      background-color: #4CAF50;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #45a049;
-    }
-  </style>
 </head>
 <body>
 <div class="container">
   <h2>업체 정보 등록</h2>
   <form th:action="@{/suppliers/register}" th:object="${supplierDTO}" method="post">
-    <label for="supplierName">업체 이름</label>
-    <input type="text" id="supplierName" th:field="*{supplierName}" required />
+    <div class="form-elements-wrapper">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card-style mb-30">
+            <h6 class="mb-25">업체 등록 정보 입력</h6>
 
-    <label for="businessRegistrationNumber">사업자 등록 번호</label>
-    <input type="text" id="businessRegistrationNumber" th:field="*{businessRegistrationNumber}" required />
+            <div class="input-style-1">
+              <label for="supplierName">업체 이름</label>
+              <input type="text" id="supplierName" th:field="*{supplierName}" required />
+            </div>
 
-    <label for="contactInfo">연락처 정보</label>
-    <input type="text" id="contactInfo" th:field="*{contactInfo}" required />
+            <div class="input-style-1">
+              <label for="businessRegistrationNumber">사업자 등록 번호</label>
+              <input type="text" id="businessRegistrationNumber" th:field="*{businessRegistrationNumber}" required />
+            </div>
 
-    <label for="address">주소</label>
-    <input type="text" id="address" th:field="*{address}" required />
+            <div class="input-style-1">
+              <label for="contactInfo">연락처 정보</label>
+              <input type="text" id="contactInfo" th:field="*{contactInfo}" required />
+            </div>
 
-    <label for="businessType">사업 유형</label>
-    <input type="text" id="businessType" th:field="*{businessType}" required />
+            <div class="input-style-1">
+              <label for="address">주소</label>
+              <input type="text" id="address" th:field="*{address}" required />
+            </div>
 
-    <button type="submit">등록하기</button>
+            <div class="input-style-1">
+              <label for="businessType">사업 유형</label>
+              <input type="text" id="businessType" th:field="*{businessType}" required />
+            </div>
+
+            <!-- 알림 메시지 표시 -->
+            <div th:if="${alertMessage}" class="alert alert-warning" th:text="${alertMessage}"></div>
+
+            <button type="submit" class="btn-submit">등록하기</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
 </div>
 </body>
-</html>
+  </th:block>
+</th:block>

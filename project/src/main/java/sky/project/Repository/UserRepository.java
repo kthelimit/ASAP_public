@@ -1,7 +1,6 @@
 package sky.project.Repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 import sky.project.Entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 

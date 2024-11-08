@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 public class SupplierDTO {
 
-    private Long supplierId; // 공급사 ID
-    private Long userId; // 사용자 ID (User 엔티티와의 관계)
+    private String supplierId; // 공급사 ID (User ID와 동일하게 설정됨)
+    private String userId; // 사용자 ID (User 엔티티와의 관계)
     private String businessRegistrationNumber; // 사업자 등록 번호
     private String supplierName; // 공급사 이름 (회사명)
     private String contactInfo; // 연락처 정보

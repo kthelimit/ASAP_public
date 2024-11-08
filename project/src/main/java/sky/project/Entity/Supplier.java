@@ -13,11 +13,11 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long supplierId; // 공급사 ID
+    private String supplierId; // User ID에서 받아오는 공급사 ID
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // User 엔터티와의 관계
+    private User user; // User 엔티티와의 관계
 
     @Column(nullable = false, unique = true, length = 20)
     private String businessRegistrationNumber; // 사업자 등록 번호

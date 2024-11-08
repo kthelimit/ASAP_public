@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+
+    <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+div class="container">
+<h2>승인 대기 중인 업체</h2>
+<div class="row">
+    <div class="col" th:each="supplier : ${suppliers}">
+        <div class="card">
+            <h3 th:text="${supplier.supplierName}">업체 이름</h3>
+            <p th:text="'사업자 번호: ' + ${supplier.businessRegistrationNumber}">사업자 번호</p>
+            <p th:text="'연락처: ' + ${supplier.contactInfo}">연락처</p>
+            <button th:if="${!supplier.approved}" th:onclick="'/suppliers/' + ${supplier.supplierId} + '/approve'">승인</button>
+            <button th:if="${!supplier.approved}" th:onclick="'/suppliers/' + ${supplier.supplierId} + '/reject'">거부</button>
+            <span th:if="${supplier.approved}">승인완료</span>
+        </div>
+    </div>
+</div>
+<!-- 페이징 처리 -->
+<ul class="pagination">
+    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a th:href="@{/suppliers/approvalPendingList(page=${i})}"
+           th:text="${i}"
+           th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+    </li>
+</ul>
+</div>
 </body>
-</html>
+    </th:block>
+</th:block>

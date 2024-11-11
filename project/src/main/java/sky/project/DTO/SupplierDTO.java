@@ -16,5 +16,6 @@ public class SupplierDTO {
     private String contactInfo; // 연락처 정보
     private String address; // 공급사 주소
     private String businessType; // 사업 유형 (예: 제조업, 유통업)
+    private String businessItem;
     private Boolean approved; // 승인 여부
 }

@@ -3,7 +3,6 @@ package sky.project.Entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -31,8 +30,6 @@ public class Product  extends Base{
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "created_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date createdDate;
+
 }
 

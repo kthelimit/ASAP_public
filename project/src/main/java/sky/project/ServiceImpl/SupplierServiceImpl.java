@@ -84,4 +84,10 @@ public class SupplierServiceImpl implements SupplierService {
                 .approved(supplier.getApproved())
                 .build();
     }
+    @Override
+    public String getSupplierNameByUserId(String userId) {
+        return supplierRepository.findByUser_UserId(userId)
+                .map(supplier -> supplier.getSupplierName())
+                .orElse(null); // supplierName 반환 또는 null 반환
+    }
 }

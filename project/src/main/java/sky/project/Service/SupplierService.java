@@ -21,4 +21,6 @@ public interface SupplierService {
     void approveSupplier(String supplierId);
 
     void rejectSupplier(String supplierId);
+
+    String getSupplierNameByUserId(String userId);
 }

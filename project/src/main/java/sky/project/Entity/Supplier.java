@@ -12,8 +12,7 @@ import lombok.*;
 public class Supplier {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String supplierId; // User ID에서 받아오는 공급사 ID
+    private String supplierId; // User ID에서 받아오는 공급사 ID (String 타입)
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

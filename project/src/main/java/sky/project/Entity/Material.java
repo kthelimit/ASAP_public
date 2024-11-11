@@ -3,7 +3,7 @@ package sky.project.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -40,8 +40,8 @@ public class Material {
     private Integer quantity; // 최소 공급 수량
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String imageUrl; // 자재 이미지 URL
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt; // 등록 시간
+    @Column(name = "weight", precision = 10, scale = 2)
+    private BigDecimal weight;
 }

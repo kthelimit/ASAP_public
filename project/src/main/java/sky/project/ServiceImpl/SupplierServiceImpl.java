@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Entity.Supplier;
+import sky.project.Entity.User;
 import sky.project.Entity.UserType;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
@@ -31,15 +32,22 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void registerSupplier(SupplierDTO supplierDTO) {
+        // User 찾기
+        User user = userRepository.findById(supplierDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         Supplier supplier = Supplier.builder()
-                .user(userRepository.findByUserId(supplierDTO.getUserId()).orElseThrow())
-                .supplierName(supplierDTO.getSupplierName())
+                .supplierId(user.getUserId()) // userId를 supplierId로 사용
+                .user(user) // User 객체 할당
                 .businessRegistrationNumber(supplierDTO.getBusinessRegistrationNumber())
+                .supplierName(supplierDTO.getSupplierName())
                 .contactInfo(supplierDTO.getContactInfo())
                 .address(supplierDTO.getAddress())
                 .businessType(supplierDTO.getBusinessType())
+                .businessItem(supplierDTO.getBusinessItem())
                 .approved(false)
                 .build();
+
         supplierRepository.save(supplier);
     }
 
@@ -82,9 +90,11 @@ public class SupplierServiceImpl implements SupplierService {
                 .contactInfo(supplier.getContactInfo())
                 .address(supplier.getAddress())
                 .businessType(supplier.getBusinessType())
+                .businessItem(supplier.getBusinessItem())
                 .approved(supplier.getApproved())
                 .build();
     }
+
     @Override
     public String getSupplierNameByUserId(String userId) {
         return supplierRepository.findByUser_UserId(userId)

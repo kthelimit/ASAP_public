@@ -9,7 +9,6 @@ import sky.project.Entity.UserType;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -40,7 +39,6 @@ public class UserServiceImpl implements UserService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
-        userDTO.setCreationDate(LocalDate.now());
         User user = toEntity(userDTO);
         User savedUser = userRepository.save(user);
         return toDTO(savedUser);
@@ -63,14 +61,14 @@ public class UserServiceImpl implements UserService {
             }
 
             // 유저 타입에 따른 분기 처리
-            if (userType==UserType.ADMIN) {
-                if ("ADMIN".equals(user.getUserType())) {
+            if (UserType.ADMIN.equals(userType)) {
+                if (UserType.ADMIN.equals(user.getUserType())) {
                     return toDTO(user);
                 } else {
                     throw new IllegalArgumentException("유저 타입이 일치하지 않습니다. 협력사 계정으로 로그인하세요.");
                 }
-            } else if (userType==UserType.PARTNER || userType==UserType.SUPPLIER) {
-                if (UserType.PARTNER==(user.getUserType()) || UserType.SUPPLIER==(user.getUserType())) {
+            } else if (UserType.PARTNER.equals(userType) || UserType.SUPPLIER.equals(userType)) {
+                if (UserType.PARTNER.equals(user.getUserType()) || UserType.SUPPLIER.equals(user.getUserType())) {
                     return toDTO(user); // 협력사 관련 DTO로 전환
                 } else {
                     throw new IllegalArgumentException("유저 타입이 일치하지 않습니다. 관리자 계정으로 로그인하세요.");
@@ -90,7 +88,6 @@ public class UserServiceImpl implements UserService {
                 .userAddress(userDTO.getUserAddress())
                 .password(userDTO.getPassword())
                 .userType(userDTO.getUserType())
-                .creationDate(userDTO.getCreationDate())
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .birthdate(userDTO.getBirthdate())
@@ -104,7 +101,6 @@ public class UserServiceImpl implements UserService {
                 .userAddress(user.getUserAddress())
                 .password(user.getPassword())
                 .userType(user.getUserType())
-                .creationDate(user.getCreationDate())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .birthdate(user.getBirthdate())

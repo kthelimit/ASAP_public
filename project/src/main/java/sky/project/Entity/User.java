@@ -22,5 +22,4 @@ public class User  extends Base{
     private String email;
     private String phone;
     private LocalDate birthdate;
-    private LocalDate creationDate = LocalDate.now();
 }

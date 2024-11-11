@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "ProcurementPlan")
-public class ProcurementPlan {
+public class ProcurementPlan  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

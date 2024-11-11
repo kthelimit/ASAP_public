@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "MaterialWarehouse")
-public class MaterialWarehouse {
+public class MaterialWarehouse  extends Base{
 
     @Id
     @Column(name = "warehouse_id", length = 20)

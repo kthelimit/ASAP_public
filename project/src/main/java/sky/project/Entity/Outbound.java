@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "Outbound")
-public class Outbound {
+public class Outbound  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

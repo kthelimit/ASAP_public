@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "Product")
-public class Product {
+public class Product  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

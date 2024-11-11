@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Supplier {
+public class Supplier  extends Base{
 
     @Id
     private String supplierId; // User ID에서 받아오는 공급사 ID (String 타입)

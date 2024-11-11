@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User  extends Base{
     @Id
     private String userId;
     private String username;

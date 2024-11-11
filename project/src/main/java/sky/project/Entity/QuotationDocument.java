@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "QuotationDocument")
-public class QuotationDocument {
+public class QuotationDocument  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

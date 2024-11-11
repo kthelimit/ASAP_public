@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "Contract")
-public class Contract {
+public class Contract  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "Shipment")
-public class Shipment {
+public class Shipment  extends Base{
 
     @Id
     @Column(name = "shipment_id", length = 20)

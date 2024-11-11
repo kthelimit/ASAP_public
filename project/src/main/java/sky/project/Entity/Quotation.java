@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "Quotation")
-public class Quotation {
+public class Quotation  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Invoice {
+public class Invoice  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

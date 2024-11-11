@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "ProgressInspection")
-public class ProgressInspection {
+public class ProgressInspection  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

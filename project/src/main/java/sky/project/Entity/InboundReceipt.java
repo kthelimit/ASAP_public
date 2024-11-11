@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "InboundReceipt")
-public class InboundReceipt {
+public class InboundReceipt  extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

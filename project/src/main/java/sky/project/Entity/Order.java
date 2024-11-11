@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "Order")
-public class Order {
+public class Order  extends Base{
 
     @Id
     @Column(name = "order_id", length = 20)

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Material {
+public class Material extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -38,7 +37,6 @@ public class MaterialServiceImpl implements MaterialService {
         material.setUnit(materialDTO.getUnit());
         material.setUnitPrice(materialDTO.getUnitPrice());
         material.setQuantity(materialDTO.getQuantity());
-        material.setCreatedAt(LocalDateTime.now());
 
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
@@ -72,7 +70,6 @@ public class MaterialServiceImpl implements MaterialService {
                 .quantity(material.getQuantity())
                 .imageUrl(material.getImageUrl())
                 .supplierName(material.getSupplier().getSupplierName())
-                .createdAt(material.getCreatedAt())
                 .build();
     }
 

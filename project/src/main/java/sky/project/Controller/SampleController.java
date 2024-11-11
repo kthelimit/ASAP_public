@@ -44,4 +44,6 @@ public class SampleController {
         log.info("exAdmin..............");
     }
 
+    @GetMapping("/babo")
+    public void exBabo() {log.info("exBabo..............");}
 }

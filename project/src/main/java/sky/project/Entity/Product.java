@@ -31,8 +31,5 @@ public class Product  extends Base{
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "created_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date createdDate;
 }
 

@@ -17,7 +17,7 @@ public class User  extends Base{
     private String userId;
     private String username;
     private String userAddress;
-    private String userType = "PARTNER";
+    private UserType userType = UserType.PARTNER;
     private String password;
     private String email;
     private String phone;

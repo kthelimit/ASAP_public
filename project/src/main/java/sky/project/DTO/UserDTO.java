@@ -1,6 +1,7 @@
 package sky.project.DTO;
 
 import lombok.*;
+import sky.project.Entity.UserType;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ public class UserDTO {
     private String userId;
     private String username;
     private String userAddress;
-    private String userType ="PARTNER";
+    private UserType userType = UserType.PARTNER;
     private String password;
     private String email;
     private String phone;

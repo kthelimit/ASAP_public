@@ -46,4 +46,9 @@ public class SampleController {
 
     @GetMapping("/babo")
     public void exBabo() {log.info("exBabo..............");}
+
+    @GetMapping("/invoice")
+    public void exInvoice() {
+        log.info("exInvoice...............");
+    }
 }

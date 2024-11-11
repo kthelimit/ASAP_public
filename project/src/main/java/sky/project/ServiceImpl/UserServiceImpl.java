@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.UserDTO;
 import sky.project.Entity.User;
+import sky.project.Entity.UserType;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO authenticate(String userId, String password, String userType) {
+    public UserDTO authenticate(String userId, String password, UserType userType) {
         System.out.println("아이디 :" + userId);
 
         // 유저 아이디로 사용자 검색
@@ -62,14 +63,14 @@ public class UserServiceImpl implements UserService {
             }
 
             // 유저 타입에 따른 분기 처리
-            if ("ADMIN".equals(userType)) {
+            if (userType==UserType.ADMIN) {
                 if ("ADMIN".equals(user.getUserType())) {
                     return toDTO(user);
                 } else {
                     throw new IllegalArgumentException("유저 타입이 일치하지 않습니다. 협력사 계정으로 로그인하세요.");
                 }
-            } else if ("PARTNER".equals(userType) || "SUPPLIER".equals(userType)) {
-                if ("PARTNER".equals(user.getUserType()) || "SUPPLIER".equals(user.getUserType())) {
+            } else if (userType==UserType.PARTNER || userType==UserType.SUPPLIER) {
+                if (UserType.PARTNER==(user.getUserType()) || UserType.SUPPLIER==(user.getUserType())) {
                     return toDTO(user); // 협력사 관련 DTO로 전환
                 } else {
                     throw new IllegalArgumentException("유저 타입이 일치하지 않습니다. 관리자 계정으로 로그인하세요.");

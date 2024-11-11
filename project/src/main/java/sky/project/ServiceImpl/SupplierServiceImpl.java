@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Entity.Supplier;
+import sky.project.Entity.UserType;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.SupplierService;
@@ -63,7 +64,7 @@ public class SupplierServiceImpl implements SupplierService {
     public void approveSupplier(String supplierId) {
         Supplier supplier = supplierRepository.findById(supplierId).orElseThrow();
         supplier.setApproved(true);
-        supplier.getUser().setUserType("SUPPLIER");
+        supplier.getUser().setUserType(UserType.SUPPLIER);
         supplierRepository.save(supplier);
     }
 

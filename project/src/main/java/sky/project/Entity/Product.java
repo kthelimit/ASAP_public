@@ -30,6 +30,5 @@ public class Product  extends Base{
     @Column(name = "image_url")
     private String imageUrl;
 
-
 }
 

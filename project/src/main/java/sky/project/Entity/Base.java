@@ -13,7 +13,7 @@ import java.util.Date;
 @Getter
 @MappedSuperclass
 @EntityListeners(value = {AuditingEntityListener.class})
-public abstract class Base{
+abstract public class Base{
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)

@@ -1,6 +1,7 @@
 package sky.project.Service;
 import sky.project.Entity.UserType;
 import sky.project.DTO.UserDTO;
+import sky.project.Entity.UserType;
 
 public interface UserService {
     UserDTO authenticate(String userId, String password, UserType userType);

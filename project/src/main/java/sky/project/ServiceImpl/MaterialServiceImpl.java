@@ -22,11 +22,12 @@ import java.util.UUID;
 public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
-    MaterialRepository materialRepository;
-    @Autowired
-    SupplierRepository supplierRepository;
+    private MaterialRepository materialRepository;
 
-    private final String uploadDir = "uploads/";
+    @Autowired
+    private SupplierRepository supplierRepository;
+
+    private final String uploadDir = "src/main/resources/static/Images/";
 
     @Override
     public void registerMaterial(MaterialDTO materialDTO, MultipartFile imageFile) {
@@ -48,7 +49,11 @@ public class MaterialServiceImpl implements MaterialService {
                 material.setImageUrl(imageUrl);
             } catch (IOException e) {
                 e.printStackTrace();
+                // 기본 이미지 또는 오류 시 처리
+                material.setImageUrl("/default-image.jpg"); // 기본 이미지 설정
             }
+        } else {
+            material.setImageUrl("/default-image.jpg"); // 이미지가 없을 경우 기본 이미지 설정
         }
 
         materialRepository.save(material);
@@ -74,16 +79,18 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     private String saveImage(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String originalFileName = file.getOriginalFilename();
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        String fileName = UUID.randomUUID() + fileExtension; // 고유한 파일 이름 생성
         Path filePath = Paths.get(uploadDir + fileName);
         Files.createDirectories(filePath.getParent());
         file.transferTo(filePath.toFile());
-        return "/" + uploadDir + fileName;
+        return "/Images/" + fileName; // 저장된 이미지 경로 반환
     }
 
     public String getSupplierNameByUserId(String userId) {
         return supplierRepository.findByUser_UserId(userId)
                 .map(Supplier::getSupplierName)
-                .orElse(null); // supplierName 반환 또는 null 반환
+                .orElse(null);
     }
 }

@@ -58,21 +58,15 @@
               <input type="text" id="businessItem" th:field="*{businessItem}" required />
             </div>
 
-            <!-- 알림 메시지 표시 -->
-            <div th:if="${alertMessage}" class="alert alert-warning" th:text="${alertMessage}"></div>
 
-            <button type="submit" class="btn-submit">등록하기</button>
+
+            <button type="submit" class="btn-submit" onclick="alert('업체등록이 완료되었습니다. 승인을 기다려주세요')">등록하기</button>
           </div>
         </div>
       </div>
     </div>
   </form>
 </div>
-<script>
-
-
-
-</script>
 
 </body>
   </th:block>

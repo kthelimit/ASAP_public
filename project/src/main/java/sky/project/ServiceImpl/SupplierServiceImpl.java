@@ -5,15 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Entity.Supplier;
 import sky.project.Entity.User;
-import sky.project.Entity.UserType;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.SupplierService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,18 +28,39 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public Page<Supplier> getAllSuppliers(Pageable pageable) {
-        return supplierRepository.findAll(pageable);
+        return supplierRepository.findByApprovedTrue(pageable);
+    }
+    public List<Supplier> getApprovedSuppliers() {
+        return supplierRepository.findByApprovedTrue();
     }
 
     @Override
+    public SupplierDTO getSupplierById(String supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new IllegalArgumentException("Supplier not found with id: " + supplierId));
+
+        return SupplierDTO.builder()
+                .supplierId(supplier.getSupplierId())
+                .userId(supplier.getUser().getUserId()) // User 엔티티에서 userId 가져옴
+                .businessRegistrationNumber(supplier.getBusinessRegistrationNumber())
+                .supplierName(supplier.getSupplierName())
+                .contactInfo(supplier.getContactInfo())
+                .address(supplier.getAddress())
+                .businessType(supplier.getBusinessType())
+                .businessItem(supplier.getBusinessItem())
+                .approved(supplier.getApproved())
+                .build();
+    }
+
+
+    @Override
     public void registerSupplier(SupplierDTO supplierDTO) {
-        // User 찾기
         User user = userRepository.findById(supplierDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Supplier supplier = Supplier.builder()
-                .supplierId(user.getUserId()) // userId를 supplierId로 사용
-                .user(user) // User 객체 할당
+                .supplierId(user.getUserId())
+                .user(user)
                 .businessRegistrationNumber(supplierDTO.getBusinessRegistrationNumber())
                 .supplierName(supplierDTO.getSupplierName())
                 .contactInfo(supplierDTO.getContactInfo())
@@ -64,22 +86,30 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public long getTotalPendingCount() {
-        // 승인되지 않은 공급자의 총 개수를 반환
         return supplierRepository.countByApprovedFalse();
     }
 
+    @Transactional
     @Override
     public void approveSupplier(String supplierId) {
-        Supplier supplier = supplierRepository.findById(supplierId).orElseThrow();
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new NoSuchElementException("No supplier found with ID: " + supplierId));
         supplier.setApproved(true);
-        supplier.getUser().setUserType(UserType.SUPPLIER);
         supplierRepository.save(supplier);
+        System.out.println("Supplier approved with ID: " + supplierId);
     }
 
+    @Transactional
     @Override
     public void rejectSupplier(String supplierId) {
-        supplierRepository.deleteById(supplierId);
+
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new NoSuchElementException("No supplier found with ID: " + supplierId));
+        supplierRepository.delete(supplier);
+
+        System.out.println("Supplier rejected and deleted with ID: " + supplierId);
     }
+
 
     private SupplierDTO toDTO(Supplier supplier) {
         return SupplierDTO.builder()
@@ -98,7 +128,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public String getSupplierNameByUserId(String userId) {
         return supplierRepository.findByUser_UserId(userId)
-                .map(supplier -> supplier.getSupplierName())
-                .orElse(null); // supplierName 반환 또는 null 반환
+                .map(Supplier::getSupplierName)
+                .orElse(null);
     }
 }

@@ -1,122 +1,149 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>로그인</title>
-    <style>
-        /* 스타일은 기존 스타일 그대로 유지합니다 */
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f5;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        .toggle-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .toggle-button {
-            flex: 1;
-            padding: 10px;
-            cursor: pointer;
-            color: #333;
-            font-weight: bold;
-            background-color: #e0e0e0;
-            border-radius: 5px 5px 0 0;
-            transition: background-color 0.3s;
-        }
-        .toggle-button.active {
-            background-color: #4CAF50;
-            color: #fff;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-top: 15px;
-            color: #333;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button[type="submit"]:hover {
-            background-color: #45a049;
-        }
-        a {
-            margin: 10px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <form th:action="@{/login}" method="post" th:object="${userDTO}">
-        <!-- 토글 버튼 -->
-        <div class="toggle-container">
-            <div id="adminToggle" class="toggle-button active" onclick="toggleLoginType('ADMIN')">관리자 로그인</div>
-            <div id="partnerToggle" class="toggle-button" onclick="toggleLoginType('PARTNER')">협력사 로그인</div>
-        </div>
-
-        <!-- 로그인 폼 입력 필드 -->
-        <label>아이디</label>
-        <input type="text" name="userId" th:field="*{userId}" required />
-        <label>비밀번호</label>
-        <input type="password" name="password" th:field="*{password}" required />
-
-        <!-- 선택된 로그인 타입을 전달할 hidden input -->
-        <input type="hidden" id="loginType" name="userType" value="ADMIN" />
-
-        <button type="submit">로그인</button>
-
-        <!-- 에러 메시지 표시 -->
-        <div th:if="${error}" th:text="${error}" style="color: red; margin-top: 10px;"></div>
-    </form>
-    <a href="/signup">회원가입</a> |
-    <a href="#">아이디 찾기</a> |
-    <a href="#">비밀번호 찾기</a>
-</div>
-
-<script>
-    // 자바스크립트로 토글 활성화
-    function toggleLoginType(userType) {
-        document.getElementById('adminToggle').classList.toggle('active', userType === 'ADMIN');
-        document.getElementById('partnerToggle').classList.toggle('active', userType === 'PARTNER');
-
-        // 선택한 로그인 타입을 hidden input에 설정
-        document.getElementById('loginType').value = userType;
+<head><style>
+    /* 기존 스타일을 그대로 유지합니다 */
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f5;
+        font-family: Arial, sans-serif;
     }
-</script>
 
-</body>
+    .container {
+        margin-top: 100px;
+        width: 400px;
+        height: 500px;
+        background-color: #ffffff;
+        padding: 20px 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #365CF5FF;
+        margin-bottom: 20px;
+    }
+
+    .toggle-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .toggle-button {
+        flex: 1;
+        padding: 10px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+        background-color: #e0e0e0;
+        border-radius: 5px 5px 0 0;
+        transition: background-color 0.3s;
+    }
+
+    .toggle-button.active {
+        background-color: #365CF5FF;
+        color: #fff;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-top: 15px;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #365CF5FF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 50px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #2c4bb3;
+    }
+
+    .find_tab {
+        margin-top: 50px;
+    }
+
+    a {
+        color: #365CF5FF;
+        font-weight: bold;
+        margin: 10px;
+        text-decoration-line: none;
+    }
+</style>
+
+    <div class="container">
+        <!-- ASAP 로그인 제목 -->
+        <h1>ASAP</h1>
+
+        <form th:action="@{/login}" method="post" th:object="${userDTO}">
+            <!-- 토글 버튼 -->
+            <div class="toggle-container">
+                <div id="adminToggle" class="toggle-button active" onclick="toggleLoginType('ADMIN')">관리자 로그인</div>
+                <div id="partnerToggle" class="toggle-button" onclick="toggleLoginType('PARTNER')">협력사 로그인</div>
+            </div>
+
+            <!-- 로그인 폼 입력 필드 -->
+            <div>
+                <label>아이디</label>
+                <input type="text" name="userId" placeholder="ID (사번 또는 사업자번호)" th:field="*{userId}" required />
+                <label>비밀번호</label>
+                <input type="password" name="password" placeholder="Password" th:field="*{password}" required />
+            </div>
+
+            <!-- 선택된 로그인 타입을 전달할 hidden input -->
+            <input type="hidden" id="loginType" name="userType" value="ADMIN" />
+
+            <button type="submit">로그인</button>
+
+            <!-- 에러 메시지 표시 -->
+            <div th:if="${error}" th:text="${error}" style="color: red; margin-top: 10px;"></div>
+        </form>
+
+        <!-- 회원가입, 아이디 찾기, 비밀번호 찾기 링크 -->
+        <div class="find_tab">
+            <a href="/signup">회원가입</a> |
+            <a href="#">아이디 찾기</a> |
+            <a href="#">비밀번호 찾기</a>
+        </div>
+    </div>
+
+    <script>
+        // 자바스크립트로 토글 활성화
+        function toggleLoginType(userType) {
+            document.getElementById('adminToggle').classList.toggle('active', userType === 'ADMIN');
+            document.getElementById('partnerToggle').classList.toggle('active', userType === 'PARTNER');
+
+            // 선택한 로그인 타입을 hidden input에 설정
+            document.getElementById('loginType').value = userType;
+        }
+    </script>
 </html>

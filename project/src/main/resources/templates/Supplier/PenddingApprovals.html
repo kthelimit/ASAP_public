@@ -2,35 +2,142 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
+        <head>
+            <meta charset="UTF-8">
+            <title>업체 승인 대기 리스트</title>
+            <style>
+                /* 페이징 스타일 */
+                .pagination {
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    list-style: none;
+                    padding: 0;
+                    gap: 5px;
+                }
 
-    <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-div class="container">
-<h2>승인 대기 중인 업체</h2>
-<div class="row">
-    <div class="col" th:each="supplier : ${suppliers}">
-        <div class="card">
-            <h3 th:text="${supplier.supplierName}">업체 이름</h3>
-            <p th:text="'사업자 번호: ' + ${supplier.businessRegistrationNumber}">사업자 번호</p>
-            <p th:text="'연락처: ' + ${supplier.contactInfo}">연락처</p>
-            <button th:if="${!supplier.approved}" th:onclick="'/suppliers/' + ${supplier.supplierId} + '/approve'">승인</button>
-            <button th:if="${!supplier.approved}" th:onclick="'/suppliers/' + ${supplier.supplierId} + '/reject'">거부</button>
-            <span th:if="${supplier.approved}">승인완료</span>
+                .pagination li a {
+                    padding: 8px 12px;
+                    text-decoration: none;
+                    color: #333;
+                    background-color: #e0e0e0;
+                    border-radius: 5px;
+                    transition: background-color 0.3s;
+                }
+
+                .pagination li a:hover {
+                    background-color: #cccccc;
+                }
+
+                .pagination li a.active {
+                    font-weight: bold;
+                    color: white;
+                    background-color: #007BFF;
+            </style>
+        </head>
+        <body>
+        <div class="tables-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <h6 class="mb-10">승인 대기 중인 업체</h6>
+                        <p class="text-sm mb-20">
+                            현재 승인 대기 중인 업체 목록입니다. 각 업체의 정보를 확인하고, 필요 시 승인 또는 거부할 수 있습니다.
+                        </p>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th><h6>업체 이름</h6></th>
+                                    <th><h6>사업자 번호</h6></th>
+                                    <th><h6>연락처</h6></th>
+                                    <th><h6>주소</h6></th>
+                                    <th><h6>업태</h6></th>
+                                    <th><h6>종목</h6></th>
+                                    <th><h6>Action</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="supplier : ${suppliers}" th:id="'supplier-' + ${supplier.supplierId}">
+                                    <td th:text="${supplier.supplierName}">업체 이름</td>
+                                    <td th:text="${supplier.businessRegistrationNumber}">사업자 번호</td>
+                                    <td th:text="${supplier.contactInfo}">연락처</td>
+                                    <td th:text="${supplier.address}">주소</td>
+                                    <td th:text="${supplier.businessType}">업태</td>
+                                    <td th:text="${supplier.businessItem}">종목</td>
+
+                                    <!-- Hidden input field for supplierId -->
+                                    <input type="hidden" class="supplier-id" th:value="${supplier.supplierId}" />
+
+                                    <td>
+                                        <button class="main-btn primary-btn btn-hover" style="padding: 15px 15px"
+                                                th:if="${!supplier.approved}"
+                                                onclick="approveSupplier(this)">승인
+                                        </button>
+                                        <button class="main-btn danger-btn btn-hover" style="padding: 15px 15px"
+                                                th:if="${!supplier.approved}"
+                                                onclick="rejectSupplier(this)">거부
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-<!-- 페이징 처리 -->
-<ul class="pagination">
-    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-        <a th:href="@{/suppliers/approvalPendingList(page=${i})}"
-           th:text="${i}"
-           th:classappend="${i == currentPage ? 'active' : ''}">1</a>
-    </li>
-</ul>
-</div>
-</body>
+
+        <!-- 페이징 처리 -->
+        <ul class="pagination">
+            <li th:each="i : ${#numbers.sequence(1, totalPages != null ? totalPages : 1)}">
+                <a th:href="@{/suppliers/pending(page=${i})}"
+                   th:text="${i}"
+                   th:classappend="${i == (currentPage != null ? currentPage : 1) ? 'active' : ''}">1</a>
+            </li>
+        </ul>
+
+        <script>
+            function approveSupplier(button) {
+                // Find the hidden supplier ID within the same row as the button
+                const supplierId = button.closest('tr').querySelector('.supplier-id').value;
+
+                fetch(`/suppliers/approve/${supplierId}`, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            const row = button.closest('tr');
+                            // Update the action cell to show "승인완료" after approval
+                            const actionCell = row.querySelector('td:last-child');
+                            actionCell.innerHTML = '<span>승인완료</span>';
+                        } else {
+                            console.error('Failed to approve supplier:', response.status);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function rejectSupplier(button) {
+                const supplierId = button.closest('tr').querySelector('.supplier-id').value;
+
+                fetch(`/suppliers/reject/${supplierId}`, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Remove the entire row upon rejection
+                            const row = button.closest('tr');
+                            row.remove();
+                        } else {
+                            console.error('Failed to reject supplier:', response.status);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        </body>
     </th:block>
 </th:block>
+</html>

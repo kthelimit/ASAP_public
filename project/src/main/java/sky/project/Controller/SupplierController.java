@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.SupplierDTO;
 import sky.project.DTO.UserDTO;
 import sky.project.Entity.Supplier;
 import sky.project.Service.SupplierService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("/suppliers")
@@ -26,7 +28,7 @@ public class SupplierController {
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
                                    @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size); // page를 1 감소시켜서 사용
         Page<Supplier> supplierPage = supplierService.getAllSuppliers(pageable);
 
         model.addAttribute("suppliers", supplierPage.getContent());
@@ -86,14 +88,34 @@ public class SupplierController {
     }
 
     @PostMapping("/approve/{supplierId}")
-    public String approveSupplier(@PathVariable String supplierId) {
-        supplierService.approveSupplier(supplierId);
+    public String approveSupplier(@PathVariable String supplierId, RedirectAttributes redirectAttributes) {
+        System.out.println("===============================================" +supplierId);
+        try {
+            supplierService.approveSupplier(supplierId);
+        } catch (NoSuchElementException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
+            return "redirect:/suppliers/pending"; // 오류 메시지와 함께 리다이렉트
+        }
         return "redirect:/suppliers/pending";
     }
 
     @PostMapping("/reject/{supplierId}")
-    public String rejectSupplier(@PathVariable String supplierId) {
-        supplierService.rejectSupplier(supplierId);
+    public String rejectSupplier(@PathVariable String supplierId, RedirectAttributes redirectAttributes) {
+        try {
+            supplierService.rejectSupplier(supplierId);
+        } catch (NoSuchElementException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
+            return "redirect:/suppliers/pending"; // 오류 메시지와 함께 리다이렉트
+        }
         return "redirect:/suppliers/pending";
     }
+
+
+    @GetMapping("/detail/{id}")
+    public String getSupplierDetail(@PathVariable String id, Model model) {
+        SupplierDTO supplierDTO = supplierService.getSupplierById(id);
+        model.addAttribute("supplierDTO", supplierDTO);  // 모델에 문의 정보 추가
+        return "Supplier/SupplierDetail";  // 문의 상세 페이지 (qnaDetail.html)로 이동
+    }
+
 }

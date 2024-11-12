@@ -193,9 +193,16 @@
                         <input type="number" id="unitPrice" th:field="*{unitPrice}" step="0.01" min="0" required />
                     </div>
                     <div class="form-group">
-                        <label for="supplierName">공급사</label>
-                        <input type="text" id="supplierName" th:field="*{supplierName}" readonly />
+                        <label for="supplierId">공급사</label>
+                        <select id="supplierId" th:field="*{supplierId}" required>
+                            <option value="">공급사 선택</option>
+                            <option th:each="supplier : ${approvedSuppliers}"
+                                    th:value="${supplier.supplierId}"
+                                    th:text="${supplier.supplierName}">
+                            </option>
+                        </select>
                     </div>
+
                     <div class="form-group">
                         <label for="quantity">수량</label>
                         <input type="number" id="quantity" th:field="*{quantity}" min="1" required />

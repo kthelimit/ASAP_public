@@ -19,6 +19,11 @@ public class SampleController {
         log.info("exAll..............");
     }
 
+    @GetMapping("/all3")
+    public void exAll3() {
+        log.info("exAll..............");
+    }
+
     @GetMapping("/member")
     public void exMember() {
         log.info("exMember...............");

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <!-- 발주 품목 선택-->
+        <div class="row mt-20">
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <h3 class="mb-10">발주 품목 선택</h3>
+                    <p class="text-sm mb-20">
+                        현재 진행되고 있는 조달계획과 관련된 품목들입니다.
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h6>조달계획번호</h6>
+                                </th>
+                                <th>
+                                    <h6>업체명</h6>
+                                </th>
+                                <th>
+                                    <h6>품목명</h6>
+                                </th>
+                                <th>
+                                    <h6>조달 납기일</h6>
+                                </th>
+                                <th>
+                                    <h6>조달수량</h6>
+                                </th>
+                                <th>
+                                    <h6>선택</h6>
+                                </th>
+                            </tr>
+                            <!-- end table row-->
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="min-width">
+                                    <p>PL-001</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>디씨바이크</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>스포크 J밴드240</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>2024-11-20</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>300</p>
+                                </td>
+                                <td>
+                                    <button class="main-btn primary-btn btn-hover" style="padding: 12px">선택</button>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td class="min-width">
+                                    <p>PL-002</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>볼턴사</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>2024-11-26</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>50</p>
+                                </td>
+                                <td>
+                                    <button class="main-btn primary-btn btn-hover" style="padding: 12px">선택</button>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td class="min-width">
+                                    <p>PL-003</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>WB사
+                                    </p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시티 바이시클 40mm패드 무통안장</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>2024-11-26</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>50</p>
+                                </td>
+                                <td>
+                                    <button class="main-btn primary-btn btn-hover" style="padding: 12px">선택</button>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 발주서 작성-->
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <h3 class="mb-10">발주서 작성</h3>
+                    <p class="text-sm mb-20">
+                        발주서 작성 후 버튼을 누르시면 발주서가 등록됩니다.
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table">
+                            <tr>
+                                <th colspan="4"
+                                    style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    공급자 정보
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="width:15%">업체명</th>
+                                <td style="width:35%">WB사</td>
+                                <th style="width:15%">사업자 번호</th>
+                                <td style="width:35%">123-12-12345</td>
+                            </tr>
+                            <tr>
+                                <th>주소</th>
+                                <td colspan="3">경기도 수원시 장안구</td>
+                            </tr>
+                            <tr>
+                                <th>발주일</th>
+                                <td>24.11.13</td>
+                                <th>담당자</th>
+                                <td>김현식</td>
+                            </tr>
+                        </table>
+                        <table class="table">
+                            <tr>
+                                <th colspan="6"
+                                    style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    품목 정보
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">품목명</th>
+                                <th>단가</th>
+                                <th style="width: 15%">수량</th>
+                                <th style="width: 15%">공급가</th>
+                                <th style="width: 15%">입고 예정일</th>
+                            </tr>
+                            <tr>
+                                <td>시티 바이시클 40mm패드 무통안장</td>
+                                <td>15,500</td>
+                                <td style="padding-left: 5px"><input style="width: 80%" type="number" value="50"></td>
+                                <td>775,000</td>
+                                <td>24.11.15</td>
+                            </tr>
+                        </table>
+                        <table class="table">
+                            <tr>
+                                <th>비고</th>
+                                <td><input style="width: 90%" type="text"></td>
+                                <th style="width: 15%">합계</th>
+                                <td style="width: 15%">₩775,000</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="text-align: right">
+                        <button class="main-btn primary-btn btn-hover">발주서 등록
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 구매 발주서 관리-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h3 class="mb-10">구매 발주서 관리</h3>
+                    <p class="text-sm mb-20">
+                        발주가 완료되어 진행중인 리스트입니다.
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h6>조달계획번호</h6>
+                                </th>
+                                <th>
+                                    <h6>업체명</h6>
+                                </th>
+                                <th>
+                                    <h6>품목명</h6>
+                                </th>
+                                <th>
+                                    <h6>발주일</h6>
+                                </th>
+                                <th>
+                                    <h6>입고 예정일</h6>
+                                </th>
+                                <th>
+                                    <h6>발주 상태</h6>
+                                </th>
+                            </tr>
+                            <!-- end table row-->
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <p>PL-004</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시마노</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>RD-R8150 (12단) di2 뒷변속기</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.12</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.14</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <span class="status-btn active-btn">배송중</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td>
+                                    <p>PL-005</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>cs사</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>전기자전거 2인자전거 브레이크 케이블</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.09</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.10</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <span class="status-btn success-btn">입고완료</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td>
+                                    <p>PL-006</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시마노</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시티 바이시클 40mm패드 무통안장</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.06</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.09</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <span class="status-btn danger-btn">반품중</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>

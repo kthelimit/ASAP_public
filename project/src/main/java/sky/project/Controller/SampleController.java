@@ -9,8 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Log4j2
 @RequestMapping("/sample/")
 public class SampleController {
-    @GetMapping("/all")
-    public void exAll() {
+    @GetMapping("/all1")
+    public void exAll1() {
+        log.info("exAll..............");
+    }
+
+    @GetMapping("/all2")
+    public void exAll2() {
         log.info("exAll..............");
     }
 

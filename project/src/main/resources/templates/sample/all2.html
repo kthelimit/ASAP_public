@@ -42,8 +42,8 @@
                 border-radius: 8px;
             }
 
-            .register {
-                margin: auto;
+            .choice {
+                margin: 5px;
                 width: 80px;
                 height: 50px;
                 border-radius: 8px;
@@ -56,7 +56,7 @@
             .search {
                 margin-left: 15px;
                 border: 1px solid #e5e5e5;;
-
+                border-radius: 10px;
                 width: 300px;
                 height: 58px;
                 position: relative;
@@ -71,54 +71,62 @@
                 justify-content: space-between;
             }
 
-
-
+            .choice-column {
+                width: 220px;
+            }
 
 
         </style>
         <div class="row">
             <div class="col-lg-6">
                 <div class="card-style mb-30">
-                    <h6 class="mb-10">조달 계획 등록</h6>
+                    <div class="search_tab">
+                        <h6 class="mb-10">입고 예정</h6>
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select>
+                                    <option value="">품목코드</option>
+                                    <option value="">Category one</option>
+                                    <option value="">Category two</option>
+                                    <option value="">Category three</option>
+                                </select>
+
+                            </div>
+                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
+                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                        </div>
+                    </div>
+
                     <div class="table-wrapper table-responsive">
                         <table class="table striped-table">
                             <thead>
                             <tr>
                                 <th>
-                                    <h5>생산 시작일</h5>
+                                    <h5>발주 번호</h5>
                                 </th>
                                 <th>
-                                    <h5>생산 종료일</h5>
+                                    <h5>업체명</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품코드</h5>
+                                    <h5>품명</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품명</h5>
-                                </th>
-                                <th>
-                                    <h5>생산수량</h5>
-                                </th>
-                                <th>
-                                    <h5>품목코드</h5>
-                                </th>
-                                <th>
-                                    <h5>품목명</h5>
-                                </th>
-                                <th>
-                                    <h5>품목소요수량</h5>
-                                </th>
-                                <th>
-                                    <h5>조달간격(일)</h5>
-                                </th>
-                                <th>
-                                    <h5>조달수량</h5>
+                                    <h5>발주일</h5>
                                 </th>
                                 <th>
                                     <h5>조달납기일</h5>
                                 </th>
                                 <th>
-                                    <h5>ㅎㅎ</h5>
+                                    <h5>재고</h5>
+                                </th>
+                                <th>
+                                    <h5>발주수량</h5>
+                                </th>
+                                <th>
+                                    <h5>입고수량</h5>
+                                </th>
+                                <th>
+                                    <h5>선택목록</h5>
                                 </th>
                             </tr>
                             </thead>
@@ -149,18 +157,7 @@
                                     <p>2024-11-11</p>
                                 </td>
                                 <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                            <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
+                                    <a href="#0" class="main-btn active-btn btn-hover choice">검수이행</a>
                                 </td>
                             </tr>
 
@@ -176,7 +173,7 @@
             <div class="col-lg-6">
                 <div class="card-style mb-30">
                     <div class="search_tab">
-                    <h6 class="mb-10">생산 계획 조회</h6>
+                        <h6 class="mb-10">입고 검수</h6>
                         <div class="select-style-1">
                             <div class="select-position">
                                 <select>
@@ -187,10 +184,10 @@
                                 </select>
 
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="   검색어를 입력하세요">
+                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
                             <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
                         </div>
-                        </div>
+                    </div>
 
 
                     <div class="table-wrapper table-responsive">
@@ -198,31 +195,25 @@
                             <thead>
                             <tr>
                                 <th>
-                                    <h5>생산 시작일</h5>
+                                    <h5>품명</h5>
                                 </th>
                                 <th>
-                                    <h5>생산 종료일</h5>
+                                    <h5>발주 수량</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품코드</h5>
+                                    <h5>입고 수량</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품명</h5>
+                                    <h5>합격 수량</h5>
                                 </th>
                                 <th>
-                                    <h5>생산수량</h5>
+                                    <h5>발주 번호</h5>
                                 </th>
                                 <th>
-                                    <h5>품목코드</h5>
+                                    <h5>처리상태</h5>
                                 </th>
-                                <th>
-                                    <h5>품목명</h5>
-                                </th>
-                                <th>
-                                    <h5>품목소요수량</h5>
-                                </th>
-                                <th>
-                                    <h5>ㅎㅎ</h5>
+                                <th class="choice-column">
+                                    <h5>선택목록</h5>
                                 </th>
                             </tr>
                             </thead>
@@ -240,7 +231,7 @@
                                     <p>2024-11-11</p>
                                 </td>
                                 <td>
-                                    <p>2024-11-11</p>
+                                    <input class="passed" type="number">
                                 </td>
                                 <td>
                                     <p>2024-11-11</p>
@@ -248,16 +239,9 @@
                                 <td>
                                     <p>2024-11-11</p>
                                 </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
+                                <td class="choice-column">
+                                        <a href="#0" class="main-btn active-btn btn-hover choice">검수완료</a>
+                                        <a href="#0" class="main-btn danger-btn btn-hover choice">반품</a>
                                 </td>
                             </tr>
                             <tr>
@@ -271,7 +255,7 @@
                                     <p>2024-11-11</p>
                                 </td>
                                 <td>
-                                    <p>2024-11-11</p>
+                                    <input class="passed" type="number">
                                 </td>
                                 <td>
                                     <p>2024-11-11</p>
@@ -279,16 +263,9 @@
                                 <td>
                                     <p>2024-11-11</p>
                                 </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
+                                <td class="choice-column">
+                                    <a href="#0" class="main-btn active-btn btn-hover choice">검수완료</a>
+                                    <a href="#0" class="main-btn danger-btn btn-hover choice">반품</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -302,7 +279,7 @@
             <div class="col-lg-6">
                 <div class="card-style mb-30">
                     <div class="search_tab">
-                        <h6 class="mb-10">조달 계획 조회</h6>
+                        <h6 class="mb-10">입고 완료</h6>
                         <div class="select-style-1">
                             <div class="select-position">
                                 <select>
@@ -313,7 +290,7 @@
                                 </select>
 
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="검색어를 입력하세요">
+                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
                             <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
                         </div>
                     </div>
@@ -322,37 +299,28 @@
                             <thead>
                             <tr>
                                 <th>
-                                    <h5>생산 시작일</h5>
+                                    <h5>발주 번호</h5>
                                 </th>
                                 <th>
-                                    <h5>생산 종료일</h5>
+                                    <h5>업체명</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품코드</h5>
+                                    <h5>품명</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품명</h5>
-                                </th>
-                                <th>
-                                    <h5>생산수량</h5>
-                                </th>
-                                <th>
-                                    <h5>품목코드</h5>
-                                </th>
-                                <th>
-                                    <h5>품목명</h5>
-                                </th>
-                                <th>
-                                    <h5>품목소요수량</h5>
-                                </th>
-                                <th>
-                                    <h5>조달간격(일)</h5>
-                                </th>
-                                <th>
-                                    <h5>조달수량</h5>
+                                    <h5>발주일</h5>
                                 </th>
                                 <th>
                                     <h5>조달납기일</h5>
+                                </th>
+                                <th>
+                                    <h5>재고</h5>
+                                </th>
+                                <th>
+                                    <h5>발주수량</h5>
+                                </th>
+                                <th>
+                                    <h5>입고수량</h5>
                                 </th>
                             </tr>
                             </thead>
@@ -383,26 +351,8 @@
                                 <td>
                                     <p>2024-11-11</p>
                                 </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
                             </tr>
                             <tr>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
                                 <td>
                                     <p>2024-11-11</p>
                                 </td>

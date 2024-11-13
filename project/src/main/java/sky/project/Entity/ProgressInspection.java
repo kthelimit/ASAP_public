@@ -22,11 +22,13 @@ public class ProgressInspection  extends Base{
     @Column(name = "expected_arrival_date", nullable = false)
     private LocalDate expectedArrivalDate;
 
-    @Column(name = "item_code", nullable = false, length = 50)
-    private String itemCode;
 
-    @Column(name = "item_name", nullable = false, length = 100)
-    private String itemName;
+    @Column(nullable = false, length = 100)
+    private String materialName; // 자재 이름
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String materialCode; // 자재 코드
+
 
     @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;

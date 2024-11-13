@@ -8,7 +8,7 @@
             }
             .col-lg-6 {
                 margin: 20px auto -25px;
-                width: 1625px;
+                width: 1600px;
                 height: auto;
             }
 
@@ -85,7 +85,7 @@
             <div class="col-lg-6">
                 <div class="card-style mb-30">
                     <div class="search_tab">
-                        <h6 class="mb-10">출고 요청 목록</h6>
+                        <h6 class="mb-10">입고 예정</h6>
                         <div class="select-style-1">
                             <div class="select-position">
                                 <select>
@@ -106,22 +106,28 @@
                             <thead>
                             <tr>
                                 <th>
-                                    <h5>생산계획번호</h5>
+                                    <h5>발주 번호</h5>
                                 </th>
                                 <th>
-                                    <h5>생산제품명</h5>
+                                    <h5>업체명</h5>
                                 </th>
                                 <th>
-                                    <h5>품목명</h5>
+                                    <h5>품명</h5>
                                 </th>
                                 <th>
-                                    <h5>품목코드</h5>
+                                    <h5>발주일</h5>
                                 </th>
                                 <th>
-                                    <h5>재고수량</h5>
+                                    <h5>조달납기일</h5>
                                 </th>
                                 <th>
-                                    <h5>출고수량</h5>
+                                    <h5>재고</h5>
+                                </th>
+                                <th>
+                                    <h5>발주수량</h5>
+                                </th>
+                                <th>
+                                    <h5>입고수량</h5>
                                 </th>
                                 <th>
                                     <h5>선택목록</h5>
@@ -146,10 +152,16 @@
                                     <p>2024-11-11</p>
                                 </td>
                                 <td>
-                                    <input class="how-ea" type="number">
+                                    <p>2024-11-11</p>
                                 </td>
                                 <td>
-                                    <a href="#0" class="main-btn active-btn btn-hover choice">출고</a>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <a href="#0" class="main-btn active-btn btn-hover choice">검수이행</a>
                                 </td>
                             </tr>
 
@@ -165,7 +177,7 @@
             <div class="col-lg-6">
                 <div class="card-style mb-30">
                     <div class="search_tab">
-                        <h6 class="mb-10">창고 자재 목록</h6>
+                        <h6 class="mb-10">입고 검수</h6>
                         <div class="select-style-1">
                             <div class="select-position">
                                 <select>
@@ -187,16 +199,25 @@
                             <thead>
                             <tr>
                                 <th>
-                                    <h5>품목 코드</h5>
+                                    <h5>품명</h5>
                                 </th>
                                 <th>
-                                    <h5>품목명</h5>
+                                    <h5>발주 수량</h5>
                                 </th>
                                 <th>
-                                    <h5>재고 수량</h5>
+                                    <h5>입고 수량</h5>
                                 </th>
                                 <th>
-                                    <h5>가용 재고</h5>
+                                    <h5>합격 수량</h5>
+                                </th>
+                                <th>
+                                    <h5>발주 번호</h5>
+                                </th>
+                                <th>
+                                    <h5>처리상태</h5>
+                                </th>
+                                <th class="choice-column">
+                                    <h5>선택목록</h5>
                                 </th>
                             </tr>
                             </thead>
@@ -214,10 +235,140 @@
                                     <p>2024-11-11</p>
                                 </td>
                                 <td>
+                                    <input class="how-ea" type="number">
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td class="choice-column">
+                                        <a href="#0" class="main-btn active-btn btn-hover choice">검수완료</a>
+                                        <a href="#0" class="main-btn danger-btn btn-hover choice">반품</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <input class="how-ea" type="number">
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td class="choice-column">
+                                    <a href="#0" class="main-btn active-btn btn-hover choice">검수완료</a>
+                                    <a href="#0" class="main-btn danger-btn btn-hover choice">반품</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <div class="search_tab">
+                        <h6 class="mb-10">입고 완료</h6>
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select>
+                                    <option value="">품목코드</option>
+                                    <option value="">Category one</option>
+                                    <option value="">Category two</option>
+                                    <option value="">Category three</option>
+                                </select>
+
+                            </div>
+                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
+                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                        </div>
+                    </div>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table striped-table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h5>발주 번호</h5>
+                                </th>
+                                <th>
+                                    <h5>업체명</h5>
+                                </th>
+                                <th>
+                                    <h5>품명</h5>
+                                </th>
+                                <th>
+                                    <h5>발주일</h5>
+                                </th>
+                                <th>
+                                    <h5>조달납기일</h5>
+                                </th>
+                                <th>
+                                    <h5>재고</h5>
+                                </th>
+                                <th>
+                                    <h5>발주수량</h5>
+                                </th>
+                                <th>
+                                    <h5>입고수량</h5>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
                                     <p>2024-11-11</p>
                                 </td>
                             </tr>
                             <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
                                 <td>
                                     <p>2024-11-11</p>
                                 </td>
@@ -237,8 +388,6 @@
                 </div>
             </div>
         </div>
-
-
 
 
     </th:block>

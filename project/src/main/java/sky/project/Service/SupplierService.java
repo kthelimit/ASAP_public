@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface SupplierService {
     Page<Supplier> getAllSuppliers(Pageable pageable);
-    public List<Supplier> getApprovedSuppliers();
+
+     List<Supplier> getApprovedSuppliers();
+
     void registerSupplier(SupplierDTO supplierDTO);  // 불필요한 오버로딩 메서드 제거
 
     boolean isAlreadyRegistered(String userId);
@@ -21,8 +23,6 @@ public interface SupplierService {
     void approveSupplier(String supplierId);
 
     void rejectSupplier(String supplierId);
-
-    String getSupplierNameByUserId(String userId);
 
     SupplierDTO getSupplierById(String id);
 

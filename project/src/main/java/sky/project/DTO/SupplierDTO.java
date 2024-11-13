@@ -18,4 +18,6 @@ public class SupplierDTO {
     private String businessType; // 사업 유형 (예: 제조업, 유통업)
     private String businessItem;
     private Boolean approved; // 승인 여부
+    private String contractFilePath; // 계약서 파일 경로
+
 }

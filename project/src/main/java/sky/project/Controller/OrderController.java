@@ -13,4 +13,9 @@ public class OrderController {
     @GetMapping("/index")
     public void index() {
     }
+
+    @RequestMapping("/procure")
+    public String procure() {
+        return "/procure/index";
+    }
 }

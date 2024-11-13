@@ -26,8 +26,12 @@ public class Material extends Base{
     @Column(nullable = false)
     private String materialType; // 자재 유형 (대부품/소부품)
 
-    @Column(nullable = false, length = 20)
-    private String unit; // 자재 단위 (e.g., pcs, kg)
+    private int width;
+
+    private int height;
+
+    private int depth;
+
 
     @Column(nullable = false)
     private Double unitPrice; // 단위당 가격

@@ -8,12 +8,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.SupplierDTO;
 import sky.project.DTO.UserDTO;
 import sky.project.Entity.Supplier;
 import sky.project.Service.SupplierService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -28,21 +34,21 @@ public class SupplierController {
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
                                    @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page - 1, size); // page를 1 감소시켜서 사용
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Supplier> supplierPage = supplierService.getAllSuppliers(pageable);
 
         model.addAttribute("suppliers", supplierPage.getContent());
         model.addAttribute("totalPages", supplierPage.getTotalPages());
         model.addAttribute("currentPage", page);
 
-        return "Supplier/SupplierList"; // Thymeleaf 뷰 이름
+        return "Supplier/SupplierList";
     }
 
     @GetMapping("/register")
     public String showRegisterForm(Model model, HttpSession session) {
         String userId = (String) session.getAttribute("userId");
 
-        if (supplierService.isAlreadyRegistered(userId)) {
+        if (userId != null && supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("alertMessage", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");
             return "/sample/admin";
         }
@@ -50,29 +56,43 @@ public class SupplierController {
         model.addAttribute("supplierDTO", new SupplierDTO());
         return "Supplier/SupplierRegister";
     }
-    @PostMapping("/register")
-    public String registerSupplier(@ModelAttribute SupplierDTO supplierDTO, HttpSession session, Model model) {
-        UserDTO user = (UserDTO) session.getAttribute("user"); // UserDTO로 가져오기
 
-        // 세션에 user가 없는 경우 처리
+    @PostMapping("/register")
+    public String registerSupplier(@ModelAttribute SupplierDTO supplierDTO,
+                                   @RequestParam("contractFile") MultipartFile file,
+                                   HttpSession session, Model model) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
-            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+            return "redirect:/";
         }
+        String userId = user.getUserId();
+        supplierDTO.setSupplierId(userId);  // supplierId 설정
 
-        String userId = user.getUserId(); // userId를 UserDTO에서 가져옴
-
-        // 이미 등록된 공급업체인지 확인
         if (supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("message", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");
             return "Supplier/SupplierRegister";
         }
 
-        // userId 설정 후 등록 로직 실행
-        supplierDTO.setUserId(userId);
-        supplierService.registerSupplier(supplierDTO);
-
-        return "redirect:/sample/admin";
+        try {
+            if (!file.isEmpty()) {
+                String directoryPath = "C:/uploads/File";
+                Path directory = Paths.get(directoryPath);
+                if (!Files.exists(directory)) {
+                    Files.createDirectories(directory);
+                }
+                String filePath = directoryPath + "/" + file.getOriginalFilename();
+                file.transferTo(new File(filePath));
+                supplierDTO.setContractFilePath("/uploads/File" + file.getOriginalFilename());
+            }
+            supplierDTO.setUserId(userId);
+            supplierService.registerSupplier(supplierDTO);
+            return "redirect:/sample/admin";
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("message", "파일 업로드에 실패했습니다.");
+            return "Supplier/SupplierRegister";
+        }
     }
 
     @GetMapping("/pending")
@@ -84,17 +104,16 @@ public class SupplierController {
         model.addAttribute("suppliers", suppliers);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        return "Supplier/PenddingApprovals";
+        return "Supplier/PendingApprovals";
     }
 
     @PostMapping("/approve/{supplierId}")
     public String approveSupplier(@PathVariable String supplierId, RedirectAttributes redirectAttributes) {
-        System.out.println("===============================================" +supplierId);
         try {
             supplierService.approveSupplier(supplierId);
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
-            return "redirect:/suppliers/pending"; // 오류 메시지와 함께 리다이렉트
+            return "redirect:/suppliers/pending";
         }
         return "redirect:/suppliers/pending";
     }
@@ -105,17 +124,15 @@ public class SupplierController {
             supplierService.rejectSupplier(supplierId);
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
-            return "redirect:/suppliers/pending"; // 오류 메시지와 함께 리다이렉트
+            return "redirect:/suppliers/pending";
         }
         return "redirect:/suppliers/pending";
     }
 
-
     @GetMapping("/detail/{id}")
     public String getSupplierDetail(@PathVariable String id, Model model) {
         SupplierDTO supplierDTO = supplierService.getSupplierById(id);
-        model.addAttribute("supplierDTO", supplierDTO);  // 모델에 문의 정보 추가
-        return "Supplier/SupplierDetail";  // 문의 상세 페이지 (qnaDetail.html)로 이동
+        model.addAttribute("supplierDTO", supplierDTO);
+        return "Supplier/SupplierDetail";
     }
-
 }

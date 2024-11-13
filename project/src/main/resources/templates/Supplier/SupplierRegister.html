@@ -3,71 +3,73 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
   <th:block th:fragment="content">
 
-  <head>
-  <meta charset="UTF-8">
-  <title>업체 정보 등록</title>
-    <style>
-      .btn-submit {
-        background-color: #007bff; /* 파란색 */
-        color: white; /* 텍스트 색상 */
-        padding: 12px 24px; /* 세로 12px, 가로 24px으로 버튼 크기 조정 */
-        border: none; /* 기본 테두리 제거 */
-        border-radius: 4px; /* 약간의 둥근 모서리 */
-        font-size: 16px; /* 글씨 크기 조정 */
-        cursor: pointer; /* 마우스 올릴 때 포인터 모양 */
-      }
-</style>
-</head>
-<body>
-<div class="container">
-  <h2>업체 정보 등록</h2>
-  <form th:action="@{/suppliers/register}" th:object="${supplierDTO}" method="post">
-    <div class="form-elements-wrapper">
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="card-style mb-30">
-            <h6 class="mb-25">업체 등록 정보 입력</h6>
+    <head>
+      <meta charset="UTF-8">
+      <title>업체 정보 등록</title>
+      <style>
+        .btn-submit {
+          background-color: #007bff; /* 파란색 */
+          color: white; /* 텍스트 색상 */
+          padding: 12px 24px; /* 세로 12px, 가로 24px으로 버튼 크기 조정 */
+          border: none; /* 기본 테두리 제거 */
+          border-radius: 4px; /* 약간의 둥근 모서리 */
+          font-size: 16px; /* 글씨 크기 조정 */
+          cursor: pointer; /* 마우스 올릴 때 포인터 모양 */
+        }
+      </style>
+    </head>
+    <body>
+    <div class="container">
+      <h2>업체 정보 등록</h2>
+      <form th:action="@{/suppliers/register}" th:object="${supplierDTO}" method="post" enctype="multipart/form-data">
+        <div class="form-elements-wrapper">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card-style mb-30">
+                <h6 class="mb-25">업체 등록 정보 입력</h6>
 
-            <div class="input-style-1">
-              <label for="supplierName">업체 이름</label>
-              <input type="text" id="supplierName" th:field="*{supplierName}" required />
+                <div class="input-style-1">
+                  <label for="supplierName">업체 이름</label>
+                  <input type="text" id="supplierName" th:field="*{supplierName}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="businessRegistrationNumber">사업자 등록 번호</label>
+                  <input type="text" id="businessRegistrationNumber" th:field="*{businessRegistrationNumber}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="contactInfo">연락처 정보</label>
+                  <input type="text" id="contactInfo" th:field="*{contactInfo}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="address">주소</label>
+                  <input type="text" id="address" th:field="*{address}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="businessType">업태</label>
+                  <input type="text" id="businessType" th:field="*{businessType}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="businessItem">종목</label>
+                  <input type="text" id="businessItem" th:field="*{businessItem}" required />
+                </div>
+
+                <div class="input-style-1">
+                  <label for="contractFile">계약서 파일</label>
+                  <input type="file" id="contractFile" name="contractFile" />
+                </div>
+
+                <button type="submit" class="btn-submit" onclick="alert('업체등록이 완료되었습니다. 승인을 기다려주세요')">등록하기</button>
+              </div>
             </div>
-
-            <div class="input-style-1">
-              <label for="businessRegistrationNumber">사업자 등록 번호</label>
-              <input type="text" id="businessRegistrationNumber" th:field="*{businessRegistrationNumber}" required />
-            </div>
-
-            <div class="input-style-1">
-              <label for="contactInfo">연락처 정보</label>
-              <input type="text" id="contactInfo" th:field="*{contactInfo}" required />
-            </div>
-
-            <div class="input-style-1">
-              <label for="address">주소</label>
-              <input type="text" id="address" th:field="*{address}" required />
-            </div>
-
-            <div class="input-style-1">
-              <label for="businessType">업태</label>
-              <input type="text" id="businessType" th:field="*{businessType}" required />
-            </div>
-
-            <div class="input-style-1">
-              <label for="businessItem">종목</label>
-              <input type="text" id="businessItem" th:field="*{businessItem}" required />
-            </div>
-
-
-
-            <button type="submit" class="btn-submit" onclick="alert('업체등록이 완료되었습니다. 승인을 기다려주세요')">등록하기</button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-  </form>
-</div>
-
-</body>
+    </body>
   </th:block>
 </th:block>

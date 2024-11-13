@@ -3,219 +3,247 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
 
-    <head>
-    <meta charset="UTF-8">
-    <title>자재 품목 관리</title>
-        <style>
-            /* 전체 레이아웃 */
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f5f5f5;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-            }
+        <head>
+            <meta charset="UTF-8">
+            <title>자재 품목 관리</title>
+            <style>
+                /* 전체 레이아웃 */
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 20px;
+                }
 
-            /* 컨테이너 스타일 */
-            .container {
-                display: flex;
-                width: 100%;
-                max-width: 2000px;
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                overflow: hidden;
-            }
+                /* 왼쪽(리스트) 스타일 */
+                .list-section {
+                    width: 65%;
+                    float: left;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    margin-right: 20px;
+                }
 
-            /* 왼쪽(리스트) 스타일 */
-            .list-section {
-                flex: 2;
-                padding: 20px;
-                border-right: 1px solid whitesmoke;
-            }
+                /* 오른쪽(폼) 스타일 */
+                .form-section {
+                    width: 30%;
+                    float: left;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
 
-            /* 오른쪽(폼) 스타일 */
-            .form-section {
-                flex: 1;
-                padding: 20px;
-            }
+                /* 테이블 스타일 */
+                .table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                }
 
-            /* 테이블 스타일 */
-            .table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 10px;
-            }
+                .table th, .table td {
+                    padding: 8px;
+                    text-align: center;
+                    border-bottom: 1px solid #ddd;
+                }
 
-            .table th, .table td {
-                padding: 8px;
-                text-align: center;
-                border-bottom: 1px solid #ddd;
-            }
+                .table th {
+                    background-color: #f0f0f0;
+                }
 
-            .table th {
-                background-color: #f0f0f0;
-            }
+                /* 폼 요소 스타일 */
+                .form-group {
+                    margin-bottom: 15px;
+                }
 
-            /* 폼 요소 스타일 */
-            .form-group {
-                margin-bottom: 15px;
-            }
+                .form-group label {
+                    font-weight: bold;
+                    display: block;
+                    margin-bottom: 5px;
+                }
 
-            .form-group label {
-                font-weight: bold;
-                display: block;
-                margin-bottom: 5px;
-            }
+                .form-group input, .form-group select {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
 
-            .form-group input, .form-group select {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
+                /* 규격(가로, 세로, 높이) 입력 필드 스타일 */
+                .standard-group {
+                    display: flex;
+                    gap: 10px;
+                }
 
-            /* 버튼 스타일 */
-            .btn-primary {
-                background-color: #007bff;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-            }
+                .standard-group input {
+                    flex: 1;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
 
-            .btn-primary:hover {
-                background-color: #0056b3;
-            }
+                /* 버튼 스타일 */
+                .btn-primary {
+                    background-color: #007bff;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
 
-            /* 페이징 스타일 */
-            .pagination {
-                list-style: none;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                margin-top: 20px;
-            }
+                .btn-primary:hover {
+                    background-color: #0056b3;
+                }
 
-            .pagination li {
-                margin: 0 5px;
-            }
+                /* 검색 버튼 스타일 */
+                .btn-search {
+                    background-color: #007bff;
+                    color: white;
+                    padding: 10px 15px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    margin-left: 10px;
+                }
 
-            .pagination a {
-                color: #007bff;
-                text-decoration: none;
-                padding: 5px 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
+                .btn-search:hover {
+                    background-color: #0056b3;
+                }
 
-            .pagination a.active {
-                background-color: #007bff;
-                color: white;
-                border: 1px solid #007bff;
-            }
-        </style>
-    </head>
+                /* 페이징 스타일 */
+                .pagination {
+                    list-style: none;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                }
+
+                .pagination li {
+                    margin: 0 5px;
+                }
+
+                .pagination a {
+                    color: #007bff;
+                    text-decoration: none;
+                    padding: 5px 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+
+                .pagination a.active {
+                    background-color: #007bff;
+                    color: white;
+                    border: 1px solid #007bff;
+                }
+            </style>
+        </head>
         <body>
-        <div class="container">
-            <!-- 자재 품목 리스트 -->
-            <div class="list-section">
-                <h3>자재 품목 리스트</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>이미지</th>
-                        <th>자재 ID</th>
-                        <th>자재 이름</th>
-                        <th>자재 코드</th>
-                        <th>자재 유형</th>
-                        <th>단위</th>
-                        <th>단가</th>
-                        <th>수량</th>
-                        <th>공급사</th>
-                        <th>승인</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="material : ${materials}">
-                        <td><img th:src="${material.imageUrl}" alt="이미지" class="thumbnail" style="width: 50px; height: 50px;"/></td>
-                        <td th:text="${material.materialId}">1</td>
-                        <td th:text="${material.materialName}">Sample Name</td>
-                        <td th:text="${material.materialCode}">M001</td>
-                        <td th:text="${material.materialType}">MAIN</td>
-                        <td th:text="${material.unit}">pcs</td>
-                        <td th:text="${material.unitPrice}">100.0</td>
-                        <td th:text="${material.quantity}">50</td>
-                        <td th:text="${material.supplierName}">Supplier A</td>
-                        <td><button type="button" class="btn-primary">승인</button></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <ul class="pagination">
-                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                        <a th:href="@{/materials/list(page=${i})}"
-                           th:text="${i}"
-                           th:classappend="${i == currentPage ? 'active' : ''}">1</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 자재 품목 등록 폼 -->
-            <div class="form-section">
-                <h3>자재 품목 등록</h3>
-                <form th:action="@{/material/register}" th:object="${materialDTO}" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="materialName">자재 이름</label>
-                        <input type="text" id="materialName" th:field="*{materialName}" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="materialCode">자재 코드</label>
-                        <input type="text" id="materialCode" th:field="*{materialCode}" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="materialType">자재 유형</label>
-                        <select id="materialType" th:field="*{materialType}" required>
-                            <option value="MAIN">대부품</option>
-                            <option value="SUB">소부품</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="unit">단위</label>
-                        <input type="text" id="unit" th:field="*{unit}" placeholder="e.g., pcs, kg" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="unitPrice">단가</label>
-                        <input type="number" id="unitPrice" th:field="*{unitPrice}" step="0.01" min="0" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="supplierId">공급사</label>
-                        <select id="supplierId" th:field="*{supplierId}" required>
-                            <option value="">공급사 선택</option>
-                            <option th:each="supplier : ${approvedSuppliers}"
-                                    th:value="${supplier.supplierId}"
-                                    th:text="${supplier.supplierName}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="quantity">수량</label>
-                        <input type="number" id="quantity" th:field="*{quantity}" min="1" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="imageFile">이미지</label>
-                        <input type="file"id="imageFile" th:field="*{imageFile}" required />
-                    </div>
-
-                    <button type="submit" class="btn-primary">등록하기</button>
-                </form>
-            </div>
+        <!-- 자재 품목 리스트 -->
+        <div class="list-section">
+            <h3>자재 품목 리스트</h3>
+            <input type="text" >
+            <button type="submit" class="btn-search">검색</button>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>이미지</th>
+                    <th>자재 ID</th>
+                    <th>자재 이름</th>
+                    <th>자재 코드</th>
+                    <th>자재 유형</th>
+                    <th>규격</th>
+                    <th>무게</th>
+                    <th>수량</th>
+                    <th>공급사</th>
+                    <th>승인</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="material : ${materials}">
+                    <td><img th:src="${material.imageUrl}" alt="이미지" class="thumbnail" style="width: 50px; height: 50px;"/></td>
+                    <td th:text="${material.materialId}">1</td>
+                    <td th:text="${material.materialName}">Sample Name</td>
+                    <td th:text="${material.materialCode}">M001</td>
+                    <td th:text="${material.materialType}">MAIN</td>
+                    <td th:text="${material.unit}">pcs</td>
+                    <td th:text="${material.unitPrice}">100.0</td>
+                    <td th:text="${material.quantity}">50</td>
+                    <td th:text="${material.supplierName}">Supplier A</td>
+                    <td><button type="button" class="btn-primary">승인</button></td>
+                </tr>
+                </tbody>
+            </table>
+            <ul class="pagination">
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/materials/list(page=${i})}"
+                       th:text="${i}"
+                       th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+                </li>
+            </ul>
         </div>
-</body>
+
+        <!-- 자재 품목 등록 폼 -->
+        <div class="form-section">
+            <h3>자재 품목 등록</h3>
+            <form th:action="@{/material/register}" th:object="${materialDTO}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="materialName">자재 이름</label>
+                    <input type="text" id="materialName" th:field="*{materialName}" required />
+                </div>
+                <div class="form-group">
+                    <label for="materialCode">자재 코드</label>
+                    <input type="text" id="materialCode" th:field="*{materialCode}" required />
+                </div>
+                <div class="form-group">
+                    <label for="materialType">자재 유형</label>
+                    <select id="materialType" th:field="*{materialType}" required>
+                        <option value="MAIN">대부품</option>
+                        <option value="SUB">소부품</option>
+                    </select>
+                </div>
+                <div class="form-group standard-group">
+                    <input type="text" id="width" th:field="*{width}" placeholder="가로" />
+                    <input type="text" id="height" th:field="*{height}" placeholder="세로" />
+                    <input type="text" id="depth" th:field="*{depth}" placeholder="높이" />
+                </div>
+                <div class="form-group">
+                    <label for="weight">무게</label>
+                    <input type="text" id="weight" th:field="*{weight}" required />
+                </div>
+                <div class="form-group">
+                    <label for="unitPrice">단가</label>
+                    <input type="number" id="unitPrice" th:field="*{unitPrice}" step="0.01" min="0" required />
+                </div>
+                <div class="form-group">
+                    <label for="supplierId">공급사</label>
+                    <select id="supplierId" th:field="*{supplierId}" required>
+                        <option value="">공급사 선택</option>
+                        <option th:each="supplier : ${approvedSuppliers}"
+                                th:value="${supplier.supplierId}"
+                                th:text="${supplier.supplierName}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">수량</label>
+                    <input type="number" id="quantity" th:field="*{quantity}" min="1" required />
+                </div>
+                <div class="form-group">
+                    <label for="imageFile">이미지</label>
+                    <input type="file" id="imageFile" th:field="*{imageFile}" required />
+                </div>
+
+                <button type="submit" class="btn-primary">등록하기</button>
+            </form>
+        </div>
+        </body>
     </th:block>
 </th:block>
+``

@@ -14,8 +14,13 @@ public class MaterialWarehouse  extends Base{
     @Column(name = "warehouse_id", length = 20)
     private String warehouseId;
 
-    @Column(name = "item_name", length = 100, nullable = false)
-    private String itemName;
+
+    @Column(nullable = false, length = 100)
+    private String materialName; // 자재 이름
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String materialCode; // 자재 코드
+
 
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;

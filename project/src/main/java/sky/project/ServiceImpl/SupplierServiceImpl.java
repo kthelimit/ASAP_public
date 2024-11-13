@@ -56,10 +56,10 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public void registerSupplier(SupplierDTO supplierDTO) {
         User user = userRepository.findById(supplierDTO.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + supplierDTO.getUserId()));
 
         Supplier supplier = Supplier.builder()
-                .supplierId(user.getUserId())
+                .supplierId(supplierDTO.getSupplierId())
                 .user(user)
                 .businessRegistrationNumber(supplierDTO.getBusinessRegistrationNumber())
                 .supplierName(supplierDTO.getSupplierName())
@@ -68,10 +68,12 @@ public class SupplierServiceImpl implements SupplierService {
                 .businessType(supplierDTO.getBusinessType())
                 .businessItem(supplierDTO.getBusinessItem())
                 .approved(false)
+                .contractFilePath(supplierDTO.getContractFilePath())
                 .build();
 
         supplierRepository.save(supplier);
     }
+
 
     @Override
     public boolean isAlreadyRegistered(String userId) {
@@ -122,13 +124,8 @@ public class SupplierServiceImpl implements SupplierService {
                 .businessType(supplier.getBusinessType())
                 .businessItem(supplier.getBusinessItem())
                 .approved(supplier.getApproved())
+                .contractFilePath(supplier.getContractFilePath())
                 .build();
     }
 
-    @Override
-    public String getSupplierNameByUserId(String userId) {
-        return supplierRepository.findByUser_UserId(userId)
-                .map(Supplier::getSupplierName)
-                .orElse(null);
-    }
 }

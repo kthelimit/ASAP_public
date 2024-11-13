@@ -31,11 +31,13 @@ public class ProcurementPlan  extends Base{
     @Column(name = "production_quantity", nullable = false)
     private Integer productionQuantity;
 
-    @Column(name = "item_code", nullable = false, length = 50)
-    private String itemCode;
 
-    @Column(name = "item_name", nullable = false, length = 100)
-    private String itemName;
+    @Column(nullable = false, length = 100)
+    private String materialName; // 자재 이름
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String materialCode; // 자재 코드
+
 
     @Column(name = "required_quantity", nullable = false)
     private Integer requiredQuantity;

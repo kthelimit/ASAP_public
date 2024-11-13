@@ -22,6 +22,9 @@ public class MaterialDTO {
     private String supplierId; // 공급사 ID (Supplier 엔티티에서 가져옴)
     private String supplierName; // 공급사 이름 (회사명)
     private Integer quantity; // 최소 공급 수량
+    private int width;
+    private int height;
+    private int depth;
     private String imageUrl; // 이미지 URL
     private MultipartFile imageFile; // 이미지 파일 업로드를 위한 필드 추가
     private BigDecimal weight;

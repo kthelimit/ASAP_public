@@ -9,7 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "Order")
+@Table(name = "Orders")
 public class Order  extends Base{
 
     @Id
@@ -24,11 +24,12 @@ public class Order  extends Base{
     @Temporal(TemporalType.DATE)
     private Date expectedDate;
 
-    @Column(name = "item_code", length = 20, nullable = false)
-    private String itemCode;
 
-    @Column(name = "item_name", length = 100, nullable = false)
-    private String itemName;
+    @Column(nullable = false, length = 100)
+    private String materialName; // 자재 이름
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String materialCode; // 자재 코드
 
     @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;

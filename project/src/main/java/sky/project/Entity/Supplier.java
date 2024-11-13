@@ -38,4 +38,7 @@ public class Supplier extends Base{
 
     @Column(nullable = false)
     private Boolean approved = false; // 기본값은 false
+
+    @Column(name = "contract_file_path")
+    private String contractFilePath; // 계약서 파일 경로
 }

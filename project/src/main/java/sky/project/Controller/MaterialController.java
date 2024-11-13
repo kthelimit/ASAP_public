@@ -49,4 +49,16 @@ import java.util.List;
             materialService.registerMaterial(materialDTO, imageFile);
             return "redirect:/material/list";
         }
+
+        //자재 입고
+        @RequestMapping("/import")
+        public String importMaterial(Model model) {
+            return "/import/index";
+        }
+
+        //자재 출고
+        @RequestMapping("/export")
+        public String exportMaterial(Model model) {
+            return "/export/index";
+        }
     }

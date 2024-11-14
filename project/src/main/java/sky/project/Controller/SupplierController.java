@@ -135,11 +135,4 @@ public class SupplierController {
         model.addAttribute("supplierDTO", supplierDTO);
         return "Supplier/SupplierDetail";
     }
-    @GetMapping("/supplierpage")
-    public String getSupplierPage() {
-
-
-        return "Supplier/SupplierPage";
-    }
-
 }

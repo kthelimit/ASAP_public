@@ -2,6 +2,439 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <h1>ALL</h1>
+        <style>
+            body {
+                height: 3000px;
+            }
+            .col-lg-6 {
+                margin: 20px auto -25px;
+                width: 1600px;
+                height: auto;
+            }
+
+            .mb-10 {
+                font-weight: bold;
+                font-size: 30px;
+                margin-bottom: 30px;
+                margin-left: 10px;
+            }
+
+            thead {
+                background-color: #ebebeb;
+            }
+
+            thead th:first-child {
+                border-top-left-radius: 10px;
+            }
+
+            thead th:last-child {
+                border-top-right-radius: 10px;
+            }
+
+            th, td {
+                text-align: center;
+            }
+
+            .blue_botton {
+                margin: auto 15px;
+                width: 80px;
+                height: 50px;
+                border-radius: 8px;
+            }
+
+            .register {
+                margin: auto;
+                width: 80px;
+                height: 50px;
+                border-radius: 8px;
+            }
+
+            .select-position {
+                width: 300px;
+            }
+
+            .search {
+                margin-left: 15px;
+                border: 1px solid #e5e5e5;;
+
+                width: 300px;
+                height: 58px;
+                position: relative;
+            }
+
+            .select-style-1 {
+                display: flex;
+                justify-content: space-between;
+            }
+            .search_tab {
+                display: flex;
+                justify-content: space-between;
+            }
+
+
+
+
+
+        </style>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">조달 계획 등록</h6>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table striped-table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h5>생산 시작일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산 종료일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품코드</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품명</h5>
+                                </th>
+                                <th>
+                                    <h5>생산수량</h5>
+                                </th>
+                                <th>
+                                    <h5>품목코드</h5>
+                                </th>
+                                <th>
+                                    <h5>품목명</h5>
+                                </th>
+                                <th>
+                                    <h5>품목소요수량</h5>
+                                </th>
+                                <th>
+                                    <h5>조달간격(일)</h5>
+                                </th>
+                                <th>
+                                    <h5>조달수량</h5>
+                                </th>
+                                <th>
+                                    <h5>조달납기일</h5>
+                                </th>
+                                <th>
+                                    <h5>ㅎㅎ</h5>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                            <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <div class="search_tab">
+                    <h6 class="mb-10">생산 계획 조회</h6>
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select>
+                                    <option value="">품목코드</option>
+                                    <option value="">Category one</option>
+                                    <option value="">Category two</option>
+                                    <option value="">Category three</option>
+                                </select>
+
+                            </div>
+                            <input class="select-style-1, search" type="text" placeholder="   검색어를 입력하세요">
+                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                        </div>
+                        </div>
+
+
+                    <div class="table-wrapper table-responsive">
+                        <table class="table striped-table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h5>생산 시작일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산 종료일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품코드</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품명</h5>
+                                </th>
+                                <th>
+                                    <h5>생산수량</h5>
+                                </th>
+                                <th>
+                                    <h5>품목코드</h5>
+                                </th>
+                                <th>
+                                    <h5>품목명</h5>
+                                </th>
+                                <th>
+                                    <h5>품목소요수량</h5>
+                                </th>
+                                <th>
+                                    <h5>ㅎㅎ</h5>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <div class="search_tab">
+                        <h6 class="mb-10">조달 계획 조회</h6>
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select>
+                                    <option value="">품목코드</option>
+                                    <option value="">Category one</option>
+                                    <option value="">Category two</option>
+                                    <option value="">Category three</option>
+                                </select>
+
+                            </div>
+                            <input class="select-style-1, search" type="text" placeholder="검색어를 입력하세요">
+                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                        </div>
+                    </div>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table striped-table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <h5>생산 시작일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산 종료일</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품코드</h5>
+                                </th>
+                                <th>
+                                    <h5>생산제품명</h5>
+                                </th>
+                                <th>
+                                    <h5>생산수량</h5>
+                                </th>
+                                <th>
+                                    <h5>품목코드</h5>
+                                </th>
+                                <th>
+                                    <h5>품목명</h5>
+                                </th>
+                                <th>
+                                    <h5>품목소요수량</h5>
+                                </th>
+                                <th>
+                                    <h5>조달간격(일)</h5>
+                                </th>
+                                <th>
+                                    <h5>조달수량</h5>
+                                </th>
+                                <th>
+                                    <h5>조달납기일</h5>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                                <td>
+                                    <p>2024-11-11</p>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </th:block>
 </th:block>

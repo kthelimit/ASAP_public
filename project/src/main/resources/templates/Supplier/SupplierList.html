@@ -7,6 +7,28 @@
       <meta charset="UTF-8">
       <title>업체 정보 리스트</title>
       <style>
+        .keword{
+          margin-top:20px;
+          margin-bottom:20px;
+        }
+
+
+        .search {
+          margin-left: 15px;
+          border: 1px solid #e5e5e5;;
+          border-radius: 10px;
+          width: 300px;
+          height: 58px;
+          position: relative;
+        }
+
+        .blue_botton {
+          margin: auto 15px;
+          width: 80px;
+          height: 50px;
+          border-radius: 8px;
+        }
+
 
         /* 페이징 스타일 */
         .pagination {
@@ -37,29 +59,13 @@
           background-color: #007BFF;
         }
 
-        /* 검색 버튼 스타일 */
-        .btn-search {
-          background-color: #007BFF;
-          color: white;
-          padding: 10px 15px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-          margin-left: 10px;
-          transition: background-color 0.3s;
-        }
-
-        .btn-search:hover {
-          background-color: #0056b3;
-        }
       </style>
     </head>
     <body>
     <h2>업체 정보 리스트</h2>
     <div class ="keword">
-    <input type="text" >
-    <button type="submit" class="btn-search">검색</button>
+ <input class="select-style-1, search" type="text" placeholder="업체명을 입력하세요">
+      <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
     </div>
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6" th:each="supplier : ${suppliers}">

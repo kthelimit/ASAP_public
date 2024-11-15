@@ -37,6 +37,7 @@ public class ProcurementPlanController {
     public ResponseEntity<?> registerProcurement(@RequestBody List<ProcurementPlanDTO> procurementPlanDTOs) {
         System.out.println("prcurementPlanController register 메서드 실행.");
 
+        String productionPlanCode = procurementPlanDTOs.get(0).getProductionPlanCode();
         try {
             for (ProcurementPlanDTO procurementPlanDTO : procurementPlanDTOs) {
                 if (procurementPlanDTO.getProcurePlanCode() == null || procurementPlanDTO.getProcurePlanCode().isEmpty()) {
@@ -65,11 +66,12 @@ public class ProcurementPlanController {
                 procurementPlanService.save(procurementPlan);
 
                 //조달계획에 해당하는 생산계획을 IN_PROGRESS로 바꾸기
-                String productionPlanCode = procurementPlan.getProductionPlanCode();
+                productionPlanCode = procurementPlan.getProductionPlanCode();
                 productionPlanService.updateProductionPlanInProgress(productionPlanCode);
 
-            }
 
+            }
+            boolean allRegistered = true; // 모든 BOM이 등록되었는지 확인할 변수
             // DTO의 isRegister 업데이트
             List<BomDTO> updatedBomList = bomService.findWithProductCode(procurementPlanDTOs.get(0).getProductCode());
             for (BomDTO bom : updatedBomList) {
@@ -79,6 +81,25 @@ public class ProcurementPlanController {
                         System.out.println("Updated BOM: " + bom.getMaterialName() + " isRegister=" + bom.isRegister());
                     }
                 }
+
+
+                // 각 BOM의 등록 여부를 체크
+                boolean isRegistered = procurementPlanService.ProcurementCheckWithMaterialCodeAndProductionPlanCode(
+                        bom.getMaterialCode(), productionPlanCode);
+                bom.setRegister(isRegistered);
+
+                // 하나라도 등록되지 않은 BOM이 있으면 allRegistered를 false로 설정
+                if (!isRegistered) {
+                    allRegistered = false;
+                }
+            }
+
+            // 모든 BOM이 등록되었을 경우 생산계획 상태를 FINISHED로 변경
+            if (allRegistered && productionPlanCode != null) {
+                productionPlanService.updateProductionPlanFinshed(productionPlanCode);
+                System.out.println("Production Plan " + productionPlanCode + " 상태가 FINISHED로 변경되었습니다.");
+            } else if (!allRegistered) {
+                System.out.println("모든 BOM이 등록되지 않았으므로 FINISHED로 변경되지 않았습니다.");
             }
 
             return ResponseEntity.ok(updatedBomList);

@@ -575,7 +575,7 @@ public class InsertDataTest {
             SupplierStockDTO dto = SupplierStockDTO.builder()
                     .supplierId(supplierId)
                     .materialCode(materialCodes[i - 1])
-                    .stock(700)
+                    .stock(30000)
                     .build();
             supplierStockService.register(dto);
 

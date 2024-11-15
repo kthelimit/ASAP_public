@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+  <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/lineicons.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/materialdesignicons.min.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+</head>
+<body>
+
+<div class="tables-wrapper">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card-style mb-30">
+        <div id="ExportTable">
+          <span class="anchor" id="delivery"></span>
+          <h3 class="table-title mb-10">납품 지시 요청</h3>
+          <p class="text-sm mb-20">
+            현재 처리되지 않은 납품지시가 위쪽에 뜹니다.
+          </p>
+          <form method="post" th:action="@{/suppliers/importregisterbatch}"
+                th:object="${ImportDTO}">
+            <!-- 일괄 출고 버튼 -->
+            <div class="text-end mt-3">
+              <button class="btn btn-primary" type="submit">선택 출고</button>
+            </div>
+            <table class="table">
+              <thead>
+              <tr>
+                <th class="text-center">
+                  <input id="selectAll" onclick="toggleAllCheckboxes(this)"
+                         type="checkbox"> <!-- 전체 선택 -->
+                </th>
+                <th class="text-center"><h6>납품 지시 번호</h6></th>
+                <th class="text-center"><h6>발주 번호</h6></th>
+                <th class="text-center"><h6>자재 이름</h6></th>
+                <th class="text-center"><h6>요청 수량</h6></th>
+                <th class="text-center"><h6>배달 요청일</h6></th>
+                <th class="text-center"><h6>상태</h6></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="request : ${deliveryRequests}">
+                <td class="text-center">
+                  <input name="selectedRequests"
+                         th:if="${request.status == 'IN_PROGRESS'}"
+                         th:value="${request.id}" type="checkbox">
+                </td>
+                <td class="text-center" th:text="${request.deliveryCode}"></td>
+                <td class="text-center" th:text="${request.orderCode}"></td>
+                <input name="orderCode" th:value="${request.orderCode}" type="hidden">
+                <td class="text-center" th:text="${request.materialName}"></td>
+                <input name="materialName" th:value="${request.materialName}" type="hidden">
+                <td class="text-center" th:text="${request.requestedQuantity}"></td>
+                <input name="quantity" th:value="${request.requestedQuantity}"
+                       type="hidden">
+                <td class="text-center"
+                    th:text="${#temporals.format(request.requestedDate)}"></td>
+                <input name="supplierName" th:value="${request.supplierName}" type="hidden">
+                <input name="expectedDate" th:value="${request.requestedDate}"
+                       type="hidden">
+                <td class="text-center">
+                                                   <span class="status-btn success-btn"
+                                                         th:if="${request.status == 'FINISHED'}">납품 완료</span>
+                  <span class="status-btn success-btn"
+                        th:if="${request.status == 'DELIVERED'}">배달중</span>
+                  <span class="status-btn success-btn"
+                        th:if="${request.status == 'ARRIVED'}">도착</span>
+                  <span class="status-btn close-btn"
+                        th:if="${request.status == 'IN_PROGRESS'}">요청 중</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+
+          </form>
+          <div class="pagination-wrapper">
+            <ul class="pagination">
+              <!-- 이전 페이지 버튼 -->
+              <li th:if="${deliveryCurrentPage > 1}">
+                <a th:href="@{/suppliers/page(deliveryPage=${deliveryCurrentPage - 1}, deliverySize=${deliverySize})}">&laquo;</a>
+              </li>
+
+              <!-- 페이지 번호 버튼 -->
+              <li th:each="i : ${#numbers.sequence(1, deliveryTotalPages)}">
+                <a th:classappend="${i == deliveryCurrentPage ? 'active' : ''}"
+                   th:if="${(deliveryCurrentPage/10)*10 <= i and i<=(deliveryCurrentPage/10 +1)*10  and i!=0}"
+                   th:href="@{/suppliers/page(deliveryPage=${i}, deliverySize=${deliverySize})}"
+                   th:text="${i}"></a>
+              </li>
+
+              <!-- 다음 페이지 버튼 -->
+              <li th:if="${deliveryCurrentPage < deliveryTotalPages}">
+                <a th:href="@{/suppliers/page(deliveryPage=${deliveryCurrentPage + 1}, deliverySize=${deliverySize})}">&raquo;</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+  // 전체 선택/해제 스크립트
+  function toggleAllCheckboxes(selectAll) {
+    const checkboxes = document.querySelectorAll('input[name="selectedRequests"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = selectAll.checked;
+    });
+  }
+</script>
+</body>
+</html>

@@ -137,6 +137,9 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "1") int page,
                                          @RequestParam(defaultValue = "10") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
+                                         @RequestParam(defaultValue = "1") int page2,
+                                         @RequestParam(defaultValue = "10") int size2,
+                                         @RequestParam(value = "keyword2", required = false) String keyword2,
                                          @RequestParam(value = "id", required = false) Long id,
                                          @RequestParam(value = "productCode", required = false) String productCode,
                                          @RequestParam(value = "materialCode", required = false) String materialCode) {
@@ -181,22 +184,37 @@ public class ProductionPlanController {
             );
             bom.setRegister(isRegistered);
 
-            // 하나라도 등록되지 않은 BOM이 있으면 allRegistered를 false로 설정
-            if (!isRegistered) {
-                allRegistered = false;
-            }
+//            // 하나라도 등록되지 않은 BOM이 있으면 allRegistered를 false로 설정
+//            if (!isRegistered) {
+//                allRegistered = false;
+//            }
         }
 
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
+//
+//        // 모든 BOM이 등록되었을 경우 생산계획 상태를 FINISHED로 변경
+//        if (allRegistered && productionPlanCode != null) {
+//            productionPlanService.updateProductionPlanFinshed(productionPlanCode);
+//            System.out.println("Production Plan " + productionPlanCode + " 상태가 FINISHED로 변경되었습니다.");
+//        } else if (!allRegistered) {
+//            System.out.println("모든 BOM이 등록되지 않았으므로 FINISHED로 변경되지 않았습니다.");
+//        }
 
-        // 모든 BOM이 등록되었을 경우 생산계획 상태를 FINISHED로 변경
-        if (allRegistered && productionPlanCode != null) {
-            productionPlanService.updateProductionPlanFinshed(productionPlanCode);
-            System.out.println("Production Plan " + productionPlanCode + " 상태가 FINISHED로 변경되었습니다.");
-        } else if (!allRegistered) {
-            System.out.println("모든 BOM이 등록되지 않았으므로 FINISHED로 변경되지 않았습니다.");
+        Pageable pageable2 = PageRequest.of(page2 - 1, size2, Sort.by("planId").descending());
+        Page<ProcurementPlanDTO> procurementPlanDTOs;
+        if (keyword2 != null && !keyword.isEmpty()) {
+            procurementPlanDTOs = procurementPlanService.searchProcurementPlans(keyword2, pageable2);
+        } else {
+            procurementPlanDTOs = procurementPlanService.getProcurementPlans(pageable2);
         }
+
+        model.addAttribute("procurementPlans", procurementPlanDTOs.getContent());
+        model.addAttribute("totalPages2", procurementPlanDTOs.getTotalPages());
+        model.addAttribute("currentPage2", page2);
+        model.addAttribute("pageSize2", size2);
+        model.addAttribute("keyword2", keyword2);
+
 
         return "procure/ProcureIndex";
     }

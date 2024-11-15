@@ -81,15 +81,15 @@
                                     <td><p th:text="${plan.productionQuantity}"></p></td>
                                     <td>
                                         <th:block th:if="${selectedBom.isEmpty()}">
-                                        <a class="main-btn active-btn btn-hover" style="padding: 6px"
-                                           th:href="@{/plan/procureRegister(
+                                            <a class="main-btn active-btn btn-hover" style="padding: 6px"
+                                               th:href="@{/plan/procureRegister(
                                            id=${plan.planId},
                                            page=${currentPage},
                                            size=${pageSize},
                                            keyword=${keyword},
                                            productCode=${plan.productCode})}">
-                                            선택
-                                        </a>
+                                                선택
+                                            </a>
                                         </th:block>
                                         <th:block th:if="${selectedPlan!=null}">
                                             <a class="main-btn success-btn btn-hover"
@@ -126,19 +126,19 @@
                                 <ul class="pagination" th:if="${totalPages > 0}">
                                     <li th:if="${currentPage > 1}">
                                         <a aria-label="Previous"
-                                           th:href="@{/plan/procureRegister(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}">
+                                           th:href="@{/plan/procureRegister(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2})}">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                         <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/plan/procureRegister(page=${i}, size=${pageSize}, keyword=${keyword}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2})}"
                                            th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
-                                           th:href="@{/plan/procureRegister(page=${i}, size=${pageSize}, keyword=${keyword})}"
                                            th:text="${i}"></a>
                                     </li>
                                     <li th:if="${currentPage < totalPages}">
                                         <a aria-label="Next"
-                                           th:href="@{/plan/procureRegister(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}">
+                                           th:href="@{/plan/procureRegister(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2})}">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
@@ -158,10 +158,10 @@
                                 <div class="select-style-1">
 
                                     <input class="select-style-1 search"
-                                           name="keyword"
+                                           name="keyword2"
                                            placeholder=" 제품명 및 생산 계획 코드를 입력하세요."
                                            style="text-align:right"
-                                           th:value="${keyword}"
+                                           th:value="${keyword2}"
                                            type="text"
                                     />
                                     <button class="main-btn active-btn btn-hover blue_botton" type="submit">
@@ -184,13 +184,42 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr th:each="plan : ${procurementPlans}">
+                                    <td class="min-width"><p th:text="${plan.productionPlanCode}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.productName}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.supplierName}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.materialName}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.procurementQuantity}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.procurementDueDate}"></p></td>
+                                </tr>
                                 </tbody>
                             </table>
-                            <ul id="pagination">
-                                <!-- 동적으로 페이지 버튼이 생성됩니다 -->
-                            </ul>
+
 
                         </div>
+                        <div class="pagination-wrapper">
+                            <ul class="pagination" th:if="${totalPages2 > 0}">
+                                <li th:if="${currentPage2 > 1}">
+                                    <a aria-label="Previous"
+                                       th:href="@{/plan/procureRegister(page= ${currentPage}, size=${pageSize}, keyword=${keyword}, page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2})}">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
+                                    <a th:classappend="${i == currentPage2 ? 'active' : ''}"
+                                       th:href="@{/plan/procureRegister(page= ${currentPage}, size=${pageSize}, keyword=${keyword}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2})}"
+                                       th:if="${(currentPage2/10)*10 <= i and i<=(currentPage2/10 +1)*10  and i!=0}"
+                                       th:text="${i}"></a>
+                                </li>
+                                <li th:if="${currentPage2 < totalPages2}">
+                                    <a aria-label="Next"
+                                       th:href="@{/plan/procureRegister(page= ${currentPage}, size=${pageSize}, keyword=${keyword}, page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2})}">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
 
@@ -245,7 +274,7 @@
 
 
                                     <tr
-                                        th:each="bom : ${selectedBom}">
+                                            th:each="bom : ${selectedBom}">
 
                                         <!-- 생산계획이 많다보니 미래에 필요한 양도 계산할 수 있어야할 것으로 보임.... 일단은 전부 출력하게 바꿔둠-->
                                         <!-- 출력할 가용재고의 양을 계산하는 수식을 바꿔야할지도....        -->
@@ -263,9 +292,9 @@
                             data-product-name=${selectedPlan.productName},
                             data-production-plan-code=${selectedPlan.productionPlanCode},
                             data-material-code=${bom.materialCode}"
-                                                    type="checkbox"
                                                     th:checked="${bom.register}"
-                                                    th:disabled="${bom.register}">
+                                                    th:disabled="${bom.register}"
+                                                    type="checkbox">
                                         </td>
                                         <td style="width: 130px">
                                             <div class="select-style-1" style="width: 120px; height: 10px">
@@ -346,7 +375,7 @@
                         parentCheckboxes.forEach(parentCheckbox => {
                             updateParentCheckboxState(parentCheckbox); // 상위 체크박스 상태 동기화
                         });
-                    }).observe(checkbox, { attributes: true, attributeFilter: ['disabled'] });
+                    }).observe(checkbox, {attributes: true, attributeFilter: ['disabled']});
                 });
             });
 
@@ -472,6 +501,7 @@
                     row.style.display = isHidden ? '' : 'none';
                 });
             }
+
             function updateParentCheckboxState(parentCheckbox) {
                 let nextRow = parentCheckbox.closest('tr').nextElementSibling;
                 const childCheckboxes = [];
@@ -498,6 +528,7 @@
                     parentCheckbox.checked = childCheckboxes.some(checkbox => checkbox.checked);
                 }
             }
+
             function toggleCategoryCheckbox(categoryCheckbox) {
                 const rows = [];
                 let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
@@ -579,17 +610,17 @@
 
                     // JSON 객체 생성
                     const procurementData = {
-                        productionPlanCode: checkbox.getAttribute('data-production-plan-code'),
-                        productCode: checkbox.getAttribute('data-product-code'),
-                        productName: checkbox.getAttribute('data-product-name'),
-                        supplierId: supplierId, // 공급업체 ID 추가
-                        supplierName: supplierName, // 공급업체 이름 추가
-                        materialName: checkbox.getAttribute('data-material-name'),
-                        materialCode: checkbox.getAttribute('data-material-code'),
+                        productionPlanCode : checkbox.getAttribute('data-production-plan-code'),
+                        productCode        : checkbox.getAttribute('data-product-code'),
+                        productName        : checkbox.getAttribute('data-product-name'),
+                        supplierId         : supplierId, // 공급업체 ID 추가
+                        supplierName       : supplierName, // 공급업체 이름 추가
+                        materialName       : checkbox.getAttribute('data-material-name'),
+                        materialCode       : checkbox.getAttribute('data-material-code'),
                         procurementQuantity: parseInt(checkbox.getAttribute('data-procurement-quantity')),
-                        requireQuantity: parseInt(checkbox.getAttribute('data-required-quantity')),
-                        procurementDueDate: procurementDueDate,
-                        createDate: new Date().toISOString()
+                        requireQuantity    : parseInt(checkbox.getAttribute('data-required-quantity')),
+                        procurementDueDate : procurementDueDate,
+                        createDate         : new Date().toISOString()
                     };
 
                     procurementDataList.push(procurementData); // 배열에 추가
@@ -616,7 +647,8 @@
                         console.log("등록 성공:", updatedBomList);
                         alert("조달 계획이 성공적으로 등록되었습니다.");
                         updateUIAfterRegistration(updatedBomList); // UI 업데이트
-                        loadProcurementPlans(currentPage); // 새로고침으로 최신 데이터 불러오기
+                        //  loadProcurementPlans(currentPage); // 새로고침으로 최신 데이터 불러오기
+                        location.reload(true); //전체 새로고침
                     })
                     .catch(error => {
                         console.error('등록 오류:', error);
@@ -664,27 +696,27 @@
             let currentPage = 1;
             let totalPages = 1;
 
-            function loadProcurementPlans(page = 1) {
-                fetch(`/procure/list?page=1&size=1000`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const allPlans = data.plans.reverse();
-
-                        const startIndex = (page - 1) * 5;
-                        const endIndex = page * 5;
-                        const currentPagePlans = allPlans.slice(startIndex, endIndex);
-
-                        updateTable(currentPagePlans);
-
-                        totalPages = Math.ceil(allPlans.length / 5);
-                        currentPage = page;
-
-                        updatePagination();
-                    })
-                    .catch(error => {
-                        console.error('Error loading procurement plans:', error);
-                    });
-            }
+            // function loadProcurementPlans(page = 1) {
+            //     fetch(`/procure/list?page=1&size=1000`)
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             const allPlans = data.plans.reverse();
+            //
+            //             const startIndex = (page - 1) * 5;
+            //             const endIndex = page * 5;
+            //             const currentPagePlans = allPlans.slice(startIndex, endIndex);
+            //
+            //             updateTable(currentPagePlans);
+            //
+            //             totalPages = Math.ceil(allPlans.length / 5);
+            //             currentPage = page;
+            //
+            //             updatePagination();
+            //         })
+            //         .catch(error => {
+            //             console.error('Error loading procurement plans:', error);
+            //         });
+            // }
 
             function updateTable(plans) {
                 const tableBody = document.querySelector('#checkProcurementPlan tbody');

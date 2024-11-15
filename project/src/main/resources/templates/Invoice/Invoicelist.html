@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>거래 명세서 목록</h2>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">발주 관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item active"><a th:href="@{/sample/invoice}">거래 명세서 목록</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <h6 class="mb-10">이번 달 발행한 거래 명세서</h6>
+                        <p class="text-sm mb-20">
+                            이번 달에 발행한 거래 명세서 목록입니다. 버튼을 눌러 명세서 내용을 확인할 수 있습니다.
+                        </p>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <h6>공급업체명</h6>
+                                    </th>
+                                    <th>
+                                        <h6>거래한 품목</h6>
+                                    </th>
+                                    <th>
+                                        <h6>최종 거래 날짜</h6>
+                                    </th>
+                                    <th>
+                                        <h6>명세서 발행 날짜</h6>
+                                    </th>
+                                    <th>
+                                        <h6>상태</h6>
+                                    </th>
+                                    <th>
+                                        <h6>선택</h6>
+                                    </th>
+                                </tr>
+                                <!-- end table row-->
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="min-width">
+                                        <p>볼턴사</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>48V 리튬이온 배터리 볼턴 배터리 외 2종</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>24.11.12</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>24.11.25</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>발행 완료</p>
+                                    </td>
+                                    <td>
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="window.open('/sample/invoicedetail','거래명세서','width=1200, height=600,location=no,status=no,scrollbars=no');"
+                                                style="padding: 12px">선택
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- end table row -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>

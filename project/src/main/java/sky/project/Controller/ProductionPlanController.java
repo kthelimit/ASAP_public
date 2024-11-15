@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/plan")
 public class ProductionPlanController {
 
-    @GetMapping({"/", ""})
-    public String index() {
+    @GetMapping({"/productRegister"})
+    public String productRegister() {
         return "/ProductionPlan/ProductPlanIndex";
+    }
+
+    @GetMapping("/procureRegister")
+    public String procureRegister() {
+        return "/Procure/ProcureIndex";
     }
 }

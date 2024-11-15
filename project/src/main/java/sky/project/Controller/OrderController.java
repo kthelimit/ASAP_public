@@ -11,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class OrderController {
 
     @GetMapping("/index")
-    public void index() {
+    public String index() {
+        return "Order/Orderindex";
     }
 
-    @RequestMapping("/procure")
-    public String procure() {
-        return "/procure/index";
-    }
 }

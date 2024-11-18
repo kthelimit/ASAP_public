@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>생산 계획 등록</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a th:href="@{/plan/list}">생산 계획 등록</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+
+            <div class="row">
+                <!-- 생산계획 리스트 -->
+                <div class="col-lg-8">
+                    <div class="card-style mb-30">
+                        <h3 class="mb-10">등록된 생산 계획 목록</h3>
+                        <p class="text-sm mb-20">등록된 생산 계획 목록입니다. 최근에 등록한 것부터 보여집니다.</p>
+                        <div class="table-wrapper table-responsive">
+                            <div class="search text-align-right">
+                                <form th:action="@{/plan/list}" method="get">
+                                    <input type="text" name="keyword" placeholder="생산 제품명 " th:value="${keyword}">
+                                    <button type="submit" class="main-btn primary-btn btn-hover">검색</button>
+                                </form>
+                            </div>
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th><h6>생산 시작 날짜</h6></th>
+                                    <th><h6>생산 종료 날짜</h6></th>
+                                    <th><h6>생산 제품 코드</h6></th>
+                                    <th><h6>생산 제품명</h6></th>
+                                    <th><h6>생산 수량</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="plan : ${plans}">
+                                    <td class="min-width"><p th:text="${plan.productionStartDate}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.productionEndDate}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.productCode}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.productName}"></p></td>
+                                    <td class="min-width"><p th:text="${plan.productionQuantity}"></p></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="margin:10px auto">
+                            <ul style="text-align: center">
+                                <li style="display: inline-block" th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
+                                    <a class="main-btn primary-btn btn-hover" th:href="@{/plan/list(page=${pageNum})}"
+                                       th:classappend="${pageNum == currentPage} ? 'active'"
+                                       th:text="${pageNum}"></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 생산계획 등록 -->
+                <div class="col-lg-4">
+                    <div class="card-style mb-30">
+                        <form th:action="@{/plan/register}" th:object="${productionPlanDTO}" method="post">
+                            <h3 class="mb-25">생산 계획 등록</h3>
+                            <div class="input-style-1">
+                                <label>생산 시작 일자</label>
+                                <input type="date" th:field="*{productionStartDate}" required>
+                            </div>
+                            <div class="input-style-1">
+                                <label>생산 종료 일자</label>
+                                <input type="date" th:field="*{productionEndDate}" required>
+                            </div>
+                            <div class="select-style-1">
+                                <label>생산 제품명</label>
+                                <div class="select-position" required>
+                                    <select id="productSelect" th:field="*{productName}" onchange="updateProductCode()">
+                                        <option value="전기자전거A">전기자전거A</option>
+                                        <option value="전기자전거B">전기자전거B</option>
+                                        <option value="전동킥보드">전동킥보드</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="input-style-1">
+                                <label>생산 제품 코드</label>
+                                <input type="text" id="productCode" th:field="*{productCode}" readonly>
+                            </div>
+                            <div class="input-style-1">
+                                <label>생산 수량</label>
+                                <input type="number" th:field="*{productionQuantity}" required>
+                            </div>
+                            <div style="text-align: right">
+                                <button class="main-btn primary-btn btn-hover">등록</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script>
+    function updateProductCode() {
+        // 제품 이름과 제품 코드 매핑
+        const productMapping = {
+            "전기자전거A": "MATB3FIN001",
+            "전기자전거B": "MATB3FIN002",
+            "전동킥보드": "MATK2FIN001"
+        };
+
+        // Select 요소와 선택된 값 가져오기
+        const productSelect = document.getElementById("productSelect");
+        const selectedProduct = productSelect.value;
+
+        // Read-only input에 제품 코드 설정
+        const productCodeInput = document.getElementById("productCode");
+        productCodeInput.value = productMapping[selectedProduct];
+    }
+</script>
+</html>

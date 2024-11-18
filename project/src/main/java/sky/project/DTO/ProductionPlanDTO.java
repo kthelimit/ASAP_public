@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Setter
 public class ProductionPlanDTO {
 
-    private String planId;
+    private Long planId;
     private String productCode;
     private String productName;
     private LocalDate productionStartDate;

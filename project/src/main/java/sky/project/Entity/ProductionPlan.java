@@ -1,11 +1,9 @@
 package sky.project.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDate;
 
 @Entity
@@ -15,8 +13,9 @@ import java.time.LocalDate;
 public class ProductionPlan extends Base {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id", length = 20, nullable = false)
-    private String planId;
+    private Long planId;
 
     @Column(name = "product_code", length = 20)
     private String productCode;

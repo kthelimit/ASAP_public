@@ -1,0 +1,61 @@
+package sky.project.ServiceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import sky.project.DTO.ProductionPlanDTO;
+import sky.project.Entity.ProductionPlan;
+import sky.project.Repository.ProductionPlanRepository;
+import sky.project.Service.ProductionPlanService;
+
+@Service
+public class ProductionPlanServiceImpl implements ProductionPlanService {
+
+    @Autowired
+    private ProductionPlanRepository productionPlanRepository;
+
+    @Override
+    public Page<ProductionPlanDTO> getProductionPlans(Pageable pageable) {
+        return productionPlanRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    @Override
+    public Page<ProductionPlanDTO> searchProductionPlans(String keyword, Pageable pageable) {
+        Page<ProductionPlan> productionPlansPage = productionPlanRepository.findByProductNameContaining(keyword, pageable);
+        return productionPlansPage.map(this::toDTO);
+    }
+
+    @Override
+    public void registerProductionPlan(ProductionPlanDTO productionPlanDTO) {
+        ProductionPlan plan = toEntity(productionPlanDTO);
+        productionPlanRepository.save(plan);
+    }
+
+    private ProductionPlanDTO toDTO(ProductionPlan plan) {
+        if (plan == null) return null;
+
+        ProductionPlanDTO dto = new ProductionPlanDTO();
+        dto.setPlanId(plan.getPlanId());
+        dto.setProductCode(plan.getProductCode());
+        dto.setProductName(plan.getProductName());
+        dto.setProductionStartDate(plan.getProductionStartDate());
+        dto.setProductionEndDate(plan.getProductionEndDate());
+        dto.setProductionQuantity(plan.getProductionQuantity());
+        return dto;
+    }
+
+    private ProductionPlan toEntity(ProductionPlanDTO dto) {
+        if (dto == null) return null;
+
+        ProductionPlan plan = new ProductionPlan();
+        plan.setPlanId(dto.getPlanId());
+        plan.setProductCode(dto.getProductCode());
+        plan.setProductName(dto.getProductName());
+        plan.setProductionStartDate(dto.getProductionStartDate());
+        plan.setProductionEndDate(dto.getProductionEndDate());
+        plan.setProductionQuantity(dto.getProductionQuantity());
+        return plan;
+    }
+}
+

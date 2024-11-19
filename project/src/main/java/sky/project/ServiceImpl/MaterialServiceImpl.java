@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -98,5 +99,18 @@ public class MaterialServiceImpl implements MaterialService {
 
         // 저장된 이미지 경로 반환 (URL에서 사용할 수 있는 형식으로 반환)
         return "/Images/" + fileName;
+    }
+
+
+    @Override
+    public List<Material> getMaterialListWithComponentType(String ComponentType){
+        List<Material> A= materialRepository.findByComponentType(ComponentType);
+        A.forEach(material -> {
+            System.out.println(material.getMaterialId());
+            System.out.println(material.getMaterialName());
+            System.out.println(material.getMaterialCode());
+            System.out.println(material.getMaterialType());
+        });
+        return A;
     }
 }

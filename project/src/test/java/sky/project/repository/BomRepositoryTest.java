@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sky.project.Entity.Bom;
-import sky.project.Entity.Material;
 import sky.project.Entity.Product;
 import sky.project.Repository.BomRepository;
 
@@ -15,12 +14,11 @@ public class BomRepositoryTest {
 
     @Test
     public void insertBom(){
-        Product product = Product.builder().productCode("DB에 있는 코드를 여기다 넣어야 됨").build();
-        Material material = Material.builder().materialCode("자재코드 예시").build();
+        Product product = Product.builder().productCode("MATB3FIN001").build();
 
         Bom bom = Bom.builder()
                 .product(product)
-                .material(material)
+                .materialName("알루미늄 더블림 29인치")
                 .componentType("테스트")
                 .requireQuantity(30)
                 .build();

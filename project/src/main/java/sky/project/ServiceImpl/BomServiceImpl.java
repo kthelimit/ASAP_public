@@ -5,10 +5,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.BomDTO;
 import sky.project.Entity.Bom;
-import sky.project.Entity.Material;
 import sky.project.Entity.Product;
 import sky.project.Repository.BomRepository;
+import sky.project.Repository.ProductRepository;
 import sky.project.Service.BomService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -16,16 +19,15 @@ import sky.project.Service.BomService;
 public class BomServiceImpl implements BomService {
 
     private final BomRepository repository;
+    private final ProductRepository productRepository;
 
     //등록
     @Override
     public Long register(BomDTO dto) {
-        Product product = Product.builder().productCode(dto.getProductCode()).build();
-        Material material = Material.builder().materialCode(dto.getMaterialCode()).build();
-
+        Product product = productRepository.findByProductCode(dto.getProductCode());
         Bom bom = Bom.builder()
                 .product(product)
-                .material(material)
+                .materialName(dto.getMaterialName())
                 .componentType(dto.getComponentType())
                 .requireQuantity(dto.getRequireQuantity())
                 .build();
@@ -45,4 +47,15 @@ public class BomServiceImpl implements BomService {
     public void remove(Long BomId) {
 
     }
+
+    //상품코드로 불러오기
+    public List<BomDTO> findWithProductCode(String productCode) {
+        List<Bom> bomList = repository.findByProductCode(productCode);
+        List<BomDTO> bomDTOList = new ArrayList<>();
+        bomList.forEach(bom -> {
+            bomDTOList.add(entityToDTO(bom));
+        });
+        return bomDTOList;
+    }
+
 }

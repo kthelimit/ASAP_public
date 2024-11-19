@@ -58,12 +58,14 @@ public class ProductionPlanController {
         }
         return "redirect:/plan/list";
     }
+
     @GetMapping("/edit/{id}")
     public String editProductionPlan(@PathVariable("id") Long id, Model model) {
         ProductionPlanDTO planDTO = productionPlanService.getProductionPlanById(id);
         model.addAttribute("productionPlanDTO", planDTO);
         return "ProductionPlan/ProductPlanModify";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteProductionPlan(@PathVariable("id") Long id) {
         productionPlanService.deleteProductionPlan(id);
@@ -73,5 +75,11 @@ public class ProductionPlanController {
     @GetMapping("/procureRegister")
     public String procureRegister() {
         return "/Procure/ProcureIndex";
+    }
+
+
+    @GetMapping("/bomRegister")
+    public String bomRegister() {
+        return "/ProductionPlan/BomRegister";
     }
 }

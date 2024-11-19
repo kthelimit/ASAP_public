@@ -36,11 +36,11 @@
                             <h3 class="mb-25">생산 계획 수정</h3>
                             <div class="input-style-1">
                                 <label>생산 시작 일자</label>
-                                <input type="date" th:value="*{productionStartDate}" required>
+                                <input type="date" th:value="*{productionStartDate}" name="productionStartDate" required>
                             </div>
                             <div class="input-style-1">
                                 <label>생산 종료 일자</label>
-                                <input type="date" th:value="*{productionEndDate}" required>
+                                <input type="date" th:value="*{productionEndDate}"  name="productionEndDate"  required>
                             </div>
                             <div class="select-style-1">
                                 <label>생산 제품명</label>

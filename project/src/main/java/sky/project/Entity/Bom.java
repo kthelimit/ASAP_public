@@ -21,6 +21,8 @@ private Long bomId;
 @JoinColumn(name="product_code", nullable=false)
 private Product product;
 
+private String componentType;
+
 @ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name="material_code" ,nullable=false)
 private Material material;

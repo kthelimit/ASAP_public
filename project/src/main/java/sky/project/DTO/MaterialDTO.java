@@ -17,7 +17,7 @@ public class MaterialDTO {
     private String materialCode; // 자재 코드
     private String materialType; // 자재 유형 (대부품/소부품)
     private String unit; // 자재 단위 (e.g., pcs, kg)
-
+    private String componentType;
     private Double unitPrice; // 단위당 가격
     private String supplierId; // 공급사 ID (Supplier 엔티티에서 가져옴)
     private String supplierName; // 공급사 이름 (회사명)

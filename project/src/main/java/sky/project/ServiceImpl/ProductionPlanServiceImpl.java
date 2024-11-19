@@ -32,6 +32,37 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         productionPlanRepository.save(plan);
     }
 
+    @Override
+    public ProductionPlanDTO getProductionPlanById(Long id) {
+        ProductionPlan plan = productionPlanRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + id));
+        return toDTO(plan);
+    }
+
+    @Override
+    public void updateProductionPlan(ProductionPlanDTO productionPlanDTO) {
+        ProductionPlan plan = productionPlanRepository.findById(productionPlanDTO.getPlanId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + productionPlanDTO.getPlanId()));
+
+        plan.setProductionStartDate(productionPlanDTO.getProductionStartDate());
+        plan.setProductionEndDate(productionPlanDTO.getProductionEndDate());
+        plan.setProductCode(productionPlanDTO.getProductCode());
+        plan.setProductName(productionPlanDTO.getProductName());
+        plan.setProductionQuantity(productionPlanDTO.getProductionQuantity());
+
+        productionPlanRepository.save(plan);
+    }
+
+    @Override
+    public void deleteProductionPlan(Long id) {
+        if (!productionPlanRepository.existsById(id)) {
+            throw new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + id);
+        }
+        productionPlanRepository.deleteById(id);
+    }
+
+
+
     private ProductionPlanDTO toDTO(ProductionPlan plan) {
         if (plan == null) return null;
 
@@ -44,6 +75,8 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         dto.setProductionQuantity(plan.getProductionQuantity());
         return dto;
     }
+
+
 
     private ProductionPlan toEntity(ProductionPlanDTO dto) {
         if (dto == null) return null;
@@ -58,4 +91,3 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         return plan;
     }
 }
-

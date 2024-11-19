@@ -8,4 +8,5 @@ import sky.project.DTO.MaterialDTO;
 public interface MaterialService {
     void registerMaterial(MaterialDTO materialDTO, MultipartFile imageFile);
     Page<MaterialDTO> getMaterials(PageRequest pageRequest);
+
 }

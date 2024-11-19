@@ -32,6 +32,7 @@ public class Material extends Base{
 
     private int depth;
 
+    private String componentType;
 
     @Column(nullable = false)
     private Double unitPrice; // 단위당 가격

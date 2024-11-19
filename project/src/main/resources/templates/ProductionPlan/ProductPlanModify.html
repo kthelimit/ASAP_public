@@ -8,7 +8,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <div class="title">
-                            <h2>생산 계획 관리</h2>
+                            <h2>생산 계획 수정</h2>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -18,6 +18,7 @@
                                     <li class="breadcrumb-item">
                                         <a th:href="@{/plan/list}">생산 계획 관리</a>
                                     </li>
+                                    <li class="breadcrumb-item active">수정</li>
                                 </ol>
                             </nav>
                         </div>
@@ -27,69 +28,23 @@
             <!-- ========== title-wrapper end ========== -->
 
             <div class="row">
-                <!-- 생산계획 리스트 -->
-                <div class="col-lg-8">
-                    <div class="card-style mb-30">
-                        <h3 class="mb-10">등록된 생산 계획 목록</h3>
-                        <p class="text-sm mb-20">항목을 클릭하면 수정할 수 있습니다.</p>
-                        <div class="table-wrapper table-responsive">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th><h6>생산 시작 날짜</h6></th>
-                                    <th><h6>생산 종료 날짜</h6></th>
-                                    <th><h6>생산 제품 코드</h6></th>
-                                    <th><h6>생산 제품명</h6></th>
-                                    <th><h6>생산 수량</h6></th>
-                                    <th><h6>수정</h6></th>
-                                    <th><h6>삭제</h6></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="plan : ${plans}">
-                                    <td><p th:text="${plan.productionStartDate}"></p></td>
-                                    <td><p th:text="${plan.productionEndDate}"></p></td>
-                                    <td><p th:text="${plan.productCode}"></p></td>
-                                    <td><p th:text="${plan.productName}"></p></td>
-                                    <td><p th:text="${plan.productionQuantity}"></p></td>
-                                    <td>
-                                        <a th:href="@{/plan/edit/{id}(id=${plan.planId})}" class="main-btn primary-btn btn-hover">
-                                            수정하기
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a th:href="@{/plan/delete/{id}(id=${plan.planId})}" class="main-btn danger-btn btn-hover"
-                                           onclick="return confirm('정말 삭제하시겠습니까?');">
-                                            삭제하기
-                                        </a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 등록/수정 폼 -->
-                <div class="col-lg-4">
+                <!-- 수정 폼 -->
+                <div class="col-lg-12">
                     <div class="card-style mb-30">
                         <form th:action="@{/plan/save}" th:object="${productionPlanDTO}" method="post">
-                            <!-- Hidden field to determine register/update -->
-                            <input type="hidden" th:field="*{planId}" id="planId">
-
-                            <h3 class="mb-25">생산 계획 등록</h3>
+                            <input type="hidden" th:field="*{planId}">
+                            <h3 class="mb-25">생산 계획 수정</h3>
                             <div class="input-style-1">
                                 <label>생산 시작 일자</label>
-                                <input type="date" th:field="*{productionStartDate}" id="startDate" required>
+                                <input type="date" th:field="*{productionStartDate}" required>
                             </div>
                             <div class="input-style-1">
                                 <label>생산 종료 일자</label>
-                                <input type="date" th:field="*{productionEndDate}" id="endDate" required>
+                                <input type="date" th:field="*{productionEndDate}" required>
                             </div>
                             <div class="select-style-1">
                                 <label>생산 제품명</label>
-                                <div class="select-position" required>
+                                <div class="select-position">
                                     <select id="productSelect" th:field="*{productName}" onchange="updateProductCode()">
                                         <option value="전기자전거A">전기자전거A</option>
                                         <option value="전기자전거B">전기자전거B</option>
@@ -103,10 +58,11 @@
                             </div>
                             <div class="input-style-1">
                                 <label>생산 수량</label>
-                                <input type="number" th:field="*{productionQuantity}" id="quantity" required>
+                                <input type="number" th:field="*{productionQuantity}" required>
                             </div>
                             <div style="text-align: right">
-                                <button class="main-btn primary-btn btn-hover">등록</button>
+                                <button class="main-btn primary-btn btn-hover">수정</button>
+                                <a th:href="@{/plan/list}" class="main-btn danger-btn btn-hover">취소</a>
                             </div>
                         </form>
                     </div>
@@ -115,7 +71,6 @@
         </div>
 
         <script>
-            // 제품 선택 시 제품 코드 자동 갱신
             function updateProductCode() {
                 const productMapping = {
                     "전기자전거A": "MATB3FIN001",

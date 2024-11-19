@@ -35,17 +35,20 @@ public class MaterialServiceImpl implements MaterialService {
         material.setMaterialName(materialDTO.getMaterialName());
         material.setMaterialCode(materialDTO.getMaterialCode());
         material.setMaterialType(materialDTO.getMaterialType());
+        material.setComponentType(materialDTO.getComponentType()); // 추가된 필드 설정
         material.setUnitPrice(materialDTO.getUnitPrice());
         material.setQuantity(materialDTO.getQuantity());
         material.setWidth(materialDTO.getWidth());
         material.setHeight(materialDTO.getHeight());
         material.setDepth(materialDTO.getDepth());
-        material.setWeight(materialDTO.getWeight()); // BigDecimal로 변환하여 설정
+        material.setWeight(materialDTO.getWeight());
 
+        // Supplier 조회 및 설정
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
         material.setSupplier(supplier);
 
+        // 이미지 처리
         if (!imageFile.isEmpty()) {
             try {
                 String imageUrl = saveImage(imageFile);  // 이미지 저장
@@ -72,6 +75,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .materialName(material.getMaterialName())
                 .materialCode(material.getMaterialCode())
                 .materialType(material.getMaterialType())
+                .componentType(material.getComponentType()) // 추가된 필드 설정
                 .unitPrice(material.getUnitPrice())
                 .quantity(material.getQuantity())
                 .width(material.getWidth())
@@ -82,7 +86,6 @@ public class MaterialServiceImpl implements MaterialService {
                 .supplierName(material.getSupplier().getSupplierName())
                 .build();
     }
-
 
     private String saveImage(MultipartFile file) throws IOException {
         String originalFileName = file.getOriginalFilename();

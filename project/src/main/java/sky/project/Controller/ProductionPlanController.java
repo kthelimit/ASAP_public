@@ -20,6 +20,7 @@ public class ProductionPlanController {
     @Autowired
     private ProductionPlanService productionPlanService;
 
+
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
                                         @RequestParam(defaultValue = "1") int page,
@@ -28,7 +29,6 @@ public class ProductionPlanController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
-        // 검색어가 있을 경우 검색 결과 반환, 없으면 전체 목록 반환
         if (keyword != null && !keyword.isEmpty()) {
             plans = productionPlanService.searchProductionPlans(keyword, pageable);
         } else {
@@ -39,30 +39,36 @@ public class ProductionPlanController {
         model.addAttribute("totalPages", plans.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
-        model.addAttribute("keyword", keyword);  // 검색어 추가
+        model.addAttribute("keyword", keyword);
 
-        // 등록 폼에 사용될 빈 ProductionPlanDTO 설정
+        // 등록 및 수정에 사용할 빈 DTO 객체 추가
         model.addAttribute("productionPlanDTO", new ProductionPlanDTO());
 
-        return "ProductionPlan/ProductPlanList"; // 생산 계획 목록과 등록 폼이 있는 동일 페이지
+        return "ProductionPlan/ProductPlanList";
     }
 
-    @PostMapping("/register")
-    public String registerProductionPlan(@ModelAttribute ProductionPlanDTO productionPlanDTO) {
-        productionPlanService.registerProductionPlan(productionPlanDTO);
+    @PostMapping("/save")
+    public String saveProductionPlan(@ModelAttribute ProductionPlanDTO productionPlanDTO) {
+        if (productionPlanDTO.getPlanId() == null) {
+            // 등록 동작
+            productionPlanService.registerProductionPlan(productionPlanDTO);
+        } else {
+            // 수정 동작
+            productionPlanService.updateProductionPlan(productionPlanDTO);
+        }
         return "redirect:/plan/list";
     }
-
-
-
-
-
-
-
-
-
-
-
+    @GetMapping("/edit/{id}")
+    public String editProductionPlan(@PathVariable("id") Long id, Model model) {
+        ProductionPlanDTO planDTO = productionPlanService.getProductionPlanById(id);
+        model.addAttribute("productionPlanDTO", planDTO);
+        return "ProductionPlan/ProductPlanModify";
+    }
+    @GetMapping("/delete/{id}")
+    public String deleteProductionPlan(@PathVariable("id") Long id) {
+        productionPlanService.deleteProductionPlan(id);
+        return "redirect:/plan/list"; // 삭제 후 목록으로 리다이렉트
+    }
 
     @GetMapping("/procureRegister")
     public String procureRegister() {

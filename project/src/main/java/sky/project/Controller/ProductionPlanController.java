@@ -47,6 +47,8 @@ public class ProductionPlanController {
         return "ProductionPlan/ProductPlanList";
     }
 
+
+
     @PostMapping("/save")
     public String saveProductionPlan(@ModelAttribute ProductionPlanDTO productionPlanDTO) {
         if (productionPlanDTO.getPlanId() == null) {
@@ -73,11 +75,35 @@ public class ProductionPlanController {
     }
 
     @GetMapping("/procureRegister")
-    public String procureRegister() {
-        return "/Procure/ProcureIndex";
+    public String getProductionPlanCheck(Model model,
+                                         @RequestParam(defaultValue = "1") int page,
+                                         @RequestParam(defaultValue = "2") int size,
+                                         @RequestParam(value = "keyword", required = false) String keyword,
+                                         @RequestParam(value = "id", required = false) Long id) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductionPlanDTO> plans;
+
+        // 생산 계획 목록 조회
+        if (keyword != null && !keyword.isEmpty()) {
+            plans = productionPlanService.searchProductionPlans(keyword, pageable);
+        } else {
+            plans = productionPlanService.getProductionPlans(pageable);
+        }
+
+        model.addAttribute("plans", plans.getContent());
+        model.addAttribute("totalPages", plans.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+
+        // 선택된 생산 계획 처리
+        if (id != null) { 
+            ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
+            model.addAttribute("selectedPlan", selectedPlan);
+        }
+
+        return "/procure/ProcureIndex";
     }
-
-
     @GetMapping("/bomRegister")
     public String bomRegister() {
         return "/ProductionPlan/BomRegister";

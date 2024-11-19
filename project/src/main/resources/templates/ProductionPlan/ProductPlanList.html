@@ -28,6 +28,15 @@
 
             <div class="row">
                 <!-- 생산계획 리스트 -->
+                <div class="mb-20 d-flex">
+                    <form th:action="@{/plan/list}" method="get" class="d-flex">
+                        <input type="text" id="searchKeyword" name="keyword"
+                               class="form-control" placeholder="제품명을 입력하세요"
+                               th:value="${keyword}" />
+                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                    </form>
+                </div>
+
                 <div class="col-lg-8">
                     <div class="card-style mb-30">
                         <h3 class="mb-10">등록된 생산 계획 목록</h3>
@@ -67,6 +76,25 @@
                                 </tbody>
                             </table>
 
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage > 1}">
+                                        <a th:href="@{/plan/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                        <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/plan/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/plan/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

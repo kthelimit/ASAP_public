@@ -223,8 +223,9 @@
 
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
 
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+
         <script>
-            // FullCalendar 활성화 및 API 데이터 가져오기
             document.addEventListener("DOMContentLoaded", function () {
                 var calendarMiniEl = document.getElementById("calendar-mini");
 
@@ -235,25 +236,34 @@
                         center: "",
                         end: "today prev,next" // 오늘, 이전, 다음 버튼
                     },
-                    events: "/api/calendar/events", // ProductionPlan 데이터 가져오는 API 경로
-                    eventContent: function(info) {
-                        // 생산 수량을 표시하고 스타일을 설정
-                        let color = info.event.extendedProps.color || "blue"; // 색상 지정
+                    events: "/api/calendar/events", // API 경로
+                    eventContent: function (info) {
+                        // 서버에서 반환된 color 속성을 적용
+                        let color = info.event.extendedProps.color; //
+
                         return {
-                            html: `<div style="background-color:${color}; padding: 5px;">
-                                      <b>${info.event.title}</b><br>
-                                      <span>수량: ${info.event.extendedProps.quantity}</span>
-                                   </div>`
+                            html: `
+                        <div style="background-color:${color}; color:white; padding: 5px; border-radius: 5px;">
+                            <b>${info.event.title}</b><br>
+                            <span>수량: ${info.event.extendedProps.quantity}</span>
+                        </div>
+                    `
                         };
                     },
-                    eventClick: function(info) {
-                        // 이벤트 클릭 시 알림 표시
-                        alert('Event: ' + info.event.title + '\nStart: ' + info.event.start.toISOString() + '\nEnd: ' + info.event.end.toISOString() + '\nQuantity: ' + info.event.extendedProps.quantity);
+                    eventClick: function (info) {
+                        // 이벤트 클릭 시 상세 정보 표시
+                        alert(
+                            `Event: ${info.event.title}\n` +
+                            `Start: ${info.event.start.toISOString()}\n` +
+                            `End: ${info.event.end.toISOString()}\n` +
+                            `Quantity: ${info.event.extendedProps.quantity}`
+                        );
                     }
                 });
 
                 calendarMini.render();
             });
         </script>
+
     </th:block>
 </th:block>

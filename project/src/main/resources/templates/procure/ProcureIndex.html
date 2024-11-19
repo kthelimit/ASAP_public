@@ -3,28 +3,19 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
         <style>
-            /*.col-lg-6 {*/
-            /*    height: auto;*/
-            /*}*/
-
-            /*.row1 {*/
-            /*    width: 1545px;*/
-            /*}*/
-
-            /*.row2 {*/
-            /*    width: 1545px;*/
-            /*}*/
-
-            /*.row3 {*/
-            /*     width: 1545px;*/
-            /* }*/
-
+            .title {
+                padding: 30px;
+            }
 
             .mb-10 {
                 font-weight: bold;
                 font-size: 30px;
                 margin-bottom: 30px;
                 margin-left: 10px;
+            }
+
+            .right-div {
+                margin-top: 94px;
             }
 
             thead {
@@ -75,36 +66,40 @@
                 justify-content: space-between;
             }
 
-            .search_tab {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .table-wrapper {
-                width: 730px;
-            }
 
         </style>
 
 
         <div class="row">
             <div class="col-lg-6">
+                <div class="title">
+                    <h2>조달 계획 등록 및 조회</h2>
+                </div>
                 <div class="card-style mb-30">
                     <h6 class="mb-10">생산 계획 조회</h6>
                     <div class="search_tab">
-                        <div class="select-style-1">
-                            <div class="select-position">
-                                <select>
-                                    <option value="">품목코드</option>
-                                    <option value="">Category one</option>
-                                    <option value="">Category two</option>
-                                    <option value="">Category three</option>
-                                </select>
-
+                        <form th:action="@{/plan/procureRegister}" method="get">
+                            <div class="select-style-1">
+                                <div class="select-position">
+                                    <select name="category">
+                                        <option value="">품목코드</option>
+                                        <option value="CategoryOne">Category one</option>
+                                        <option value="CategoryTwo">Category two</option>
+                                        <option value="CategoryThree">Category three</option>
+                                    </select>
+                                </div>
+                                <input
+                                        class="select-style-1 search"
+                                        type="text"
+                                        name="keyword"
+                                        th:value="${keyword}"
+                                        placeholder="   검색어를 입력하세요"
+                                />
+                                <button type="submit" class="main-btn active-btn btn-hover blue_botton">
+                                    검색
+                                </button>
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="   검색어를 입력하세요">
-                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
-                        </div>
+                        </form>
                     </div>
 
 
@@ -134,54 +129,44 @@
                             </thead>
                             <tbody>
 
-                            <tr>
+                            <tr th:each="plan : ${plans}">
+                                <td><p th:text="${plan.productionStartDate}"></p></td>
+                                <td><p th:text="${plan.productionEndDate}"></p></td>
+                                <td><p th:text="${plan.productCode}"></p></td>
+                                <td><p th:text="${plan.productName}"></p></td>
+                                <td><p th:text="${plan.productionQuantity}"></p></td>
                                 <td>
-                                    <p>2024-11-15</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
+                                    <a th:href="@{/plan/procureRegister(id=${plan.planId}, page=${currentPage}, size=${pageSize}, keyword=${keyword})}"
+                                       class="main-btn active-btn btn-hover register">
+                                        선택
+                                    </a>
 
-                                <td>
-                                    <p>DEF-1234</p>
-                                </td>
-                                <td>
-                                    <p>전기자전거B</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">선택</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-25</p>
-                                </td>
-
-                                <td>
-                                    <p>ASD-1234</p>
-                                </td>
-                                <td>
-                                    <p>전기킥보드</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">선택</a>
-                                    </div>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
+                        </form>
+                        <div class="pagination-wrapper">
+                            <ul class="pagination">
+                                <li th:if="${currentPage > 1}">
+                                    <a th:href="@{/plan/procureRegister(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                    <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                       th:href="@{/plan/procureRegister(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                                       th:text="${i}"></a>
+                                </li>
+                                <li th:if="${currentPage < totalPages}">
+                                    <a th:href="@{/plan/procureRegister(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="card-style mb-30">
@@ -197,7 +182,7 @@
                                 </select>
 
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="검색어를 입력하세요">
+                            <input class="select-style-1, search" type="text" placeholder="   검색어를 입력하세요">
                             <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
                         </div>
                     </div>
@@ -205,12 +190,6 @@
                         <table class="table striped-table">
                             <thead>
                             <tr>
-                                <th>
-                                    <h5>생산 시작일</h5>
-                                </th>
-                                <th>
-                                    <h5>생산 종료일</h5>
-                                </th>
                                 <th>
                                     <h5>생산제품코드</h5>
                                 </th>
@@ -241,49 +220,7 @@
                             </tr>
                             </thead>
                             <tbody>
-
                             <tr>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-15</p>
-                                </td>
-                                <td>
-                                    <p>ABC-1234</p>
-                                </td>
-                                <td>
-                                    <p>전기자전거A</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>타이어</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-15</p>
-                                </td>
                                 <td>
                                     <p>ABC-1234</p>
                                 </td>
@@ -318,47 +255,26 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card-style mb-30">
+                <div class="card-style mb-30 right-div">
                     <h6 class="mb-10">조달 계획 등록</h6>
                     <div class="table-wrapper table-responsive">
-                        <table class="table striped-table">
+                        <table id="procurement-table" class="table striped-table">
                             <thead>
                             <tr>
-                                <th>
-                                    <h5>생산 시작일</h5>
-                                </th>
-                                <th>
-                                    <h5>생산 종료일</h5>
-                                </th>
-                                <th>
-                                    <h5>생산제품코드</h5>
-                                </th>
-                                <th>
-                                    <h5>생산제품명</h5>
-                                </th>
-                                <th>
-                                    <h5>생산수량</h5>
-                                </th>
-                                <th>
+                                <th>생산 시작일</th>
+                                <th>생산 종료일</th>
+                                <th>생산제품코드</th>
+                                <th>생산제품명</th>
+                                <th>생산수량</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>
-                                    <p>2024-11-11</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-15</p>
-                                </td>
-                                <td>
-                                    <p>ABC-1234</p>
-                                </td>
-                                <td>
-                                    <p>전기자전거A</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
+                            <tr th:if="${selectedPlan != null}">
+                                <td th:text="${selectedPlan.productionStartDate}"></td>
+                                <td th:text="${selectedPlan.productionEndDate}"></td>
+                                <td th:text="${selectedPlan.productCode}"></td>
+                                <td th:text="${selectedPlan.productName}"></td>
+                                <td th:text="${selectedPlan.productionQuantity}"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -394,151 +310,6 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>타이어</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>배터리</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>체인</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>프레임</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>컨트롤러</p>
-                                </td>
-                                <td>
-                                    <p>200</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>100</p>
-                                </td>
-
-                                <td>
-                                    <p>4</p>
-                                </td>
-                                <td>
-                                    <p>2024-11-20</p>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <a href="#0" class="main-btn active-btn btn-hover register">등록</a>
-                                    </div>
-                                </td>
-                            </tr>
                             <tr>
                                 <td>
                                     <p>XYZ-1234</p>

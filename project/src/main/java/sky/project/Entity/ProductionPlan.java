@@ -31,4 +31,7 @@ public class ProductionPlan extends Base {
 
     @Column(name = "production_quantity")
     private Integer productionQuantity;
+
+    @Column(name = "production_plan_code", length = 50, unique = true)
+    private String productionPlanCode; // 생산 계획 코드
 }

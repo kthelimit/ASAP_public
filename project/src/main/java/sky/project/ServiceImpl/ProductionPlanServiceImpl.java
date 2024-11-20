@@ -9,6 +9,8 @@ import sky.project.Entity.ProductionPlan;
 import sky.project.Repository.ProductionPlanRepository;
 import sky.project.Service.ProductionPlanService;
 
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class ProductionPlanServiceImpl implements ProductionPlanService {
 
@@ -29,6 +31,11 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     @Override
     public void registerProductionPlan(ProductionPlanDTO productionPlanDTO) {
         ProductionPlan plan = toEntity(productionPlanDTO);
+
+        // 생산 계획 코드 생성 로직 추가
+        String productionPlanCode = generateProductionPlanCode(productionPlanDTO);
+        plan.setProductionPlanCode(productionPlanCode);
+
         productionPlanRepository.save(plan);
     }
 
@@ -44,8 +51,10 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         ProductionPlan plan = productionPlanRepository.findById(productionPlanDTO.getPlanId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + productionPlanDTO.getPlanId()));
 
+        // 기존 생산 계획 코드는 수정하지 않음
         plan.setProductionStartDate(productionPlanDTO.getProductionStartDate());
         plan.setProductionEndDate(productionPlanDTO.getProductionEndDate());
+        plan.setProductionPlanCode(productionPlanDTO.getProductionPlanCode());
         plan.setProductCode(productionPlanDTO.getProductCode());
         plan.setProductName(productionPlanDTO.getProductName());
         plan.setProductionQuantity(productionPlanDTO.getProductionQuantity());
@@ -61,8 +70,6 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         productionPlanRepository.deleteById(id);
     }
 
-
-
     private ProductionPlanDTO toDTO(ProductionPlan plan) {
         if (plan == null) return null;
 
@@ -73,10 +80,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         dto.setProductionStartDate(plan.getProductionStartDate());
         dto.setProductionEndDate(plan.getProductionEndDate());
         dto.setProductionQuantity(plan.getProductionQuantity());
+        dto.setProductionPlanCode(plan.getProductionPlanCode()); // 코드 추가
         return dto;
     }
-
-
 
     private ProductionPlan toEntity(ProductionPlanDTO dto) {
         if (dto == null) return null;
@@ -89,5 +95,33 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         plan.setProductionEndDate(dto.getProductionEndDate());
         plan.setProductionQuantity(dto.getProductionQuantity());
         return plan;
+    }
+
+    private String generateProductionPlanCode(ProductionPlanDTO dto) {
+        // 제품명에 따른 접두어 설정
+        String prefix;
+        switch (dto.getProductName()) {
+            case "전기자전거A":
+                prefix = "PDPBA";
+                break;
+            case "전기자전거B":
+                prefix = "PDPBB";
+                break;
+            case "전동킥보드":
+                prefix = "PDPBK";
+                break;
+            default:
+                prefix = "PDPUN";
+        }
+
+        // 날짜 포맷 (예: 20231120)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String dateCode = dto.getProductionStartDate().format(formatter);
+
+        // 동일 접두어 코드의 다음 번호
+        Long nextSequence = productionPlanRepository.countByPrefix(prefix) + 1;
+
+        // 코드 생성
+        return String.format("%s%s%03d", prefix, dateCode, nextSequence);
     }
 }

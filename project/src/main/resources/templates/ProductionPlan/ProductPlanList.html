@@ -45,6 +45,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
+                                    <th><h6>생산 계획 코드</h6></th>
                                     <th><h6>생산 시작 날짜</h6></th>
                                     <th><h6>생산 종료 날짜</h6></th>
                                     <th><h6>생산 제품 코드</h6></th>
@@ -56,20 +57,21 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="plan : ${plans}">
+                                    <td><p th:text="${plan.productionPlanCode}"></p></td>
                                     <td><p th:text="${plan.productionStartDate}"></p></td>
                                     <td><p th:text="${plan.productionEndDate}"></p></td>
                                     <td><p th:text="${plan.productCode}"></p></td>
                                     <td><p th:text="${plan.productName}"></p></td>
                                     <td><p th:text="${plan.productionQuantity}"></p></td>
                                     <td>
-                                        <a th:href="@{/plan/edit/{id}(id=${plan.planId})}" class="main-btn primary-btn btn-hover">
-                                            수정하기
+                                        <a th:href="@{/plan/edit/{id}(id=${plan.planId})}" class="main-btn primary-btn btn-hover" style="padding: 6px">
+                                            수정
                                         </a>
                                     </td>
                                     <td>
-                                        <a th:href="@{/plan/delete/{id}(id=${plan.planId})}" class="main-btn danger-btn btn-hover"
+                                        <a th:href="@{/plan/delete/{id}(id=${plan.planId})}" class="main-btn danger-btn btn-hover" style="padding: 6px"
                                            onclick="return confirm('정말 삭제하시겠습니까?');">
-                                            삭제하기
+                                            삭제
                                         </a>
                                     </td>
                                 </tr>
@@ -155,6 +157,9 @@
                 const productCodeInput = document.getElementById("productCode");
                 productCodeInput.value = productMapping[productSelect.value] || '';
             }
+            document.addEventListener("DOMContentLoaded", function () {
+                updateProductCode();
+            });
         </script>
     </th:block>
 </th:block>

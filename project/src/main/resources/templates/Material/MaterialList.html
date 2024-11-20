@@ -49,33 +49,32 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>이미지</th>
-                                    <th>자재 ID</th>
                                     <th>자재 이름</th>
                                     <th>자재 코드</th>
                                     <th>자재 유형</th>
                                     <th>규격</th>
                                     <th>무게</th>
+                                    <th>단가</th>
                                     <th>수량</th>
                                     <th>공급사</th>
-                                    <th>승인</th>
+                                    <th>leadtime</th>
+                                    <th>이미지</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="material : ${materials}">
+                                    <td th:text="${material.materialName}"></td>
+                                    <td th:text="${material.materialCode}"></td>
+                                    <td th:text="${material.materialType}"></td>
+                                    <td th:text="${material.width} + 'x' + ${material.height} + 'x' + ${material.depth}"></td>
+                                    <td th:text="${material.weight}"></td>
+                                    <td th:text="${material.unitPrice}"></td>
+                                    <td th:text="${material.quantity}"></td>
+                                    <td th:text="${material.supplierName}"></td>
+                                    <td th:text="${material.leadtime}"></td>
                                     <td><img alt="이미지" class="thumbnail" style="width: 50px; height: 50px;"
                                              th:src="${material.imageUrl}"/></td>
-                                    <td th:text="${material.materialId}">1</td>
-                                    <td th:text="${material.materialName}">Sample Name</td>
-                                    <td th:text="${material.materialCode}">M001</td>
-                                    <td th:text="${material.materialType}">MAIN</td>
-                                    <td th:text="${material.unit}">pcs</td>
-                                    <td th:text="${material.unitPrice}">100.0</td>
-                                    <td th:text="${material.quantity}">50</td>
-                                    <td th:text="${material.supplierName}">Supplier A</td>
-                                    <td>
-                                        <button class="btn-primary" type="button">승인</button>
-                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -181,7 +180,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="select-style-1 form-group col-lg-12">
+                                    <div class="select-style-1 form-group col-lg-6">
                                         <label for="supplierId">공급사</label>
                                         <div class="select-position">
                                             <select id="supplierId" required th:field="*{supplierId}">
@@ -193,7 +192,12 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="input-style-1 form-group col-lg-6">
+                                        <label for="leadtime">leadtime</label>
+                                        <input id="leadtime" required th:field="*{leadtime}" type="text" placeholder="기간(일) 을 입력하세요"/>
+                                    </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="form-group standard-group input-style-1 col-lg-8">
                                         <label for="materialType">규격</label>

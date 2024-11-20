@@ -28,5 +28,6 @@ public class MaterialDTO {
     private String imageUrl; // 이미지 URL
     private MultipartFile imageFile; // 이미지 파일 업로드를 위한 필드 추가
     private BigDecimal weight;
+    private int leadtime;
 
 }

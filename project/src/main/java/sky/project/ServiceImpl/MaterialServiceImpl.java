@@ -43,6 +43,7 @@ public class MaterialServiceImpl implements MaterialService {
         material.setHeight(materialDTO.getHeight());
         material.setDepth(materialDTO.getDepth());
         material.setWeight(materialDTO.getWeight());
+        material.setLeadtime(materialDTO.getLeadtime());
 
         // Supplier 조회 및 설정
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
@@ -85,6 +86,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .weight(material.getWeight()) // weight를 BigDecimal로 설정
                 .imageUrl(material.getImageUrl())
                 .supplierName(material.getSupplier().getSupplierName())
+                .leadtime(material.getLeadtime())
                 .build();
     }
 

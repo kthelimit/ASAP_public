@@ -16,7 +16,7 @@ public class Bom{
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long bomId;
 
-@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 @JoinColumn(name="product_code", nullable=false)
 private Product product;
 

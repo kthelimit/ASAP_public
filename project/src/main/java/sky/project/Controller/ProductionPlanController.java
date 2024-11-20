@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sky.project.DTO.BomDTO;
 import sky.project.DTO.ProductionPlanDTO;
 import sky.project.Service.BomService;
 import sky.project.Service.ProductionPlanService;
@@ -114,11 +112,5 @@ public class ProductionPlanController {
     @GetMapping("/bomRegister")
     public String bomRegister() {
         return "/ProductionPlan/BomRegister";
-    }
-
-    @PostMapping("/registerBom")
-    public String RegisterBom(BomDTO dto, RedirectAttributes redirectAttributes) {
-        bomService.register(dto);
-        return "redirect:/plan/bomRegister";
     }
 }

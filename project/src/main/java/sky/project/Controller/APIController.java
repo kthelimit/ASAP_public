@@ -29,15 +29,29 @@ public class APIController {
 
     //등록한 상품을 select에 불러오는 용도
     @RequestMapping("/load/product")
-    public List<Product> loadProductInfo(){
+    public List<Product> loadProductInfo() {
         return productService.getProductList();
     }
 
-
-
+    //상품 선택에 따른 BOM리스트 출력용
     @RequestMapping("/load/bom/{productCode}")
-    public List<BomDTO> loadBomWithProductInfo(@PathVariable String productCode){
+    public List<BomDTO> loadBomWithProductInfo(@PathVariable String productCode) {
         return bomService.findWithProductCode(productCode);
+    }
+
+    //* BOM *//
+    //등록
+    @PostMapping("/post/bom")
+    public ResponseEntity<Long> registerBom(@RequestBody BomDTO dto) {
+        return ResponseEntity.ok(bomService.register(dto));
+    }
+
+    //BOM 삭제
+    @DeleteMapping("/delete/bom/{bomId}")
+    public ResponseEntity<String> deleteBom(@PathVariable String bomId) {
+        log.info("Delete bom with id {}", bomId);
+        bomService.remove(Long.parseLong(bomId));
+        return ResponseEntity.ok(bomId);
     }
 //
 //    //부품 종류로 자재 리스트 불러오기

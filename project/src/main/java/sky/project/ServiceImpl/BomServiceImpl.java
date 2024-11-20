@@ -1,5 +1,6 @@
 package sky.project.ServiceImpl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -43,9 +44,10 @@ public class BomServiceImpl implements BomService {
     }
 
     //삭제
+    @Transactional
     @Override
     public void remove(Long BomId) {
-
+        repository.deleteById(BomId);
     }
 
     //상품코드로 불러오기

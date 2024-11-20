@@ -55,7 +55,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <form th:action="@{/plan/registerBom}" th:method="post">
+                            <form>
                                 <h6 class="mb-10 col-lg-3">상품 선택</h6>
                                 <div class="row">
                                     <div class="select-style-1 col-lg-9">
@@ -134,21 +134,17 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4 input-style-1">
-                                        <input name="materialName" placeholder="부품명을 입력하세요." type="text">
+                                        <input id="materialName" name="materialName" placeholder="부품명을 입력하세요."
+                                               type="text">
                                     </div>
-                                    <!--                                <div class="col-lg-4 select-style-1">-->
-                                    <!--                                    <div class="select-position">-->
-                                    <!--                                        <select id="material" name="material">-->
-                                    <!--                                            <option value="material1">등록되어있는 부품명1</option>-->
-                                    <!--                                            <option value="material2">등록되어있는 부품명2</option>-->
-                                    <!--                                        </select>-->
-                                    <!--                                    </div>-->
-                                    <!--                                </div>-->
                                     <div class="col-lg-3 input-style-1">
-                                        <input name="requireQuantity" placeholder="수량" type="number">
+                                        <input id="requireQuantity" name="requireQuantity" placeholder="수량"
+                                               type="number">
                                     </div>
                                     <div class="col-lg-1 text-align-right">
-                                        <button class="main-btn primary-btn btn-hover" type="submit">추가</button>
+                                        <button class="main-btn primary-btn btn-hover" onclick="bomRegister()"
+                                                type="button">추가
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -186,7 +182,6 @@
         <script>
 
             //상품 리스트 불러오기용
-
             const main = {
                 init: function () {
                     const _this = this;
@@ -246,7 +241,7 @@
             };
             main.init();
 
-            //상품 선택에서 상품을 선택하면 생기는 변화.
+            //선택된 상품의 BOM 세팅
             function changeProductSelect() {
                 var productSelect = document.getElementById("productSelect");
 
@@ -254,7 +249,11 @@
 
                 $('#productCode2').val(selectValue);
 
-                //선택한 상품에 따른 BOM들을 불러오기
+                //아래 테이블 출력 리셋
+                $('#bom-table').empty();
+                $('#bom-table').append('<tr><th>부품 종류</th><th>부품명</th><th>부품 수량</th><th>수정/삭제</th></tr>')
+
+                //선택한 상품에 따른 BOM 불러오기
                 loadBom(selectValue);
             }
 
@@ -263,35 +262,84 @@
                 $.ajax({
                     url        : "/api/load/bom/" + productCode,
                     type       : "GET",
-                    dataType   : "TEXT",
+                    dataType   : "JSON",
                     contentType: 'application/json; charset=utf-8',
                     data       : JSON.stringify(productCode),
                     success    : function (data) {
                         console.log(data);
-                        console.log(data[0]);
-                        console.log(data[1]);
-                        console.log(data[2]);
-                        console.log(data[3]);
-                        console.log(data[4]);
                         str = '';
 
-                        // $.each(data, function (i) {
-                        //     console.log(data[i]);
-                        //     // str += '<tr><td>' + data[i].componentType + '</td><td>' + data[i].materialName
-                        //     //     + '</td><td>' + data[i].requireQuantity
-                        //     //     + '</td><td><a href="#0"><i class="lni lni-pencil-alt"></i></a><a class="text-danger" href="#0">'
-                        //     //     + '<i class="lni lni-trash-can"></i></a></td></tr>';
-                        // })
-                        // $('#bom-table').append(str);
-
-                        // $(data).each(function () {
-                        //     // $('#bom-table').append('<tr><td>' + this.componentType + '</td><td>' + this.materialName
-                        //     //     + '</td><td>' + this.requireQuantity
-                        //     //     + '</td><td><a href="#0"><i class="lni lni-pencil-alt"></i></a><a class="text-danger" href="#0">'
-                        //     //     + '<i class="lni lni-trash-can"></i></a></td></tr>')
-                        // })
+                        $.each(data, function (i) {
+                            console.log(data[i]);
+                            str += '<tr><td>' + data[i].componentType + '</td><td>' + data[i].materialName
+                                + '</td><td>' + data[i].requireQuantity
+                                + '</td><td><a href="#0"><i class="lni lni-pencil-alt"></i></a>'
+                                + '<a class="text-danger" href="#0" onclick="bomDelete(' + data[i].bomId + ')">'
+                                + '<i class="lni lni-trash-can"></i></a></td></tr>';
+                        })
+                        $('#bom-table').append(str);
                     }
                 })
+            }
+
+            //BOM 삭제
+            function bomDelete(bomId) {
+                console.log(bomId);
+                const con_check = confirm("삭제하시겠습니까?")
+                if (con_check === true) {
+                    $.ajax({
+                        type       : "DELETE",
+                        url        : '/api/delete/bom/' + bomId,
+                        dataType   : "TEXT",
+                        contentType: 'application/json; charset=utf-8'
+                    }).done(function () {
+                        alert("bom이 삭제되었습니다.");
+                        // window.location.reload();
+                        changeProductSelect();
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    })
+                }
+            }
+
+            //BOM 등록
+            function bomRegister() {
+                const data = {
+                    productCode    : $('#productCode2').val(),
+                    componentType  : $('#componentType').val(),
+                    materialName   : $('#materialName').val(),
+                    requireQuantity: $('#requireQuantity').val()
+
+                }
+                console.log(data);
+                console.log(data.productCode);
+
+                if (!data.productCode) {
+                    alert("상품을 선택하지 않았습니다.")
+                    return false;
+                } else if (!data.materialName || data.materialName.trim() === "") {
+                    alert("부품명에 공백 또는 입력하지 않은 부분이 있습니다.");
+                    return false;
+                } else if (!data.requireQuantity || data.requireQuantity.trim() === "") {
+                    alert("수량에 공백 또는 입력하지 않은 부분이 있습니다.");
+                    return false;
+                } else {
+                    $.ajax({
+                        type       : 'POST',
+                        url        : '/api/post/bom',
+                        dataType   : 'TEXT',
+                        contentType: 'application/json; charset=utf-8',
+                        data       : JSON.stringify(data)
+                    }).done(function () {
+                        alert("BOM이 등록되었습니다.")
+                        changeProductSelect();
+                        $('#componentType').val("");
+                        $('#materialName').val("");
+                        $('#requireQuantity').val("");
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    });
+                }
             }
 
 

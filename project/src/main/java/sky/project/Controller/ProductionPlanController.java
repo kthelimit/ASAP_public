@@ -88,6 +88,8 @@ public class ProductionPlanController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
+
+
         // 생산 계획 목록 조회
         if (keyword != null && !keyword.isEmpty()) {
             plans = productionPlanService.searchProductionPlans(keyword, pageable);

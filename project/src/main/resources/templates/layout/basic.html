@@ -229,7 +229,7 @@
                             <a th:href="@{/order/index}"> 구매 발주서 작성</a>
                         </li>
                         <li>
-                            <a href="#0">진척 검수 관리 </a>
+                            <a href="/order/delivery">진척 검수 관리 </a>
                         </li>
                         <li>
                             <a href="#0"> 발주 진행 현황 </a>
@@ -385,18 +385,18 @@
                             </div>
                             <!-- notification end -->
                             <!-- profile start -->
-                            <div class="profile-box ml-15">
+                            <div class="profile-box ml-15" >
                                 <button aria-expanded="false" class="dropdown-toggle bg-transparent border-0"
                                         data-bs-toggle="dropdown"
                                         id="profile" type="button">
-                                    <div class="profile-info">
+                                    <div class="profile-info" >
                                         <div class="info">
                                             <div class="image">
                                                 <img alt="" th:src="@{/assets/images/profile/profile-image.png}"/>
                                             </div>
                                             <div>
-                                                <h6 class="fw-500">접속자 이름</h6>
-                                                <p>관리자/사원/협력업체</p>
+                                                <h6 class="fw-500"></h6>
+                                                <p ></p>
                                             </div>
                                         </div>
                                     </div>
@@ -408,9 +408,7 @@
                                                 <img alt="image" th:src="@{/assets/images/profile/profile-image.png}">
                                             </div>
                                             <div class="content">
-                                                <h4 class="text-sm">접속자 이름</h4>
-                                                <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-                                                   href="#">Email@gmail.com</a>
+                                                <h4 class="text-sm"  >접속자 이름</h4>
                                             </div>
                                         </div>
                                     </li>
@@ -427,7 +425,7 @@
                                     </li>
                                     <li class="divider"></li>
                                     <li>
-                                        <a href="#0"> <i class="lni lni-exit"></i> 로그아웃 </a>
+                                        <a href="/logout"> <i class="lni lni-exit"></i> 로그아웃 </a>
                                     </li>
                                 </ul>
                             </div>

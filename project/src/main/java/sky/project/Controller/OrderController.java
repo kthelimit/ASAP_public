@@ -19,4 +19,10 @@ public class OrderController {
     public String procure() {
         return "/procure/Procureindex";
     }
+
+
+    @GetMapping("/delivery")
+    public String delivery() {
+        return "/Order/DeliveryOrder";
+    }
 }

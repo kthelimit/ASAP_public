@@ -37,7 +37,7 @@ public class HomeController {
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(60 * 60 * 12); // 세션 유효시간을 12시간으로 설정
                 session.setAttribute("user", authenticatedUser);
-                return "redirect:/sample/admin";
+                return "redirect:/main";
             } else {
                 model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
                 return "/UserForm/Login";
@@ -47,6 +47,18 @@ public class HomeController {
             return "/UserForm/Login";
         }
     }
+
+    @GetMapping("/main")
+    public String mainPage( ) {
+//        UserDTO user = (UserDTO) session.getAttribute("user");
+//        if(user == null) {
+//            return "redirect:/";
+//        }
+//
+//        model.addAttribute("user", user);
+        return "/sample/admin";
+    }
+
 
     // 회원가입 폼 표시
     @GetMapping("/signup")
@@ -76,6 +88,6 @@ public class HomeController {
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/login";
+        return "redirect:/";
     }
 }

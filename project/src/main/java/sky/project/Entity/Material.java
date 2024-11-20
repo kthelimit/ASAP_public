@@ -24,7 +24,7 @@ public class Material extends Base{
     private String materialCode; // 자재 코드
 
     @Column(nullable = false)
-    private String materialType; // 자재 유형 (대부품/소부품)
+    private String materialType; // 자재 유형 (제조품/구매품)
 
     private int width;
 
@@ -44,7 +44,8 @@ public class Material extends Base{
     @Column(nullable = false)
     private Integer quantity; // 최소 공급 수량
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    @Column
     private String imageUrl; // 자재 이미지 URL
 
     @Column(name = "weight", precision = 10, scale = 2)

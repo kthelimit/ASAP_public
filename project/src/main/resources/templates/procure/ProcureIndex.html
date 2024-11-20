@@ -36,12 +36,12 @@
                             <form method="get" th:action="@{/plan/procureRegister}">
                                 <div class="select-style-1">
 
-                                    <input  style="text-align:right"
-                                            class="select-style-1 search"
-                                            name="keyword"
-                                            placeholder=" 제품명 및 생산 계획 코드를 입력하세요."
-                                            th:value="${keyword}"
-                                            type="text"
+                                    <input style="text-align:right"
+                                           class="select-style-1 search"
+                                           name="keyword"
+                                           placeholder=" 제품명 및 생산 계획 코드를 입력하세요."
+                                           th:value="${keyword}"
+                                           type="text"
                                     />
                                     <button class="main-btn active-btn btn-hover blue_botton" type="submit">
                                         검색
@@ -55,27 +55,13 @@
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <h5>생산 시작일</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산 종료일</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산계획코드</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산제품코드</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산제품명</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>선택목록</h5>
-                                    </th>
+                                    <th><h5>생산 시작일</h5></th>
+                                    <th><h5>생산 종료일</h5></th>
+                                    <th><h5>생산계획코드</h5></th>
+                                    <th><h5>생산제품코드</h5></th>
+                                    <th><h5>생산제품명</h5></th>
+                                    <th><h5>생산수량</h5></th>
+                                    <th><h5>선택목록</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -89,7 +75,12 @@
                                     <td><p th:text="${plan.productionQuantity}"></p></td>
                                     <td>
                                         <a class="main-btn active-btn btn-hover register" style="padding: 6px"
-                                           th:href="@{/plan/procureRegister(id=${plan.planId}, page=${currentPage}, size=${pageSize}, keyword=${keyword})}">
+                                           th:href="@{/plan/procureRegister(
+                                           id=${plan.planId},
+                                           page=${currentPage},
+                                           size=${pageSize},
+                                           keyword=${keyword},
+                                           productCode=${plan.productCode})}">
                                             선택
                                         </a>
 
@@ -142,64 +133,28 @@
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <h5>생산제품코드</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산제품명</h5>
-                                    </th>
-                                    <th>
-                                        <h5>생산수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>품목코드</h5>
-                                    </th>
-                                    <th>
-                                        <h5>품목명</h5>
-                                    </th>
-                                    <th>
-                                        <h5>품목소요수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달간격(일)</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달납기일</h5>
-                                    </th>
+                                    <th><h5>생산제품코드</h5></th>
+                                    <th><h5>생산제품명</h5></th>
+                                    <th><h5>생산수량</h5></th>
+                                    <th><h5>품목코드</h5></th>
+                                    <th><h5>품목명</h5></th>
+                                    <th><h5>품목소요수량</h5></th>
+                                    <th><h5>조달간격(일)</h5></th>
+                                    <th><h5>조달수량</h5></th>
+                                    <th><h5>조달납기일</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>
-                                        <p>ABC-1234</p>
-                                    </td>
-                                    <td>
-                                        <p>전기자전거A</p>
-                                    </td>
-                                    <td>
-                                        <p>100</p>
-                                    </td>
-                                    <td>
-                                        <p>XYZ-1234</p>
-                                    </td>
-                                    <td>
-                                        <p>타이어</p>
-                                    </td>
-                                    <td>
-                                        <p>200</p>
-                                    </td>
-                                    <td>
-                                        <p>4</p>
-                                    </td>
-                                    <td>
-                                        <p>100</p>
-                                    </td>
-                                    <td>
-                                        <p>2024-11-20</p>
-                                    </td>
+                                    <td><p>ABC-1234</p></td>
+                                    <td><p>전기자전거A</p></td>
+                                    <td><p>100</p></td>
+                                    <td><p>XYZ-1234</p></td>
+                                    <td><p>타이어</p></td>
+                                    <td><p>200</p></td>
+                                    <td><p>4</p></td>
+                                    <td><p>100</p></td>
+                                    <td><p>2024-11-20</p></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -236,59 +191,37 @@
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <h5>품목코드</h5>
-                                    </th>
-                                    <th>
-                                        <h5>품목명</h5>
-                                    </th>
-                                    <th>
-                                        <h5>필요수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>가용재고</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달수량</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달간격(일)</h5>
-                                    </th>
-                                    <th>
-                                        <h5>조달납기일</h5>
-                                    </th>
-                                    <th>
-                                        <h5>선택목록</h5>
-                                    </th>
+                                    <th><h5>부품코드</h5></th>
+                                    <th><h5>부품명</h5></th>
+                                    <th><h5>공급업체</h5></th>
+                                    <th><h5>필요수량(가용재고)</h5></th>
+                                    <th><h5>조달수량</h5></th>
+                                    <th><h5>조달납기일</h5></th>
+                                    <th><h5>선택목록</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="bom : ${selectedBom}">
+                                    <td th:text="${bom.productCode}"></td>
+                                    <td th:text="${bom.materialName}"></td>
                                     <td>
-                                        <p>XYZ-1234</p>
+                                        <div class="select-style-1" style="width: 130px; height: 10px">
+                                            <div class="select-position">
+                                                <select style="font-size: 13px; height: 50px" id="componentType" name="componentType" required>
+                                                    <option value="(주)진영산업">(주)진영산업</option>
+                                                    <option value="(주)현식물산">(주)현식물산</option>
+                                                    <option value="(주)하늘금속">(주)하늘금속</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>
-                                        <p>크랭크</p>
-                                    </td>
-                                    <td>
-                                        <p>200</p>
-                                    </td>
-                                    <td>
-                                        <p>100</p>
-                                    </td>
-                                    <td>
-                                        <p>100</p>
-                                    </td>
-
-                                    <td>
-                                        <p>4</p>
-                                    </td>
-                                    <td>
-                                        <p>2024-11-20</p>
-                                    </td>
+                                    <td th:text="${bom.requireQuantity}"></td>
+                                    <td>100</td>
+                                    <td>2024-11-20</td>
                                     <td>
                                         <div class="action">
-                                            <a class="main-btn active-btn btn-hover register" href="#0" style="padding: 6px">등록</a>
+                                            <a class="main-btn active-btn btn-hover register" href="#0"
+                                               style="padding: 6px">등록</a>
                                         </div>
                                     </td>
                                 </tr>

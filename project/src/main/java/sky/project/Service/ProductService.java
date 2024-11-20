@@ -13,13 +13,5 @@ public interface ProductService {
     //상품 리스트 반환
     List<Product>getProductList();
 
-    default Product dtoToEntity(ProductDTO dto) {
 
-        Product entity = Product.builder()
-                .productId(dto.getProductId())
-                .productName(dto.getProductName())
-                .productCode(dto.getProductCode())
-                .build();
-        return entity;
-    }
 }

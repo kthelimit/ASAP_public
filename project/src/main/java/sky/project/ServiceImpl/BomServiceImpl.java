@@ -60,4 +60,16 @@ public class BomServiceImpl implements BomService {
         return bomDTOList;
     }
 
+
+    public BomDTO entityToDTO(Bom entity) {
+        BomDTO dto = BomDTO.builder()
+                .bomId(entity.getBomId())
+                .componentType(entity.getComponentType())
+                .materialName(entity.getMaterialName())
+                .productCode(entity.getProduct().getProductCode())
+                .requireQuantity(entity.getRequireQuantity())
+                .build();
+        return dto;
+    }
+
 }

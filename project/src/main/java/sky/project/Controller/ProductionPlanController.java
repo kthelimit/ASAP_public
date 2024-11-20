@@ -8,9 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import sky.project.DTO.BomDTO;
 import sky.project.DTO.ProductionPlanDTO;
 import sky.project.Service.BomService;
 import sky.project.Service.ProductionPlanService;
+
+import java.util.List;
 
 @Controller
 @Log4j2
@@ -84,7 +87,8 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "1") int page,
                                          @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
-                                         @RequestParam(value = "id", required = false) Long id) {
+                                         @RequestParam(value = "id", required = false) Long id,
+                                         @RequestParam(value = "productCode", required = false) String productCode) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
@@ -109,8 +113,16 @@ public class ProductionPlanController {
             model.addAttribute("selectedPlan", selectedPlan);
         }
 
+        List<BomDTO> selectedBom = bomService.findWithProductCode(productCode);
+        log.info("Selected BOM for productCode {}: {}", productCode, selectedBom);
+        model.addAttribute("selectedBom", selectedBom);
+        model.addAttribute("productCode", productCode);
+
         return "/procure/ProcureIndex";
     }
+
+
+
     @GetMapping("/bomRegister")
     public String bomRegister() {
         return "/ProductionPlan/BomRegister";

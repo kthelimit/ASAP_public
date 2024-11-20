@@ -25,7 +25,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductList(){
+    public List<Product> getProductList() {
         return repository.findAll();
+    }
+
+    public Product dtoToEntity(ProductDTO dto) {
+
+        Product entity = Product.builder()
+                .productId(dto.getProductId())
+                .productName(dto.getProductName())
+                .productCode(dto.getProductCode())
+                .build();
+        return entity;
     }
 }

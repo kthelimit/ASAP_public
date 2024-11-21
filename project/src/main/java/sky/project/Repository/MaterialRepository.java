@@ -14,4 +14,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long>{
 
     @Query("SELECT m from Material m where m.componentType = :componentType")
     List<Material> findByComponentType(String componentType);
+
+
+    Optional<Material> findByMaterialCode(String materialCode);
 }

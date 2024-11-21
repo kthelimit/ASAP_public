@@ -6,8 +6,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.BomDTO;
 import sky.project.Entity.Bom;
+import sky.project.Entity.Material;
 import sky.project.Entity.Product;
 import sky.project.Repository.BomRepository;
+import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.ProductRepository;
 import sky.project.Service.BomService;
 
@@ -21,20 +23,27 @@ public class BomServiceImpl implements BomService {
 
     private final BomRepository repository;
     private final ProductRepository productRepository;
+    private final MaterialRepository materialRepository;
 
     //등록
     @Override
     public Long register(BomDTO dto) {
         Product product = productRepository.findByProductCode(dto.getProductCode());
-        Bom bom = Bom.builder()
-                .product(product)
-                .materialName(dto.getMaterialName())
-                .componentType(dto.getComponentType())
-                .requireQuantity(dto.getRequireQuantity())
-                .build();
-        repository.save(bom);
-        return bom.getBomId();
 
+        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
+            Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
+
+            Bom bom = Bom.builder()
+                    .product(product)
+                    .material(material)
+                    .componentType(dto.getComponentType())
+                    .requireQuantity(dto.getRequireQuantity())
+                    .build();
+            repository.save(bom);
+            return bom.getBomId();
+        } else {
+            return null;
+        }
     }
 
     //수정
@@ -65,7 +74,8 @@ public class BomServiceImpl implements BomService {
         BomDTO dto = BomDTO.builder()
                 .bomId(entity.getBomId())
                 .componentType(entity.getComponentType())
-                .materialName(entity.getMaterialName())
+                .materialCode(entity.getMaterial().getMaterialCode())
+                .materialName(entity.getMaterial().getMaterialName())
                 .productCode(entity.getProduct().getProductCode())
                 .requireQuantity(entity.getRequireQuantity())
                 .build();

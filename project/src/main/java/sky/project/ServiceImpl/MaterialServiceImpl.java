@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -104,15 +105,13 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
 
-    @Override
-    public List<Material> getMaterialListWithComponentType(String ComponentType){
-        List<Material> A= materialRepository.findByComponentType(ComponentType);
-        A.forEach(material -> {
-            System.out.println(material.getMaterialId());
-            System.out.println(material.getMaterialName());
-            System.out.println(material.getMaterialCode());
-            System.out.println(material.getMaterialType());
+    public List<MaterialDTO> findBycomponentType(String componentType){
+
+        List<Material> materialList = materialRepository.findByComponentType(componentType);
+        List<MaterialDTO> materialDTOList = new ArrayList<>();
+        materialList.forEach(material -> {
+            materialDTOList.add(ToDTO(material));
         });
-        return A;
+        return materialDTOList;
     }
 }

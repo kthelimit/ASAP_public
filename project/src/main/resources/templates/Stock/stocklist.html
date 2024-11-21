@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>창고 자재 목록</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">자재 관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">창고 자재 목록</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3 class="mb-10">창고 자재 등록</h3>
+                            <p class="text-sm mb-20">
+                                아직 창고에 들어 있지 않은 자재를 등록할 수 있습니다.
+                            </p>
+                            <form method="post" th:action="@{/material/registerStock}">
+                                <div class="row" style="justify-content: space-around">
+                                    <div class="col-lg-2 select-style-1">
+                                        <div class="select-position">
+                                            <select id="materialType" name="materialType">
+                                                <option>---</option>
+                                                <option value="구매품">구매품</option>
+                                                <option value="제조품">제조품</option>
+                                                <option value="조립품">조립품</option>
+                                                <option value="완제품">완제품</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 select-style-1">
+                                        <div class="select-position">
+                                            <select id="materialName" name="materialName">
+                                                <option>---</option>
+                                                <option value="전자식 경적">전자식 경적</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <input id="materialCode" name="materialCode" placeholder="자재 코드" readonly
+                                               type="text" value="MATB3MAT001">
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <input id="quantity" name="quantity" placeholder="자재 수량" type="text">
+                                    </div>
+                                    <div class="col-lg-1 text-align-right" style="min-width:144px">
+                                        <button class="main-btn btn-hover primary-btn" id="btn-product-register"> 등록
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3 class="mb-10">창고 자재 목록</h3>
+                            <p class="text-sm mb-20">
+                                창고 안의 자재 목록을 확인할 수 있습니다.
+                            </p>
+                            <table class="table">
+                                <tr>
+                                    <th class="text-center"><h6>자재코드</h6></th>
+                                    <th class="text-center"><h6>자재명</h6></th>
+                                    <th class="text-center"><h6>창고 내 재고 수량</h6></th>
+                                    <th class="text-center"><h6>가용 재고</h6></th>
+                                </tr>
+
+                                <tr th:each="stock : ${stocks}">
+                                    <td class="min-width text-center"><p th:text="${stock.materialCode}"></p></td>
+                                    <td class="min-width"><p th:text="${stock.materialName}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.quantity}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.availableStock}"></p></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+
+            // matertialType을 결정하면 그 타입에 맞는 자재들 중
+            // 아직 창고에 등록되지 않은 것들의 리스트를 가져와 출력한다.
+
+
+        </script>
+
+
+    </th:block>
+</th:block>

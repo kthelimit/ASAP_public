@@ -3,6 +3,7 @@ package sky.project;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sky.project.Entity.*;
 import sky.project.Repository.*;
 
@@ -11,6 +12,9 @@ import java.util.stream.IntStream;
 
 @SpringBootTest
 public class InsertDataTest {
+    @Autowired
+    private PasswordEncoder passwordEncoder; // PasswordEncoder 주입
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -22,6 +26,7 @@ public class InsertDataTest {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
     @Autowired
     private MaterialRepository materialRepository;
 
@@ -30,9 +35,49 @@ public class InsertDataTest {
 
         insertProduct();
         insertUser();
+        insertUserForUse();
         insertSupplier();
         insertMaterial();
+        insertAssyMaterial();
         insertBom();
+
+    }
+
+
+    @Test
+    public void insertUserForUse() {
+        User user = User.builder()
+                .userId("user1")
+                .username("user")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.PARTNER)
+                .build();
+        userRepository.save(user);
+
+        User admin = User.builder()
+                .userId("admin")
+                .username("admin")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.ADMIN)
+                .build();
+        userRepository.save(admin);
+
+        Supplier supplier = Supplier.builder()
+                .user(admin)
+                .supplierId(admin.getUserId())
+                .businessRegistrationNumber("000-00-00000")
+                .supplierName("DG전동")
+                .contactInfo("000-0000-0000")
+                .address("경기도 수원시")
+                .businessType("우리 회사")
+                .businessItem("우리 회사")
+                .approved(true)
+                .build();
+        supplierRepository.save(supplier);
 
     }
 
@@ -76,8 +121,9 @@ public class InsertDataTest {
                     .userId("supplier" + i)
                     .username(supplierName[i - 1])
                     .userAddress("주소")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("000-0000-0000")
+                    .userType(UserType.SUPPLIER)
                     .build();
             userRepository.save(user);
         });
@@ -126,7 +172,7 @@ public class InsertDataTest {
                 "페달 보조 센서", "포크", "포크", "프레임", "핸들 그립", "핸들 그립", "핸들바", "핸들바", "핸들바", "허브", "허브",
                 "허브 모터", "허브 모터", "허브 모터", "헤드셋", "헤드셋", "휠"};
 
-        String[] materialCodes = {"MATB3MAT001", "MATB3MAT002", "MATK2FIN001", "MATB2MAT001", "MATB2MAT002", "MATHAMAT001",
+        String[] materialCodes = {"MATB3MAT001", "MATB3MAT002", "MATK2MAT001", "MATB2MAT001", "MATB2MAT002", "MATHAMAT001",
                 "MATBOMAT001", "MATWHMAT001", "MATWHMAT002", "MATWHMAT003", "MATRIMAT001", "MATRIMAT002", "MATK1MAT001",
                 "MATB1MAT001", "MATB1MAT002", "MATBOMAT002", "MATB2MAT003", "MATB2MAT004", "MATK1MAT002", "MATWHMAT004",
                 "MATWHMAT005", "MATB1MAT003", "MATB1MAT004", "MATB1MAT005", "MATB1MAT006", "MATHAMAT002", "MATHAMAT003",
@@ -214,13 +260,11 @@ public class InsertDataTest {
                         .build();
                 materialRepository.save(material);
             }
-
         });
-
-
     }
 
 
+    //BOM 등록
     @Test
     public void insertBom() {
         String[] productCodes = {"MATB3FIN001", "MATB3FIN001", "MATB3FIN001", "MATB3FIN001", "MATB3FIN001", "MATB3FIN001",
@@ -251,7 +295,7 @@ public class InsertDataTest {
                 "MATRIMAT003", "MATWHMAT006", "MATB1MAT011", "MATSAMAT001", "MATSAMAT003", "MATB3MAT003", "MATB1MAT013",
                 "MATB1MAT015", "MATB2MAT005", "MATB1MAT017", "MATWHMAT008", "MATWHMAT011", "MATPEMAT001", "MATPEMAT003",
                 "MATB1MAT019", "MATB1MAT021", "MATHAMAT006", "MATHAMAT009", "MATRIMAT005", "MATWHMAT013", "MATB1MAT022",
-                "MATK2FIN001", "MATHAMAT001", "MATBOMAT001", "MATWHMAT003", "MATK1MAT001", "MATBOMAT002", "MATK1MAT002",
+                "MATK2MAT001", "MATHAMAT001", "MATBOMAT001", "MATWHMAT003", "MATK1MAT001", "MATBOMAT002", "MATK1MAT002",
                 "MATK1MAT003", "MATK1MAT004", "MATK1MAT005", "MATWHMAT010", "MATHAMAT008", "MATWHMAT015", "MATWHMAT016",
                 "MATB3MAT002", "MATB2MAT002", "MATWHMAT002", "MATRIMAT002", "MATB1MAT002", "MATB2MAT004", "MATWHMAT005",
                 "MATB1MAT004", "MATB1MAT006", "MATHAMAT003", "MATHAMAT005", "MATB1MAT008", "MATB1MAT010", "MATRIMAT004",
@@ -276,6 +320,54 @@ public class InsertDataTest {
                         .requireQuantity(requireQuantities[i - 1])
                         .build();
                 bomRepository.save(bom);
+            }
+        });
+    }
+
+    //조립품 및 완제품 등록
+    @Test
+    public void insertAssyMaterial() {
+        String[] componentTypes = {"완성 림F", "완성 림R", "앞바퀴", "뒷바퀴", "핸들", "조립된 페달", "안장", "자전거1", "자전거2",
+                "자전거3", "앞바퀴", "뒷바퀴", "핸들", "킥보드 바디", "킥보드1", "킥보드2", "완성 림F", "완성 림R", "앞바퀴", "뒷바퀴",
+                "핸들", "조립된 페달", "안장", "자전거1", "자전거2", "자전거3"};
+
+        String[] materialCodes = {"MATWHSEM001", "MATWHSEM002", "MATB1SEM001", "MATB1SEM002", "MATB1SEM003", "MATB1SEM004",
+                "MATB1SEM005", "MATB2SEM001", "MATB3SEM001", "MATB3FIN001", "MATK1SEM001", "MATK1SEM002", "MATK1SEM003",
+                "MATK1SEM004", "MATK2SEM001", "MATK2FIN001", "MATWHSEM003", "MATWHSEM004", "MATB1SEM006", "MATB1SEM007",
+                "MATB1SEM008", "MATB1SEM009", "MATB1SEM010", "MATB2SEM002", "MATB3SEM002", "MATB3FIN002"};
+
+        String[] materialNames = {"완성 림AF", "완성 림AR", "앞바퀴A", "뒷바퀴A", "핸들A", "조립된 페달A", "안장A", "자전거A1",
+                "자전거A2", "자전거A3", "앞바퀴K", "뒷바퀴K", "핸들K", "킥보드 바디K", "킥보드K1", "킥보드K2", "완성 림BF",
+                "완성 림BR", "앞바퀴B", "뒷바퀴B", "핸들B", "조립된 페달B", "안장B", "자전거B1", "자전거B2", "자전거B3"};
+
+
+        Double[] unitPrices = {128000D, 132000D, 202400D, 422500D, 127000D, 154000D, 80000D, 3566300D, 4226300D, 4256300D,
+                27000D, 147000D, 82000D, 130000D, 863000D, 873000D, 107400D, 110600D, 168900D, 417100D, 90900D, 68000D,
+                70000D, 1861150D, 2369570D, 2389570D};
+
+        IntStream.rangeClosed(1, 26).forEach(i -> {
+
+            String supplierId = supplierRepository.findSupplierIdBySupplierName("DG전동");
+            if (supplierRepository.findById(supplierId).isPresent()) {
+                Supplier supplier = supplierRepository.findById(supplierId).get();
+
+                String materialType = "조립품";
+                if (materialNames[i - 1].equals("자전거B3") || materialNames[i - 1].equals("자전거A3") || materialNames[i - 1].equals("킥보드K2")) {
+                    materialType = "완제품";
+                }
+
+
+                Material material = Material.builder()
+                        .materialName(materialNames[i - 1])
+                        .materialCode(materialCodes[i - 1])
+                        .materialType(materialType)
+                        .componentType(componentTypes[i - 1])
+                        .unitPrice(unitPrices[i - 1])
+                        .quantity(1)
+                        .leadtime(1)
+                        .supplier(supplier)
+                        .build();
+                materialRepository.save(material);
             }
         });
     }

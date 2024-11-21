@@ -110,18 +110,11 @@
                             <div class="table-wrapper table-responsive">
                                 <table class="table" id="bom-table">
                                     <tr>
-                                        <th>
-                                            부품 종류
-                                        </th>
-                                        <th>
-                                            부품명
-                                        </th>
-                                        <th>
-                                            부품 수량
-                                        </th>
-                                        <th>
-                                            삭제
-                                        </th>
+                                        <th class="text-center"><h6> 부품 종류 </h6></th>
+                                        <th class="text-center"><h6> 부품코드 </h6></th>
+                                        <th class="text-center"><h6> 부품명 </h6></th>
+                                        <th class="text-center"><h6> 부품 수량 </h6></th>
+                                        <th class="text-center"><h6> 삭제 </h6></th>
                                     </tr>
                                     <!-- 행 종료-->
 
@@ -206,7 +199,9 @@
 
                 //아래 테이블 출력 리셋
                 $('#bom-table').empty();
-                $('#bom-table').append('<tr><th>부품 종류</th><th>부품코드</th><th>부품명</th><th>부품 수량</th><th>삭제</th></tr>')
+                $('#bom-table').append('<tr><th class="text-center"><h6>부품 종류</h6></th><th class="text-center">' +
+                    '<h6>부품코드</h6></th><th class="text-center"><h6>부품명</h6></th><th class="text-center"><h6>부품 수량</h6>' +
+                    '</th><th class="text-center"><h6>삭제</h6></th></tr>')
 
                 //선택한 상품에 따른 BOM 불러오기
                 loadBom(selectValue);
@@ -284,10 +279,10 @@
 
                         $.each(data, function (i) {
                             console.log(data[i]);
-                            str += '<tr><td>' + data[i].componentType + '</td><td>' + data[i].materialCode
-                                + '</td><td>' + data[i].materialName
-                                + '</td><td>' + data[i].requireQuantity
-                                + '</td><td>'
+                            str += '<tr><td><p>' + data[i].componentType + '</p></td><td class="text-center"><p>' + data[i].materialCode
+                                + '</p></td><td><p>' + data[i].materialName
+                                + '</p></td><td class="text-align-right pr-30"><p>' + data[i].requireQuantity
+                                + '</p></td><td class="text-center">'
                                 + '<a class="text-danger" href="#0" onclick="bomDelete(' + data[i].bomId + ')">'
                                 + '<i class="lni lni-trash-can"></i></a></td></tr>';
                         })

@@ -33,7 +33,7 @@ public class SupplierController {
     @GetMapping("/list")
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
-                                   @RequestParam(defaultValue = "10") int size) {
+                                   @RequestParam(defaultValue = "12") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Supplier> supplierPage = supplierService.getAllSuppliers(pageable);
 

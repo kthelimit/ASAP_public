@@ -115,7 +115,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         }
 
         // 날짜 포맷 (예: 20231120)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
         String dateCode = dto.getProductionStartDate().format(formatter);
 
         // 동일 접두어 코드의 다음 번호

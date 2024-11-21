@@ -40,40 +40,47 @@
                                 현재 등록되어 있는 자재 품목들입니다. 오른쪽의 폼을 통해 신규 자재 품목을 등록할 수 있습니다.
                             </p>
 
-                            <div class="text-align-right">
-
-                                <span class="input-style-1"> <input type="text" style="padding: 5px;"></span>
-                                <button class="btn-search primary-btn main-btn btn-hover" style="padding: 5px 18px 9px;"
-                                        type="submit"><i class="lni lni-search"> 검색</i></button>
+                            <div class="row" style="justify-content: flex-end">
+                                <div class="input-style-1 col-lg-5">
+                                    <input type="text">
+                                </div>
+                                <div style="width: 144px">
+                                    <button class="btn-search primary-btn main-btn btn-hover"
+                                            type="submit">검색
+                                    </button>
+                                </div>
                             </div>
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>자재 이름</th>
-                                    <th>자재 코드</th>
-                                    <th>자재 유형</th>
-                                    <th>규격</th>
-                                    <th>무게</th>
-                                    <th>단가</th>
-                                    <th>수량</th>
-                                    <th>공급사</th>
-                                    <th>leadtime</th>
-                                    <th>이미지</th>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>자재 코드</h6></th>
+                                    <th class="text-center"><h6>자재 유형</h6></th>
+                                    <th class="text-center"><h6>규격</h6></th>
+                                    <th class="text-center"><h6>무게</h6></th>
+                                    <th class="text-center"><h6>단가</h6></th>
+                                    <th class="text-center"><h6>수량</h6></th>
+                                    <th class="text-center"><h6>공급사</h6></th>
+                                    <th class="text-center"><h6>리드타임</h6></th>
+                                    <th class="text-center"><h6>이미지</h6></th>
 
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="material : ${materials}">
-                                    <td th:text="${material.materialName}"></td>
-                                    <td th:text="${material.materialCode}"></td>
-                                    <td th:text="${material.materialType}"></td>
-                                    <td th:text="${material.width} + 'x' + ${material.height} + 'x' + ${material.depth}"></td>
-                                    <td th:text="${material.weight}"></td>
-                                    <td th:text="${material.unitPrice}"></td>
-                                    <td th:text="${material.quantity}"></td>
-                                    <td th:text="${material.supplierName}"></td>
-                                    <td th:text="${material.leadtime}"></td>
+                                    <td class="min-width"><p th:text="${material.materialName}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${material.materialCode}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${material.materialType}"></p></td>
+                                    <td class="min-width text-center"><p
+                                            th:text="${material.width} + 'x' + ${material.height} + 'x' + ${material.depth}"></p>
+                                    </td>
+                                    <td class="min-width text-align-right"><p th:text="${material.weight}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${material.unitPrice}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${material.quantity}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${material.supplierName}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${material.leadtime}"></p></td>
                                     <td><img alt="이미지" class="thumbnail" style="width: 50px; height: 50px;"
+                                             th:if="${material.imageUrl!=null}"
                                              th:src="${material.imageUrl}"/></td>
                                 </tr>
                                 </tbody>
@@ -81,8 +88,7 @@
                             <ul class="pagination">
                                 <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                     <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                       th:href="@{/materials/list(page=${i})}"
-                                       th:text="${i}">1</a>
+                                       th:href="@{/material/list(page=${i})}" th:text="${i}">1</a>
                                 </li>
                             </ul>
                         </div>
@@ -111,8 +117,8 @@
                                     <div class="select-style-1 form-group col-lg-6">
                                         <label for="componentType">부품 종류</label>
                                         <div class="select-position">
-                                            <select id="componentType" th:field="*{componentType}"
-                                                    onchange="updateMaterialNameOptions()" required>
+                                            <select id="componentType" onchange="updateMaterialNameOptions()"
+                                                    required th:field="*{componentType}">
                                                 <optgroup label="(전기자전거)">
                                                     <option value="경적">(전기자전거) 경적</option>
                                                     <option value="계기판+스로틀 레버">(전기자전거) 계기판+스로틀 레버</option>
@@ -194,7 +200,8 @@
                                     </div>
                                     <div class="input-style-1 form-group col-lg-6">
                                         <label for="leadtime">leadtime</label>
-                                        <input id="leadtime" required th:field="*{leadtime}" type="text" placeholder="기간(일) 을 입력하세요"/>
+                                        <input id="leadtime" placeholder="기간(일) 을 입력하세요" required th:field="*{leadtime}"
+                                               type="text"/>
                                     </div>
                                 </div>
 

@@ -1900,6 +1900,11 @@ h6,
     border-collapse: inherit;
     border-spacing: 0px;
 }
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #dee2e6 !important;
+}
+
 
 .table > :not(caption) > * > * {
     padding: 15px 0;
@@ -6563,4 +6568,10 @@ h6,
 
 .text-align-right{
     text-align: right;
+}
+.text-align-left{
+    text-align: left;
+}
+.text-align-center{
+    text-align: center;
 }

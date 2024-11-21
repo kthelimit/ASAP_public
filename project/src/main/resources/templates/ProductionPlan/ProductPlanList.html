@@ -28,49 +28,56 @@
 
             <div class="row">
                 <!-- 생산계획 리스트 -->
-                <div class="mb-20 d-flex">
-                    <form th:action="@{/plan/list}" method="get" class="d-flex">
-                        <input type="text" id="searchKeyword" name="keyword"
-                               class="form-control" placeholder="제품명을 입력하세요"
-                               th:value="${keyword}" />
-                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
-                    </form>
-                </div>
-
                 <div class="col-lg-8">
                     <div class="card-style mb-30">
                         <h3 class="mb-10">등록된 생산 계획 목록</h3>
-                        <p class="text-sm mb-20">항목을 클릭하면 수정할 수 있습니다.</p>
+                        <p class="text-sm mb-20">현재 등록되어 있는 생산 계획 목록입니다. 오른쪽의 폼을 통해 생산 계획을 등록하면 이곳에 추가됩니다.</p>
+                        <!-- 생산계획 검색창 -->
+                        <form method="get" th:action="@{/plan/list}">
+                            <div class="row" style="justify-content: flex-end">
+                                <div class="input-style-1 col-lg-5">
+                                    <input id="searchKeyword" name="keyword"
+                                           placeholder="제품명을 입력하세요" th:value="${keyword}"
+                                           type="text"/>
+                                </div>
+                                <div style="width: 144px">
+                                    <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- 생산계획 리스트 출력 -->
                         <div class="table-wrapper table-responsive">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th><h6>생산 계획 코드</h6></th>
-                                    <th><h6>생산 시작 날짜</h6></th>
-                                    <th><h6>생산 종료 날짜</h6></th>
-                                    <th><h6>생산 제품 코드</h6></th>
-                                    <th><h6>생산 제품명</h6></th>
-                                    <th><h6>생산 수량</h6></th>
-                                    <th><h6>수정</h6></th>
-                                    <th><h6>삭제</h6></th>
+                                    <th class="text-center"><h6>생산 계획 코드</h6></th>
+                                    <th class="text-center"><h6>생산 시작 날짜</h6></th>
+                                    <th class="text-center"><h6>생산 종료 날짜</h6></th>
+                                    <th class="text-center"><h6>생산 제품 코드</h6></th>
+                                    <th class="text-center"><h6>생산 제품명</h6></th>
+                                    <th class="text-center"><h6>생산 수량</h6></th>
+                                    <th class="text-center"><h6>수정</h6></th>
+                                    <th class="text-center"><h6>삭제</h6></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="plan : ${plans}">
-                                    <td><p th:text="${plan.productionPlanCode}"></p></td>
-                                    <td><p th:text="${plan.productionStartDate}"></p></td>
-                                    <td><p th:text="${plan.productionEndDate}"></p></td>
-                                    <td><p th:text="${plan.productCode}"></p></td>
-                                    <td><p th:text="${plan.productName}"></p></td>
-                                    <td><p th:text="${plan.productionQuantity}"></p></td>
-                                    <td>
-                                        <a th:href="@{/plan/edit/{id}(id=${plan.planId})}" class="main-btn primary-btn btn-hover" style="padding: 6px">
+                                    <td class="min-width text-center"><p th:text="${plan.productionPlanCode}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${plan.productionStartDate}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${plan.productionEndDate}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${plan.productCode}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${plan.productName}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${plan.productionQuantity}"></p></td>
+                                    <td class="min-width  text-center">
+                                        <a class="main-btn primary-btn btn-hover"
+                                           style="padding: 6px" th:href="@{/plan/edit/{id}(id=${plan.planId})}">
                                             수정
                                         </a>
                                     </td>
-                                    <td>
-                                        <a th:href="@{/plan/delete/{id}(id=${plan.planId})}" class="main-btn danger-btn btn-hover" style="padding: 6px"
-                                           onclick="return confirm('정말 삭제하시겠습니까?');">
+                                    <td class="min-width  text-center">
+                                        <a class="main-btn danger-btn btn-hover"
+                                           onclick="return confirm('정말 삭제하시겠습니까?');" style="padding: 6px"
+                                           th:href="@{/plan/delete/{id}(id=${plan.planId})}">
                                             삭제
                                         </a>
                                     </td>
@@ -81,7 +88,8 @@
                             <div class="pagination-wrapper">
                                 <ul class="pagination">
                                     <li th:if="${currentPage > 1}">
-                                        <a th:href="@{/plan/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}" aria-label="Previous">
+                                        <a aria-label="Previous"
+                                           th:href="@{/plan/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
@@ -91,7 +99,8 @@
                                            th:text="${i}"></a>
                                     </li>
                                     <li th:if="${currentPage < totalPages}">
-                                        <a th:href="@{/plan/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}" aria-label="Next">
+                                        <a aria-label="Next"
+                                           th:href="@{/plan/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
@@ -104,23 +113,23 @@
                 <!-- 등록/수정 폼 -->
                 <div class="col-lg-4">
                     <div class="card-style mb-30">
-                        <form th:action="@{/plan/save}" th:object="${productionPlanDTO}" method="post">
+                        <form method="post" th:action="@{/plan/save}" th:object="${productionPlanDTO}">
                             <!-- Hidden field to determine register/update -->
-                            <input type="hidden" th:field="*{planId}" id="planId">
+                            <input id="planId" th:field="*{planId}" type="hidden">
 
                             <h3 class="mb-25">생산 계획 등록</h3>
                             <div class="input-style-1">
                                 <label>생산 시작 일자</label>
-                                <input type="date" th:field="*{productionStartDate}" id="startDate" required>
+                                <input id="startDate" required th:field="*{productionStartDate}" type="date">
                             </div>
                             <div class="input-style-1">
                                 <label>생산 종료 일자</label>
-                                <input type="date" th:field="*{productionEndDate}" id="endDate" required>
+                                <input id="endDate" required th:field="*{productionEndDate}" type="date">
                             </div>
                             <div class="select-style-1">
                                 <label>생산 제품명</label>
                                 <div class="select-position" required>
-                                    <select id="productSelect" th:field="*{productName}" onchange="updateProductCode()">
+                                    <select id="productSelect" onchange="updateProductCode()" th:field="*{productName}">
                                         <option value="전기자전거A">전기자전거A</option>
                                         <option value="전기자전거B">전기자전거B</option>
                                         <option value="전동킥보드">전동킥보드</option>
@@ -129,11 +138,11 @@
                             </div>
                             <div class="input-style-1">
                                 <label>생산 제품 코드</label>
-                                <input type="text" id="productCode" th:field="*{productCode}" readonly>
+                                <input id="productCode" readonly th:field="*{productCode}" type="text">
                             </div>
                             <div class="input-style-1">
                                 <label>생산 수량</label>
-                                <input type="number" th:field="*{productionQuantity}" id="quantity" required>
+                                <input id="quantity" required th:field="*{productionQuantity}" type="number">
                             </div>
                             <div style="text-align: right">
                                 <button class="main-btn primary-btn btn-hover">등록</button>
@@ -150,13 +159,14 @@
                 const productMapping = {
                     "전기자전거A": "MATB3FIN001",
                     "전기자전거B": "MATB3FIN002",
-                    "전동킥보드": "MATK2FIN001"
+                    "전동킥보드" : "MATK2FIN001"
                 };
 
                 const productSelect = document.getElementById("productSelect");
                 const productCodeInput = document.getElementById("productCode");
                 productCodeInput.value = productMapping[productSelect.value] || '';
             }
+
             document.addEventListener("DOMContentLoaded", function () {
                 updateProductCode();
             });

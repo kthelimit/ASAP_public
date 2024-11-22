@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
-import sky.project.Entity.Supplier;
 import sky.project.Service.MaterialService;
 import sky.project.Service.StockService;
 import sky.project.Service.SupplierService;
@@ -94,8 +93,15 @@ public class MaterialController {
     //자재 출고
     @RequestMapping("/export")
     public String exportMaterial(Model model) {
-        return "/export/index";
+        return "/Export/index";
     }
+
+    //자재 출고요청
+    @RequestMapping("/export/request")
+    public String exportMaterialRequest(Model model) {
+        return "/Export/ExportRequest";
+    }
+
 
     //창고 자재 목록
     @RequestMapping("/stocklist")

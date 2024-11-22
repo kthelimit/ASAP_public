@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
+import sky.project.Repository.AssyRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Service.MaterialService;
@@ -27,6 +28,7 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final MaterialRepository materialRepository;
     private final SupplierRepository supplierRepository;
+    private final AssyRepository assyRepository;
     private final String uploadDir = "C:/uploads/Images/";
 
     @Override
@@ -126,4 +128,16 @@ public class MaterialServiceImpl implements MaterialService {
        });
        return materialDTOList;
    }
+
+    @Override
+    public List<MaterialDTO> findAssyMaterialByProductCode(String productCode) {
+        List<Material> materialList = assyRepository.findAssyMaterialByProductCode(productCode);
+        List<MaterialDTO> materialDTOList = new ArrayList<>();
+        materialList.forEach(material -> {
+            materialDTOList.add(toDTO(material));
+        });
+        return materialDTOList;
+    }
+
+
 }

@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sky.project.DTO.AssyDTO;
 import sky.project.DTO.BomDTO;
 import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.ProductDTO;
 import sky.project.Entity.Product;
+import sky.project.Service.AssyService;
 import sky.project.Service.BomService;
 import sky.project.Service.MaterialService;
 import sky.project.Service.ProductService;
@@ -22,6 +24,7 @@ public class APIController {
     private final ProductService productService;
     private final BomService bomService;
     private final MaterialService materialService;
+    private final AssyService assyService;
 
     //* 상품 *//
     //등록
@@ -59,13 +62,29 @@ public class APIController {
 
     //부품 종류 선택에 따른 자재 리스트 출력용
     @RequestMapping("/load/material/{componentType}")
-    public List<MaterialDTO> loadMaterialByComponentType(@PathVariable String componentType){
+    public List<MaterialDTO> loadMaterialByComponentType(@PathVariable String componentType) {
         return materialService.findByComponentType(componentType);
     }
 
     //자재 타입 선택에 따른 자재 리스트 출력용
     @RequestMapping("/load/materialWith/{materialType}")
-    public List<MaterialDTO> loadMaterialByMaterialType(@PathVariable String materialType){
+    public List<MaterialDTO> loadMaterialByMaterialType(@PathVariable String materialType) {
         return materialService.findByMaterialType(materialType);
     }
+
+    //ProductCode에 따른 조립 공정 출력용
+    @RequestMapping("/load/Assy/{productCode}")
+    public List<MaterialDTO> loadAssyByProductCode(@PathVariable String productCode) {
+        return materialService.findAssyMaterialByProductCode(productCode);
+    }
+
+
+    //ProductCode에 따른 조립 공정 출력용
+    @RequestMapping("/load/AssyList/{assyMaterialCode}")
+    public List<AssyDTO> loadAssyMaterialListByProductCode(@PathVariable String assyMaterialCode) {
+        log.info("assyMaterialCode: "+assyMaterialCode);
+        return assyService.findByAssyMaterialCode(assyMaterialCode);
+    }
+
+
 }

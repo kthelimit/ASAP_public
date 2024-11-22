@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>출고 요청</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">자재관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">출고요청</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <!-- 출고요청 폼-->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3 class="mb-10">출고 요청 등록</h3>
+                            <p class="mb-20">생산계획을 고르고, 진행할 공정을 선택한 뒤 작업할 수량을 입력하세요.</p>
+                            <form>
+                                <div class="row">
+                                    <!-- 지금 진행중인 생산계획에 관련된 물품만 요청할 수 있게할 것 th:each="productionPlan: ${productionPlan}"-->
+                                    <div class="col-lg-4 select-style-1">
+                                        <div class="select-position">
+                                            <label>생산계획</label>
+                                            <select id="productionPlanSelect" name="productionPlanCode"
+                                                    onchange="changeProductPlan()">
+                                                <option>---</option>
+                                                <option value="MATB3FIN001">[PDPBA2411001] 전기자전거A</option>
+                                                <option value="MATB3FIN002">[PDPBB2411001] 전기자전거B</option>
+                                                <option value="MATK2FIN001">[PDPKB2411001] 전동킥보드</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- -->
+                                    <div class="col-lg-2 select-style-1">
+                                        <div class="select-position">
+                                            <label>조립공정</label>
+                                            <select id="assyMaterial" name="assyMaterial"
+                                                    onchange="changeAssyMaterial()">
+                                                <option>---</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <label>공정 결과물의 자재코드</label>
+                                        <input id="assyMaterialCode" name="assyMaterialCode" readonly type="text"
+                                               value="자재 코드">
+                                    </div>
+                                    <div class="col-lg-3 input-style-1">
+                                        <label>공정 결과물의 자재명</label>
+                                        <input id="assyMaterialName" name="assyMaterialName" readonly type="text"
+                                               value="조립품">
+                                    </div>
+                                    <div class="col-lg-1 input-style-1">
+                                        <label>조립할 수량</label>
+                                        <input id="quantity" name="quantity" type="number" onchange="changeAssyMaterial()">
+                                    </div>
+                                </div>
+                                <!-- 출고요청될 자재 리스트-->
+                                <h3 class="mb-10">요청될 자재 리스트</h3>
+                                <table class="table" id="assyMaterialTable">
+                                    <tr>
+                                        <th class="text-center"><h6>부품종류</h6></th>
+                                        <th class="text-center"><h6>자재코드</h6></th>
+                                        <th class="text-center"><h6>자재명</h6></th>
+                                        <th class="text-center"><h6>조립품 하나에 필요한 수량</h6></th>
+                                        <th class="text-center"><h6>총 요청 수량</h6></th>
+
+                                    </tr>
+                                </table>
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="col-lg-1" style="min-width:144px">
+                                        <button class="main-btn btn-hover primary-btn" id="btn-product-register"> 요청
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            //생산계획을 선택하면 해당 생산계획을 위한 조립공정이 뜬다.
+            function changeProductPlan() {
+                var productPlanSelect = document.getElementById("productionPlanSelect");
+                var selectedValue = productPlanSelect.options[productPlanSelect.selectedIndex].value;
+
+                //조립공정 선택창 리셋
+                $('#assyMaterial').empty();
+                $('#assyMaterial').append('<option>---</option>');
+
+                //자재코드와 자재명 리셋
+                $('#assyMaterialCode').val("");
+                $('#assyMaterialName').val("");
+
+                //선택한 생산계획에 따른 조립공정 불러오기
+                loadAssyByProduct(selectedValue);
+            }
+
+            //선택한 생산계획에 따른 조립공정 불러오기
+            function loadAssyByProduct(productCode) {
+                $.ajax({
+                    url        : "/api/load/Assy/" + productCode,
+                    type       : "GET",
+                    dataType   : "JSON",
+                    contentType: 'application/json; charset=utf-8',
+                    data       : JSON.stringify(productCode),
+                    success    : function (data) {
+                        str = '';
+
+                        $.each(data, function (i) {
+                            str += '<option value="' + data[i].materialCode + '" data-name="'+data[i].materialName+'">' + data[i].materialName + '</option>';
+                        })
+                        $('#assyMaterial').append(str);
+                    }
+                })
+
+            }
+
+
+            //선택한 조립공정에 따른 자재명과 자재코드 출력
+            function changeAssyMaterial() {
+                var assyMaterialSelect = document.getElementById("assyMaterial");
+                var selectedValue = assyMaterialSelect.options[assyMaterialSelect.selectedIndex].value;
+
+                $('#assyMaterialCode').val(selectedValue);
+
+                var selectedValue2 = $("#assyMaterial").find("option:selected").data("name");
+
+                $('#assyMaterialName').val(selectedValue2);
+
+
+                //자재 리스트 리셋
+                $('#assyMaterialTable').empty();
+                $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
+                    '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
+                    '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+
+                //선택한 조립품에 따른 자재 리스트 불러오기
+                loadAssyMaterialListByProduct(selectedValue);
+
+            }
+
+            //선택한 조립품에 따른 자재 리스트 불러오기
+            function loadAssyMaterialListByProduct(assyMaterialCode){
+                var quantity = $('#quantity').val();
+                $.ajax({
+                    url        : "/api/load/AssyList/" + assyMaterialCode,
+                    type       : "GET",
+                    dataType   : "JSON",
+                    contentType: 'application/json; charset=utf-8',
+                    data       : JSON.stringify(assyMaterialCode),
+                    success    : function (data) {
+                        console.log(data);
+                        str = '';
+
+                        $.each(data, function (i) {
+                            console.log(data[i]);
+                            str += '<tr><td class="min-width"><p>'+data[i].componentType+'</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
+                                + '</p></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right pr-30"><p>'
+                                + data[i].quantity + '</p></td> <td class="min-width text-align-right pr-30"><p>' + data[i].quantity * quantity + '</p></td></tr>';
+                        })
+                        $('#assyMaterialTable').append(str);
+                    }
+                })
+            }
+
+
+
+        </script>
+
+
+    </th:block>
+</th:block>

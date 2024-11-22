@@ -18,4 +18,5 @@ public interface MaterialService {
     Page<MaterialDTO> getMaterials(Pageable pageable); // 기존 메서드
     Page<MaterialDTO> searchMaterials(String keyword, Pageable pageable);
 
+    List<MaterialDTO> findAssyMaterialByProductCode(String productCode);
 }

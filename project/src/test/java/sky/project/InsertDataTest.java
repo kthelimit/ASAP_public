@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sky.project.DTO.StockDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.*;
+import sky.project.Service.StockService;
 
 import java.text.DecimalFormat;
 import java.util.stream.IntStream;
@@ -29,6 +31,10 @@ public class InsertDataTest {
 
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private StockService stockService;
+
 
     @Test
     public void insertAll() {
@@ -375,5 +381,31 @@ public class InsertDataTest {
 
 
     //창고 자재 등록
+    @Test
+    public void insertStock() {
+        String[] materialCodes ={"MATB3MAT001","MATB3MAT002","MATK2MAT001","MATB2MAT001","MATB2MAT002","MATHAMAT001",
+                "MATBOMAT001","MATWHMAT001","MATWHMAT002","MATWHMAT003","MATRIMAT001","MATRIMAT002","MATK1MAT001",
+                "MATB1MAT001","MATB1MAT002","MATBOMAT002","MATB2MAT003","MATB2MAT004","MATK1MAT002","MATWHMAT004",
+                "MATWHMAT005","MATB1MAT003","MATB1MAT004","MATB1MAT005","MATB1MAT006","MATHAMAT002","MATHAMAT003",
+                "MATHAMAT004","MATHAMAT005","MATB1MAT007","MATB1MAT008","MATB1MAT009","MATB1MAT010","MATK1MAT003",
+                "MATRIMAT003","MATRIMAT004","MATWHMAT006","MATWHMAT007","MATB1MAT011","MATB1MAT012","MATSAMAT001",
+                "MATSAMAT002","MATSAMAT003","MATSAMAT004","MATB3MAT003","MATB3MAT004","MATB1MAT013","MATB1MAT014",
+                "MATB1MAT015","MATB1MAT016","MATK1MAT004","MATB2MAT005","MATB2MAT006","MATK1MAT005","MATB1MAT017",
+                "MATB1MAT018","MATWHMAT008","MATWHMAT009","MATWHMAT010","MATWHMAT011","MATWHMAT012","MATPEMAT001",
+                "MATPEMAT002","MATPEMAT003","MATB1MAT019","MATB1MAT020","MATB1MAT021","MATHAMAT006","MATHAMAT007",
+                "MATHAMAT008","MATHAMAT009","MATHAMAT010","MATRIMAT005","MATRIMAT006","MATWHMAT013","MATWHMAT014",
+                "MATWHMAT015","MATB1MAT022","MATB1MAT023","MATWHSEM001","MATWHSEM002","MATB1SEM001","MATB1SEM002",
+                "MATB1SEM003","MATB1SEM004","MATB1SEM005","MATB2SEM001","MATB3SEM001","MATB3FIN001","MATK1SEM001",
+                "MATK1SEM002","MATK1SEM003","MATK1SEM004","MATK2SEM001","MATK2FIN001","MATWHSEM003","MATWHSEM004",
+                "MATB1SEM006","MATB1SEM007","MATB1SEM008","MATB1SEM009","MATB1SEM010","MATB2SEM002","MATB3SEM002",
+                "MATB3FIN002"};
 
+        IntStream.rangeClosed(1, 105).forEach(i -> {
+            StockDTO stockDTO = StockDTO.builder()
+                    .materialCode(materialCodes[i - 1])
+                    .quantity(100)
+                    .build();
+            stockService.register(stockDTO);
+        });
+    }
 }

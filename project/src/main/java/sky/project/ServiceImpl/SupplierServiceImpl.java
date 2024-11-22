@@ -27,20 +27,15 @@ public class SupplierServiceImpl implements SupplierService {
     private UserRepository userRepository;
 
     @Override
-    public Page<SupplierDTO> getAllSuppliers(Pageable pageable) {
-        Page<Supplier> suppliers = supplierRepository.findByApprovedTrue(pageable);
-        return suppliers.map(this::toDTO); // Supplier -> SupplierDTO 변환
+    public Page<Supplier> getAllSuppliers(Pageable pageable) {
+        return supplierRepository.findByApprovedTrue(pageable);
     }
+
+    @Override
     public List<Supplier> getApprovedSuppliers() {
         return supplierRepository.findByApprovedTrue();
     }
 
-
-    @Override
-    public Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable){
-        Page<Supplier> suppliers = supplierRepository.findBySupplierNameContaining(keyword, pageable);
-        return suppliers.map(this::toDTO);
-    }
 
     @Override
     public SupplierDTO getSupplierById(String supplierId) {
@@ -59,11 +54,6 @@ public class SupplierServiceImpl implements SupplierService {
                 .approved(supplier.getApproved())
                 .build();
     }
-
-
-
-
-
 
 
     @Override
@@ -86,7 +76,15 @@ public class SupplierServiceImpl implements SupplierService {
 
         supplierRepository.save(supplier);
     }
-
+    public List<SupplierDTO> findSuppliersByMaterialCode(String materialCode) {
+        // 자재 코드와 관련된 공급업체 조회 로직 구현
+        List<Supplier> suppliers = supplierRepository.findSuppliersByMaterialCode(materialCode);
+        return suppliers.stream().map(supplier -> SupplierDTO.builder()
+                .supplierId(supplier.getSupplierId())
+                .supplierName(supplier.getSupplierName())
+                .contactInfo(supplier.getContactInfo())
+                .build()).collect(Collectors.toList());
+    }
 
     @Override
     public boolean isAlreadyRegistered(String userId) {

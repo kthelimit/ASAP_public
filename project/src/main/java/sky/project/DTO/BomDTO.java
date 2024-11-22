@@ -2,6 +2,7 @@ package sky.project.DTO;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,6 +18,7 @@ public class BomDTO {
     private String materialName; // 자재 이름
     private int requireQuantity; // 필요 수량
     private List<MaterialDTO> suppliers;
-    private int availableStock;
-    private int procurementQuantity;
+
+    @Builder.Default
+    private List<SupplierDTO> suppliers = new ArrayList<>();
 }

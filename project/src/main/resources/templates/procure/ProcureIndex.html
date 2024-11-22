@@ -115,31 +115,18 @@
                     <div class="card-style mb-30">
                         <h3 class="mb-10">조달 계획 조회</h3>
                         <div class="search_tab">
-                            <div class="select-style-1">
-                                <div class="select-position">
-                                    <select>
-                                        <option value="">품목코드</option>
-                                        <option value="">Category one</option>
-                                        <option value="">Category two</option>
-                                        <option value="">Category three</option>
-                                    </select>
-
-                                </div>
-                                <input class="select-style-1, search" placeholder="   검색어를 입력하세요" type="text">
+                                <input class="select-style-1, search" placeholder="   제품명 및 생산 계획 코드를 입력하세요." type="text">
                                 <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
-                            </div>
                         </div>
                         <div class="table-wrapper table-responsive">
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
-                                    <th><h5>생산제품코드</h5></th>
+                                    <th><h5>생산계획코드</h5></th>
                                     <th><h5>생산제품명</h5></th>
-                                    <th><h5>생산수량</h5></th>
-                                    <th><h5>품목코드</h5></th>
-                                    <th><h5>품목명</h5></th>
-                                    <th><h5>품목소요수량</h5></th>
-                                    <th><h5>조달간격(일)</h5></th>
+                                    <th><h5>공급업체</h5></th>
+                                    <th><h5>부품명</h5></th>
+                                    <th><h5>leadtime </h5></th>
                                     <th><h5>조달수량</h5></th>
                                     <th><h5>조달납기일</h5></th>
                                 </tr>
@@ -151,10 +138,6 @@
                                     <td><p>100</p></td>
                                     <td><p>XYZ-1234</p></td>
                                     <td><p>타이어</p></td>
-                                    <td><p>200</p></td>
-                                    <td><p>4</p></td>
-                                    <td><p>100</p></td>
-                                    <td><p>2024-11-20</p></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -191,33 +174,38 @@
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
-                                    <th><h5>부품코드</h5></th>
-                                    <th><h5>부품명</h5></th>
-                                    <th><h5>공급업체</h5></th>
-                                    <th><h5>필요수량(가용재고)</h5></th>
+                                    <th><h5>자재명</h5></th>
+                                    <th><h5>필요수량</h5></th>
+                                    <th><h5>가용재고</h5></th>
                                     <th><h5>조달수량</h5></th>
                                     <th><h5>조달납기일</h5></th>
-                                    <th><h5>선택목록</h5></th>
+                                    <th><h5>공급업체</h5></th>
+                                    <th><h5>선택</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="bom : ${selectedBom}">
-                                    <td th:text="${bom.productCode}"></td>
                                     <td th:text="${bom.materialName}"></td>
+                                    <td th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
+                                    <td>0</td>
+                                    <td>100</td>
+                                    <td>
+                                        <input id="startDate" required type="date">
+                                    </td>
                                     <td>
                                         <div class="select-style-1" style="width: 130px; height: 10px">
                                             <div class="select-position">
                                                 <select style="font-size: 13px; height: 50px" id="componentType" name="componentType" required>
-                                                    <option value="(주)진영산업">(주)진영산업</option>
-                                                    <option value="(주)현식물산">(주)현식물산</option>
-                                                    <option value="(주)하늘금속">(주)하늘금속</option>
+                                                    <option value="" disabled selected>회사를 선택하세요</option>
+                                                    <!-- 각 자재에 맞는 공급업체를 필터링하여 보여주기 -->
+                                                    <option th:each="supplier : ${bom.suppliers}"
+                                                            th:value="${supplier.supplierId}"
+                                                            th:text="${supplier.supplierName}">
+                                                    </option>
                                                 </select>
                                             </div>
                                         </div>
                                     </td>
-                                    <td th:text="${bom.requireQuantity}"></td>
-                                    <td>100</td>
-                                    <td>2024-11-20</td>
                                     <td>
                                         <div class="action">
                                             <a class="main-btn active-btn btn-hover register" href="#0"

@@ -616,7 +616,7 @@ h6,
 
 /* secondary buttons */
 .secondary-btn {
-    background: #00c1f8;
+    background: #009EE7;
     color: #fff;
 }
 
@@ -626,34 +626,34 @@ h6,
 
 .secondary-btn-outline {
     background: transparent;
-    color: #00c1f8;
-    border-color: #00c1f8;
+    color: #009EE7;
+    border-color: #009EE7;
 }
 
 .secondary-btn-outline:hover {
     color: #fff;
-    background: #00c1f8;
+    background: #009EE7;
 }
 
 .secondary-btn-light {
     background: rgba(0, 193, 248, 0.12);
-    color: #00c1f8;
+    color: #009EE7;
 }
 
 .secondary-btn-light:hover {
-    color: #00c1f8;
+    color: #009EE7;
 }
 
 .secondary-btn-group {
     background: transparent;
     border: 1px solid transparent;
-    color: #00c1f8;
+    color: #009EE7;
 }
 
 .secondary-btn-group.active, .secondary-btn-group:hover {
     color: #fff;
-    background: #00c1f8;
-    border-color: #00c1f8 !important;
+    background: #009EE7;
+    border-color: #009EE7 !important;
 }
 
 /* success buttons */
@@ -1057,7 +1057,7 @@ h6,
 }
 
 .status-btn.secondary-btn {
-    color: #00c1f8;
+    color: #009EE7;
     background: rgba(0, 193, 248, 0.1);
 }
 
@@ -1228,18 +1228,18 @@ h6,
 
 /* Alert secondary */
 .secondary-alert .left {
-    background: #00c1f8;
+    background: #009EE7;
 }
 
 .secondary-alert .alert {
-    color: #00c1f8;
-    border: 1px solid #00c1f8;
+    color: #009EE7;
+    border: 1px solid #009EE7;
     background: rgba(0, 193, 248, 0.2);
     width: 100%;
 }
 
 .secondary-alert .alert .alert-heading {
-    color: #00c1f8;
+    color: #009EE7;
     margin-bottom: 15px;
 }
 
@@ -6324,7 +6324,7 @@ h6,
 }
 
 .secondary-bg {
-    background-color: #00c1f8;
+    background-color: #009EE7;
 }
 
 .success-bg {
@@ -6397,7 +6397,7 @@ h6,
 }
 
 .text-secondary {
-    color: #00c1f8 !important;
+    color: #009EE7 !important;
 }
 
 .text-success {

@@ -99,9 +99,34 @@ public class MaterialController {
 
     //창고 자재 목록
     @RequestMapping("/stocklist")
-    public String stocklist(Model model, @RequestParam(defaultValue = "1") int page) {
-        Page<StockDTO> stocks = stockService.getStocks(PageRequest.of(page - 1, 10));
+    public String stocklist(Model model, @RequestParam(defaultValue = "1") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(value = "type", required = false) String type,
+                            @RequestParam(value = "keyword", required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<StockDTO> stocks;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            if (type.contains("t")) {
+                stocks = stockService.getStocksWithSearchInMaterialType(keyword, pageable);
+            } else if (type.contains("p")) {
+                stocks = stockService.getStocksWithSearchInComponentType(keyword, pageable);
+            } else if (type.contains("n")) {
+                stocks = stockService.getStocksWithSearchInMaterialName(keyword, pageable);
+            } else if (type.contains("c")) {
+                stocks = stockService.getStocksWithSearchInMaterialCode(keyword, pageable);
+            } else {
+                stocks = stockService.getStocks(pageable);
+            }
+        } else {
+            stocks = stockService.getStocks(pageable);
+        }
         model.addAttribute("stocks", stocks.getContent());
+        model.addAttribute("totalPages", stocks.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
 
         return "/Stock/stocklist";
     }

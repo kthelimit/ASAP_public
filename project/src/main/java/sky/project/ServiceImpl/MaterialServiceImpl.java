@@ -114,4 +114,15 @@ public class MaterialServiceImpl implements MaterialService {
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
         return UUID.randomUUID() + fileExtension; // 고유 파일명 생성
     }
+
+
+   public List<MaterialDTO>  findByMaterialType(String materialType){
+       List<Material> materialList =materialRepository.findByMaterialType(materialType);
+       List<MaterialDTO> materialDTOList = new ArrayList<>();
+
+       materialList.forEach(material -> {
+           materialDTOList.add(ToDTO(material));
+       });
+       return materialDTOList;
+   }
 }

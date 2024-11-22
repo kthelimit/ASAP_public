@@ -3,7 +3,7 @@ package sky.project.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.StockDTO;
 import sky.project.Entity.Material;
@@ -22,31 +22,65 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public Long register(StockDTO dto) {
+        Stock entity = null;
+        if (stockRepository.findByMaterialCode(dto.getMaterialCode()) != null) {
+            entity = stockRepository.findByMaterialCode(dto.getMaterialCode());
+            entity.setQuantity(dto.getQuantity());
 
-        Stock entity = dtoToEntity(dto);
+            //가용재고 처리(고민중) 현재는 기초 재고로 받은 것을 전부 가용재고로 갖고 있다.
+            entity.setAvailableStock(dto.getQuantity());
+        } else {
+            entity = dtoToEntity(dto);
+
+        }
         stockRepository.save(entity);
         return entity.getStockId();
     }
 
+    //목록 불러오기
     @Override
-    public Page<StockDTO> getStocks(PageRequest pageRequest){
-        return stockRepository.findAll(pageRequest).map(this::entityToDto);
+    public Page<StockDTO> getStocks(Pageable pageable) {
+        return stockRepository.findAll(pageable).map(this::entityToDto);
     }
 
+    //검색
+    @Override
+    public Page<StockDTO> getStocksWithSearchInMaterialName(String keyword, Pageable pageable){
+        Page<Stock> stockPage = stockRepository.findByMaterialName(keyword, pageable);
+        return stockPage.map(this::entityToDto);
+    }
 
+    @Override
+    public Page<StockDTO> getStocksWithSearchInMaterialType(String keyword, Pageable pageable){
+        Page<Stock> stockPage = stockRepository.findByMaterialType(keyword, pageable);
+        return stockPage.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<StockDTO> getStocksWithSearchInMaterialCode(String keyword, Pageable pageable){
+        Page<Stock> stockPage = stockRepository.findByMaterialCode(keyword, pageable);
+        return stockPage.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<StockDTO> getStocksWithSearchInComponentType(String keyword, Pageable pageable){
+        Page<Stock> stockPage = stockRepository.findByComponentType(keyword, pageable);
+        return stockPage.map(this::entityToDto);
+    }
 
 
     public Stock dtoToEntity(StockDTO dto) {
 
         if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
             Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
-            Stock stock = Stock.builder()
+
+            return Stock.builder()
                     .stockId(dto.getStockId())
                     .material(material)
                     .quantity(dto.getQuantity())
-                    .availableStock(dto.getAvailableStock())
+                    //가용재고 처리(고민중) 현재는 기초 재고로 받은 것을 전부 가용재고로 갖고 있다.
+                    .availableStock(dto.getQuantity())
                     .build();
-            return stock;
         } else return null;
 
     }
@@ -59,6 +93,8 @@ public class StockServiceImpl implements StockService {
                 .availableStock(stock.getAvailableStock())
                 .materialCode(stock.getMaterial().getMaterialCode())
                 .materialName(stock.getMaterial().getMaterialName())
+                .materialType(stock.getMaterial().getMaterialType())
+                .componentType(stock.getMaterial().getComponentType())
                 .unitPrice(stock.getMaterial().getUnitPrice())
                 .build();
     }

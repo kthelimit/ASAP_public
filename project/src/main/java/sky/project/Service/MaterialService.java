@@ -19,4 +19,6 @@ public interface MaterialService {
     Page<MaterialDTO> searchMaterials(String keyword, Pageable pageable);
 
     List<MaterialDTO> findAssyMaterialByProductCode(String productCode);
+    List<MaterialDTO> getSuppliersByMaterialName(String materialName);
+    int getAvailableStock(String materialCode);
 }

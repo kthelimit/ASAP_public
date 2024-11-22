@@ -3,6 +3,8 @@ package sky.project.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -35,6 +37,10 @@ public class Supplier extends Base{
 
     @Column(nullable = false)
     private String businessItem;
+
+    // Material과의 관계 추가
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Material> materials; // 공급사와 연결된 자재 목록
 
     @Column(nullable = false)
     private Boolean approved = false; // 기본값은 false

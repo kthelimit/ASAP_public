@@ -22,4 +22,6 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query("select s from Stock s where s.material.materialCode=:materialCode")
     Stock findByMaterialCode(String materialCode);
+
+
 }

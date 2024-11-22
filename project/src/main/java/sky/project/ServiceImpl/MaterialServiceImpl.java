@@ -1,15 +1,18 @@
 package sky.project.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
 import sky.project.Entity.Material;
+import sky.project.Entity.Stock;
 import sky.project.Entity.Supplier;
 import sky.project.Repository.AssyRepository;
 import sky.project.Repository.MaterialRepository;
+import sky.project.Repository.StockRepository;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Service.MaterialService;
 
@@ -26,9 +29,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
-    private final MaterialRepository materialRepository;
-    private final SupplierRepository supplierRepository;
-    private final AssyRepository assyRepository;
+    @Autowired
+    StockRepository stockRepository;
+
+    @Autowired
+    MaterialRepository materialRepository;
+
+    @Autowired
+    SupplierRepository supplierRepository;
+
+    @Autowired
+    AssyRepository assyRepository;
+
     private final String uploadDir = "C:/uploads/Images/";
 
     @Override
@@ -119,6 +131,31 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
 
+    @Override
+    public List<MaterialDTO> getSuppliersByMaterialName(String materialName) {
+        // 자재 이름에 매칭되는 자재 조회
+        List<Material> materials = materialRepository.findByMaterialName(materialName);
+
+        // DTO로 변환
+        return materials.stream()
+                .map(material -> MaterialDTO.builder()
+                        .materialName(material.getMaterialName())
+                        .supplierName(material.getSupplier().getSupplierName())
+                        .unitPrice(material.getUnitPrice())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getAvailableStock(String materialCode) {
+        // 자재 코드에 매칭되는 재고 정보 조회
+        Stock stock = stockRepository.findByMaterialCode(materialCode);
+        return stock != null ? stock.getAvailableStock() : 0;
+    }
+
+
+
+    @Override
    public List<MaterialDTO>  findByMaterialType(String materialType){
        List<Material> materialList =materialRepository.findByMaterialType(materialType);
        List<MaterialDTO> materialDTOList = new ArrayList<>();

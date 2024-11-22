@@ -62,4 +62,10 @@ public class APIController {
     public List<MaterialDTO> loadMaterialByComponentType(@PathVariable String componentType){
         return materialService.findBycomponentType(componentType);
     }
+
+    //자재 타입 선택에 따른 자재 리스트 출력용
+    @RequestMapping("/load/materialWith/{materialType}")
+    public List<MaterialDTO> loadMaterialByMaterialType(@PathVariable String materialType){
+        return materialService.findByMaterialType(materialType);
+    }
 }

@@ -114,4 +114,15 @@ public class MaterialServiceImpl implements MaterialService {
         });
         return materialDTOList;
     }
+
+
+   public List<MaterialDTO>  findByMaterialType(String materialType){
+       List<Material> materialList =materialRepository.findByMaterialType(materialType);
+       List<MaterialDTO> materialDTOList = new ArrayList<>();
+
+       materialList.forEach(material -> {
+           materialDTOList.add(ToDTO(material));
+       });
+       return materialDTOList;
+   }
 }

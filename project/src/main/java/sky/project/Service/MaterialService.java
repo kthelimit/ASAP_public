@@ -13,6 +13,9 @@ public interface MaterialService {
     //부품 타입으로 자재 리스트 불러오기
     List<MaterialDTO> findBycomponentType(String componentType);
 
+    //자재 타입으로 자재 리스트 불러오기
+    List<MaterialDTO> findByMaterialType(String materialType);
+
     Page<MaterialDTO> getMaterials(PageRequest pageRequest);
 
 }

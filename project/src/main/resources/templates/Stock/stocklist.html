@@ -35,13 +35,15 @@
                         <div class="card-style mb-30">
                             <h3 class="mb-10">창고 자재 등록</h3>
                             <p class="text-sm mb-20">
-                                아직 창고에 들어 있지 않은 자재를 등록할 수 있습니다.
+                                각 자재의 기초 재고를 등록할 수 있습니다. 같은 자재의 경우 마지막에 등록한 수량으로 덮어씌워집니다.
+                                <br>가용재고 = 기초재고 + 입고 예정 재고 - 출고 예정 재고
                             </p>
                             <form method="post" th:action="@{/material/registerStock}">
                                 <div class="row" style="justify-content: space-around">
                                     <div class="col-lg-2 select-style-1">
                                         <div class="select-position">
-                                            <select id="materialType" name="materialType">
+                                            <select id="materialType" name="materialType"
+                                                    onchange="changeMatertialTypeSelect()">
                                                 <option>---</option>
                                                 <option value="구매품">구매품</option>
                                                 <option value="제조품">제조품</option>
@@ -52,18 +54,18 @@
                                     </div>
                                     <div class="col-lg-4 select-style-1">
                                         <div class="select-position">
-                                            <select id="materialName" name="materialName">
+                                            <select id="materialName" name="materialName"
+                                                    onchange="changeMaterialNameSelect()">
                                                 <option>---</option>
-                                                <option value="전자식 경적">전자식 경적</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 input-style-1">
                                         <input id="materialCode" name="materialCode" placeholder="자재 코드" readonly
-                                               type="text" value="MATB3MAT001">
+                                               type="text" value="">
                                     </div>
                                     <div class="col-lg-2 input-style-1">
-                                        <input id="quantity" name="quantity" placeholder="자재 수량" type="text">
+                                        <input id="quantity" name="quantity" placeholder="자재 수량" type="number">
                                     </div>
                                     <div class="col-lg-1 text-align-right" style="min-width:144px">
                                         <button class="main-btn btn-hover primary-btn" id="btn-product-register"> 등록
@@ -84,8 +86,34 @@
                             <p class="text-sm mb-20">
                                 창고 안의 자재 목록을 확인할 수 있습니다.
                             </p>
+                            <!-- 검색 창 -->
+                            <form method="get" th:action="@{/material/stocklist}">
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="select-style-1 col-lg-3">
+                                        <div class="select-position">
+                                            <select name="type">
+                                                <option th:selected="${type=='t'}" value="t">자재유형</option>
+                                                <option th:selected="${type=='p'}" value="p">부품종류</option>
+                                                <option th:selected="${type=='c'}" value="c">자재코드</option>
+                                                <option th:selected="${type=='n'}" value="n">자재명</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword" name="keyword"
+                                               placeholder="검색어를 입력하세요" th:value="${keyword}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- 자재 목록 출력-->
                             <table class="table">
                                 <tr>
+                                    <th class="text-center"><h6>자재유형</h6></th>
+                                    <th class="text-center"><h6>부품종류</h6></th>
                                     <th class="text-center"><h6>자재코드</h6></th>
                                     <th class="text-center"><h6>자재명</h6></th>
                                     <th class="text-center"><h6>창고 내 재고 수량</h6></th>
@@ -93,12 +121,35 @@
                                 </tr>
 
                                 <tr th:each="stock : ${stocks}">
+                                    <td class="min-width text-center"><p th:text="${stock.materialType}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.componentType}"></p></td>
                                     <td class="min-width text-center"><p th:text="${stock.materialCode}"></p></td>
                                     <td class="min-width"><p th:text="${stock.materialName}"></p></td>
                                     <td class="min-width text-center"><p th:text="${stock.quantity}"></p></td>
                                     <td class="min-width text-center"><p th:text="${stock.availableStock}"></p></td>
                                 </tr>
                             </table>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage > 1}">
+                                        <a aria-label="Previous"
+                                           th:href="@{/material/stocklist(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                        <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/material/stocklist(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage < totalPages}">
+                                        <a aria-label="Next"
+                                           th:href="@{/material/stocklist(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,8 +159,52 @@
 
         <script>
 
-            // matertialType을 결정하면 그 타입에 맞는 자재들 중
-            // 아직 창고에 등록되지 않은 것들의 리스트를 가져와 출력한다.
+            // matertialType을 결정하면 그 타입에 맞는 자재 리스트를 가져와 출력한다.
+            function changeMatertialTypeSelect() {
+                var matertialTypeSelect = document.getElementById("materialType");
+
+                var selectValue = matertialTypeSelect.options[matertialTypeSelect.selectedIndex].value;
+
+                //자재 선택창 리셋
+                $('#materialName').empty();
+                $('#materialName').append('<option>---</option>')
+
+                //선택한 상품에 따른 BOM 불러오기
+                loadMaterialByMaterialType(selectValue);
+
+            }
+
+            function loadMaterialByMaterialType(materialType) {
+                $.ajax({
+                    url        : "/api/load/materialWith/" + materialType,
+                    type       : "GET",
+                    dataType   : "JSON",
+                    contentType: 'application/json; charset=utf-8',
+                    data       : JSON.stringify(materialType),
+                    success    : function (data) {
+                        console.log(data);
+                        str = '';
+
+                        $.each(data, function (i) {
+                            console.log(data[i]);
+                            str += '<option value="' + data[i].materialCode + '">[' + data[i].componentType + ']' + data[i].materialName + '</option>';
+                        })
+                        $('#materialName').append(str);
+                    }
+                })
+
+
+            }
+
+
+            //자재 이름 변경시 옆 칸에 자재 코드 출력
+            function changeMaterialNameSelect() {
+                var materialNameSelect = document.getElementById("materialName");
+
+                var selectValue = materialNameSelect.options[materialNameSelect.selectedIndex].value;
+
+                $('#materialCode').val(selectValue);
+            }
 
 
         </script>

@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import sky.project.Entity.Supplier;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     @Query("select s.supplierId from Supplier s where s.supplierName=:supplierName")
     String findSupplierIdBySupplierName(String supplierName);
 
-    Page<Supplier> findBySupplierNameContaining(String supplierName, Pageable pageable);
+    @Query("SELECT s FROM Supplier s JOIN s.materials m WHERE m.materialCode = :materialCode")
+    List<Supplier> findSuppliersByMaterialCode(@Param("materialCode") String materialCode);
 
 }

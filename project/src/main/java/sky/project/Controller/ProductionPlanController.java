@@ -9,11 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.BomDTO;
-import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.ProductionPlanDTO;
+import sky.project.DTO.SupplierDTO;
 import sky.project.Service.BomService;
-import sky.project.Service.MaterialService;
 import sky.project.Service.ProductionPlanService;
+import sky.project.Service.SupplierService;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ProductionPlanController {
     private BomService bomService;
 
     @Autowired
-    private MaterialService materialService;
+    private SupplierService supplierService;
 
 
     @GetMapping("/list")
@@ -93,8 +93,7 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam(value = "productCode", required = false) String productCode,
-                                         @RequestParam(value = "materialName",required =false) String materialName) {
+                                         @RequestParam(value = "productCode", required = false) String productCode) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
@@ -113,36 +112,30 @@ public class ProductionPlanController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
 
-
-
-
         // 선택된 생산 계획 처리
-        if (id != null) {
+        if (id != null) { 
             ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
             model.addAttribute("selectedPlan", selectedPlan);
         }
 
+
+        // BOM 및 공급업체 정보 조회
         List<BomDTO> selectedBom = bomService.findWithProductCode(productCode);
-        log.info("Selected BOM for productCode {}: {}", productCode, selectedBom);
+        for (BomDTO bom : selectedBom) {
+            // 각 BOM의 자재에 맞는 공급업체 조회
+            List<SupplierDTO> suppliers = supplierService.findSuppliersByMaterialCode(bom.getMaterialCode());
+            bom.setSuppliers(suppliers);
+        }
+
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
 
-        if (materialName != null) {
-            List<MaterialDTO> suppliers = materialService.getSuppliersByMaterialName(materialName);
-            model.addAttribute("suppliers", suppliers);
-        }
 
-        // 가용 재고 추가
-        if (productCode != null) {
-            int availableStock = materialService.getAvailableStock(productCode);
-            model.addAttribute("availableStock", availableStock);
-        }
-
-
-
-        return "/Procure/ProcureIndex";
+        return "/procure/ProcureIndex";
     }
+
+
 
     @GetMapping("/bomRegister")
     public String bomRegister() {

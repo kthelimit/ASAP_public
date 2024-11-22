@@ -33,21 +33,13 @@ public class SupplierController {
     @GetMapping("/list")
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
-                                   @RequestParam(defaultValue = "12") int size,
-                                   @RequestParam(value = "keyword", required = false) String keyword){
-
+                                   @RequestParam(defaultValue = "12") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<SupplierDTO> supplier;
-        if (keyword != null && !keyword.isEmpty()) {
-            supplier = supplierService.searchSuppliers(keyword, pageable);
-        } else {
-            supplier = supplierService.getAllSuppliers(pageable);
-        }
+        Page<Supplier> supplierPage = supplierService.getAllSuppliers(pageable);
 
-        model.addAttribute("suppliers", supplier.getContent());
-        model.addAttribute("totalPages", supplier.getTotalPages());
+        model.addAttribute("suppliers", supplierPage.getContent());
+        model.addAttribute("totalPages", supplierPage.getTotalPages());
         model.addAttribute("currentPage", page);
-        model.addAttribute("keyword", keyword);
 
         return "Supplier/SupplierList";
     }

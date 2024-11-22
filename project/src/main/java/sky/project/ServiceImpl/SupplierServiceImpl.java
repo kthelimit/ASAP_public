@@ -27,11 +27,19 @@ public class SupplierServiceImpl implements SupplierService {
     private UserRepository userRepository;
 
     @Override
-    public Page<Supplier> getAllSuppliers(Pageable pageable) {
-        return supplierRepository.findByApprovedTrue(pageable);
+    public Page<SupplierDTO> getAllSuppliers(Pageable pageable) {
+        Page<Supplier> suppliers = supplierRepository.findByApprovedTrue(pageable);
+        return suppliers.map(this::toDTO); // Supplier -> SupplierDTO 변환
     }
     public List<Supplier> getApprovedSuppliers() {
         return supplierRepository.findByApprovedTrue();
+    }
+
+
+    @Override
+    public Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable){
+        Page<Supplier> suppliers = supplierRepository.findBySupplierNameContaining(keyword, pageable);
+        return suppliers.map(this::toDTO);
     }
 
     @Override
@@ -51,6 +59,11 @@ public class SupplierServiceImpl implements SupplierService {
                 .approved(supplier.getApproved())
                 .build();
     }
+
+
+
+
+
 
 
     @Override

@@ -1,7 +1,7 @@
 package sky.project.Service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
 
@@ -11,8 +11,9 @@ public interface MaterialService {
     void registerMaterial(MaterialDTO materialDTO, MultipartFile imageFile);
 
     //부품 타입으로 자재 리스트 불러오기
-    List<MaterialDTO> findBycomponentType(String componentType);
+    List<MaterialDTO> findByComponentType(String componentType);
 
-    Page<MaterialDTO> getMaterials(PageRequest pageRequest);
+    Page<MaterialDTO> getMaterials(Pageable pageable); // 기존 메서드
+    Page<MaterialDTO> searchMaterials(String keyword, Pageable pageable);
 
 }

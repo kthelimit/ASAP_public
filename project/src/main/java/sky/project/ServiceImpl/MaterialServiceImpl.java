@@ -1,8 +1,8 @@
 package sky.project.ServiceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
@@ -16,20 +16,29 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
-    @Autowired
-    private MaterialRepository materialRepository;
-
-    @Autowired
-    private SupplierRepository supplierRepository;
-
+    private final MaterialRepository materialRepository;
+    private final SupplierRepository supplierRepository;
     private final String uploadDir = "C:/uploads/Images/";
+
+    @Override
+    public Page<MaterialDTO> getMaterials(Pageable pageable) {
+        return materialRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    @Override
+    public Page<MaterialDTO> searchMaterials(String keyword, Pageable pageable) {
+        return materialRepository
+                .findByMaterialNameContainingOrMaterialCodeContaining(keyword, keyword, pageable)
+                .map(this::toDTO);
+    }
 
     @Override
     public void registerMaterial(MaterialDTO materialDTO, MultipartFile imageFile) {
@@ -37,7 +46,7 @@ public class MaterialServiceImpl implements MaterialService {
         material.setMaterialName(materialDTO.getMaterialName());
         material.setMaterialCode(materialDTO.getMaterialCode());
         material.setMaterialType(materialDTO.getMaterialType());
-        material.setComponentType(materialDTO.getComponentType()); // 추가된 필드 설정
+        material.setComponentType(materialDTO.getComponentType());
         material.setUnitPrice(materialDTO.getUnitPrice());
         material.setQuantity(materialDTO.getQuantity());
         material.setWidth(materialDTO.getWidth());
@@ -46,72 +55,63 @@ public class MaterialServiceImpl implements MaterialService {
         material.setWeight(materialDTO.getWeight());
         material.setLeadtime(materialDTO.getLeadtime());
 
-        // Supplier 조회 및 설정
+        // Supplier 설정
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
         material.setSupplier(supplier);
 
         // 이미지 처리
-        if (!imageFile.isEmpty()) {
-            try {
-                String imageUrl = saveImage(imageFile);  // 이미지 저장
-                material.setImageUrl(imageUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-                material.setImageUrl("/Images/default-image.jpg"); // 기본 이미지 설정
-            }
-        } else {
-            material.setImageUrl("/Images/default-image.jpg"); // 이미지가 없을 경우 기본 이미지 설정
-        }
+        material.setImageUrl(handleImageUpload(imageFile));
 
         materialRepository.save(material);
     }
 
     @Override
-    public Page<MaterialDTO> getMaterials(PageRequest pageRequest) {
-        return materialRepository.findAll(pageRequest).map(this::ToDTO);
+    public List<MaterialDTO> findByComponentType(String componentType) {
+        return materialRepository.findByComponentType(componentType).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    private MaterialDTO ToDTO(Material material) {
+    private MaterialDTO toDTO(Material material) {
         return MaterialDTO.builder()
                 .materialId(material.getMaterialId())
                 .materialName(material.getMaterialName())
                 .materialCode(material.getMaterialCode())
                 .materialType(material.getMaterialType())
-                .componentType(material.getComponentType()) // 추가된 필드 설정
+                .componentType(material.getComponentType())
                 .unitPrice(material.getUnitPrice())
                 .quantity(material.getQuantity())
                 .width(material.getWidth())
                 .height(material.getHeight())
                 .depth(material.getDepth())
-                .weight(material.getWeight()) // weight를 BigDecimal로 설정
+                .weight(material.getWeight())
                 .imageUrl(material.getImageUrl())
                 .supplierName(material.getSupplier().getSupplierName())
                 .leadtime(material.getLeadtime())
                 .build();
     }
 
-    private String saveImage(MultipartFile file) throws IOException {
-        String originalFileName = file.getOriginalFilename();
-        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String fileName = UUID.randomUUID() + fileExtension; // 고유한 파일 이름 생성
-        Path filePath = Paths.get(uploadDir + fileName);
+    private String handleImageUpload(MultipartFile imageFile) {
+        if (imageFile.isEmpty()) {
+            return "/Images/default-image.jpg"; // 기본 이미지
+        }
+        try {
+            String fileName = generateUniqueFileName(imageFile.getOriginalFilename());
+            Path filePath = Paths.get(uploadDir + fileName);
 
-        Files.createDirectories(filePath.getParent());  // 폴더가 없으면 생성
-        file.transferTo(filePath.toFile());
+            Files.createDirectories(filePath.getParent());  // 폴더 생성
+            imageFile.transferTo(filePath.toFile());
 
-        // 저장된 이미지 경로 반환 (URL에서 사용할 수 있는 형식으로 반환)
-        return "/Images/" + fileName;
+            return "/Images/" + fileName; // 이미지 경로 반환
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "/Images/default-image.jpg"; // 예외 발생 시 기본 이미지
+        }
     }
 
-
-    public List<MaterialDTO> findBycomponentType(String componentType){
-
-        List<Material> materialList = materialRepository.findByComponentType(componentType);
-        List<MaterialDTO> materialDTOList = new ArrayList<>();
-        materialList.forEach(material -> {
-            materialDTOList.add(ToDTO(material));
-        });
-        return materialDTOList;
+    private String generateUniqueFileName(String originalFileName) {
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        return UUID.randomUUID() + fileExtension; // 고유 파일명 생성
     }
 }

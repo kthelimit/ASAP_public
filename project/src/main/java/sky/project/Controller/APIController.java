@@ -60,6 +60,6 @@ public class APIController {
     //부품 종류 선택에 따른 자재 리스트 출력용
     @RequestMapping("/load/material/{componentType}")
     public List<MaterialDTO> loadMaterialByComponentType(@PathVariable String componentType){
-        return materialService.findBycomponentType(componentType);
+        return materialService.findByComponentType(componentType);
     }
 }

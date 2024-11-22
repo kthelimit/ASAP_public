@@ -40,16 +40,18 @@
                                 현재 등록되어 있는 자재 품목들입니다. 오른쪽의 폼을 통해 신규 자재 품목을 등록할 수 있습니다.
                             </p>
 
-                            <div class="row" style="justify-content: flex-end">
-                                <div class="input-style-1 col-lg-5">
-                                    <input type="text">
+                            <form method="get" th:action="@{/material/list}">
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword" name="keyword"
+                                               placeholder="자재명 또는 자재코드를 입력하세요" th:value="${keyword}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
                                 </div>
-                                <div style="width: 144px">
-                                    <button class="btn-search primary-btn main-btn btn-hover"
-                                            type="submit">검색
-                                    </button>
-                                </div>
-                            </div>
+                            </form>
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -85,12 +87,32 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <ul class="pagination">
-                                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                    <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                       th:href="@{/material/list(page=${i})}" th:text="${i}">1</a>
-                                </li>
-                            </ul>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <!-- 이전 페이지 -->
+                                    <li th:if="${currentPage > 1}">
+                                        <a th:href="@{/material/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- 페이지 번호 -->
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                        <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/material/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                                           th:text="${i}"></a>
+                                    </li>
+
+                                    <!-- 다음 페이지 -->
+                                    <li th:if="${currentPage < totalPages}">
+                                        <a th:href="@{/material/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}"
+                                           aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 

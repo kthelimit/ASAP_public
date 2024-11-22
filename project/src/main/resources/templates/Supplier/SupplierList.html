@@ -28,43 +28,66 @@
                 </div>
             </div>
             <!-- ========== title-wrapper end ========== -->
-            <div class="keyword">
-                <div class="row" style="justify-content: flex-end">
-                    <div class="input-style-1 col-lg-3">
-                        <input style="background-color: white" type="text">
+            <div>
+                <form method="get" th:action="@{/suppliers/list}">
+                    <div class="row" style="justify-content: flex-end">
+                        <div class="input-style-1 col-lg-5">
+                            <input id="searchKeyword" name="keyword"
+                                   placeholder="회사명을 입력하세요" th:value="${keyword}"
+                                   type="text"/>
+                        </div>
+                        <div style="width: 144px">
+                            <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                        </div>
                     </div>
-                    <div style="width: 144px">
-                        <button class="btn-search main-btn primary-btn btn-hover" type="submit">검색</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6" th:each="supplier : ${suppliers}">
-                    <div class="card-style-3 mb-30">
-                        <div class="card-content">
-                            <h3>
-                                <a th:href="@{/suppliers/detail/{id}(id=${supplier.supplierId})}"
-                                   th:text="${supplier.supplierName}">업체 이름</a>
-                            </h3>
-                            <p th:text="'사업자 번호: ' + ${supplier.businessRegistrationNumber}">사업자 번호</p>
-                            <p th:text="'연락처: ' + ${supplier.contactInfo}">연락처</p>
-                            <p th:text="'주소: ' + ${supplier.address}">주소</p>
-                            <p th:text="'업태: ' + ${supplier.businessType}">업태</p>
-                            <p th:text="'종목: ' + ${supplier.businessItem}">종목</p>
+                </form>
+
+
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6" th:each="supplier : ${suppliers}">
+                        <div class="card-style-3 mb-30">
+                            <div class="card-content">
+                                <h3>
+                                    <a th:href="@{/suppliers/detail/{id}(id=${supplier.supplierId})}"
+                                       th:text="${supplier.supplierName}">업체 이름</a>
+                                </h3>
+                                <p th:text="'사업자 번호: ' + ${supplier.businessRegistrationNumber}">사업자 번호</p>
+                                <p th:text="'연락처: ' + ${supplier.contactInfo}">연락처</p>
+                                <p th:text="'주소: ' + ${supplier.address}">주소</p>
+                                <p th:text="'업태: ' + ${supplier.businessType}">업태</p>
+                                <p th:text="'종목: ' + ${supplier.businessItem}">종목</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="pagination-wrapper">
+                    <ul class="pagination">
+                        <!-- 이전 페이지 -->
+                        <li th:if="${currentPage > 1}">
+                            <a th:href="@{/suppliers/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
 
-            <!-- 페이징 처리 -->
-            <ul class="pagination">
-                <li th:each="i : ${#numbers.sequence(1, totalPages != null ? totalPages : 1)}">
-                    <a th:classappend="${i == (currentPage != null ? currentPage : 1) ? 'active' : ''}"
-                       th:href="@{/suppliers/list(page=${i})}"
-                       th:text="${i}">1</a>
-                </li>
-            </ul>
-        </div>
+                        <!-- 페이지 번호 -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                            <a th:classappend="${i == currentPage ? 'active' : ''}"
+                               th:href="@{/suppliers/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                               th:text="${i}"></a>
+                        </li>
+
+                        <!-- 다음 페이지 -->
+                        <li th:if="${currentPage < totalPages}">
+                            <a th:href="@{/suppliers/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
 
     </th:block>
 </th:block>

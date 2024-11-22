@@ -28,4 +28,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     @Query("select s.supplierId from Supplier s where s.supplierName=:supplierName")
     String findSupplierIdBySupplierName(String supplierName);
 
+    Page<Supplier> findBySupplierNameContaining(String supplierName, Pageable pageable);
+
 }

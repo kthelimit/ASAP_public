@@ -2,6 +2,8 @@ package sky.project.DTO;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,7 @@ public class BomDTO {
     private String materialCode; // 자재 코드
     private String materialName; // 자재 이름
     private int requireQuantity; // 필요 수량
+    private List<MaterialDTO> suppliers;
+    private int availableStock;
+    private int procurementQuantity;
 }

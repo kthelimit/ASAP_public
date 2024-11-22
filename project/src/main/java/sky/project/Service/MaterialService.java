@@ -17,5 +17,6 @@ public interface MaterialService {
     List<MaterialDTO> findByMaterialType(String materialType);
     Page<MaterialDTO> getMaterials(Pageable pageable); // 기존 메서드
     Page<MaterialDTO> searchMaterials(String keyword, Pageable pageable);
-
+    List<MaterialDTO> getSuppliersByMaterialName(String materialName);
+    int getAvailableStock(String materialCode);
 }

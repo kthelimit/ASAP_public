@@ -9,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.BomDTO;
+import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.ProductionPlanDTO;
 import sky.project.Service.BomService;
+import sky.project.Service.MaterialService;
 import sky.project.Service.ProductionPlanService;
 
 import java.util.List;
@@ -27,6 +29,9 @@ public class ProductionPlanController {
 
     @Autowired
     private BomService bomService;
+
+    @Autowired
+    private MaterialService materialService;
 
 
     @GetMapping("/list")
@@ -88,7 +93,8 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam(value = "productCode", required = false) String productCode) {
+                                         @RequestParam(value = "productCode", required = false) String productCode,
+                                         @RequestParam(value = "materialName",required =false) String materialName) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
@@ -107,8 +113,11 @@ public class ProductionPlanController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
 
+
+
+
         // 선택된 생산 계획 처리
-        if (id != null) { 
+        if (id != null) {
             ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
             model.addAttribute("selectedPlan", selectedPlan);
         }
@@ -118,10 +127,22 @@ public class ProductionPlanController {
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
-        return "/procure/ProcureIndex";
+
+        if (materialName != null) {
+            List<MaterialDTO> suppliers = materialService.getSuppliersByMaterialName(materialName);
+            model.addAttribute("suppliers", suppliers);
+        }
+
+        // 가용 재고 추가
+        if (productCode != null) {
+            int availableStock = materialService.getAvailableStock(productCode);
+            model.addAttribute("availableStock", availableStock);
+        }
+
+
+
+        return "/Procure/ProcureIndex";
     }
-
-
 
     @GetMapping("/bomRegister")
     public String bomRegister() {

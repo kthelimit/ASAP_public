@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sky.project.DTO.ExportDTO;
 import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.Service.*;
@@ -101,6 +102,12 @@ public class MaterialController {
         model.addAttribute("CurrentExportRequest", exportService.getCurrentExportList());
 
         return "/Export/index";
+    }
+
+    @PostMapping("/export/approval")
+    public String exportMaterialApproval(ExportDTO dto) {
+        exportService.modify(dto);
+        return "redirect:/material/export";
     }
 
     //자재 출고요청

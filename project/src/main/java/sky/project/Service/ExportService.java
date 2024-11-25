@@ -7,5 +7,7 @@ import java.util.List;
 public interface ExportService {
     Long register(ExportDTO dto);
 
+    Long modify(ExportDTO dto);
+
     List<ExportDTO> getCurrentExportList();
 }

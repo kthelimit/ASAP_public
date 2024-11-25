@@ -8,6 +8,7 @@ import sky.project.Entity.*;
 import sky.project.Repository.ExportRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.ProductionPlanRepository;
+import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class ExportServiceImpl implements ExportService {
     private final MaterialRepository materialRepository;
     private final ProductionPlanRepository productionPlanRepository;
     private final ExportRepository exportRepository;
+    private final StockRepository stockRepository;
 
     @Override
     public Long register(ExportDTO dto) {
@@ -31,6 +33,23 @@ public class ExportServiceImpl implements ExportService {
         exportRepository.save(entity);
         return entity.getExportId();
     }
+
+    @Override
+    public Long modify(ExportDTO dto) {
+        Export export = exportRepository.findByExportCode(dto.getExportCode());
+        log.info(export);
+        //상태 전환
+        export.setExportStatus(CurrentStatus.FINISHED);
+        exportRepository.save(export);
+
+        //재고에서 분량만큼 빼기
+        Stock stock= stockRepository.findByMaterialCode(dto.getMaterialCode());
+        stock.setQuantity(stock.getQuantity()-export.getRequiredQuantity());
+        stockRepository.save(stock);
+
+        return export.getExportId();
+    }
+
 
     public Export dtoToEntity(ExportDTO dto) {
         if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {

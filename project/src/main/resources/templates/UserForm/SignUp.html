@@ -138,7 +138,6 @@
             <label>아이디</label>
             <div style="display: flex; align-items: center;">
                 <input type="text" th:field="*{userId}" required />
-
             </div>
             <button type="button" onclick="checkUserId()" class="inline-button">ID 중복 조회</button>
 
@@ -159,7 +158,7 @@
             <input type="date" th:field="*{birthdate}" required />
         </div>
 
-        <button type="submit" onclick="alert('회원가입이 완료 되었습니다. 로그인페이지로 이동합니다.')">가입하기</button>
+        <button type="submit">가입하기</button>
 
         <div class="find_tab">
             <a href="/">로그인 페이지로</a>
@@ -168,6 +167,8 @@
 </div>
 
 <script>
+    let isUserIdChecked = false; // 중복 확인 상태를 저장하는 변수
+
     function checkPasswordMatch() {
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm_password').value;
@@ -194,7 +195,13 @@
             method: 'GET',
             data: { userId: userId },
             success: function(response) {
-                alert(response ? "사용 가능한 아이디입니다." : "이미 사용 중인 아이디입니다.");
+                if (response) {
+                    alert("사용 가능한 아이디입니다.");
+                    isUserIdChecked = true; // 중복 확인 완료 상태로 변경
+                } else {
+                    alert("이미 사용 중인 아이디입니다.");
+                    isUserIdChecked = false; // 중복 확인 실패 상태
+                }
             },
             error: function() {
                 alert("오류가 발생했습니다. 다시 시도해주세요.");
@@ -202,6 +209,23 @@
         });
     }
 
+    function validateForm(event) {
+        if (!isUserIdChecked) {
+            // 아이디 중복 확인이 완료되지 않았다면 메시지를 한 번만 표시
+            alert("아이디 중복 확인을 완료하세요.");
+            event.preventDefault(); // 폼 제출 방지
+            return;
+        }
+
+        // 모든 검증이 통과되었을 때 메시지를 표시
+        alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("signupForm");
+        form.addEventListener("submit", validateForm);
+    });
 </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
             body {
                 height: 3000px;
             }
+
             .col-lg-6 {
                 margin: 20px auto -25px;
                 width: 1625px;
@@ -66,6 +67,7 @@
                 display: flex;
                 justify-content: space-between;
             }
+
             .search_tab {
                 display: flex;
                 justify-content: space-between;
@@ -96,8 +98,8 @@
                                 </select>
 
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
-                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                            <input class="select-style-1, search" placeholder="     검색어를 입력하세요" type="text">
+                            <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
                         </div>
                     </div>
 
@@ -161,7 +163,13 @@
                                     <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
                                 </td>
                                 <td>
-                                    <a href="#0" class="main-btn active-btn btn-hover choice">출고</a>
+                                    <form method="post" th:action="@{/material/export/approval}">
+                                        <input name="exportCode" th:value="${export.exportCode}" type="hidden">
+                                        <input name="materialCode" th:value="${export.materialCode}" type="hidden">
+                                        <input name="requiredQuantity" th:value="${export.requiredQuantity}"
+                                               type="hidden">
+                                        <button class="main-btn active-btn btn-hover" type="submit">출고</button>
+                                    </form>
                                 </td>
                             </tr>
 
@@ -188,8 +196,8 @@
                                 </select>
 
                             </div>
-                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
-                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+                            <input class="select-style-1, search" placeholder="     검색어를 입력하세요" type="text">
+                            <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
                         </div>
                     </div>
 
@@ -265,8 +273,6 @@
                 </div>
             </div>
         </div>
-
-
 
 
     </th:block>

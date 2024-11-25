@@ -6,11 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.StockDTO;
+import sky.project.Entity.Export;
 import sky.project.Entity.Material;
 import sky.project.Entity.Stock;
+import sky.project.Repository.ExportRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.StockService;
+
+import java.util.List;
 
 @Service
 @Log4j2
@@ -19,6 +23,7 @@ public class StockServiceImpl implements StockService {
 
     private final StockRepository stockRepository;
     private final MaterialRepository materialRepository;
+    private final ExportRepository exportRepository;
 
     @Override
     public Long register(StockDTO dto) {
@@ -40,30 +45,31 @@ public class StockServiceImpl implements StockService {
     //목록 불러오기
     @Override
     public Page<StockDTO> getStocks(Pageable pageable) {
+
         return stockRepository.findAll(pageable).map(this::entityToDto);
     }
 
     //검색
     @Override
-    public Page<StockDTO> getStocksWithSearchInMaterialName(String keyword, Pageable pageable){
+    public Page<StockDTO> getStocksWithSearchInMaterialName(String keyword, Pageable pageable) {
         Page<Stock> stockPage = stockRepository.findByMaterialName(keyword, pageable);
         return stockPage.map(this::entityToDto);
     }
 
     @Override
-    public Page<StockDTO> getStocksWithSearchInMaterialType(String keyword, Pageable pageable){
+    public Page<StockDTO> getStocksWithSearchInMaterialType(String keyword, Pageable pageable) {
         Page<Stock> stockPage = stockRepository.findByMaterialType(keyword, pageable);
         return stockPage.map(this::entityToDto);
     }
 
     @Override
-    public Page<StockDTO> getStocksWithSearchInMaterialCode(String keyword, Pageable pageable){
+    public Page<StockDTO> getStocksWithSearchInMaterialCode(String keyword, Pageable pageable) {
         Page<Stock> stockPage = stockRepository.findByMaterialCode(keyword, pageable);
         return stockPage.map(this::entityToDto);
     }
 
     @Override
-    public Page<StockDTO> getStocksWithSearchInComponentType(String keyword, Pageable pageable){
+    public Page<StockDTO> getStocksWithSearchInComponentType(String keyword, Pageable pageable) {
         Page<Stock> stockPage = stockRepository.findByComponentType(keyword, pageable);
         return stockPage.map(this::entityToDto);
     }
@@ -86,11 +92,19 @@ public class StockServiceImpl implements StockService {
     }
 
     public StockDTO entityToDto(Stock stock) {
-
+        int availableStock = stock.getQuantity();
+        if (exportRepository.findByMaterialCode(stock.getMaterial().getMaterialCode()) != null) {
+            List<Export> exports = exportRepository.findByMaterialCode(stock.getMaterial().getMaterialCode());
+            int exportQuantity = 0;
+            for (Export export : exports) {
+                exportQuantity += export.getRequiredQuantity();
+            }
+            availableStock -= exportQuantity;
+        }
         return StockDTO.builder()
                 .stockId(stock.getStockId())
                 .quantity(stock.getQuantity())
-                .availableStock(stock.getAvailableStock())
+                .availableStock(availableStock)
                 .materialCode(stock.getMaterial().getMaterialCode())
                 .materialName(stock.getMaterial().getMaterialName())
                 .materialType(stock.getMaterial().getMaterialType())

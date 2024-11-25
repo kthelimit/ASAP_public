@@ -86,6 +86,8 @@ public class SupplierServiceImpl implements SupplierService {
 
         supplierRepository.save(supplier);
     }
+
+    @Override
     public List<SupplierDTO> findSuppliersByMaterialCode(String materialCode) {
         // 자재 코드와 관련된 공급업체 조회 로직 구현
         List<Supplier> suppliers = supplierRepository.findSuppliersByMaterialCode(materialCode);

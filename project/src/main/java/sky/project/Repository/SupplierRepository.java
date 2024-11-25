@@ -32,4 +32,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     @Query("SELECT s FROM Supplier s JOIN s.materials m WHERE m.materialCode = :materialCode")
     List<Supplier> findSuppliersByMaterialCode(@Param("materialCode") String materialCode);
 
+    Page<Supplier> findBySupplierNameContaining(String supplierName, Pageable pageable);
 }

@@ -4,15 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sky.project.DTO.AssyDTO;
-import sky.project.DTO.BomDTO;
-import sky.project.DTO.MaterialDTO;
-import sky.project.DTO.ProductDTO;
+import sky.project.DTO.*;
 import sky.project.Entity.Product;
-import sky.project.Service.AssyService;
-import sky.project.Service.BomService;
-import sky.project.Service.MaterialService;
-import sky.project.Service.ProductService;
+import sky.project.Service.*;
 
 import java.util.List;
 
@@ -25,6 +19,7 @@ public class APIController {
     private final BomService bomService;
     private final MaterialService materialService;
     private final AssyService assyService;
+    private final ExportService exportService;
 
     //* 상품 *//
     //등록
@@ -84,6 +79,13 @@ public class APIController {
     public List<AssyDTO> loadAssyMaterialListByProductCode(@PathVariable String assyMaterialCode) {
         log.info("assyMaterialCode: "+assyMaterialCode);
         return assyService.findByAssyMaterialCode(assyMaterialCode);
+    }
+
+
+    //출고요청 등록
+    @PostMapping("/post/export")
+    public ResponseEntity<Long> registerExport(@RequestBody ExportDTO dto){
+        return ResponseEntity.ok(exportService.register(dto));
     }
 
 

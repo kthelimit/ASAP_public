@@ -6,10 +6,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sky.project.Entity.ProductionPlan;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, Long> {
 
     Page<ProductionPlan> findByProductNameContaining(String keyword, Pageable pageable);
 
     @Query("SELECT COUNT(p) FROM ProductionPlan p WHERE p.productionPlanCode LIKE CONCAT(:prefix, '%')")
     Long countByPrefix(String prefix);
+
+    @Query("select pp from ProductionPlan pp where pp.productionPlanCode=:productionPlanCode")
+    ProductionPlan findByProductionPlanCode(String productionPlanCode);
+
+
+    @Query("select pp from ProductionPlan pp where pp.productionStartDate<=:planDate and pp.productionEndDate>=:planDate")
+    List<ProductionPlan> findByPlanDate(LocalDate planDate);
 }

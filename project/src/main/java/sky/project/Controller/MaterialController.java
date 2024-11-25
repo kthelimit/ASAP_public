@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
-import sky.project.Service.MaterialService;
-import sky.project.Service.StockService;
-import sky.project.Service.SupplierService;
+import sky.project.Service.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +28,11 @@ public class MaterialController {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private ProductionPlanService productionPlanService;
+    @Autowired
+    private ExportService exportService;
 
     @GetMapping("/list")
     public String getMaterialsList(Model model,
@@ -93,12 +96,18 @@ public class MaterialController {
     //자재 출고
     @RequestMapping("/export")
     public String exportMaterial(Model model) {
+
+        //현재 처리되지 않은 출고요청만 가져오기
+        model.addAttribute("CurrentExportRequest", exportService.getCurrentExportList());
+
         return "/Export/index";
     }
 
     //자재 출고요청
     @RequestMapping("/export/request")
     public String exportMaterialRequest(Model model) {
+        model.addAttribute("productionPlans", productionPlanService.getProductionPlansWithDate());
+
         return "/Export/ExportRequest";
     }
 

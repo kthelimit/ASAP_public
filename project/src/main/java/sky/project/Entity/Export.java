@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "Export")
-public class Export {
+public class Export extends Base{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long exportId;

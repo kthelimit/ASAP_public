@@ -8,7 +8,7 @@ import sky.project.Entity.Supplier;
 import java.util.List;
 
 public interface SupplierService {
-    Page<Supplier> getAllSuppliers(Pageable pageable);
+    Page<SupplierDTO> getAllSuppliers(Pageable pageable);
 
     List<Supplier> getApprovedSuppliers();
 
@@ -26,5 +26,6 @@ public interface SupplierService {
 
     SupplierDTO getSupplierById(String id);
 
-    List<SupplierDTO> findSuppliersByMaterialCode(String materialCode);
+
+    Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable);
 }

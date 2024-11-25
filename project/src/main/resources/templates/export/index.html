@@ -106,6 +106,9 @@
                             <thead>
                             <tr>
                                 <th>
+                                    <h5>출고 코드</h5>
+                                </th>
+                                <th>
                                     <h5>생산계획번호</h5>
                                 </th>
                                 <th>
@@ -124,29 +127,38 @@
                                     <h5>출고수량</h5>
                                 </th>
                                 <th>
+                                    <h5>등록일</h5>
+                                </th>
+                                <th>
                                     <h5>선택목록</h5>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
+                            <tr th:each="export:${CurrentExportRequest}">
                                 <td>
-                                    <p>OWO-5959</p>
+                                    <p th:text="${export.exportCode}"></p>
                                 </td>
                                 <td>
-                                    <p>전기자전거A</p>
+                                    <p th:text="${export.productionPlanCode}"></p>
                                 </td>
                                 <td>
-                                    <p>프레임</p>
+                                    <p th:text="${export.productName}"></p>
                                 </td>
                                 <td>
-                                    <p>JKL-1234</p>
+                                    <p th:text="${export.materialName}"></p>
                                 </td>
                                 <td>
-                                    <p>100</p>
+                                    <p th:text="${export.materialCode}"></p>
                                 </td>
                                 <td>
-                                    <input class="how-ea" type="number">
+                                    <p th:text="${export.availableQuantity}"></p>
+                                </td>
+                                <td>
+                                    <p th:text="${export.requiredQuantity}"></p>
+                                </td>
+                                <td>
+                                    <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
                                 </td>
                                 <td>
                                     <a href="#0" class="main-btn active-btn btn-hover choice">출고</a>

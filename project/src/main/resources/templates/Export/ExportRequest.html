@@ -39,21 +39,23 @@
                                 <div class="row">
                                     <!-- 지금 진행중인 생산계획에 관련된 물품만 요청할 수 있게할 것 th:each="productionPlan: ${productionPlan}"-->
                                     <div class="col-lg-4 select-style-1">
+                                        <label>생산계획</label>
                                         <div class="select-position">
-                                            <label>생산계획</label>
-                                            <select id="productionPlanSelect" name="productionPlanCode"
+                                            <select id="productionPlanSelect" name="productCode"
                                                     onchange="changeProductPlan()">
                                                 <option>---</option>
-                                                <option value="MATB3FIN001">[PDPBA2411001] 전기자전거A</option>
-                                                <option value="MATB3FIN002">[PDPBB2411001] 전기자전거B</option>
-                                                <option value="MATK2FIN001">[PDPKB2411001] 전동킥보드</option>
+                                                <option th:attr="data-name=${plan.productionPlanCode}"
+                                                        th:each="plan : ${productionPlans}"
+                                                        th:value="${plan.productCode}">
+                                                    [[${plan.productionPlanCode}]] - [[${plan.productName}]]
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
                                     <!-- -->
                                     <div class="col-lg-2 select-style-1">
+                                        <label>조립공정</label>
                                         <div class="select-position">
-                                            <label>조립공정</label>
                                             <select id="assyMaterial" name="assyMaterial"
                                                     onchange="changeAssyMaterial()">
                                                 <option>---</option>
@@ -72,9 +74,11 @@
                                     </div>
                                     <div class="col-lg-1 input-style-1">
                                         <label>조립할 수량</label>
-                                        <input id="quantity" name="quantity" type="number" onchange="changeAssyMaterial()">
+                                        <input id="quantity" name="quantity" onchange="changeAssyMaterial()"
+                                               type="number">
                                     </div>
                                 </div>
+                                <!-- 출고요청될 자재 리스트-->
                                 <!-- 출고요청될 자재 리스트-->
                                 <h3 class="mb-10">요청될 자재 리스트</h3>
                                 <table class="table" id="assyMaterialTable">
@@ -89,8 +93,9 @@
                                 </table>
                                 <div class="row" style="justify-content: flex-end">
                                     <div class="col-lg-1" style="min-width:144px">
-                                        <button class="main-btn btn-hover primary-btn" id="btn-product-register"> 요청
-                                        </button>
+                                        <span class="main-btn btn-hover primary-btn" id="btn-product-register"
+                                              onclick="registerExport()"> 요청
+                                        </span>
                                     </div>
                                 </div>
                             </form>
@@ -130,7 +135,7 @@
                         str = '';
 
                         $.each(data, function (i) {
-                            str += '<option value="' + data[i].materialCode + '" data-name="'+data[i].materialName+'">' + data[i].materialName + '</option>';
+                            str += '<option value="' + data[i].materialCode + '" data-name="' + data[i].materialName + '">' + data[i].materialName + '</option>';
                         })
                         $('#assyMaterial').append(str);
                     }
@@ -163,7 +168,7 @@
             }
 
             //선택한 조립품에 따른 자재 리스트 불러오기
-            function loadAssyMaterialListByProduct(assyMaterialCode){
+            function loadAssyMaterialListByProduct(assyMaterialCode) {
                 var quantity = $('#quantity').val();
                 $.ajax({
                     url        : "/api/load/AssyList/" + assyMaterialCode,
@@ -177,15 +182,88 @@
 
                         $.each(data, function (i) {
                             console.log(data[i]);
-                            str += '<tr><td class="min-width"><p>'+data[i].componentType+'</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
-                                + '</p></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right pr-30"><p>'
-                                + data[i].quantity + '</p></td> <td class="min-width text-align-right pr-30"><p>' + data[i].quantity * quantity + '</p></td></tr>';
+                            str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
+                                + '</p><input type="hidden" name="materialCode" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
+                                + data[i].quantity + '</p></td> <td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
                         })
                         $('#assyMaterialTable').append(str);
                     }
                 })
             }
 
+            //출고 요청 등록
+            function registerExport() {
+                var productPlanCode = $("#productionPlanSelect").find("option:selected").data("name");
+                console.log(productPlanCode);
+
+                var materialCodes = $('input[name=materialCode]').length;
+                var materialCodesArray = new Array(materialCodes);
+
+                var requiredQuantities = $('input[name=requiredQuantity]').length;
+                var requiredQuantitiesArray = new Array(requiredQuantities);
+
+                for (var i = 0; i < materialCodes; i++) {
+                    materialCodesArray[i] = $('input[name=materialCode]').eq(i).val();
+                    requiredQuantitiesArray[i] = $('input[name=requiredQuantity]').eq(i).val();
+                }
+                console.log(materialCodesArray);
+                console.log(requiredQuantitiesArray);
+
+                var j = 0;
+                var it = setInterval(function () {
+                    if (j < materialCodesArray.length) {
+                        //하나씩 등록 요청하기
+                        data = {
+                            productionPlanCode: productPlanCode,
+                            materialCode      : materialCodesArray[j],
+                            requiredQuantity  : requiredQuantitiesArray[j]
+                        }
+                        $.ajax({
+                            type       : 'POST',
+                            url        : '/api/post/export',
+                            dataType   : 'TEXT',
+                            contentType: 'application/json; charset=utf-8',
+                            data       : JSON.stringify(data)
+                        }).done(function () {
+                            console.log("출고요청이 등록되었습니다.")
+                            j++;
+                            if (j === materialCodesArray.length) {
+                                window.location.reload();
+                            }
+                        }).fail(function (error) {
+                            alert(JSON.stringify(error));
+                        })
+
+                    } else {
+                        clearInterval(it);
+                    }
+                }, 100);
+
+
+                // //하나씩 등록 요청하기
+                // for (var j = 0; j < materialCodesArray.length; j++) {
+                //     data = {
+                //         productionPlanCode : productPlanCode,
+                //         materialCode    : materialCodesArray[j],
+                //         requiredQuantity: requiredQuantitiesArray[j]
+                //     }
+                //     $.ajax({
+                //         type       : 'POST',
+                //         url        : '/api/post/export',
+                //         dataType   : 'TEXT',
+                //         contentType: 'application/json; charset=utf-8',
+                //         data       : JSON.stringify(data)
+                //     }).done(function () {
+                //         console.log("출고요청이 등록되었습니다.")
+                //     }).fail(function (error) {
+                //         alert(JSON.stringify(error));
+                //     })
+                // }
+
+                //결과 알려주기
+                alert(materialCodesArray.length + "개의 출고요청이 등록되었습니다.")
+                // window.location.reload();
+            }
 
 
         </script>

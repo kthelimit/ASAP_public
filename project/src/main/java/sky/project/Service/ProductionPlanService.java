@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sky.project.DTO.ProductionPlanDTO;
 
+import java.util.List;
+
 public interface ProductionPlanService {
     Page<ProductionPlanDTO> getProductionPlans(Pageable pageable);
 
@@ -16,4 +18,6 @@ public interface ProductionPlanService {
     void updateProductionPlan(ProductionPlanDTO productionPlanDTO); // 계획 수정
 
     void deleteProductionPlan(Long id);
+
+    List<ProductionPlanDTO> getProductionPlansWithDate();
 }

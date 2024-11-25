@@ -9,7 +9,10 @@ import sky.project.Entity.ProductionPlan;
 import sky.project.Repository.ProductionPlanRepository;
 import sky.project.Service.ProductionPlanService;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProductionPlanServiceImpl implements ProductionPlanService {
@@ -123,5 +126,17 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
 
         // 코드 생성
         return String.format("%s%s%03d", prefix, dateCode, nextSequence);
+    }
+
+    @Override
+    public List<ProductionPlanDTO> getProductionPlansWithDate() {
+
+        LocalDate today = LocalDate.now();
+        List<ProductionPlan> productionPlans = productionPlanRepository.findByPlanDate(today);
+        List<ProductionPlanDTO> dtos = new ArrayList<>();
+        for (ProductionPlan productionPlan : productionPlans) {
+            dtos.add(toDTO(productionPlan));
+        }
+        return dtos;
     }
 }

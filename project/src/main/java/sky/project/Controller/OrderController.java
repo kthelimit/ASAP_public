@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Service.ProcurementPlanService;
-import org.springframework.ui.Model;
 
 @Controller
 @Log4j2
@@ -21,10 +21,13 @@ public class OrderController {
     @Autowired
     ProcurementPlanService procurementPlanService;
 
+
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(value = "id", required = false) Long id,
+                                        @RequestParam(value = "procurePlanCode", required = false) String procurePlanCode,
                                         @RequestParam(value = "keyword", required = false) String keyword) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProcurementPlanDTO> procure;
@@ -40,6 +43,12 @@ public class OrderController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
+
+        // 선택된 생산 계획 처리
+        if (id != null) {
+            ProcurementPlanDTO selectedOrder = procurementPlanService.getProcurementPlanById(id);
+            model.addAttribute("selectedOrder", selectedOrder);
+        }
 
 
         return "/Order/Orderindex";

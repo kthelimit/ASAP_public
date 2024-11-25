@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <!-- 발주 품목 선택 -->
+        <!-- 발주 품목 선택-->
         <div class="row mt-20">
             <div class="col-lg-6">
                 <div class="card-style mb-30">
@@ -11,19 +11,23 @@
                         현재 진행되고 있는 조달계획과 관련된 품목들입니다.
                     </p>
                     <div class="table-wrapper table-responsive">
-                        <div class="row">
-                            <form method="get" th:action="@{/order/list}">
-                                <div class="row">
-                                    <div class="input-style-1 col-lg-5">
-                                        <input id="searchKeyword" name="keyword"
-                                               placeholder="공급사 또는 부품명을 입력하세요." th:value="${keyword}"
-                                               type="text"/>
-                                    </div>
-                                    <div>
-                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
-                                    </div>
+                        <div class="row" style="width: 99%; height: 70px">
+                            <div class="select-style-1 col-lg-3">
+                                <div class="select-position">
+                                    <select  style="height: 40px; padding: 5px 10px">
+                                        <option value="">품목코드</option>
+                                        <option value="">Category one</option>
+                                        <option value="">Category two</option>
+                                        <option value="">Category three</option>
+                                    </select>
                                 </div>
-                            </form>
+                            </div>
+                            <div class="input-style-1 col-lg-6">
+                                <input class="select-style-1 search" placeholder="   검색어를 입력하세요" type="text" style="height: 40px; padding: 5px 10px">
+                            </div>
+                            <div class="col-lg-3">
+                                <a class="main-btn active-btn btn-hover" style="height: 40px; padding: 5px 20px" href="#0">검색</a>
+                            </div>
                         </div>
                         <table class="table">
                             <thead>
@@ -31,50 +35,54 @@
                                 <th><h6>조달계획번호</h6></th>
                                 <th><h6>업체명</h6></th>
                                 <th><h6>품목명</h6></th>
-                                <th><h6>조달 수량</h6></th>
                                 <th><h6>조달 납기일</h6></th>
+                                <th><h6>조달수량</h6></th>
                                 <th><h6>선택</h6></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="procure : ${procure}">
-                                <td class="min-width text-center"><p th:text="${procure.procurePlanCode}"></p></td>
-                                <td class="min-width text-center"><p th:text="${procure.supplierName}"></p></td>
-                                <td class="min-width text-center"><p th:text="${procure.materialName}"></p></td>
-                                <td class="min-width text-center"><p th:text="${procure.procurementQuantity}"></p></td>
-                                <td class="min-width text-center"><p th:text="${procure.procurementDueDate}"></p></td>
+                                <td class="min-width">
+                                    <p th:text="${procure.procurePlanCode}"></p>
+                                </td>
+                                <td class="min-width">
+                                    <p th:text="${procure.supplierName}"></p>
+                                </td>
+                                <td class="min-width">
+                                    <p th:text="${procure.materialName}"></p>
+                                </td>
+                                <td class="min-width">
+                                    <p th:text="${procure.procurementDueDate}"></p>
+                                </td>
+                                <td class="min-width">
+                                    <p th:text="${procure.procurementQuantity}"></p>
+                                </td>
                                 <td>
-                                    <button class="main-btn primary-btn btn-hover">선택</button>
+                                    <a class="main-btn primary-btn btn-hover" style="padding: 12px"
+                                            th:href="@{/order/list(
+                                            id=${procure.planId},
+                                            page=${currentPage},
+                                            size=${pageSize},
+                                            keyword=${keyword},
+                                            procurePlanCode=${procure.procurePlanCode})}">
+                                        선택</a>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                        <div class="pagination-wrapper">
-                            <ul class="pagination">
-                                <li th:if="${currentPage > 1}">
-                                    <a aria-label="Previous"
-                                       th:href="@{/order/list(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                    <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                       th:href="@{/order/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
-                                       th:text="${i}"></a>
-                                </li>
-                                <li th:if="${currentPage < totalPages}">
-                                    <a aria-label="Next"
-                                       th:href="@{/order/list(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                    </div>
+                    <div style="margin:10px auto">
+                        <ul style="text-align: center">
+                            <li style="display: inline-block">
+                                <a class="main-btn primary-btn btn-hover" style="padding:4px 8px">1</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- 발주서 작성 -->
+
+            <!-- 발주서 작성-->
             <div class="col-lg-6">
                 <div class="card-style mb-30">
                     <h3 class="mb-10">발주서 작성</h3>
@@ -84,13 +92,16 @@
                     <div class="table-wrapper table-responsive">
                         <table class="table">
                             <tr>
-                                <th colspan="4">공급자 정보</th>
+                                <th colspan="4"
+                                    style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    공급자 정보
+                                </th>
                             </tr>
-                            <tr>
-                                <th>업체명</th>
-                                <td>WB사</td>
-                                <th>사업자 번호</th>
-                                <td>123-12-12345</td>
+                            <tr th:if="${selectedOrder != null}">
+                                <th style="width:15%">업체명</th>
+                                <td style="width:35%"><p th:text="${selectedOrder.supplierName}"></p></td>
+                                <th style="width:15%">사업자 번호</th>
+                                <td style="width:35%">123-12-12345</td>
                             </tr>
                             <tr>
                                 <th>주소</th>
@@ -105,19 +116,23 @@
                         </table>
                         <table class="table">
                             <tr>
-                                <th colspan="6">품목 정보</th>
+                                <th colspan="6"
+                                    style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    품목 정보
+                                </th>
                             </tr>
                             <tr>
-                                <th>품목명</th>
+                                <th style="width: 47%"><p th:text="${selectedOrder.materialName}"></p></th>
                                 <th>단가</th>
-                                <th>수량</th>
-                                <th>공급가</th>
-                                <th>입고 예정일</th>
+                                <th style="width: 15%">수량</th>
+                                <th style="width: 15%">공급가</th>
+                                <th style="width: 15%">입고 예정일</th>
                             </tr>
                             <tr>
-                                <td>시티 바이시클 40mm패드 무통안장</td>
+                                <td></td>
                                 <td>15,500</td>
-                                <td><input type="number" value="50"></td>
+                                <td style="padding-left: 5px"><input style="width: 80%" type="number" value="50">
+                                </td>
                                 <td>775,000</td>
                                 <td>24.11.15</td>
                             </tr>
@@ -125,20 +140,19 @@
                         <table class="table">
                             <tr>
                                 <th>비고</th>
-                                <td><input type="text"></td>
-                                <th>합계</th>
-                                <td>₩775,000</td>
+                                <td><input style="width: 90%" type="text"></td>
+                                <th style="width: 15%">합계</th>
+                                <td style="width: 15%">₩775,000</td>
                             </tr>
                         </table>
                     </div>
-                    <div>
+                    <div style="text-align: right">
                         <button class="main-btn primary-btn btn-hover">발주서 등록</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 구매 발주서 관리 -->
+        <!-- 구매 발주서 관리-->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card-style mb-30">
@@ -149,10 +163,10 @@
                                 발주가 완료되어 진행중인 목록입니다.
                             </p>
                         </div>
-                        <div class="row">
+                        <div class="row" style="width: 50%; height: 70px">
                             <div class="select-style-1 col-lg-3">
                                 <div class="select-position">
-                                    <select>
+                                    <select  style="height: 40px; padding: 5px 10px">
                                         <option value="">품목코드</option>
                                         <option value="">Category one</option>
                                         <option value="">Category two</option>
@@ -161,10 +175,10 @@
                                 </div>
                             </div>
                             <div class="input-style-1 col-lg-6">
-                                <input class="select-style-1 search" placeholder="검색어를 입력하세요" type="text">
+                                <input class="select-style-1 search" placeholder="   검색어를 입력하세요" type="text" style="height: 40px; padding: 5px 10px">
                             </div>
                             <div class="col-lg-3">
-                                <a class="main-btn active-btn btn-hover" href="#0">검색</a>
+                                <a class="main-btn active-btn btn-hover" style="height: 40px; padding: 5px 20px" href="#0">검색</a>
                             </div>
                         </div>
                     </div>
@@ -172,34 +186,105 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>조달계획번호</th>
-                                <th>업체명</th>
-                                <th>품목명</th>
-                                <th>발주일</th>
-                                <th>입고 예정일</th>
-                                <th>발주 상태</th>
+                                <th>
+                                    <h6>조달계획번호</h6>
+                                </th>
+                                <th>
+                                    <h6>업체명</h6>
+                                </th>
+                                <th>
+                                    <h6>품목명</h6>
+                                </th>
+                                <th>
+                                    <h6>발주일</h6>
+                                </th>
+                                <th>
+                                    <h6>입고 예정일</h6>
+                                </th>
+                                <th>
+                                    <h6>발주 상태</h6>
+                                </th>
                             </tr>
+                            <!-- end table row-->
                             </thead>
                             <tbody>
                             <tr>
-                                <td>PL-004</td>
-                                <td class="min-width">시마노</td>
-                                <td class="min-width">RD-R8150 (12단) di2 뒷변속기</td>
-                                <td class="min-width">24.11.12</td>
-                                <td class="min-width">24.11.14</td>
+                                <td>
+                                    <p>PL-004</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시마노</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>RD-R8150 (12단) di2 뒷변속기</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.12</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.14</p>
+                                </td>
                                 <td>
                                     <div class="action">
                                         <span class="status-btn active-btn">배송중</span>
                                     </div>
                                 </td>
                             </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td>
+                                    <p>PL-005</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>cs사</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>전기자전거 2인자전거 브레이크 케이블</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.09</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.10</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <span class="status-btn success-btn">입고완료</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
+                            <tr>
+                                <td>
+                                    <p>PL-006</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시마노</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>시티 바이시클 40mm패드 무통안장</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.06</p>
+                                </td>
+                                <td class="min-width">
+                                    <p>24.11.09</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <span class="status-btn danger-btn">반품중</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- end table row -->
                             </tbody>
                         </table>
+
                     </div>
-                    <div>
-                        <ul>
-                            <li>
-                                <a class="main-btn primary-btn btn-hover">1</a>
+                    <div style="margin:10px auto">
+                        <ul style="text-align: center">
+                            <li style="display: inline-block">
+                                <a class="main-btn primary-btn btn-hover" style="padding:4px 8px">1</a>
                             </li>
                         </ul>
                     </div>

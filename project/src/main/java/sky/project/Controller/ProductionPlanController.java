@@ -12,6 +12,7 @@ import sky.project.DTO.BomDTO;
 import sky.project.DTO.ProductionPlanDTO;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Service.BomService;
+import sky.project.Service.MaterialService;
 import sky.project.Service.ProductionPlanService;
 import sky.project.Service.SupplierService;
 
@@ -26,6 +27,8 @@ public class ProductionPlanController {
     @Autowired
     private ProductionPlanService productionPlanService;
 
+    @Autowired
+    private MaterialService materialService;
 
     @Autowired
     private BomService bomService;
@@ -90,7 +93,7 @@ public class ProductionPlanController {
     @GetMapping("/procureRegister")
     public String getProductionPlanCheck(Model model,
                                          @RequestParam(defaultValue = "1") int page,
-                                         @RequestParam(defaultValue = "5") int size,
+                                         @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
                                          @RequestParam(value = "productCode", required = false) String productCode) {
@@ -129,6 +132,14 @@ public class ProductionPlanController {
 
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
+
+
+
+        // 가용 재고 추가
+        if (productCode != null) {
+            int availableStock = materialService.getAvailableStock(productCode);
+            model.addAttribute("availableStock", availableStock);
+        }
 
 
 

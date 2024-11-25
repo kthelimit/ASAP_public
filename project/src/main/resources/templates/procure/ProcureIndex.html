@@ -115,30 +115,22 @@
                     <div class="card-style mb-30">
                         <h3 class="mb-10">조달 계획 조회</h3>
                         <div class="search_tab">
-                                <input class="select-style-1, search" placeholder="   제품명 및 생산 계획 코드를 입력하세요." type="text">
-                                <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
+                            <input class="select-style-1, search" placeholder="   제품명 및 생산 계획 코드를 입력하세요." type="text">
+                            <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
                         </div>
                         <div class="table-wrapper table-responsive">
-                            <table class="table striped-table">
+                            <table class="table striped-table" id="checkProcurementPlan">
                                 <thead>
                                 <tr>
                                     <th><h5>생산계획코드</h5></th>
                                     <th><h5>생산제품명</h5></th>
                                     <th><h5>공급업체</h5></th>
                                     <th><h5>부품명</h5></th>
-                                    <th><h5>leadtime </h5></th>
                                     <th><h5>조달수량</h5></th>
                                     <th><h5>조달납기일</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td><p>ABC-1234</p></td>
-                                    <td><p>전기자전거A</p></td>
-                                    <td><p>100</p></td>
-                                    <td><p>XYZ-1234</p></td>
-                                    <td><p>타이어</p></td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -174,46 +166,66 @@
                             <table class="table striped-table">
                                 <thead>
                                 <tr>
+                                    <th><h5>공급업체</h5></th>
                                     <th><h5>자재명</h5></th>
                                     <th><h5>필요수량</h5></th>
                                     <th><h5>가용재고</h5></th>
                                     <th><h5>조달수량</h5></th>
                                     <th><h5>조달납기일</h5></th>
-                                    <th><h5>공급업체</h5></th>
-                                    <th><h5>선택</h5></th>
+                                    <th><h5>등록</h5></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="bom : ${selectedBom}">
-                                    <td th:text="${bom.materialName}"></td>
-                                    <td th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
-                                    <td>0</td>
-                                    <td>100</td>
-                                    <td>
-                                        <input id="startDate" required type="date">
-                                    </td>
                                     <td>
                                         <div class="select-style-1" style="width: 130px; height: 10px">
                                             <div class="select-position">
-                                                <select style="font-size: 13px; height: 50px" id="componentType" name="componentType" required>
-                                                    <option value="" disabled selected>회사를 선택하세요</option>
-                                                    <!-- 각 자재에 맞는 공급업체를 필터링하여 보여주기 -->
+                                                <select style="font-size: 13px; height: 50px"
+                                                        name="componentType"
+                                                        required>
+                                                    <option value="공급업체 목록" disabled selected>공급업체 목록</option>
+                                                    <!-- 공급업체가 있을 때만 옵션을 생성 -->
                                                     <option th:each="supplier : ${bom.suppliers}"
                                                             th:value="${supplier.supplierId}"
-                                                            th:text="${supplier.supplierName}">
+                                                            th:text="${supplier.supplierName}"
+                                                            th:selected="${#lists.size(bom.suppliers) > 0}">
+                                                        <!-- 공급업체가 있을 때만 selected 처리 -->
                                                     </option>
                                                 </select>
                                             </div>
                                         </div>
                                     </td>
+                                    <td th:text="${bom.materialName}"></td>
+                                    <td th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
+                                    <td th:text="${availableStock}"></td>
+                                    <td th:text="${(bom.requireQuantity * selectedPlan.productionQuantity - availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - availableStock : 0}"></td>
+                                    <td>
+                                        <input id="startDate" required type="date">
+                                    </td>
                                     <td>
                                         <div class="action">
-                                            <a class="main-btn active-btn btn-hover register" href="#0"
-                                               style="padding: 6px">등록</a>
+                                            <a
+                                                    class="main-btn active-btn btn-hover register"
+                                                    type="button"
+                                                    style="padding: 6px"
+                                                    th:attr="
+                                                                data-bom-id=${bom.bomId},
+                                                                data-material-name=${bom.materialName},
+                                                                data-required-quantity=${bom.requireQuantity * selectedPlan.productionQuantity},
+                                                                data-product-code=${bom.productCode},
+                                                                data-available-stock=${availableStock},
+                                                                data-product-name=${selectedPlan.productName},
+                                                                data-production-plan-code=${selectedPlan.productionPlanCode},
+                                                                data-material-code=${bom.materialCode}"
+                                                    onclick="registerProcurement(this)">
+                                                등록
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                                 </tbody>
+
+
                             </table>
                         </div>
                     </div>
@@ -224,3 +236,100 @@
 
     </th:block>
 </th:block>
+<script>
+    function registerProcurement(button) {
+        const bomId = button.getAttribute('data-bom-id');  // BOM ID 가져오기
+        console.log("BOM ID:", bomId);
+
+
+        // 해당 셀렉트에서 공급업체 값 추출
+        const row = button.closest('tr'); // 버튼이 속한 tr 요소 찾기
+        const supplierSelect = row.querySelector('select[name="componentType"]');  // 해당 행의 select 요소 찾기
+        const supplierId = supplierSelect ? supplierSelect.value : null;  // 선택된 공급업체 ID 가져오기
+        const supplierName = supplierSelect ? supplierSelect.options[supplierSelect.selectedIndex].text : null;  // 선택된 공급업체 이름 가져오기
+
+        // 조달수량 추출 (해당 row에서 계산된 수량 값 가져오기)
+        const procurementQuantity = row.querySelector('td:nth-child(5)').textContent;  // 5번째 td가 '조달수량'이므로, 해당 값을 가져옵니다.
+        const procurementDueDate = row.querySelector('input[type="date"]').value;  // 해당 row에서 날짜 입력값 가져오기
+
+        const materialCode = button.getAttribute('data-material-code');
+        const materialName = button.getAttribute('data-material-name');
+        const requiredQuantity = parseFloat(button.getAttribute('data-required-quantity'));
+        const availableStock = parseFloat(button.getAttribute('data-available-stock'));
+
+
+        const productCode = button.getAttribute('data-product-code');
+        const productName = button.getAttribute('data-product-name');
+        const productionPlanCode = button.getAttribute('data-production-plan-code');
+
+        console.log("Supplier Name:", supplierName);
+        console.log("Material Name:", materialName);
+        console.log("Required Quantity:", requiredQuantity);
+        console.log("Available Stock:", availableStock);
+        console.log("Procurement Due Date:", procurementDueDate);
+        console.log("Procurement Quantity:", procurementQuantity);
+        console.log("Production Plan Code:", productionPlanCode);
+        console.log("Product Code:", productCode);
+        console.log("Material Code:", materialCode);
+
+        const procurementData = {
+            productionPlanCode: productionPlanCode,
+            productCode: productCode,
+            productName: productName,
+            supplierName: supplierName,
+            materialName: materialName,
+            materialCode: materialCode,
+            procurementQuantity: parseInt(procurementQuantity),
+            procurementDueDate: procurementDueDate
+        };
+
+        console.log("Procurement Data:", procurementData);
+
+        fetch('/procure/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(procurementData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("조달 계획이 성공적으로 등록되었습니다.");
+
+                    // 등록 성공 후 테이블을 다시 로드하여 데이터 갱신
+                    loadProcurementPlans();
+                } else {
+                    alert(`${data.message || "Unknown error"}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    function loadProcurementPlans() {
+        fetch('/procure/list')  // 조달 계획 목록을 요청하는 API 호출
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#checkProcurementPlan tbody');
+                tableBody.innerHTML = ''; // 기존 테이블 내용 초기화
+                data.forEach(plan => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${plan.productionPlanCode}</td>
+                <td>${plan.productName}</td>
+                <td>${plan.supplierName}</td>
+                <td>${plan.materialName}</td>
+                <td>${plan.procurementQuantity}</td>
+                <td>${plan.procurementDueDate}</td>
+            `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading procurement plans:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProcurementPlans);
+</script>

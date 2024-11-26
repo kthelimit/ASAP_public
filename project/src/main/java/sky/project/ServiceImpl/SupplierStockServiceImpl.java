@@ -27,17 +27,20 @@ public class SupplierStockServiceImpl implements SupplierStockService {
     @Override
     public Long register(SupplierStockDTO dto) {
         SupplierStock entity = null;
-        if (supplierStockRepository.findByMaterialCodeWithSupplierId(dto.getSupplierId(), dto.getMaterialCode()) != null) {
-            entity = supplierStockRepository.findByMaterialCodeWithSupplierId(dto.getSupplierId(), dto.getMaterialCode());
+        log.info("dto: "+dto);
+        if(supplierStockRepository.findById(dto.getSupplierStockId()).isPresent()){
+            entity = supplierStockRepository.findById(dto.getSupplierStockId()).get();
             entity.setAvailableStock(dto.getAvailableStock());
-
-        } else {
+            log.info("entity: "+entity);
+        }
+        else {
             entity = dtoToEntity(dto);
         }
-        entity = dtoToEntity(dto);
         supplierStockRepository.save(entity);
         return entity.getSupplierStockId();
     }
+
+
     @Override
     public List<SupplierStockDTO> findBySupplierId(String supplierId){
         List<SupplierStock> supplierStocks = supplierStockRepository.findBySupplierId(supplierId);

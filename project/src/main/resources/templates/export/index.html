@@ -37,25 +37,35 @@
                             <p class="text-sm mb-20">
                                 재고 수량을 확인하고 출고 버튼을 누르면 해당 자재가 출고처리 됩니다.
                             </p>
-                            <div class="row" style="justify-content: flex-end">
-                                <div class="select-style-1 col-lg-3">
-                                    <div class="select-position">
-                                        <select>
-                                            <option value="">품목코드</option>
-                                            <option value="">Category one</option>
-                                            <option value="">Category two</option>
-                                            <option value="">Category three</option>
-                                        </select>
-
+                            <form id="searchForm2" method="get" th:action="@{/material/export}">
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="select-style-1 col-lg-3">
+                                        <div class="select-position">
+                                            <select name="type2">
+                                                <option th:selected="${type2=='e'}" value="e">출고 코드</option>
+                                                <option th:selected="${type2=='p'}" value="p">생산 계획 코드</option>
+                                                <option th:selected="${type2=='d'}" value="d">생산제품명</option>
+                                                <option th:selected="${type2=='c'}" value="c">자재 코드</option>
+                                                <option th:selected="${type2=='n'}" value="n">자재명</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword2" name="keyword2"
+                                               placeholder="검색어를 입력하세요" th:value="${keyword2}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn secondary-btn btn-hover ml-10 clear-btn"
+                                                onclick="clearForm2()"
+                                                type="button">리셋
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 input-style-1">
-                                    <input class="search" placeholder="     검색어를 입력하세요" type="text">
-                                </div>
-                                <div class="col-lg-1" style="min-width: 144px">
-                                <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="table-wrapper table-responsive">
                             <table class="table">
@@ -93,7 +103,8 @@
                                         <p th:text="${export.exportCode}"></p>
                                     </td>
                                     <td class="text-center">
-                                        <p th:text="${export.productionPlanCode}" th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
+                                        <p th:text="${export.productionPlanCode}"
+                                           th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
                                     </td>
                                     <td class="text-center">
                                         <p th:text="${export.productName}"></p>
@@ -113,14 +124,22 @@
                                     <td class="text-center">
                                         <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
                                     </td>
-                                    <td class="text-align-right">
+                                    <td class="text-center">
                                         <form method="post" th:action="@{/material/export/approval}">
                                             <input name="exportCode" th:value="${export.exportCode}" type="hidden">
                                             <input name="materialCode" th:value="${export.materialCode}" type="hidden">
                                             <input name="requiredQuantity" th:value="${export.requiredQuantity}"
                                                    type="hidden">
-                                            <button th:if="${export.availableQuantity>=export.requiredQuantity}" class="main-btn active-btn btn-hover" type="submit">출고</button>
-                                            <button th:if="${export.availableQuantity<export.requiredQuantity}" class="main-btn disabled btn-hover" type="button" disabled>불가</button>
+                                            <button class="main-btn active-btn btn-hover"
+                                                    style="padding: 5px 12px"
+                                                    th:if="${export.availableQuantity>=export.requiredQuantity}"
+                                                    type="submit">출고
+                                            </button>
+                                            <button class="main-btn disabled btn-hover"
+                                                    disabled style="padding: 5px 12px"
+                                                    th:if="${export.availableQuantity<export.requiredQuantity}"
+                                                    type="button">불가
+                                            </button>
 
                                         </form>
                                     </td>
@@ -229,6 +248,7 @@
         <script>
 
             var searchForm = $("#searchForm");
+            var searchForm2 = $("#searchForm2");
 
             //size를 결정하면 거기에 맞춰서 출력
             function changeSize() {
@@ -238,6 +258,9 @@
             //폼 리셋
             function clearForm() {
                 searchForm.empty().submit();
+            }
+            function clearForm2() {
+                searchForm2.empty().submit();
             }
         </script>
     </th:block>

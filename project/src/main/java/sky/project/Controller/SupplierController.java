@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.SupplierDTO;
+import sky.project.DTO.SupplierStockDTO;
 import sky.project.DTO.UserDTO;
 import sky.project.Service.SupplierService;
 import sky.project.Service.SupplierStockService;
@@ -57,7 +58,12 @@ public class SupplierController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model, HttpSession session) {
-        String userId = (String) session.getAttribute("userId");
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
+            model.addAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/";
+        }
+        String userId = user.getUserId();
 
         if (userId != null && supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("alertMessage", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");
@@ -147,10 +153,16 @@ public class SupplierController {
         return "Supplier/SupplierDetail";
     }
 
+
+    @PostMapping("/stockUpdate")
+    public String supplierStockUpdate(SupplierStockDTO dto){
+        supplierStockService.register(dto);
+        return "redirect:/suppliers/page";
+    }
+
     @GetMapping("/page")
-    public String supplierPage(Model model, HttpSession session) {
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        if (user == null) {
+    public String supplierPage(@SessionAttribute(name= "user", required = false) UserDTO user, Model model) {
+        if(user==null){
             model.addAttribute("message", "로그인이 필요합니다.");
             return "redirect:/";
         }
@@ -161,6 +173,21 @@ public class SupplierController {
 
         return "Supplier/SupplierPage";
     }
+
+//    @GetMapping("/page")
+//    public String supplierPage(Model model, HttpSession session) {
+//        UserDTO user = (UserDTO) session.getAttribute("user");
+//        if (user == null) {
+//            model.addAttribute("message", "로그인이 필요합니다.");
+//            return "redirect:/";
+//        }
+//        String userId = user.getUserId();
+//
+//        System.out.println("userId : " + userId);
+//        model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
+//
+//        return "Supplier/SupplierPage";
+//    }
 
 
 }

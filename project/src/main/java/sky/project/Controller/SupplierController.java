@@ -12,8 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.SupplierDTO;
 import sky.project.DTO.UserDTO;
-import sky.project.Entity.Supplier;
 import sky.project.Service.SupplierService;
+import sky.project.Service.SupplierStockService;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +30,14 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierService;
 
+    @Autowired
+    private SupplierStockService supplierStockService;
+
     @GetMapping("/list")
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
                                    @RequestParam(defaultValue = "12") int size,
-                                   @RequestParam(value = "keyword", required = false) String keyword){
+                                   @RequestParam(value = "keyword", required = false) String keyword) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<SupplierDTO> supplier;
@@ -145,7 +148,17 @@ public class SupplierController {
     }
 
     @GetMapping("/page")
-    public String supplierPage(){
+    public String supplierPage(Model model, HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
+            model.addAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/";
+        }
+        String userId = user.getUserId();
+
+        System.out.println("userId : " + userId);
+        model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
+
         return "Supplier/SupplierPage";
     }
 

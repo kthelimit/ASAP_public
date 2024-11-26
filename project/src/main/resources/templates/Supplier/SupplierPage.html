@@ -126,11 +126,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>[자재 이름]</td>
-          <td>[단가]</td>
-          <td>[최소 공급 수량]</td>
-          <td>[가용 재고 수량]</td>
+        <tr th:each="stock : ${supplierStocks}">
+          <td th:text="${stock.materialName}">[자재 이름]</td>
+          <td th:text="${stock.unitPrice}">[단가]</td>
+          <td th:text="${stock.quantity}">[최소 공급 수량]</td>
+          <td th:text="${stock.availableStock}">[가용 재고 수량]</td>
         </tr>
         </tbody>
       </table>

@@ -6,10 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sky.project.DTO.AssyDTO;
 import sky.project.DTO.StockDTO;
+import sky.project.DTO.SupplierStockDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.*;
 import sky.project.Service.AssyService;
 import sky.project.Service.StockService;
+import sky.project.Service.SupplierStockService;
 
 import java.text.DecimalFormat;
 import java.util.stream.IntStream;
@@ -39,8 +41,9 @@ public class InsertDataTest {
 
     @Autowired
     private AssyService assyService;
+
     @Autowired
-    private AssyRepository assyRepository;
+    private SupplierStockService supplierStockService;
 
 
     @Test
@@ -56,8 +59,9 @@ public class InsertDataTest {
         insertAssyMaterial(); //조립품 및 완제품 등록
         insertBom(); //BOM 등록
         insertStock(); //창고 자재 등록
-
         insertAssy(); //조립품 구조 등록
+        insertSupplierStocks(); //업체별 관리 재고 등록
+
 
     }
 
@@ -495,6 +499,49 @@ public class InsertDataTest {
 
             assyService.register(assyDTO);
         });
+
+    }
+
+
+    //업체별 자재 재고
+    @Test
+    public void insertSupplierStocks(){
+
+        String[] materialCodes = {"MATB3MAT001", "MATB3MAT002", "MATK2MAT001", "MATB2MAT001", "MATB2MAT002", "MATHAMAT001",
+                "MATBOMAT001", "MATWHMAT001", "MATWHMAT002", "MATWHMAT003", "MATRIMAT001", "MATRIMAT002", "MATK1MAT001",
+                "MATB1MAT001", "MATB1MAT002", "MATBOMAT002", "MATB2MAT003", "MATB2MAT004", "MATK1MAT002", "MATWHMAT004",
+                "MATWHMAT005", "MATB1MAT003", "MATB1MAT004", "MATB1MAT005", "MATB1MAT006", "MATHAMAT002", "MATHAMAT003",
+                "MATHAMAT004", "MATHAMAT005", "MATB1MAT007", "MATB1MAT008", "MATB1MAT009", "MATB1MAT010", "MATK1MAT003",
+                "MATRIMAT003", "MATRIMAT004", "MATWHMAT006", "MATWHMAT007", "MATB1MAT011", "MATB1MAT012", "MATSAMAT001",
+                "MATSAMAT002", "MATSAMAT003", "MATSAMAT004", "MATB3MAT003", "MATB3MAT004", "MATB1MAT013", "MATB1MAT014",
+                "MATB1MAT015", "MATB1MAT016", "MATK1MAT004", "MATB2MAT005", "MATB2MAT006", "MATK1MAT005", "MATB1MAT017",
+                "MATB1MAT018", "MATWHMAT008", "MATWHMAT009", "MATWHMAT010", "MATWHMAT011", "MATWHMAT012", "MATPEMAT001",
+                "MATPEMAT002", "MATPEMAT003", "MATB1MAT019", "MATB1MAT020", "MATB1MAT021", "MATHAMAT006", "MATHAMAT007",
+                "MATHAMAT008", "MATHAMAT009", "MATHAMAT010", "MATRIMAT005", "MATRIMAT006", "MATWHMAT013", "MATWHMAT014",
+                "MATWHMAT015", "MATB1MAT022", "MATB1MAT023", "MATWHMAT016"};
+
+        String[] supplierNames = {"신지전자", "신지전자", "신지전자", "imbot", "imbot", "AU테크", "Mankeel", "시마노", "시마노",
+                "Tektro", "Oregon", "Oregon", "Kuntai", "시마노", "시마노", "Mankeel", "볼턴", "e근두운", "EVE", "흥아타이어",
+                "흥아타이어", "스람", "스람", "시마노", "시마노", "시마노", "시마노", "시마노", "시마노", "COS", "시마노", "훔페르트",
+                "훔페르트", "Lankeleisi", "JQORG", "JQORG", "시마노", "시마노", "시마노", "TK", "Ergotec", "UNO", "BTR",
+                "LOOBON", "몬스터라이트", "몬스터라이트", "시마노", "시마노", "시마노", "시마노", "JAK", "발켄", "발켄", "Celeron",
+                "로터바이크", "스기노", "맥시스", "벨로또", "Kenda", "벨로또", "벨로또", "시마노", "시마노", "Ebike", "한국자전거",
+                "TSUNAMI", "TSUNAMI", "신지전자", "신지전자", "Ninebot", "Deda", "훔페르트", "시마노", "시마노", "Ebike", "Ebike",
+                "Lingbo", "KHS", "KUDOS", "Kenda"};
+
+        IntStream.rangeClosed(1, 80).forEach(i -> {
+
+            String supplierId = supplierRepository.findSupplierIdBySupplierName(supplierNames[i - 1]);
+
+            SupplierStockDTO dto = SupplierStockDTO.builder()
+                    .supplierId(supplierId)
+                    .materialCode(materialCodes[i - 1])
+                    .availableStock(200)
+                    .build();
+            supplierStockService.register(dto);
+
+        });
+
 
     }
 

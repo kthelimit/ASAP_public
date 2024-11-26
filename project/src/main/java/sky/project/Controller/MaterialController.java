@@ -100,8 +100,13 @@ public class MaterialController {
     public String exportMaterial(Model model, @RequestParam(defaultValue = "1") int page,
                                  @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(value = "type", required = false) String type,
-                                 @RequestParam(value = "keyword", required = false) String keyword) {
+                                 @RequestParam(value = "keyword", required = false) String keyword,
+                                 @RequestParam(defaultValue = "1") int page2,
+                                 @RequestParam(defaultValue = "10") int size2,
+                                 @RequestParam(value = "type2", required = false) String type2,
+                                 @RequestParam(value = "keyword2", required = false) String keyword2) {
         Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable2 = PageRequest.of(page2 - 1, size2);
 
         Page<StockDTO> stocks;
 
@@ -126,8 +131,36 @@ public class MaterialController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
         model.addAttribute("type", type);
-        //현재 처리되지 않은 출고요청만 가져오기
-        model.addAttribute("CurrentExportRequest", exportService.getCurrentExportList());
+
+        //현재 상태가 대기중인 출고 요청만 가지고 온다.
+        Page<ExportDTO> exports;
+
+        if(keyword2 != null && !keyword2.isEmpty()) {
+            if (type2.contains("e")) {
+                exports = exportService.getCurrentExportsWithSearchInExportCode(keyword2, pageable2);
+            } else if (type2.contains("p")) {
+                exports = exportService.getCurrentExportsWithSearchInProductionPlanCode(keyword2, pageable2);
+            } else if (type2.contains("n")) {
+                exports = exportService.getCurrentExportsWithSearchInMaterialName(keyword2, pageable2);
+            } else if (type2.contains("c")) {
+                exports = exportService.getCurrentExportsWithSearchInMaterialCode(keyword2, pageable2);
+            } else if (type2.contains("d")) {
+                exports = exportService.getCurrentExportsWithSearchInProductName(keyword2, pageable2);
+            } else {
+                exports = exportService.getCurrentExportListPage(pageable2);
+            }
+        }else{
+            exports = exportService.getCurrentExportListPage(pageable2);
+        }
+        model.addAttribute("exports", exports.getContent());
+        model.addAttribute("totalPages2", exports.getTotalPages());
+        model.addAttribute("currentPage2", page2);
+        model.addAttribute("pageSize2", size2);
+        model.addAttribute("keyword2", keyword2);
+        model.addAttribute("type2", type2);
+
+
+
         return "/Export/index";
     }
 

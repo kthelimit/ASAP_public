@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
+import sky.project.Entity.Material;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface MaterialService {
     List<MaterialDTO> findAssyMaterialByProductCode(String productCode);
     List<MaterialDTO> getSuppliersByMaterialName(String materialName);
     int getAvailableStock(String materialCode);
+
+    Material getMaterialByName(String materialName);
 }

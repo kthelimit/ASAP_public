@@ -16,9 +16,9 @@ public class Supplier extends Base{
     @Id
     private String supplierId; // User ID에서 받아오는 공급사 ID
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // User 엔티티와의 관계
+    private User user;
 
     @Column(nullable = false, unique = true, length = 20)
     private String businessRegistrationNumber;

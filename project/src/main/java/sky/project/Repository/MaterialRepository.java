@@ -25,4 +25,5 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
             String materialName, String materialCode, Pageable pageable);
 
     List<Material> findByMaterialName(String materialName);
+
 }

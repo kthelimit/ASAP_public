@@ -4,33 +4,39 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Currency;
+
 
 @Getter
 @Setter
 @Entity
-@Table(name = "Orders")
+@Table(name = "orders")
 public class Order  extends Base{
 
     @Id
-    @Column(name = "order_id", length = 20)
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
 
     @Column(name = "order_date", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date orderDate;
+    private LocalDate orderDate;
 
     @Column(name = "expected_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date expectedDate;
+    private LocalDate expectedDate;
+
+    private String procurePlanCode;
+    private String supplierName;
 
 
     @Column(nullable = false, length = 100)
     private String materialName; // 자재 이름
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String materialCode; // 자재 코드
-
     @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;
+
+    private double totalprice;
+
+    private CurrentStatus status;
 }

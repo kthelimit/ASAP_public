@@ -30,4 +30,6 @@ public interface SupplierService {
 
 
     Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable);
+
+    Supplier getSupplierByName(String supplierName);
 }

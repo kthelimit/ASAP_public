@@ -54,7 +54,7 @@ public class SupplierController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model, HttpSession session) {
-        String userId = (String) session.getAttribute("userId");
+        String userId = (String) session.getAttribute("user");
 
         if (userId != null && supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("alertMessage", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");

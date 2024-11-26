@@ -177,5 +177,13 @@ public class MaterialServiceImpl implements MaterialService {
         return materialDTOList;
     }
 
+    @Override
+    public Material getMaterialByName(String materialName) {
+        List<Material> materials = materialRepository.findByMaterialName(materialName);
+        if (materials.isEmpty()) {
+            throw new RuntimeException("Material not found with name: " + materialName);
+        }
+        return materials.get(0); // 항상 한 가지 값만 있다고 가정
+    }
 
 }

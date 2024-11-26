@@ -152,7 +152,14 @@ public class SupplierServiceImpl implements SupplierService {
                 .build();
     }
 
-
+    @Override
+    public Supplier getSupplierByName(String supplierName) {
+        Supplier supplier = supplierRepository.findBySupplierName(supplierName);
+        if (supplier == null) {
+            throw new RuntimeException("Supplier not found with name: " + supplierName);
+        }
+        return supplier;
+    }
 
 
 }

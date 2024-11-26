@@ -22,5 +22,5 @@ public class SupplierStock {
     @JoinColumn(name = "supplierId")
     private Supplier supplier;
 
-    private int availableStock; //가용 재고
+    private int stock; //재고
 }

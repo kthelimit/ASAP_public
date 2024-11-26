@@ -76,6 +76,7 @@
                                     <th class="text-center"><h6>자재 이름</h6></th>
                                     <th class="text-center"><h6>단가</h6></th>
                                     <th class="text-center"><h6>최소 공급 수량</h6></th>
+                                    <th class="text-center"><h6>현재 재고 수량</h6></th>
                                     <th class="text-center"><h6>가용 재고 수량</h6></th>
                                     <th class="text-center"><h6>재고 수량 수정</h6></th>
                                 </tr>
@@ -85,6 +86,7 @@
                                     <td class="min-width">[[${stock.materialName}]]</td>
                                     <td class="min-width text-center">[[${stock.unitPrice}]]</td>
                                     <td class="min-width text-center">[[${stock.quantity}]]</td>
+                                    <td class="min-width text-center">[[${stock.stock}]]</td>
                                     <td class="min-width text-center">[[${stock.availableStock}]]</td>
                                     <td class="min-width">
                                         <form th:action="@{/suppliers/stockUpdate}"  method="POST">

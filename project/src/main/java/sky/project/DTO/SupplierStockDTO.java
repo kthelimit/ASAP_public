@@ -26,6 +26,8 @@ public class SupplierStockDTO {
 
     private Double unitPrice; //자재 가격
 
+    private int stock; //재고
+
     private int availableStock; //가용 재고
 
 }

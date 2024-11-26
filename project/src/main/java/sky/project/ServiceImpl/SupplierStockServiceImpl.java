@@ -35,7 +35,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
     public void updateStock(SupplierStockDTO dto) {
         if (supplierStockRepository.findById(dto.getSupplierStockId()).isPresent()) {
             SupplierStock entity = supplierStockRepository.findById(dto.getSupplierStockId()).get();
-            entity.setAvailableStock(dto.getAvailableStock());
+            entity.setStock(dto.getStock());
             supplierStockRepository.save(entity);
         }
     }
@@ -63,7 +63,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
                 .quantity(entity.getMaterial().getQuantity())
                 .componentType(entity.getMaterial().getComponentType())
                 .unitPrice(entity.getMaterial().getUnitPrice())
-                .availableStock(entity.getAvailableStock())
+                .stock(entity.getStock())
                 .build();
 
     }
@@ -76,7 +76,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
             return SupplierStock.builder()
                     .supplierStockId(dto.getSupplierStockId())
-                    .availableStock(dto.getAvailableStock())
+                    .stock(dto.getStock())
                     .supplier(supplier)
                     .material(material)
                     .build();

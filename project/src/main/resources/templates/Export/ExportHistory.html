@@ -28,5 +28,155 @@
                 </div>
             </div>
             <!-- ========== title-wrapper end ========== -->
+            <div class="row mb-20">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="search_tab">
+                            <form id="searchForm" method="get" th:action="@{/material/export/history}">
+                                <div class="row" style="justify-content: space-between">
+                                    <div class="col-lg-5">
+                                        <h3 class="mb-10">출고 내역 목록</h3>
+                                        <p class="text-sm mb-20">
+                                            출고 요청의 상태와 처리여부를 확인할 수 있습니다.
+                                        </p>
+                                    </div>
+                                    <div class="select-style-1 col-lg-2">
+                                        <div class="select-position">
+                                            <select id="sizeSelect" name="size" onchange="changeSize()">
+                                                <option th:selected="${pageSize==10}" value="10">10개씩 출력하기</option>
+                                                <option th:selected="${pageSize==25}" value="25">25개씩 출력하기</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 검색 창 -->
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="select-style-1 col-lg-3">
+                                        <div class="select-position">
+                                            <select name="type">
+                                                <option th:selected="${type=='e'}" value="e">출고 코드</option>
+                                                <option th:selected="${type=='p'}" value="p">생산 계획 코드</option>
+                                                <option th:selected="${type=='d'}" value="d">생산제품명</option>
+                                                <option th:selected="${type=='c'}" value="c">자재 코드</option>
+                                                <option th:selected="${type=='n'}" value="n">자재명</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword" name="keyword"
+                                               placeholder="검색어를 입력하세요" th:value="${keyword}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn secondary-btn btn-hover ml-10 clear-btn"
+                                                onclick="clearForm()"
+                                                type="button">리셋
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th class="text-center">
+                                        <h6>출고 코드</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>생산 계획 코드</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>생산제품명</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>자재명</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>자재코드</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>출고수량</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>출고일</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>상태</h6>
+                                    </th>
+                                </tr>
+                                <tr th:each="export:${exports}">
+                                    <td class="text-center">
+                                        <p th:text="${export.exportCode}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.productionPlanCode}"
+                                           th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.productName}"></p>
+                                    </td>
+                                    <td>
+                                        <p th:text="${export.materialName}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.materialCode}"></p>
+                                    </td>
+                                    <td class="text-align-right">
+                                        <p th:text="${export.requiredQuantity}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:if="${export.exportStatus!='대기 중'}"
+                                           th:text="${#temporals.format(export.modifiedDate, 'yyyy-MM-dd')}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="status-btn active-btn" th:if="${export.exportStatus=='대기 중'}" th:text="${export.exportStatus}"/>
+                                        <span class="status-btn close-btn" th:if="${export.exportStatus=='종료'}" th:text="${export.exportStatus}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage > 1}">
+                                        <a aria-label="Previous"
+                                           th:href="@{/material/export/history(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                        <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/material/export/history(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage < totalPages}">
+                                        <a aria-label="Next"
+                                           th:href="@{/material/export/history(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            var searchForm = $("#searchForm");
+
+            //size를 결정하면 거기에 맞춰서 출력
+            function changeSize() {
+                searchForm.submit();
+            }
+
+            //폼 리셋
+            function clearForm() {
+                searchForm.empty().submit();
+            }
+        </script>
     </th:block>
 </th:block>

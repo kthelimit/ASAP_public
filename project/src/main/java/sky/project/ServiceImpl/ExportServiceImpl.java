@@ -2,6 +2,8 @@ package sky.project.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ExportDTO;
 import sky.project.Entity.*;
@@ -43,8 +45,8 @@ public class ExportServiceImpl implements ExportService {
         exportRepository.save(export);
 
         //재고에서 분량만큼 빼기
-        Stock stock= stockRepository.findByMaterialCode(dto.getMaterialCode());
-        stock.setQuantity(stock.getQuantity()-export.getRequiredQuantity());
+        Stock stock = stockRepository.findByMaterialCode(dto.getMaterialCode());
+        stock.setQuantity(stock.getQuantity() - export.getRequiredQuantity());
         stockRepository.save(stock);
 
         return export.getExportId();
@@ -91,12 +93,15 @@ public class ExportServiceImpl implements ExportService {
                 .exportId(entity.getExportId())
                 .exportCode(entity.getExportCode())
                 .productionPlanCode(entity.getProductionPlan().getProductionPlanCode())
+                .productionStartDate(entity.getProductionPlan().getProductionStartDate())
+                .productionEndDate(entity.getProductionPlan().getProductionEndDate())
                 .productName(entity.getProductionPlan().getProductName())
                 .materialName(entity.getMaterial().getMaterialName())
                 .materialCode(entity.getMaterial().getMaterialCode())
                 .requiredQuantity(entity.getRequiredQuantity())
                 .exportStatus(exportStatus)
                 .createdDate(entity.getCreatedDate())
+                .modifiedDate(entity.getModifiedDate())
                 .build();
         return dto;
 
@@ -179,4 +184,43 @@ public class ExportServiceImpl implements ExportService {
         }
         return dtoList;
     }
+
+    @Override
+    public Page<ExportDTO> getExports(Pageable pageable) {
+        Page<Export> result = exportRepository.findAll(pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInExportCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByExportCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInProductionPlanCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductionPlanCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInMaterialName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialName(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInMaterialCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInProductName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductName(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+
+
 }

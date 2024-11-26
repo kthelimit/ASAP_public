@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,8 @@ public class ProductionPlanController {
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int size,
                                         @RequestParam(value = "keyword", required = false) String keyword) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        //최근에 등록한 것이 위에 뜨도록
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
         Page<ProductionPlanDTO> plans;
 
         if (keyword != null && !keyword.isEmpty()) {

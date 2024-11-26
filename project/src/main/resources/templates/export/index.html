@@ -2,87 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <style>
-            body {
-                height: 3000px;
-            }
 
-            .col-lg-6 {
-                margin: 20px auto -25px;
-                width: 1625px;
-                height: auto;
-            }
-
-            .mb-10 {
-                font-weight: bold;
-                font-size: 30px;
-                margin-bottom: 30px;
-                margin-left: 10px;
-            }
-
-            thead {
-                background-color: #ebebeb;
-            }
-
-            thead th:first-child {
-                border-top-left-radius: 10px;
-            }
-
-            thead th:last-child {
-                border-top-right-radius: 10px;
-            }
-
-            th, td {
-                text-align: center;
-            }
-
-            .blue_botton {
-                margin: auto 15px;
-                width: 80px;
-                height: 50px;
-                border-radius: 8px;
-            }
-
-            .choice {
-                margin: 5px;
-                width: 80px;
-                height: 50px;
-                border-radius: 8px;
-            }
-
-            .select-position {
-                width: 300px;
-            }
-
-            .search {
-                margin-left: 15px;
-                border: 1px solid #e5e5e5;;
-                border-radius: 10px;
-                width: 300px;
-                height: 58px;
-                position: relative;
-            }
-
-            .select-style-1 {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .search_tab {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .choice-column {
-                width: 220px;
-            }
-
-            .how-ea {
-                width: 100px;
-            }
-
-
-        </style>
         <div class="container-fluid">
             <!-- ========== title-wrapper start ========== -->
             <div class="title-wrapper pt-30">
@@ -110,97 +30,101 @@
             </div>
             <!-- ========== title-wrapper end ========== -->
             <div class="row mb-20">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div class="card-style mb-30">
                         <div class="search_tab">
-                            <h6 class="mb-10">출고 요청 목록</h6>
-                            <div class="select-style-1">
-                                <div class="select-position">
-                                    <select>
-                                        <option value="">품목코드</option>
-                                        <option value="">Category one</option>
-                                        <option value="">Category two</option>
-                                        <option value="">Category three</option>
-                                    </select>
+                            <h3 class="mb-10">출고 요청 목록</h3>
+                            <p class="text-sm mb-20">
+                                재고 수량을 확인하고 출고 버튼을 누르면 해당 자재가 출고처리 됩니다.
+                            </p>
+                            <div class="row" style="justify-content: flex-end">
+                                <div class="select-style-1 col-lg-3">
+                                    <div class="select-position">
+                                        <select>
+                                            <option value="">품목코드</option>
+                                            <option value="">Category one</option>
+                                            <option value="">Category two</option>
+                                            <option value="">Category three</option>
+                                        </select>
 
+                                    </div>
                                 </div>
-                                <input class="select-style-1, search" placeholder="     검색어를 입력하세요" type="text">
+                                <div class="col-lg-3 input-style-1">
+                                    <input class="search" placeholder="     검색어를 입력하세요" type="text">
+                                </div>
+                                <div class="col-lg-1" style="min-width: 144px">
                                 <a class="main-btn active-btn btn-hover blue_botton" href="#0">검색</a>
+                                </div>
                             </div>
                         </div>
-
                         <div class="table-wrapper table-responsive">
                             <table class="table">
-                                <thead>
                                 <tr>
-                                    <th>
-                                        <h5>출고 코드</h5>
+                                    <th class="text-center">
+                                        <h6>출고 코드</h6>
                                     </th>
-                                    <th>
-                                        <h5>생산계획번호</h5>
+                                    <th class="text-center">
+                                        <h6>생산계획번호</h6>
                                     </th>
-                                    <th>
-                                        <h5>생산제품명</h5>
+                                    <th class="text-center">
+                                        <h6>생산제품명</h6>
                                     </th>
-                                    <th>
-                                        <h5>품목명</h5>
+                                    <th class="text-center">
+                                        <h6>품목명</h6>
                                     </th>
-                                    <th>
-                                        <h5>품목코드</h5>
+                                    <th class="text-center">
+                                        <h6>품목코드</h6>
                                     </th>
-                                    <th>
-                                        <h5>재고수량</h5>
+                                    <th class="text-center">
+                                        <h6>재고수량</h6>
                                     </th>
-                                    <th>
-                                        <h5>출고수량</h5>
+                                    <th class="text-center">
+                                        <h6>출고수량</h6>
                                     </th>
-                                    <th>
-                                        <h5>등록일</h5>
+                                    <th class="text-center">
+                                        <h6>등록일</h6>
                                     </th>
-                                    <th>
-                                        <h5>선택목록</h5>
+                                    <th class="text-center">
+                                        <h6>선택목록</h6>
                                     </th>
                                 </tr>
-                                </thead>
-                                <tbody>
                                 <tr th:each="export:${CurrentExportRequest}">
-                                    <td>
+                                    <td class="text-center">
                                         <p th:text="${export.exportCode}"></p>
                                     </td>
-                                    <td>
-                                        <p th:text="${export.productionPlanCode}"></p>
+                                    <td class="text-center">
+                                        <p th:text="${export.productionPlanCode}" th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <p th:text="${export.productName}"></p>
                                     </td>
                                     <td>
                                         <p th:text="${export.materialName}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <p th:text="${export.materialCode}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-align-right">
                                         <p th:text="${export.availableQuantity}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-align-right">
                                         <p th:text="${export.requiredQuantity}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
                                     </td>
-                                    <td>
+                                    <td class="text-align-right">
                                         <form method="post" th:action="@{/material/export/approval}">
                                             <input name="exportCode" th:value="${export.exportCode}" type="hidden">
                                             <input name="materialCode" th:value="${export.materialCode}" type="hidden">
                                             <input name="requiredQuantity" th:value="${export.requiredQuantity}"
                                                    type="hidden">
-                                            <button class="main-btn active-btn btn-hover" type="submit">출고</button>
+                                            <button th:if="${export.availableQuantity>=export.requiredQuantity}" class="main-btn active-btn btn-hover" type="submit">출고</button>
+                                            <button th:if="${export.availableQuantity<export.requiredQuantity}" class="main-btn disabled btn-hover" type="button" disabled>불가</button>
+
                                         </form>
                                     </td>
                                 </tr>
-
-
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -302,6 +226,5 @@
                 </div>
             </div>
         </div>
-
     </th:block>
 </th:block>

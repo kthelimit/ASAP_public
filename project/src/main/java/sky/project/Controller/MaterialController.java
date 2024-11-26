@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -130,12 +131,6 @@ public class MaterialController {
         return "/Export/index";
     }
 
-    @PostMapping("/export/approval")
-    public String exportMaterialApproval(ExportDTO dto) {
-        exportService.modify(dto);
-        return "redirect:/material/export";
-    }
-
     //자재 출고요청
     @RequestMapping("/export/request")
     public String exportMaterialRequest(Model model) {
@@ -144,9 +139,49 @@ public class MaterialController {
         return "/Export/ExportRequest";
     }
 
+
+    //출고 승인
+    @PostMapping("/export/approval")
+    public String exportMaterialApproval(ExportDTO dto) {
+        exportService.modify(dto);
+        return "redirect:/material/export";
+    }
+
     //출고 내역
     @RequestMapping("/export/history")
-    public String exportMaterialHistory(Model model) {
+    public String exportMaterialHistory(Model model, @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(value = "type", required = false) String type,
+                                        @RequestParam(value = "keyword", required = false) String keyword) {
+        
+        //최근에 요청한 출고내역이 위쪽에 뜨도록
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("exportId").descending());
+
+        Page<ExportDTO> exportDTOS;
+
+        if(keyword != null && !keyword.isEmpty()) {
+            if (type.contains("e")) {
+                exportDTOS = exportService.getExportsWithSearchInExportCode(keyword, pageable);
+            } else if (type.contains("p")) {
+                exportDTOS = exportService.getExportsWithSearchInProductionPlanCode(keyword, pageable);
+            } else if (type.contains("n")) {
+                exportDTOS = exportService.getExportsWithSearchInMaterialName(keyword, pageable);
+            } else if (type.contains("c")) {
+                exportDTOS = exportService.getExportsWithSearchInMaterialCode(keyword, pageable);
+            } else if (type.contains("d")) {
+                exportDTOS = exportService.getExportsWithSearchInProductName(keyword, pageable);
+            } else {
+                exportDTOS = exportService.getExports(pageable);
+            }
+        }else{
+            exportDTOS = exportService.getExports(pageable);
+        }
+        model.addAttribute("exports", exportDTOS.getContent());
+        model.addAttribute("totalPages", exportDTOS.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
         return "/Export/ExportHistory";
     }
 

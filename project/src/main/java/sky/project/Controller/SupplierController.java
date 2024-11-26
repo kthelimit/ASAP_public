@@ -156,7 +156,7 @@ public class SupplierController {
 
     @PostMapping("/stockUpdate")
     public String supplierStockUpdate(SupplierStockDTO dto){
-        supplierStockService.register(dto);
+        supplierStockService.updateStock(dto);
         return "redirect:/suppliers/page";
     }
 

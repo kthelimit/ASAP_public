@@ -8,5 +8,7 @@ public interface SupplierStockService {
 
     Long register(SupplierStockDTO dto);
 
+    void updateStock(SupplierStockDTO dto);
+
     List<SupplierStockDTO> findBySupplierId(String supplierId);
 }

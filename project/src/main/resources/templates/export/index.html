@@ -226,5 +226,19 @@
                 </div>
             </div>
         </div>
+        <script>
+
+            var searchForm = $("#searchForm");
+
+            //size를 결정하면 거기에 맞춰서 출력
+            function changeSize() {
+                searchForm.submit();
+            }
+
+            //폼 리셋
+            function clearForm() {
+                searchForm.empty().submit();
+            }
+        </script>
     </th:block>
 </th:block>

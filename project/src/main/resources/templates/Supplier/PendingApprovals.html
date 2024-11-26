@@ -42,24 +42,24 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th><h6>업체 이름</h6></th>
-                                    <th><h6>사업자 번호</h6></th>
-                                    <th><h6>연락처</h6></th>
-                                    <th><h6>주소</h6></th>
-                                    <th><h6>업태</h6></th>
-                                    <th><h6>종목</h6></th>
-                                    <th><h6>계약서</h6></th>
-                                    <th><h6>Action</h6></th>
+                                    <th class="text-center"><h6>업체 이름</h6></th>
+                                    <th class="text-center"><h6>사업자 번호</h6></th>
+                                    <th class="text-center"><h6>연락처</h6></th>
+                                    <th class="text-center"><h6>주소</h6></th>
+                                    <th class="text-center"><h6>업태</h6></th>
+                                    <th class="text-center"><h6>종목</h6></th>
+                                    <th class="text-center"><h6>계약서</h6></th>
+                                    <th class="text-center"><h6>Action</h6></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="supplier : ${suppliers}" th:id="'supplier-' + ${supplier.supplierId}">
                                     <td th:text="${supplier.supplierName}">업체 이름</td>
-                                    <td th:text="${supplier.businessRegistrationNumber}">사업자 번호</td>
-                                    <td th:text="${supplier.contactInfo}">연락처</td>
+                                    <td class="text-center" th:text="${supplier.businessRegistrationNumber}">사업자 번호</td>
+                                    <td class="text-center" th:text="${supplier.contactInfo}">연락처</td>
                                     <td th:text="${supplier.address}">주소</td>
-                                    <td th:text="${supplier.businessType}">업태</td>
-                                    <td th:text="${supplier.businessItem}">종목</td>
+                                    <td class="text-center" th:text="${supplier.businessType}">업태</td>
+                                    <td class="text-center" th:text="${supplier.businessItem}">종목</td>
                                     <td>
                                         <a th:href="@{${supplier.contractFilePath}}" target="_blank"
                                            th:if="${supplier.contractFilePath != null}">
@@ -69,7 +69,7 @@
                                     <!-- Hidden input field for supplierId -->
                                     <input type="hidden" class="supplier-id" th:value="${supplier.supplierId}" />
 
-                                    <td>
+                                    <td class="text-center">
                                         <button class="main-btn primary-btn btn-hover" style="padding: 15px 15px"
                                                 th:if="${!supplier.approved}"
                                                 onclick="approveSupplier(this)">승인

@@ -1,225 +1,224 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
-  <th:block th:fragment="content">
-    <head>
-      <meta charset="UTF-8">
-      <title>협력사 페이지</title>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background-color: #f9f9f9;
-        }
-        h2, h3 {
-          color: #333;
-        }
-        .transaction-summary{
-          margin-top:30px;
-          margin-bottom:30px;
-        }
-        /* 버튼 스타일 */
-        .btn-approve {
-          background-color: #007bff;
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
-          margin-right: 5px;
-        }
-        .btn-reject {
-          background-color: #ff4b5c;
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
-          margin-right: 5px;
-        }
-        .btn-inspect {
-          background-color: #6c757d;
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
-        }
-        /* 테이블 스타일 */
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
-        table, th, td {
-          border: 1px solid #ddd;
-          padding: 8px;
-          text-align: left;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-weight: bold;
-        }
-        /* 페이징 스타일 */
-        .pagination {
-          display: flex;
-          justify-content: center;
-          margin-top: 20px;
-          list-style: none;
-          padding: 0;
-          gap: 5px;
-        }
-        .pagination li a {
-          padding: 8px 12px;
-          text-decoration: none;
-          color: #333;
-          background-color: #e0e0e0;
-          border-radius: 5px;
-          transition: background-color 0.3s;
-        }
-        .pagination li a:hover {
-          background-color: #cccccc;
-        }
-        .pagination li a.active {
-          font-weight: bold;
-          color: white;
-          background-color: #007BFF;
-        }
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>협력사 페이지</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">업체관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">협력사 페이지</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
 
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <!-- 협력사 기본 정보 -->
+                            <h3 class="mb-10">협력사 기본 정보</h3>
+                            <div class="supplier-info">
+                                <p><strong>사업자 번호:</strong> [사업자 번호]</p>
+                                <p><strong>연락처:</strong> [연락처]</p>
+                                <p><strong>주소:</strong> [주소]</p>
+                                <p><strong>업태:</strong> [업태]</p>
+                                <p><strong>종목:</strong> [종목]</p>
+                                <button class="btn-approve">수정</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 거래 내역 요약 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div class="transaction-summary">
+                                <h3>거래 내역 요약</h3>
+                                <p><strong>총 거래 금액:</strong> [총 거래 금액]</p>
+                                <p><strong>연별 금액:</strong> [연별 거래 금액]</p>
+                                <p><strong>월별 거래 금액:</strong> [월별 거래 금액]</p>
+                                <p><strong>주별 거래 금액:</strong> [주별 거래 금액]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      </style>
-    </head>
-    <body>
-    <div>
-      <!-- 협력사 기본 정보 -->
-      <h2>협력사 기본 정보</h2>
-      <div class="supplier-info">
-        <p><strong>사업자 번호:</strong> [사업자 번호]</p>
-        <p><strong>연락처:</strong> [연락처]</p>
-        <p><strong>주소:</strong> [주소]</p>
-        <p><strong>업태:</strong> [업태]</p>
-        <p><strong>종목:</strong> [종목]</p>
-        <button class="btn-approve">수정</button>
-      </div>
-      <!-- 거래 내역 요약 -->
-      <div class="transaction-summary">
-        <h3>거래 내역 요약</h3>
-        <p><strong>총 거래 금액:</strong> [총 거래 금액]</p>
-        <p><strong>연별 금액:</strong> [연별 거래 금액]</p>
-        <p><strong>월별 거래 금액:</strong> [월별 거래 금액]</p>
-        <p><strong>주별 거래 금액:</strong> [주별 거래 금액]</p>
-      </div>
+            <!-- 취급 자재 품목 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3>취급 자재 품목</h3>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>단가</h6></th>
+                                    <th class="text-center"><h6>최소 공급 수량</h6></th>
+                                    <th class="text-center"><h6>가용 재고 수량</h6></th>
+                                    <th class="text-center"><h6>재고 수량 수정</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="stock : ${supplierStocks}">
+                                    <td class="min-width">[[${stock.materialName}]]</td>
+                                    <td class="min-width text-center">[[${stock.unitPrice}]]</td>
+                                    <td class="min-width text-center">[[${stock.quantity}]]</td>
+                                    <td class="min-width text-center">[[${stock.availableStock}]]</td>
+                                    <td class="min-width">
+                                        <form th:action="@{/suppliers/stockUpdate}"  method="POST">
+                                            <input name="supplierStockId" th:value="${stock.supplierStockId}"
+                                                   type="hidden">
+                                            <div class="row" style="justify-content: flex-end; height: 60px">
+                                            <div class="input-style-1 col-lg-4" style="margin-bottom: 0">
+                                                <input name="availableStock" style="width: 100px"
+                                                       th:value="${stock.availableStock}" type="number">
+                                            </div>
+                                                <div class="col-lg-3" style="min-width: 180px">
+                                            <button class="main-btn primary-btn btn-hover" type="submit">수량 수정
+                                            </button></div>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <!-- 취급 자재 품목 -->
-      <h3>취급 자재 품목</h3>
-      <table>
-        <thead>
-        <tr>
-          <th>자재 이름</th>
-          <th>단가</th>
-          <th>최소 공급 수량</th>
-          <th>가용 재고 수량</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>[자재 이름]</td>
-          <td>[단가]</td>
-          <td>[최소 공급 수량]</td>
-          <td>[가용 재고 수량]</td>
-        </tr>
-        </tbody>
-      </table>
+            <!-- 발주 요청 관리 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3>발주 요청 관리</h3>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>요청 ID</th>
+                                    <th>자재 이름</th>
+                                    <th>요청 수량</th>
+                                    <th>요청 날짜</th>
+                                    <th>상태</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[요청 ID]</td>
+                                    <td>[자재 이름]</td>
+                                    <td>[요청 수량]</td>
+                                    <td>[요청 날짜]</td>
+                                    <td>[상태]</td>
+                                    <td>
+                                        <button class="btn-approve" onclick="showInspectionTable()">수락</button>
+                                        <button class="btn-reject">거절</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <!-- 발주 요청 관리 -->
-      <h3>발주 요청 관리</h3>
-      <table>
-        <thead>
-        <tr>
-          <th>요청 ID</th>
-          <th>자재 이름</th>
-          <th>요청 수량</th>
-          <th>요청 날짜</th>
-          <th>상태</th>
-          <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>[요청 ID]</td>
-          <td>[자재 이름]</td>
-          <td>[요청 수량]</td>
-          <td>[요청 날짜]</td>
-          <td>[상태]</td>
-          <td>
-            <button class="btn-approve" onclick="showInspectionTable()">수락</button>
-            <button class="btn-reject">거절</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+            <!-- 진척 검수 테이블 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div id="inspectionTable">
+                                <h3>진척 검수</h3>
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>자재 이름</th>
+                                        <th>수량</th>
+                                        <th>검수 상태</th>
+                                        <th>검수 완료</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>[자재 이름]</td>
+                                        <td>[수량]</td>
+                                        <td>진행 중</td>
+                                        <td>
+                                            <button class="btn-approve">검수 완료</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <!-- 진척 검수 테이블 -->
-      <div id="inspectionTable">
-        <h3>진척 검수</h3>
-        <table>
-          <thead>
-          <tr>
-            <th>자재 이름</th>
-            <th>수량</th>
-            <th>검수 상태</th>
-            <th>검수 완료</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>[자재 이름]</td>
-            <td>[수량]</td>
-            <td>진행 중</td>
-            <td><button class="btn-approve">검수 완료</button></td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+            <!-- 거래 명세서 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3>거래 명세서</h3>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>자재 이름</th>
+                                    <th>단가</th>
+                                    <th>수량</th>
+                                    <th>총 가격</th>
+                                    <th>거래 날짜</th>
+                                    <th>상세 보기</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[자재 이름]</td>
+                                    <td>[단가]</td>
+                                    <td>[수량]</td>
+                                    <td>[총 가격]</td>
+                                    <td>[거래 날짜]</td>
+                                    <td><a href="#">상세 보기</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
 
-      <!-- 거래 명세서 -->
-      <h3>거래 명세서</h3>
-      <table>
-        <thead>
-        <tr>
-          <th>자재 이름</th>
-          <th>단가</th>
-          <th>수량</th>
-          <th>총 가격</th>
-          <th>거래 날짜</th>
-          <th>상세 보기</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>[자재 이름]</td>
-          <td>[단가]</td>
-          <td>[수량]</td>
-          <td>[총 가격]</td>
-          <td>[거래 날짜]</td>
-          <td><a href="#">상세 보기</a></td>
-        </tr>
-        </tbody>
-      </table>
+                            <!-- 거래 명세서 페이징 -->
+                            <ul class="pagination">
+                                <li><a class="active" href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <!-- 거래 명세서 페이징 -->
-      <ul class="pagination">
-        <li><a href="#" class="active">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-      </ul>
-    </div>
-
-    </body>
-  </th:block>
+        </div>
+    </th:block>
 </th:block>
 </html>

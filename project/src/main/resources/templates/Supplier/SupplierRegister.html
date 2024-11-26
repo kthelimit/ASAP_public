@@ -29,62 +29,62 @@
                 <!-- end row -->
             </div>
             <!-- ========== title-wrapper end ========== -->
-            <div class="container">
-                <form enctype="multipart/form-data" method="post" th:action="@{/suppliers/register}"
-                      th:object="${supplierDTO}">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="card-style mb-30">
-                                <h6 class="mb-25">업체 등록 정보 입력</h6>
 
-                                <div class="input-style-1">
-                                    <label for="supplierName">업체 이름</label>
-                                    <input id="supplierName" required th:field="*{supplierName}" type="text"/>
-                                </div>
+            <form enctype="multipart/form-data" method="post" th:action="@{/suppliers/register}"
+                  th:object="${supplierDTO}">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <h3 class="mb-25">업체 등록 정보 입력</h3>
 
-                                <div class="input-style-1">
-                                    <label for="businessRegistrationNumber">사업자 등록 번호</label>
-                                    <input id="businessRegistrationNumber" required
-                                           th:field="*{businessRegistrationNumber}" type="text"/>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="supplierName">업체 이름</label>
+                                <input id="supplierName" required th:field="*{supplierName}" type="text"/>
+                            </div>
 
-                                <div class="input-style-1">
-                                    <label for="contactInfo">연락처 정보</label>
-                                    <input id="contactInfo" required th:field="*{contactInfo}" type="text"/>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="businessRegistrationNumber">사업자 등록 번호</label>
+                                <input id="businessRegistrationNumber" required
+                                       th:field="*{businessRegistrationNumber}" type="text"/>
+                            </div>
 
-                                <div class="input-style-1">
-                                    <label for="address">주소</label>
-                                    <input id="address" required th:field="*{address}" type="text"/>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="contactInfo">연락처 정보</label>
+                                <input id="contactInfo" required th:field="*{contactInfo}" type="text"/>
+                            </div>
 
-                                <div class="input-style-1">
-                                    <label for="businessType">업태</label>
-                                    <input id="businessType" required th:field="*{businessType}" type="text"/>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="address">주소</label>
+                                <input id="address" required th:field="*{address}" type="text"/>
+                            </div>
 
-                                <div class="input-style-1">
-                                    <label for="businessItem">종목</label>
-                                    <input id="businessItem" required th:field="*{businessItem}" type="text"/>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="businessType">업태</label>
+                                <input id="businessType" required th:field="*{businessType}" type="text"/>
+                            </div>
 
-                                <div class="input-style-1">
-                                    <label for="contractFile">계약서 파일</label>
-                                    <input id="contractFile" name="contractFile" type="file"/>
-                                </div>
-                                <div style="text-align: right">
-                                    <button class="btn-submit btn-hover main-btn primary-btn"
-                                            onclick="alert('업체등록이 완료되었습니다. 승인을 기다려주세요')"
-                                            type="submit">등록하기
-                                    </button>
-                                </div>
+                            <div class="input-style-1">
+                                <label for="businessItem">종목</label>
+                                <input id="businessItem" required th:field="*{businessItem}" type="text"/>
+                            </div>
+
+                            <div class="input-style-1">
+                                <label for="contractFile">계약서 파일</label>
+                                <input id="contractFile" name="contractFile" type="file"/>
+                            </div>
+                            <div style="text-align: right">
+                                <button class="btn-submit btn-hover main-btn primary-btn"
+                                        onclick="alert('업체등록이 완료되었습니다. 승인을 기다려주세요')"
+                                        type="submit">등록하기
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                </form>
-            </div>
+            </form>
         </div>
+
 
     </th:block>
 </th:block>

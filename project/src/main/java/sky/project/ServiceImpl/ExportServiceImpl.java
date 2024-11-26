@@ -2,12 +2,15 @@ package sky.project.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ExportDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.ExportRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.ProductionPlanRepository;
+import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
 
 import java.time.LocalDateTime;
@@ -23,6 +26,7 @@ public class ExportServiceImpl implements ExportService {
     private final MaterialRepository materialRepository;
     private final ProductionPlanRepository productionPlanRepository;
     private final ExportRepository exportRepository;
+    private final StockRepository stockRepository;
 
     @Override
     public Long register(ExportDTO dto) {
@@ -31,6 +35,23 @@ public class ExportServiceImpl implements ExportService {
         exportRepository.save(entity);
         return entity.getExportId();
     }
+
+    @Override
+    public Long modify(ExportDTO dto) {
+        Export export = exportRepository.findByExportCode(dto.getExportCode());
+        log.info(export);
+        //상태 전환
+        export.setExportStatus(CurrentStatus.FINISHED);
+        exportRepository.save(export);
+
+        //재고에서 분량만큼 빼기
+        Stock stock = stockRepository.findByMaterialCode(dto.getMaterialCode());
+        stock.setQuantity(stock.getQuantity() - export.getRequiredQuantity());
+        stockRepository.save(stock);
+
+        return export.getExportId();
+    }
+
 
     public Export dtoToEntity(ExportDTO dto) {
         if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
@@ -72,12 +93,15 @@ public class ExportServiceImpl implements ExportService {
                 .exportId(entity.getExportId())
                 .exportCode(entity.getExportCode())
                 .productionPlanCode(entity.getProductionPlan().getProductionPlanCode())
+                .productionStartDate(entity.getProductionPlan().getProductionStartDate())
+                .productionEndDate(entity.getProductionPlan().getProductionEndDate())
                 .productName(entity.getProductionPlan().getProductName())
                 .materialName(entity.getMaterial().getMaterialName())
                 .materialCode(entity.getMaterial().getMaterialCode())
                 .requiredQuantity(entity.getRequiredQuantity())
                 .exportStatus(exportStatus)
                 .createdDate(entity.getCreatedDate())
+                .modifiedDate(entity.getModifiedDate())
                 .build();
         return dto;
 
@@ -160,4 +184,43 @@ public class ExportServiceImpl implements ExportService {
         }
         return dtoList;
     }
+
+    @Override
+    public Page<ExportDTO> getExports(Pageable pageable) {
+        Page<Export> result = exportRepository.findAll(pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInExportCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByExportCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInProductionPlanCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductionPlanCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInMaterialName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialName(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInMaterialCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialCode(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getExportsWithSearchInProductName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductName(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+
+
 }

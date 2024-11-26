@@ -2,272 +2,266 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <style>
-            body {
-                height: 3000px;
-            }
-            .col-lg-6 {
-                margin: 20px auto -25px;
-                width: 1625px;
-                height: auto;
-            }
 
-            .mb-10 {
-                font-weight: bold;
-                font-size: 30px;
-                margin-bottom: 30px;
-                margin-left: 10px;
-            }
-
-            thead {
-                background-color: #ebebeb;
-            }
-
-            thead th:first-child {
-                border-top-left-radius: 10px;
-            }
-
-            thead th:last-child {
-                border-top-right-radius: 10px;
-            }
-
-            th, td {
-                text-align: center;
-            }
-
-            .blue_botton {
-                margin: auto 15px;
-                width: 80px;
-                height: 50px;
-                border-radius: 8px;
-            }
-
-            .choice {
-                margin: 5px;
-                width: 80px;
-                height: 50px;
-                border-radius: 8px;
-            }
-
-            .select-position {
-                width: 300px;
-            }
-
-            .search {
-                margin-left: 15px;
-                border: 1px solid #e5e5e5;;
-                border-radius: 10px;
-                width: 300px;
-                height: 58px;
-                position: relative;
-            }
-
-            .select-style-1 {
-                display: flex;
-                justify-content: space-between;
-            }
-            .search_tab {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .choice-column {
-                width: 220px;
-            }
-
-            .how-ea {
-                width: 100px;
-            }
-
-
-        </style>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card-style mb-30">
-                    <div class="search_tab">
-                        <h6 class="mb-10">출고 요청 목록</h6>
-                        <div class="select-style-1">
-                            <div class="select-position">
-                                <select>
-                                    <option value="">품목코드</option>
-                                    <option value="">Category one</option>
-                                    <option value="">Category two</option>
-                                    <option value="">Category three</option>
-                                </select>
-
-                            </div>
-                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
-                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>출고 관리</h2>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">자재 관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">출고 관리</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <div class="row mb-20">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="search_tab">
+                            <h3 class="mb-10">출고 요청 목록</h3>
+                            <p class="text-sm mb-20">
+                                재고 수량을 확인하고 출고 버튼을 누르면 해당 자재가 출고처리 됩니다.
+                            </p>
+                            <form id="searchForm2" method="get" th:action="@{/material/export}">
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="select-style-1 col-lg-3">
+                                        <div class="select-position">
+                                            <select name="type2">
+                                                <option th:selected="${type2=='e'}" value="e">출고 코드</option>
+                                                <option th:selected="${type2=='p'}" value="p">생산 계획 코드</option>
+                                                <option th:selected="${type2=='d'}" value="d">생산제품명</option>
+                                                <option th:selected="${type2=='c'}" value="c">자재 코드</option>
+                                                <option th:selected="${type2=='n'}" value="n">자재명</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword2" name="keyword2"
+                                               placeholder="검색어를 입력하세요" th:value="${keyword2}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn secondary-btn btn-hover ml-10 clear-btn"
+                                                onclick="clearForm2()"
+                                                type="button">리셋
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th class="text-center">
+                                        <h6>출고 코드</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>생산계획번호</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>생산제품명</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>품목명</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>품목코드</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>재고수량</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>출고수량</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>등록일</h6>
+                                    </th>
+                                    <th class="text-center">
+                                        <h6>선택목록</h6>
+                                    </th>
+                                </tr>
+                                <tr th:each="export:${CurrentExportRequest}">
+                                    <td class="text-center">
+                                        <p th:text="${export.exportCode}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.productionPlanCode}"
+                                           th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.productName}"></p>
+                                    </td>
+                                    <td>
+                                        <p th:text="${export.materialName}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${export.materialCode}"></p>
+                                    </td>
+                                    <td class="text-align-right">
+                                        <p th:text="${export.availableQuantity}"></p>
+                                    </td>
+                                    <td class="text-align-right">
+                                        <p th:text="${export.requiredQuantity}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
+                                    </td>
+                                    <td class="text-center">
+                                        <form method="post" th:action="@{/material/export/approval}">
+                                            <input name="exportCode" th:value="${export.exportCode}" type="hidden">
+                                            <input name="materialCode" th:value="${export.materialCode}" type="hidden">
+                                            <input name="requiredQuantity" th:value="${export.requiredQuantity}"
+                                                   type="hidden">
+                                            <button class="main-btn active-btn btn-hover"
+                                                    style="padding: 5px 12px"
+                                                    th:if="${export.availableQuantity>=export.requiredQuantity}"
+                                                    type="submit">출고
+                                            </button>
+                                            <button class="main-btn disabled btn-hover"
+                                                    disabled style="padding: 5px 12px"
+                                                    th:if="${export.availableQuantity<export.requiredQuantity}"
+                                                    type="button">불가
+                                            </button>
 
-                    <div class="table-wrapper table-responsive">
-                        <table class="table striped-table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <h5>출고 코드</h5>
-                                </th>
-                                <th>
-                                    <h5>생산계획번호</h5>
-                                </th>
-                                <th>
-                                    <h5>생산제품명</h5>
-                                </th>
-                                <th>
-                                    <h5>품목명</h5>
-                                </th>
-                                <th>
-                                    <h5>품목코드</h5>
-                                </th>
-                                <th>
-                                    <h5>재고수량</h5>
-                                </th>
-                                <th>
-                                    <h5>출고수량</h5>
-                                </th>
-                                <th>
-                                    <h5>등록일</h5>
-                                </th>
-                                <th>
-                                    <h5>선택목록</h5>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="export:${CurrentExportRequest}">
-                                <td>
-                                    <p th:text="${export.exportCode}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.productionPlanCode}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.productName}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.materialName}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.materialCode}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.availableQuantity}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${export.requiredQuantity}"></p>
-                                </td>
-                                <td>
-                                    <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}"></p>
-                                </td>
-                                <td>
-                                    <a href="#0" class="main-btn active-btn btn-hover choice">출고</a>
-                                </td>
-                            </tr>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <form id="searchForm" method="get" th:action="@{/material/export}">
+                                <div class="row" style="justify-content: space-between">
+                                    <div class="col-lg-5">
+                                        <h3 class="mb-10">창고 자재 목록</h3>
+                                        <p class="text-sm mb-20">
+                                            창고 안의 자재 목록을 확인할 수 있습니다.
+                                        </p>
+                                    </div>
+                                    <div class="select-style-1 col-lg-2">
+                                        <div class="select-position">
+                                            <select id="sizeSelect" name="size" onchange="changeSize()">
+                                                <option th:selected="${pageSize==10}" value="10">10개씩 출력하기</option>
+                                                <option th:selected="${pageSize==25}" value="25">25개씩 출력하기</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 검색 창 -->
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="select-style-1 col-lg-3">
+                                        <div class="select-position">
+                                            <select name="type">
+                                                <option th:selected="${type=='t'}" value="t">자재유형</option>
+                                                <option th:selected="${type=='p'}" value="p">부품종류</option>
+                                                <option th:selected="${type=='c'}" value="c">자재코드</option>
+                                                <option th:selected="${type=='n'}" value="n">자재명</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-style-1 col-lg-5">
+                                        <input id="searchKeyword" name="keyword"
+                                               placeholder="검색어를 입력하세요" th:value="${keyword}"
+                                               type="text"/>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn primary-btn btn-hover ml-10" type="submit">검색</button>
+                                    </div>
+                                    <div style="width: 144px">
+                                        <button class="main-btn secondary-btn btn-hover ml-10 clear-btn"
+                                                onclick="clearForm()"
+                                                type="button">리셋
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- 자재 목록 출력-->
+                            <table class="table">
+                                <tr>
+                                    <th class="text-center"><h6>자재유형</h6></th>
+                                    <th class="text-center"><h6>부품종류</h6></th>
+                                    <th class="text-center"><h6>자재코드</h6></th>
+                                    <th class="text-center"><h6>자재명</h6></th>
+                                    <th class="text-center"><h6>창고 내 재고 수량</h6></th>
+                                    <th class="text-center"><h6>가용 재고</h6></th>
+                                </tr>
 
-                            </tbody>
-                        </table>
+                                <tr th:each="stock : ${stocks}">
+                                    <td class="min-width text-center"><p th:text="${stock.materialType}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.componentType}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.materialCode}"></p></td>
+                                    <td class="min-width"><p th:text="${stock.materialName}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.quantity}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${stock.availableStock}"></p></td>
+                                </tr>
+                            </table>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage > 1}">
+                                        <a aria-label="Previous"
+                                           th:href="@{/material/export(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                        <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:href="@{/material/export(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage < totalPages}">
+                                        <a aria-label="Next"
+                                           th:href="@{/material/export(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card-style mb-30">
-                    <div class="search_tab">
-                        <h6 class="mb-10">창고 자재 목록</h6>
-                        <div class="select-style-1">
-                            <div class="select-position">
-                                <select>
-                                    <option value="">품목코드</option>
-                                    <option value="">Category one</option>
-                                    <option value="">Category two</option>
-                                    <option value="">Category three</option>
-                                </select>
+            var searchForm = $("#searchForm");
+            var searchForm2 = $("#searchForm2");
 
-                            </div>
-                            <input class="select-style-1, search" type="text" placeholder="     검색어를 입력하세요">
-                            <a href="#0" class="main-btn active-btn btn-hover blue_botton">검색</a>
-                        </div>
-                    </div>
+            //size를 결정하면 거기에 맞춰서 출력
+            function changeSize() {
+                searchForm.submit();
+            }
 
-
-                    <div class="table-wrapper table-responsive">
-                        <table class="table striped-table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <h5>품목 코드</h5>
-                                </th>
-                                <th>
-                                    <h5>품목명</h5>
-                                </th>
-                                <th>
-                                    <h5>재고 수량</h5>
-                                </th>
-                                <th>
-                                    <h5>가용 재고</h5>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tr>
-                                <td>
-                                    <p>XYZ-1234</p>
-                                </td>
-                                <td>
-                                    <p>타이어</p>
-                                </td>
-
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>0</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>QWE-1234</p>
-                                </td>
-                                <td>
-                                    <p>핸들</p>
-                                </td>
-
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>0</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>MNB-1234</p>
-                                </td>
-                                <td>
-                                    <p>경적</p>
-                                </td>
-
-                                <td>
-                                    <p>100</p>
-                                </td>
-                                <td>
-                                    <p>0</p>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-
+            //폼 리셋
+            function clearForm() {
+                searchForm.empty().submit();
+            }
+            function clearForm2() {
+                searchForm2.empty().submit();
+            }
+        </script>
     </th:block>
 </th:block>

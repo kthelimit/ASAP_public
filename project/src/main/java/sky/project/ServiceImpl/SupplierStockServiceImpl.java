@@ -53,6 +53,8 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
     public SupplierStockDTO entityToDto(SupplierStock entity) {
 
+        //추후 발주 요청에서 요청중인 해당 물품을 합쳐서 빼줄것(가용재고 = 기초재고 + 입고예정수량 - 출고예정수량 이므로)
+        int availableStock = entity.getStock();
         return SupplierStockDTO.builder()
                 .supplierStockId(entity.getSupplierStockId())
                 .supplierName(entity.getSupplier().getSupplierName())
@@ -64,6 +66,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
                 .componentType(entity.getMaterial().getComponentType())
                 .unitPrice(entity.getMaterial().getUnitPrice())
                 .stock(entity.getStock())
+                .availableStock(availableStock)
                 .build();
 
     }

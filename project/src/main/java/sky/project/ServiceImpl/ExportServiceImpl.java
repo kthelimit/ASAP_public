@@ -14,10 +14,14 @@ import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Service
 @Log4j2
@@ -250,6 +254,7 @@ public class ExportServiceImpl implements ExportService {
     }
 
 
+    //페이징 및 검색용
     @Override
     public Page<ExportDTO> getExports(Pageable pageable) {
         Page<Export> result = exportRepository.findAll(pageable);
@@ -316,5 +321,28 @@ public class ExportServiceImpl implements ExportService {
         return result.map(this::entityToDto);
     }
 
+    //대시보드 출력용 출고 요청 건수
+    @Override
+    public int getCountCurrentRequest(){
+        return exportRepository.countCurrentRequest();
+    }
+
+    //대시 보드 출력용 승인된 출고 요청 건수
+    @Override
+    public int getCountApprovedRequestThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return exportRepository.countApprovedRequest(start, end);
+    }
+
+    //대시 보드 출력용 불출 완료된 출고 요청 건수
+    @Override
+    public int getCountFinishedRequestThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return exportRepository.countFinishedRequest(start, end, today.minusDays(1));
+    }
 
 }

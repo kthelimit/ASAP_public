@@ -20,4 +20,7 @@ public interface ProductionPlanService {
     void deleteProductionPlan(Long id);
 
     List<ProductionPlanDTO> getProductionPlansWithDate();
+
+    //대시보드의 생산 계획 수
+    int getCountProductionPlan();
 }

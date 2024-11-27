@@ -13,4 +13,6 @@ public interface OrderService {
     // 모든 발주 목록 조회
     Page<OrdersDTO> getAllOrders(Pageable pageable);
 
+    //대시 보드 출력용 이번달 발주 건 수
+    int getCountOrderThisMonth();
 }

@@ -36,4 +36,13 @@ public interface ExportService {
     Page<ExportDTO> getExportsWithSearchInProductName(String kerword, Pageable pageable);
 
     Page<ExportDTO> getCurrentExportsWithSearchInProductName(String keyword, Pageable pageable);
+
+    //대시보드 출력용 출고 요청 건수
+    int getCountCurrentRequest();
+
+    //대시 보드 출력용 승인된 출고 요청 건수
+    int getCountApprovedRequestThisMonth();
+
+    //대시 보드 출력용 불출 완료된 출고 요청 건수
+    int getCountFinishedRequestThisMonth();
 }

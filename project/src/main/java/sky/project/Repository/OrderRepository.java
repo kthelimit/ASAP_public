@@ -27,5 +27,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     //대시보드 출력용 이번달 발주 건수
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
     int countOrderThisMonth(LocalDateTime start, LocalDateTime end);
+
+    //대시보드 출력용 업체에 들어온 발주 건수
+    @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
+    int countOrderBySupplierName(String supplierName);
 }
 

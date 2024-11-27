@@ -116,28 +116,42 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <h3>발주 요청 관리</h3>
-                            <table>
+                            <h3 class="table-title">발주 요청 관리</h3>
+                            <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>요청 ID</th>
-                                    <th>자재 이름</th>
-                                    <th>요청 수량</th>
-                                    <th>요청 날짜</th>
-                                    <th>상태</th>
-                                    <th>Action</th>
+                                    <th class="text-center"><h6>요청 ID</h6></th>
+                                    <th class="text-center"><h6>부품 유형</h6></th>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>요청 수량</h6></th>
+                                    <th class="text-center"><h6>합계 금액</h6></th>
+                                    <th class="text-center"><h6>요청 날짜</h6></th>
+                                    <th class="text-center"><h6>상태</h6></th>
+                                    <th class="text-center"><h6>Action</h6></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>[요청 ID]</td>
-                                    <td>[자재 이름]</td>
-                                    <td>[요청 수량]</td>
-                                    <td>[요청 날짜]</td>
-                                    <td>[상태]</td>
-                                    <td>
-                                        <button class="btn-approve" onclick="showInspectionTable()">수락</button>
-                                        <button class="btn-reject">거절</button>
+                                <tr th:each="orderRequest : ${orderRequests}">
+                                    <td class="text-center" th:text="${orderRequest.orderId}"></td>
+                                    <td class="text-center" th:text="${orderRequest.materialType}"></td>
+                                    <td class="text-center" th:text="${orderRequest.materialName}"></td>
+                                    <td class="text-center" th:text="${orderRequest.orderQuantity}"></td>
+                                    <td class="text-center" th:text="${orderRequest.totalPrice}"></td>
+                                    <td class="text-center" th:text="${orderRequest.orderDate}"></td>
+                                    <td class="text-center" th:text="${orderRequest.status}"></td>
+                                    <td class="text-center">
+                                        <div th:if="${orderRequest.status == 'ON_HOLD'}">
+                                            <form method="post" th:action="@{/suppliers/orders/approve}">
+                                                <input type="hidden" name="orderId" th:value="${orderRequest.orderId}">
+                                                <button type="submit" class="main-btn btn-approve">수락</button>
+                                            </form>
+                                            <form method="post" th:action="@{/suppliers/orders/reject}">
+                                                <input type="hidden" name="orderId" th:value="${orderRequest.orderId}">
+                                                <button type="submit" class="main-btn btn-reject">거절</button>
+                                            </form>
+                                        </div>
+                                        <span th:if="${orderRequest.status == 'APPROVAL'}" th:text="'승인 완료'"></span>
+                                        <span th:if="${orderRequest.status == 'REJECT'}" th:text="'거절 완료'"></span>
                                     </td>
                                 </tr>
                                 </tbody>

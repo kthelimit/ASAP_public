@@ -38,5 +38,7 @@ public class Order  extends Base{
 
     private double totalprice;
 
+
+    @Enumerated(EnumType.STRING)
     private CurrentStatus status;
 }

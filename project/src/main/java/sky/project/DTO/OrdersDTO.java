@@ -1,9 +1,6 @@
 package sky.project.DTO;
 
 import lombok.*;
-import sky.project.Entity.CurrentStatus;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -20,5 +17,6 @@ public class OrdersDTO {
     private String materialName;      // 자재 이름
     private Integer orderQuantity;    // 주문 수량
     private double totalPrice;        // 총 가격
-    private CurrentStatus status;
+    private String status;
+    private String materialType;
 }

@@ -160,6 +160,10 @@ public class SupplierServiceImpl implements SupplierService {
         }
         return supplier;
     }
-
+    @Override
+    public String findSupplierNameByUserId(String userId) {
+        Supplier supplier = supplierRepository.findByUser_UserId(userId);
+        return supplier != null ? supplier.getSupplierName() : null;
+    }
 
 }

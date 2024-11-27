@@ -11,4 +11,5 @@ public interface SupplierStockService {
     void updateStock(SupplierStockDTO dto);
 
     List<SupplierStockDTO> findBySupplierId(String supplierId);
+
 }

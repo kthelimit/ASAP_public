@@ -26,4 +26,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 
     List<Material> findByMaterialName(String materialName);
 
+    Optional<Material> findFirstByMaterialName(String materialName);
+
+
 }

@@ -10,8 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.ProcurementPlanDTO;
+import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
+import sky.project.Entity.Order;
 import sky.project.Service.MaterialService;
 import sky.project.Service.OrderService;
 import sky.project.Service.ProcurementPlanService;
@@ -108,7 +110,7 @@ public class OrderController {
     @PostMapping("/register")
     public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
         // 데이터 확인
-        System.out.println("Received OrderDTO: " + ordersDTO);
+        System.out.println("Received OrdersDTO: " + ordersDTO);
 
         // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
         orderService.registerOrder(ordersDTO);
@@ -123,10 +125,37 @@ public class OrderController {
     }
 
 
+
+
+
+
     @GetMapping("/delivery")
-    public String delivery() {
+    public String progressPage(
+            Model model,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // 제조품 조회
+        Page<OrdersDTO> manufacturingOrders = orderService.findByMaterialTypeAndStatus(
+                "제조품", CurrentStatus.APPROVAL.name(), pageable);
+
+        // 구매품 조회
+        Page<OrdersDTO> purchaseOrders = orderService.findByMaterialTypeAndStatus(
+                "구매품", CurrentStatus.APPROVAL.name(), pageable);
+
+        // 제조품 데이터 추가
+        model.addAttribute("manufacturingOrders", manufacturingOrders.getContent());
+        model.addAttribute("manufacturingTotalPages", manufacturingOrders.getTotalPages());
+        model.addAttribute("manufacturingCurrentPage", page);
+
+        // 구매품 데이터 추가
+        model.addAttribute("purchaseOrders", purchaseOrders.getContent());
+        model.addAttribute("purchaseTotalPages", purchaseOrders.getTotalPages());
+        model.addAttribute("purchaseCurrentPage", page);
+
         return "/Order/DeliveryOrder";
     }
-
 
 }

@@ -10,9 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sky.project.DTO.SupplierDTO;
-import sky.project.DTO.SupplierStockDTO;
-import sky.project.DTO.UserDTO;
+import sky.project.DTO.*;
+import sky.project.Entity.CurrentStatus;
+import sky.project.Service.OrderService;
+import sky.project.Service.ProductService;
 import sky.project.Service.SupplierService;
 import sky.project.Service.SupplierStockService;
 
@@ -33,6 +34,9 @@ public class SupplierController {
 
     @Autowired
     private SupplierStockService supplierStockService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -161,33 +165,54 @@ public class SupplierController {
     }
 
     @GetMapping("/page")
-    public String supplierPage(@SessionAttribute(name= "user", required = false) UserDTO user, Model model) {
-        if(user==null){
+    public String supplierPage(
+            @SessionAttribute(name = "user", required = false) UserDTO user,
+            Model model,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
             return "redirect:/";
         }
-        String userId = user.getUserId();
 
-        System.out.println("userId : " + userId);
+        // userId로 supplierName 가져오기
+        String userId = user.getUserId();
+        String supplierName = supplierService.findSupplierNameByUserId(userId);
+        if (supplierName == null) {
+            model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
+            return "redirect:/";
+        }
+
+        // supplierName으로 OrdersDTO 가져오기
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<OrdersDTO> orderRequests = orderService.findOrdersBySupplier(supplierName, pageable);
+
+        // Thymeleaf에 데이터 추가
+        model.addAttribute("orderRequests", orderRequests.getContent());
+        model.addAttribute("totalOrderPages", orderRequests.getTotalPages());
+        model.addAttribute("currentOrderPage", page);
+
+        // SupplierStocks 데이터 추가
         model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
+
+        // 출고 요청 관리 테이블 추가
 
         return "Supplier/SupplierPage";
     }
 
-//    @GetMapping("/page")
-//    public String supplierPage(Model model, HttpSession session) {
-//        UserDTO user = (UserDTO) session.getAttribute("user");
-//        if (user == null) {
-//            model.addAttribute("message", "로그인이 필요합니다.");
-//            return "redirect:/";
-//        }
-//        String userId = user.getUserId();
-//
-//        System.out.println("userId : " + userId);
-//        model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
-//
-//        return "Supplier/SupplierPage";
-//    }
+    @PostMapping("/orders/approve")
+    public String approveOrder(@RequestParam Long orderId) {
+        orderService.updateOrderStatus(orderId, CurrentStatus.APPROVAL);
+        return "redirect:/suppliers/page";
+    }
+
+    @PostMapping("/orders/reject")
+    public String rejectOrder(@RequestParam Long orderId) {
+        orderService.updateOrderStatus(orderId, CurrentStatus.REJECT);
+        return "redirect:/suppliers/page";
+    }
+
 
 
 }

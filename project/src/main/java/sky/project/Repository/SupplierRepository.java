@@ -20,8 +20,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
 
     List<Supplier> findByApprovedTrue();
 
-    Optional<Supplier> findByUser_UserId(String userId);
-
+    Supplier findByUser_UserId(String userId);
     long countByApprovedFalse();
 
     // 승인 상태를 업데이트하는 메서드
@@ -35,4 +34,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     Page<Supplier> findBySupplierNameContaining(String supplierName, Pageable pageable);
 
     Supplier findBySupplierName(String supplierName);
+
+
 }

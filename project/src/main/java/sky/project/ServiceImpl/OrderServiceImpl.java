@@ -12,7 +12,6 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
 import sky.project.Service.OrderService;
 
-import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -122,12 +121,16 @@ public class OrderServiceImpl implements OrderService {
 
     //대시 보드 출력용 이번달 발주 건 수
     @Override
-    public int getCountOrderThisMonth(){
+    public int getCountOrderThisMonth() {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
         LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
         return orderRepository.countOrderThisMonth(start, end);
     }
 
+    @Override
+    public int getCountOrderBySupplier(String supplierName) {
+        return orderRepository.countOrderBySupplierName(supplierName);
+    }
 
 }

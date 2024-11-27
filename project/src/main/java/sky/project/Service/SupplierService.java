@@ -33,4 +33,6 @@ public interface SupplierService {
 
     Supplier getSupplierByName(String supplierName);
     String findSupplierNameByUserId(String userId);
+
+    int getCountSupplierWhoWaitApproval();
 }

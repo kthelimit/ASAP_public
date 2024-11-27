@@ -139,4 +139,12 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         }
         return dtos;
     }
+
+
+    //대시보드의 생산 계획 수
+    @Override
+    public int getCountProductionPlan() {
+        LocalDate today = LocalDate.now();
+        return productionPlanRepository.countCurrentPlan(today);
+    }
 }

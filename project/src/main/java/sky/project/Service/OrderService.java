@@ -21,4 +21,6 @@ public interface OrderService {
     Page<OrdersDTO> findByMaterialTypeAndStatus(String materialType, String status, Pageable pageable);
 
 
+    //대시 보드 출력용 이번달 발주 건 수
+    int getCountOrderThisMonth();
 }

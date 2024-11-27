@@ -38,6 +38,9 @@
                                 재고 수량을 확인하고 출고 버튼을 누르면 해당 자재가 출고처리 됩니다.
                             </p>
                             <form id="searchForm2" method="get" th:action="@{/material/export}">
+                                <input type="hidden" name="keyword" th:value="${keyword}">
+                                <input type="hidden" name="type" th:value="${type}">
+                                <input type="hidden" name="size" th:value="${size}">
                                 <div class="row" style="justify-content: flex-end">
                                     <div class="select-style-1 col-lg-3">
                                         <div class="select-position">
@@ -98,7 +101,7 @@
                                         <h6>선택목록</h6>
                                     </th>
                                 </tr>
-                                <tr th:each="export:${CurrentExportRequest}">
+                                <tr th:each="export:${exports}">
                                     <td class="text-center">
                                         <p th:text="${export.exportCode}"></p>
                                     </td>
@@ -145,6 +148,27 @@
                                     </td>
                                 </tr>
                             </table>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage2 > 1}">
+                                        <a aria-label="Previous"
+                                           th:href="@{/material/export(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
+                                        <a th:classappend="${i == currentPage2 ? 'active' : ''}"
+                                           th:href="@{/material/export(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2}, type=${type2})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage2 < totalPages2}">
+                                        <a aria-label="Next"
+                                           th:href="@{/material/export(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -155,6 +179,9 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <form id="searchForm" method="get" th:action="@{/material/export}">
+                                <input type="hidden" name="keyword2" th:value="${keyword2}">
+                                <input type="hidden" name="type2" th:value="${type2}">
+                                <input type="hidden" name="size2" th:value="${pageSize2}">
                                 <div class="row" style="justify-content: space-between">
                                     <div class="col-lg-5">
                                         <h3 class="mb-10">창고 자재 목록</h3>
@@ -223,18 +250,18 @@
                                 <ul class="pagination">
                                     <li th:if="${currentPage > 1}">
                                         <a aria-label="Previous"
-                                           th:href="@{/material/export(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                           th:href="@{/material/export(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                         <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                           th:href="@{/material/export(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                           th:href="@{/material/export(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}"
                                            th:text="${i}"></a>
                                     </li>
                                     <li th:if="${currentPage < totalPages}">
                                         <a aria-label="Next"
-                                           th:href="@{/material/export(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                           th:href="@{/material/export(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
@@ -259,6 +286,7 @@
             function clearForm() {
                 searchForm.empty().submit();
             }
+
             function clearForm2() {
                 searchForm2.empty().submit();
             }

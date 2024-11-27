@@ -13,9 +13,13 @@ public interface ExportService {
 
     List<ExportDTO> getCurrentExportList();
 
+    Page<ExportDTO> getCurrentExportListPage(Pageable pageable);
+
     Page<ExportDTO> getExports(Pageable pageable);
 
     Page<ExportDTO> getExportsWithSearchInExportCode(String kerword, Pageable pageable);
+
+    Page<ExportDTO> getCurrentExportsWithSearchInExportCode(String keyword, Pageable pageable);
 
     Page<ExportDTO> getExportsWithSearchInProductionPlanCode(String kerword, Pageable pageable);
 
@@ -23,5 +27,22 @@ public interface ExportService {
 
     Page<ExportDTO> getExportsWithSearchInMaterialCode(String kerword, Pageable pageable);
 
+    Page<ExportDTO> getCurrentExportsWithSearchInProductionPlanCode(String keyword, Pageable pageable);
+
+    Page<ExportDTO> getCurrentExportsWithSearchInMaterialName(String keyword, Pageable pageable);
+
+    Page<ExportDTO> getCurrentExportsWithSearchInMaterialCode(String keyword, Pageable pageable);
+
     Page<ExportDTO> getExportsWithSearchInProductName(String kerword, Pageable pageable);
+
+    Page<ExportDTO> getCurrentExportsWithSearchInProductName(String keyword, Pageable pageable);
+
+    //대시보드 출력용 출고 요청 건수
+    int getCountCurrentRequest();
+
+    //대시 보드 출력용 승인된 출고 요청 건수
+    int getCountApprovedRequestThisMonth();
+
+    //대시 보드 출력용 불출 완료된 출고 요청 건수
+    int getCountFinishedRequestThisMonth();
 }

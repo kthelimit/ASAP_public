@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Order;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findBySupplierNameContainingOrMaterialNameContaining(String supplierName, String materialName, Pageable pageable);
@@ -20,5 +22,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByMaterialTypeAndStatus(@Param("materialType") String materialType,
                                             @Param("status") CurrentStatus status,
                                             Pageable pageable);
+
+
+    //대시보드 출력용 이번달 발주 건수
+    @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
+    int countOrderThisMonth(LocalDateTime start, LocalDateTime end);
 }
 

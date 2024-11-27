@@ -35,5 +35,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
 
     Supplier findBySupplierName(String supplierName);
 
-
+    //승인 대기 중인 업체 수를 세는 쿼리문
+    @Query("select count(s) from Supplier s where s.approved=false")
+    int countByApprovedYet();
 }

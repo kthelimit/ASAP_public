@@ -13,6 +13,11 @@ import sky.project.Repository.OrderRepository;
 import sky.project.Service.OrderService;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -114,4 +119,15 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환
         return order;
     }
+
+    //대시 보드 출력용 이번달 발주 건 수
+    @Override
+    public int getCountOrderThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return orderRepository.countOrderThisMonth(start, end);
+    }
+
+
 }

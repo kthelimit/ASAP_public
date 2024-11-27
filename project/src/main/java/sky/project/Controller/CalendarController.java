@@ -27,10 +27,12 @@ public class CalendarController {
 
         for (ProductionPlan plan : plans) {
             Map<String, Object> event = new HashMap<>();
-            event.put("title", plan.getProductName()); // 제품명
+//            event.put("title", plan.getProductName()); // 제품명
+            event.put("title", plan.getProductName()+"("+plan.getProductionQuantity()+")"); // 제품명
             event.put("start", plan.getProductionStartDate().toString()); // 시작일
-            event.put("end", plan.getProductionEndDate().toString()); // 종료일
-            event.put("quantity", plan.getProductionQuantity()); // 생산 수량
+            event.put("end", plan.getProductionEndDate().plusDays(1).toString()); // 종료일
+//            event.put("quantity", plan.getProductionQuantity()); // 생산 수량
+            event.put("display", "auto");
 
             // 제품별 색상 지정
             String color;
@@ -48,7 +50,8 @@ public class CalendarController {
                     color = "gray"; // 기본 색상
                     break;
             }
-            event.put("color", color); // 색상 추가
+//            event.put("color", color); // 색상 추가
+            event.put("backgroundColor", color);
 
             events.add(event);
         }

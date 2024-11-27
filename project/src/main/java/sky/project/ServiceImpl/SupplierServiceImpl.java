@@ -31,13 +31,14 @@ public class SupplierServiceImpl implements SupplierService {
         Page<Supplier> suppliers = supplierRepository.findByApprovedTrue(pageable);
         return suppliers.map(this::toDTO); // Supplier -> SupplierDTO 변환
     }
+
     public List<Supplier> getApprovedSuppliers() {
         return supplierRepository.findByApprovedTrue();
     }
 
 
     @Override
-    public Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable){
+    public Page<SupplierDTO> searchSuppliers(String keyword, Pageable pageable) {
         Page<Supplier> suppliers = supplierRepository.findBySupplierNameContaining(keyword, pageable);
         return suppliers.map(this::toDTO);
     }
@@ -59,11 +60,6 @@ public class SupplierServiceImpl implements SupplierService {
                 .approved(supplier.getApproved())
                 .build();
     }
-
-
-
-
-
 
 
     @Override
@@ -165,5 +161,12 @@ public class SupplierServiceImpl implements SupplierService {
         Supplier supplier = supplierRepository.findByUser_UserId(userId);
         return supplier != null ? supplier.getSupplierName() : null;
     }
+
+    //승인 대기중인 업체 수
+    @Override
+    public int getCountSupplierWhoWaitApproval() {
+        return supplierRepository.countByApprovedYet();
+    }
+
 
 }

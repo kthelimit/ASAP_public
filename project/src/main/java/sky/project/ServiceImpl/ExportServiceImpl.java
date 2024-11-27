@@ -14,9 +14,14 @@ import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Service
 @Log4j2
@@ -186,6 +191,71 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
+    public Page<ExportDTO> getCurrentExportListPage(Pageable pageable) {
+        Page<Object[]> result = exportRepository.findByExportStatusOnHold(pageable);
+
+//        List<Export> exports = new ArrayList<>();
+//        List<Stock> stocks = new ArrayList<>();
+//        result.forEach(arr -> {
+//            Export export = (Export) arr[0];
+//            Stock stock = (Stock) arr[1];
+//            exports.add(export);
+//            stocks.add(stock);
+//        });
+//        List<ExportDTO> dtoList = new ArrayList<>();
+//        for (int i = 0; i < result.size(); i++) {
+//            ExportDTO dto = entityToDto(exports.get(i));
+//            dto.setAvailableQuantity(stocks.get(i).getQuantity());
+//            dtoList.add(dto);
+//        }
+
+        Function<Object[], ExportDTO> fn = (arr->entitiesToDto(
+                (Export) arr[0],
+                (Stock) arr[1]
+        ));
+
+        return result.map(fn);
+    }
+
+    public ExportDTO entitiesToDto(Export entity, Stock stock) {
+
+        String exportStatus;
+        switch (entity.getExportStatus()) {
+            case ON_HOLD:
+                exportStatus = "대기 중";
+                break;
+            case APPROVAL:
+                exportStatus = "승인 완료";
+                break;
+            case FINISHED:
+                exportStatus = "종료";
+                break;
+            default:
+                exportStatus = null;
+        }
+
+        ExportDTO dto = ExportDTO.builder()
+                .exportId(entity.getExportId())
+                .exportCode(entity.getExportCode())
+                .productionPlanCode(entity.getProductionPlan().getProductionPlanCode())
+                .productionStartDate(entity.getProductionPlan().getProductionStartDate())
+                .productionEndDate(entity.getProductionPlan().getProductionEndDate())
+                .productName(entity.getProductionPlan().getProductName())
+                .materialName(entity.getMaterial().getMaterialName())
+                .materialCode(entity.getMaterial().getMaterialCode())
+                .requiredQuantity(entity.getRequiredQuantity())
+                .availableQuantity(stock.getQuantity())
+                .exportStatus(exportStatus)
+                .createdDate(entity.getCreatedDate())
+                .modifiedDate(entity.getModifiedDate())
+                .build();
+        return dto;
+
+    }
+
+
+    //페이징 및 검색용
+    @Override
     public Page<ExportDTO> getExports(Pageable pageable) {
         Page<Export> result = exportRepository.findAll(pageable);
         return result.map(this::entityToDto);
@@ -221,6 +291,58 @@ public class ExportServiceImpl implements ExportService {
         return result.map(this::entityToDto);
     }
 
+    @Override
+    public Page<ExportDTO> getCurrentExportsWithSearchInExportCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByExportCodeOnHold(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
 
+    @Override
+    public Page<ExportDTO> getCurrentExportsWithSearchInProductionPlanCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductionPlanCodeOnHold(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getCurrentExportsWithSearchInMaterialName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialNameOnHold(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getCurrentExportsWithSearchInMaterialCode(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByMaterialCodeOnHold(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    @Override
+    public Page<ExportDTO> getCurrentExportsWithSearchInProductName(String keyword, Pageable pageable){
+        Page<Export> result = exportRepository.findByProductNameOnHold(keyword, pageable);
+        return result.map(this::entityToDto);
+    }
+
+    //대시보드 출력용 출고 요청 건수
+    @Override
+    public int getCountCurrentRequest(){
+        return exportRepository.countCurrentRequest();
+    }
+
+    //대시 보드 출력용 승인된 출고 요청 건수
+    @Override
+    public int getCountApprovedRequestThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return exportRepository.countApprovedRequest(start, end);
+    }
+
+    //대시 보드 출력용 불출 완료된 출고 요청 건수
+    @Override
+    public int getCountFinishedRequestThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return exportRepository.countFinishedRequest(start, end, today.minusDays(1));
+    }
 
 }

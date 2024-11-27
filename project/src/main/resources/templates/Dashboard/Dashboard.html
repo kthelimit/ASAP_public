@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <!-- 관리자 -->
+        <!-- ========== section start ========== -->
+        <section class="section">
+            <div class="container-fluid">
+                <!-- ========== title-wrapper start ========== -->
+                <div class="title-wrapper pt-30">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="title">
+                                <h2>Dashboard</h2>
+                            </div>
+                        </div>
+                        <!-- end col -->
+                        <div class="col-md-6">
+                            <div class="breadcrumb-wrapper">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item">
+                                            <a href="#0">Dashboard</a>
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </div>
+                <!-- ========== title-wrapper end ========== -->
+
+                <!-- 어드민 전용-->
+                <div class="alert-box danger-alert pl-100" th:if="${countPartnerWhoWait>=1}">
+                    <div class="left">
+                        <h5 class="text-bold">!IMPORTANT!</h5>
+                    </div>
+                    <div class="alert" onclick="location.href='/suppliers/pending'" style="cursor: pointer">
+                        <h4 class="alert-heading">중요 알림</h4>
+                        <p class="text-medium">
+                            승인 대기 중인 업체가 [[${countPartnerWhoWait}]]건 있습니다.
+                        </p>
+                    </div>
+                </div>
+                <!-- end alert-box -->
+                <!-- 구매부서 전용-->
+                <div class="alert-box danger-alert pl-100" th:if="${countProcurementPlanNotYet>=1}">
+                    <div class="left">
+                        <h5 class="text-bold">!IMPORTANT!</h5>
+                    </div>
+                    <div class="alert" onclick="location.href='/order/list'" style="cursor: pointer">
+                        <h4 class="alert-heading">중요 알림</h4>
+                        <p class="text-medium">
+                            아직 발주하지 않은 건수가 [[${countProcurementPlanNotYet}]]건 있습니다.
+                        </p>
+                    </div>
+                </div>
+                <!-- end alert-box -->
+                <!-- 생산부서 전용-->
+                <div class="alert-box success-alert pl-100" th:if="${(countExportApproved - countExportFinished)>=1}">
+                    <div class="left">
+                        <h5 class="text-bold">!IMPORTANT!</h5>
+                    </div>
+                    <div class="alert" onclick="location.href='/material/export/history'" style="cursor: pointer">
+                        <h4 class="alert-heading">중요 알림</h4>
+                        <p class="text-medium">
+                            이번달에 요청한 출고 요청 [[${countExportRequest + countExportApproved - countExportFinished}]]건 중
+                            [[${countExportApproved - countExportFinished}]]건이 승인 되었습니다.
+                        </p>
+                    </div>
+                </div>
+                <!-- end alert-box -->
+                <!-- 자재부서 전용-->
+                <div class="alert-box danger-alert pl-100" th:if="${countExportRequest>=1}">
+                    <div class="left">
+                        <h5 class="text-bold">!IMPORTANT!</h5>
+                    </div>
+                    <div class="alert" onclick="location.href='/material/export'" style="cursor: pointer">
+                        <h4 class="alert-heading">중요 알림</h4>
+                        <p class="text-medium">
+                            아직 승인하지 않은 출고 요청이 [[${countExportRequest}]]건 있습니다.
+                        </p>
+                    </div>
+                </div>
+                <!-- end alert-box -->
+
+
+                <div class="row">
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon purple">
+                                <i class="lni lni-cart-full"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">진행 중인 생산 계획 수</h6>
+                                <h3 class="text-bold mb-10">[[${countProductionPlan}]]</h3>
+                                <p class="text-sm text-success">
+                                    <a th:href="@{/plan/list}"><span class="text-gray">더 보기</span></a>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon primary">
+                                <i class="lni lni-credit-cards"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">이번 달 발주 건수</h6>
+                                <h3 class="text-bold mb-10">[[${countOrder}]]</h3>
+                                <p class="text-sm text-danger">
+                                    <span class="text-gray">더 보기</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon orange">
+                                <i class="lni lni-user"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">★이번 달 입고 건수</h6>
+                                <h3 class="text-bold mb-10">3</h3>
+                                <p class="text-sm text-danger">
+                                    <span class="text-gray"> 더 보기</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon success">
+                                <i class="lni lni-dollar"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">★이번달 납품 지시 건수</h6>
+                                <h3 class="text-bold mb-10">15</h3>
+                                <p class="text-sm text-success">
+                                    <span class="text-gray">더 보기</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                </div>
+                <!-- End Row -->
+                <!-- End Row -->
+                <div class="row">
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon purple">
+                                <i class="lni lni-cart-full"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">★입고 검수 예정 건수</h6>
+                                <h3 class="text-bold mb-10">3</h3>
+                                <p class="text-sm text-success">
+                                    <span class="text-gray">더 보기</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon primary">
+                                <i class="lni lni-credit-cards"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">대기 중인 출고 요청 건수</h6>
+                                <h3 class="text-bold mb-10">[[${countExportRequest}]]</h3>
+                                <p class="text-sm text-danger">
+                                    <a th:href="@{/material/export}"><span class="text-gray">더 보기</span></a>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon orange">
+                                <i class="lni lni-user"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">승인된 출고 요청 건수</h6>
+                                <h3 class="text-bold mb-10">[[${countExportApproved}]]</h3>
+                                <p class="text-sm text-danger">
+                                    <a th:href="@{/material/export/history}"><span class="text-gray"> 더 보기</span></a>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon success">
+                                <i class="lni lni-dollar"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">불출 완료된 건수</h6>
+                                <h3 class="text-bold mb-10">[[${countExportFinished}]]</h3>
+                                <p class="text-sm text-success">
+                                    <a th:href="@{/material/export/history}"><span class="text-gray"> 더 보기</span></a>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                </div>
+                <!-- 달력 -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card-style calendar-card mb-30">
+                            <h5>생산 계획 달력</h5>
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 달력 끝 -->
+            </div>
+            <!-- end container -->
+        </section>
+        <!-- ========== section end ========== -->
+
+        <!-- ========== footer start =========== -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 order-last order-md-first">
+                        <div class="copyright text-center text-md-start">
+                            <p class="text-sm">
+                                Designed and Developed by
+                                <a href="https://plainadmin.com" rel="nofollow" target="_blank">
+                                    PlainAdmin
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- end col-->
+                    <div class="col-md-6">
+                        <div class="terms d-flex justify-content-center justify-content-md-end">
+                            <a class="text-sm" href="#0">Term & Conditions</a>
+                            <a class="text-sm ml-15" href="#0">Privacy & Policy</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </footer>
+        <!-- ========== footer end =========== -->
+
+        <script th:src="@{/assets/dist/index.global.js}"></script>
+        <script th:src="@{/assets/dist/index.global.min.js}"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');
+
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+
+                    headerToolbar: {
+                        left  : 'title',
+                        center: '',
+                        right : 'today prev, next'
+                    },
+                    initialView  : "dayGridMonth",
+                    navLinks     : false, // can click day/week names to navigate views
+                    nowIndicator : true,
+
+                    weekNumbers          : false,
+                    weekNumberCalculation: 'ISO',
+                    fixedWeekCount       : false,
+
+                    editable    : false,
+                    selectable  : true,
+                    dayMaxEvents: true, // allow "more" link when too many events
+                    events      : "/api/calendar/events",
+                    eventClick  : function (info) {
+                        // 이벤트 클릭 시 상세 정보 표시
+                        alert(
+                            `Event: ${info.event.title}\n` +
+                            `Start: ${changeDateFormat(info.event.start)}\n` +
+                            `End: ${changeEndDateFormat(info.event.end)}\n`
+                        );
+                    }
+                });
+
+                calendar.render();
+            });
+
+
+            function changeDateFormat(date) {
+                var year = date.getFullYear();
+                var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                var day = date.getDate().toString().padStart(2, '0');
+                return year + '-' + month + '-' + day;
+            }
+
+            function changeEndDateFormat(date) {
+                date.setDate(date.getDate() - 1);
+                var year = date.getFullYear();
+                var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                var day = date.getDate().toString().padStart(2, '0');
+                return year + '-' + month + '-' + day;
+            }
+        </script>
+
+    </th:block>
+</th:block>

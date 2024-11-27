@@ -56,7 +56,7 @@ public class HomeController {
 //        }
 //
 //        model.addAttribute("user", user);
-        return "/sample/admin";
+        return "redirect:/dashboard/index";
     }
 
 

@@ -7,9 +7,7 @@ import sky.project.DTO.AssyDTO;
 import sky.project.Entity.Assy;
 import sky.project.Entity.Material;
 import sky.project.Entity.Product;
-import sky.project.Repository.AssyRepository;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.ProductRepository;
+import sky.project.Repository.*;
 import sky.project.Service.AssyService;
 
 import java.util.ArrayList;
@@ -23,6 +21,8 @@ public class AssyServiceImpl implements AssyService {
     private final MaterialRepository materialRepository;
     private final AssyRepository assyRepository;
     private final ProductRepository productRepository;
+    private final ExportRepository exportRepository;
+    private final ProductionPlanRepository productionPlanRepository;
 
     @Override
     public Long register(AssyDTO dto) {
@@ -32,13 +32,33 @@ public class AssyServiceImpl implements AssyService {
     }
 
     @Override
-    public List<AssyDTO> findByAssyMaterialCode(String assyMaterialCode){
+    public List<AssyDTO> findByAssyMaterialCode(String assyMaterialCode) {
         List<Assy> assyList = assyRepository.findByAssyMaterialCode(assyMaterialCode);
         List<AssyDTO> assyDTOList = new ArrayList<>();
         assyList.forEach(assy -> {
             assyDTOList.add(entityToDto(assy));
         });
         return assyDTOList;
+    }
+
+    @Override
+    public int findLeftQuantityByAssyMaterialCode(String productionPlanCode, String assyMaterialCode) {
+        //해당 생산 계획에서 해당 조립품의 요구 수량(페달(1:2) 외에는 다 1:1대응임)
+        int requiredQuantityForAssy = productionPlanRepository.findByProductionPlanCode(productionPlanCode).getProductionQuantity();
+
+        //만약 조립된 페달A거나 조립된 페달B인 경우 2를 곱한다.
+        if (assyMaterialCode.equals("MATB1SEM004") || assyMaterialCode.equals("MATB1SEM009")) {
+            requiredQuantityForAssy *= 2;
+        }
+        int totalExportRequestQuantity;
+        //해당 생산 계획에 대해서 출고 요청해둔 수량
+        if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode) == 0) {
+            totalExportRequestQuantity = 0;
+        } else {
+            totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode)
+                    / exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode);
+        }
+        return requiredQuantityForAssy - totalExportRequestQuantity;
     }
 
     public Assy dtoToEntity(AssyDTO dto) {

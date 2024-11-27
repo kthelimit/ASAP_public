@@ -35,6 +35,10 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public Long register(ExportDTO dto) {
+        log.info("register dto: " + dto);
+        log.info(dto.getMaterialCode());
+        log.info(dto.getProductionPlanCode());
+        log.info(dto.getAssyMaterialCode());
         Export entity = dtoToEntity(dto);
         entity.setExportCode(generateProductionPlanCode(dto));
         exportRepository.save(entity);
@@ -59,14 +63,17 @@ public class ExportServiceImpl implements ExportService {
 
 
     public Export dtoToEntity(ExportDTO dto) {
-        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
+        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()&&materialRepository.findByMaterialCode(dto.getAssyMaterialCode()).isPresent()) {
 
             Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
             ProductionPlan productionPlan = productionPlanRepository.findByProductionPlanCode(dto.getProductionPlanCode());
+            Material assyMaterial = materialRepository.findByMaterialCode(dto.getAssyMaterialCode()).get();
 
             return Export.builder()
                     .exportId(dto.getExportId())
                     .material(material)
+                    .assyMaterial(assyMaterial)
+                    .assyQuantity(dto.getAssyQuantity())
                     .productionPlan(productionPlan)
                     .requiredQuantity(dto.getRequiredQuantity())
                     .exportStatus(CurrentStatus.ON_HOLD)
@@ -103,6 +110,9 @@ public class ExportServiceImpl implements ExportService {
                 .productName(entity.getProductionPlan().getProductName())
                 .materialName(entity.getMaterial().getMaterialName())
                 .materialCode(entity.getMaterial().getMaterialCode())
+                .assyMaterialName(entity.getAssyMaterial().getMaterialName())
+                .assyMaterialCode(entity.getAssyMaterial().getMaterialCode())
+                .assyQuantity(entity.getAssyQuantity())
                 .requiredQuantity(entity.getRequiredQuantity())
                 .exportStatus(exportStatus)
                 .createdDate(entity.getCreatedDate())

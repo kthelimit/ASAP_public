@@ -243,6 +243,12 @@
                                     <h6>품목명</h6>
                                 </th>
                                 <th>
+                                    <h6>발주 수량</h6>
+                                </th>
+                                <th>
+                                    <h6>합계 금액</h6>
+                                </th>
+                                <th>
                                     <h6>발주일</h6>
                                 </th>
                                 <th>
@@ -259,6 +265,8 @@
                               <td th:text="${orders.procurePlanCode}"></td>
                                 <td th:text="${orders.supplierName}"></td>
                                 <td th:text="${orders.materialName}"></td>
+                                <td th:text="${orders.orderQuantity}"></td>
+                                <td th:text="${orders.totalPrice}"></td>
                                 <td th:text="${orders.orderDate}"></td>
                                 <td th:text="${orders.expectedDate}"></td>
                                 <td th:text="${orders.status}"></td>
@@ -292,9 +300,9 @@
             function updateTotalPrice() {
                 var procurementQuantity = $('#procurementQuantity').val();
                 var unitPrice = $('#unitPrice').val();
-                // $('#totalPrice').val(procurementQuantity * unitPrice);
                 $('#totalPriceSet').empty();
-                $('#totalPriceSet').append(procurementQuantity * unitPrice);
+                $('#totalPriceSet').append(procurementQuantity * unitPrice +
+                    '<input type="hidden" id="totalPrice" name="totalPrice" value="' + procurementQuantity * unitPrice + '">');
 
                 $('#totalPriceSet2').empty();
                 $('#totalPriceSet2').append('<p>₩' + procurementQuantity * unitPrice + '</p>');

@@ -157,6 +157,26 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="pagination-wrapper">
+                            <ul class="pagination">
+                                <!-- 이전 페이지 버튼 -->
+                                <li th:if="${currentOrderPage > 1}">
+                                    <a th:href="@{/suppliers/page(page=${currentOrderPage - 1}, size=${size})}">&laquo;</a>
+                                </li>
+
+                                <!-- 페이지 번호 버튼 -->
+                                <li th:each="i : ${#numbers.sequence(1, totalOrderPages)}">
+                                    <a th:classappend="${i == currentOrderPage ? 'active' : ''}"
+                                       th:href="@{/suppliers/page(page=${i}, size=${size})}"
+                                       th:text="${i}"></a>
+                                </li>
+
+                                <!-- 다음 페이지 버튼 -->
+                                <li th:if="${currentOrderPage < totalOrderPages}">
+                                    <a th:href="@{/suppliers/page(page=${currentOrderPage + 1}, size=${size})}">&raquo;</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,25 +187,17 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <div id="inspectionTable">
-                                <h3>진척 검수</h3>
-                                <table>
+                                <h3 class="table-title">진척 검수</h3>
+                                <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>자재 이름</th>
-                                        <th>수량</th>
-                                        <th>검수 상태</th>
-                                        <th>검수 완료</th>
+                                        <th class="text-center"><h6>자재 이름</h6></th>
+                                        <th class="text-center"><h6>수량</h6></th>
+                                        <th class="text-center"><h6>검수 상태</h6></th>
+                                        <th class="text-center"><h6>검수 완료</h6></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>[자재 이름]</td>
-                                        <td>[수량]</td>
-                                        <td>진행 중</td>
-                                        <td>
-                                            <button class="btn-approve">검수 완료</button>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -193,6 +205,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- 거래 명세서 -->
             <div class="tables-wrapper">
@@ -203,7 +216,7 @@
                             <table>
                                 <thead>
                                 <tr>
-                                    <th>자재 이름</th>
+                                    <th >자재 이름</th>
                                     <th>단가</th>
                                     <th>수량</th>
                                     <th>총 가격</th>

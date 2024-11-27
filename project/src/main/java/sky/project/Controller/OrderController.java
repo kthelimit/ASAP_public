@@ -111,6 +111,7 @@ public class OrderController {
     public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
         // 데이터 확인
         System.out.println("Received OrdersDTO: " + ordersDTO);
+        System.out.println("totalPrice : "+ordersDTO.getTotalPrice());
 
         // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
         orderService.registerOrder(ordersDTO);
@@ -133,13 +134,14 @@ public class OrderController {
     public String progressPage(
             Model model,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
         // 제조품 조회
         Page<OrdersDTO> manufacturingOrders = orderService.findByMaterialTypeAndStatus(
                 "제조품", CurrentStatus.APPROVAL.name(), pageable);
+        System.out.println("제조품 내역확인"+manufacturingOrders.getContent());
 
         // 구매품 조회
         Page<OrdersDTO> purchaseOrders = orderService.findByMaterialTypeAndStatus(
@@ -156,6 +158,12 @@ public class OrderController {
         model.addAttribute("purchaseCurrentPage", page);
 
         return "/Order/DeliveryOrder";
+    }
+
+    @GetMapping("/inspectionrequest")
+    public String inspectionRequest(@RequestParam Long orderId){
+        orderService.updateOrderStatus(orderId, CurrentStatus.IN_PROGRESS);
+        return "redirect:/order/delivery";
     }
 
 }

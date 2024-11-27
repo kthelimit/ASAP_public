@@ -77,14 +77,20 @@ public class APIController {
     //ProductCode에 따른 조립 공정 출력용
     @RequestMapping("/load/AssyList/{assyMaterialCode}")
     public List<AssyDTO> loadAssyMaterialListByProductCode(@PathVariable String assyMaterialCode) {
-        log.info("assyMaterialCode: "+assyMaterialCode);
+        log.info("assyMaterialCode: " + assyMaterialCode);
         return assyService.findByAssyMaterialCode(assyMaterialCode);
+    }
+
+    //
+    @RequestMapping("/load/AssyLeft/{productionPlanCode}/{assyMaterialCode}")
+    public int loadAssyMaterialLeftQuantityByProductCode(@PathVariable String productionPlanCode, @PathVariable String assyMaterialCode) {
+        return assyService.findLeftQuantityByAssyMaterialCode(productionPlanCode, assyMaterialCode);
     }
 
 
     //출고요청 등록
     @PostMapping("/post/export")
-    public ResponseEntity<Long> registerExport(@RequestBody ExportDTO dto){
+    public ResponseEntity<Long> registerExport(@RequestBody ExportDTO dto) {
         return ResponseEntity.ok(exportService.register(dto));
     }
 

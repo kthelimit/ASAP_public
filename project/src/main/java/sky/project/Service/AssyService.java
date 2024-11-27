@@ -10,4 +10,6 @@ public interface AssyService {
     Long register(AssyDTO dto);
 
     List<AssyDTO> findByAssyMaterialCode(String assyMaterialCode);
+
+    int findLeftQuantityByAssyMaterialCode(String productionPlanCode, String assyMaterialCode);
 }

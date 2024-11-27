@@ -104,10 +104,11 @@
                         발주서 작성 후 버튼을 누르시면 발주서가 등록됩니다.
                     </p>
                     <div class="table-wrapper table-responsive">
-                        <form th:action="@{/order/register}" method="post">
+                        <form method="post" th:action="@{/order/register}">
                             <table class="table">
                                 <tr>
-                                    <th colspan="4" style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    <th colspan="4"
+                                        style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
                                         공급자 정보
                                     </th>
                                 </tr>
@@ -115,7 +116,8 @@
                                     <th style="width:15%">업체명</th>
                                     <td style="width:35%">
                                         <p th:text="${selectedOrder.supplierName}"></p>
-                                        <input type="hidden" name="supplierName" th:value="${selectedOrder.supplierName}">
+                                        <input name="supplierName" th:value="${selectedOrder.supplierName}"
+                                               type="hidden">
                                     </td>
                                     <th style="width:15%">사업자 번호</th>
                                     <td style="width:35%">
@@ -132,7 +134,7 @@
                                     <th>발주일</th>
                                     <td>
                                         <p th:text="${orderDate}"></p>
-                                        <input type="hidden" name="orderDate" th:value="${orderDate}">
+                                        <input name="orderDate" th:value="${orderDate}" type="hidden">
                                     </td>
                                     <th>담당자</th>
                                     <td>
@@ -142,7 +144,8 @@
                             </table>
                             <table class="table">
                                 <tr>
-                                    <th colspan="6" style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
+                                    <th colspan="6"
+                                        style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
                                         품목 정보
                                     </th>
                                 </tr>
@@ -157,75 +160,82 @@
                                 <tr th:if="${selectedOrder != null}">
                                     <td>
                                         <p th:text="${selectedOrder.procurePlanCode}"></p>
-                                        <input type="hidden" name="procurePlanCode" th:value="${selectedOrder.procurePlanCode}">
+                                        <input name="procurePlanCode" th:value="${selectedOrder.procurePlanCode}"
+                                               type="hidden">
                                     </td>
                                     <td>
                                         <p th:text="${selectedOrder.materialName}"></p>
-                                        <input type="hidden" name="materialName" th:value="${selectedOrder.materialName}">
+                                        <input name="materialName" th:value="${selectedOrder.materialName}"
+                                               type="hidden">
                                     </td>
                                     <td>
                                         [[${unitPrice}]]
-                                        <input type="hidden" id="unitPrice" name="unitPrice" th:value="${unitPrice}">
+                                        <input id="unitPrice" name="unitPrice" th:value="${unitPrice}" type="hidden">
                                     </td>
                                     <td style="padding-left: 5px">
-                                        <input style="width: 50%" id="procurementQuantity" type="number" name="orderQuantity"
-                                               th:value="${selectedOrder.procurementQuantity}" onchange="updateTotalPrice()">
+                                        <input id="procurementQuantity" name="orderQuantity" onchange="updateTotalPrice()"
+                                               style="width: 50%"
+                                               th:value="${selectedOrder.procurementQuantity}"
+                                               type="number">
                                     </td>
                                     <td id="totalPriceSet">
                                         [[${totalPrice}]]
-                                        <input type="hidden" id="totalPrice" name="totalPrice" th:value="${totalPrice}">
+                                        <input id="totalPrice" name="totalPrice" th:value="${totalPrice}" type="hidden">
                                     </td>
                                     <td>
                                         <p th:text="${selectedOrder.procurementDueDate}"></p>
-                                        <input type="hidden" name="expectedDate" th:value="${selectedOrder.procurementDueDate}">
+                                        <input name="expectedDate" th:value="${selectedOrder.procurementDueDate}"
+                                               type="hidden">
                                     </td>
                                 </tr>
                             </table>
                             <table class="table">
                                 <tr>
                                     <th>비고</th>
-                                    <td><input style="width: 90%" type="text" name="remarks"></td>
+                                    <td><input name="remarks" style="width: 90%" type="text"></td>
                                 </tr>
                                 <tr>
                                     <th>합계</th>
-                                    <td style="width: 15%" id="totalPriceSet2">
+                                    <td id="totalPriceSet2" style="width: 15%">
                                         <p th:text="'₩' + ${totalPrice}"></p>
                                     </td>
                                 </tr>
                             </table>
                             <div style="text-align: right">
-                                <button type="submit" class="main-btn primary-btn btn-hover">발주서 등록</button>
+                                <button class="main-btn primary-btn btn-hover" type="submit">발주서 등록</button>
                             </div>
                         </form>
                     </div>
+                </div>
             </div>
-        </div>
-        <!-- 구매 발주서 관리-->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card-style mb-30">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <h3 class="mb-10">구매 발주서 목록</h3>
-                            <p class="text-sm mb-20">
-                                발주가 완료되어 진행중인 목록입니다.
-                            </p>
-                            <div class="table-wrapper table-responsive">
-                                <div class="row">
-                                    <form method="get" th:action="@{/order/list}">
-                                        <!-- Hidden field to pass the type -->
-                                        <input type="hidden" name="type" th:value="orders" />
+            <!-- 구매 발주서 관리-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h3 class="mb-10">구매 발주서 목록</h3>
+                                <p class="text-sm mb-20">
+                                    발주가 완료되어 진행중인 목록입니다.
+                                </p>
+                                <div class="table-wrapper table-responsive">
+                                    <div class="row">
+                                        <form method="get" th:action="@{/order/list}">
+                                            <!-- Hidden field to pass the type -->
+                                            <input name="type" th:value="orders" type="hidden"/>
 
-                                        <div class="input-style-1 col-lg-5" style="display: flex; align-items: center;">
-                                            <input id="searchKeyword2" name="keyword"
-                                                   placeholder="업체명 또는 부품명 입력"
-                                                   th:value="${keyword2}"
-                                                   type="text" />
-                                            <button class="main-btn primary-btn btn-hover ml-10" type="submit">
-                                                검색
-                                            </button>
-                                        </div>
-                                    </form>
+                                            <div class="input-style-1 col-lg-5"
+                                                 style="display: flex; align-items: center;">
+                                                <input id="searchKeyword2" name="keyword"
+                                                       placeholder="업체명 또는 부품명 입력"
+                                                       th:value="${keyword2}"
+                                                       type="text"/>
+                                                <button class="main-btn primary-btn btn-hover ml-10" type="submit">
+                                                    검색
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                     </div>
@@ -275,27 +285,27 @@
                             </tbody>
                         </table>
 
-                    </div>
-                        <div class="pagination-wrapper">
-                            <ul class="pagination">
-                                <li th:if="${currentPage2 > 1}">
-                                    <a th:href="@{/order/list(page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2})}">&laquo;</a>
-                                </li>
-                                <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
-                                    <a th:classappend="${i == currentPage2 ? 'active' : ''}"
-                                       th:href="@{/order/list(page2=${i}, size2=${pageSize2}, keyword2=${keyword2})}"
-                                       th:text="${i}"></a>
-                                </li>
-                                <li th:if="${currentPage2 < totalPages2}">
-                                    <a th:href="@{/order/list(page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2})}">&raquo;</a>
-                                </li>
-                            </ul>
+                            </div>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${currentPage2 > 1}">
+                                        <a th:href="@{/order/list(page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2})}">&laquo;</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
+                                        <a th:classappend="${i == currentPage2 ? 'active' : ''}"
+                                           th:href="@{/order/list(page2=${i}, size2=${pageSize2}, keyword2=${keyword2})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${currentPage2 < totalPages2}">
+                                        <a th:href="@{/order/list(page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2})}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <script>
             function updateTotalPrice() {
                 var procurementQuantity = $('#procurementQuantity').val();

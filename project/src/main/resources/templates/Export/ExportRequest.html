@@ -65,12 +65,16 @@
                                     <div class="col-lg-2 input-style-1">
                                         <label>공정 결과물의 자재코드</label>
                                         <input id="assyMaterialCode" name="assyMaterialCode" readonly type="text"
-                                               value="자재 코드">
+                                               placeholder="자재 코드" value="">
                                     </div>
-                                    <div class="col-lg-3 input-style-1">
+                                    <div class="col-lg-2 input-style-1">
                                         <label>공정 결과물의 자재명</label>
                                         <input id="assyMaterialName" name="assyMaterialName" readonly type="text"
-                                               value="조립품">
+                                               placeholder="조립품" value="">
+                                    </div>
+                                    <div class="col-lg-1 input-style-1">
+                                        <label>남은 수량</label>
+                                        <input id="leftQuantity" readonly type="number" value="">
                                     </div>
                                     <div class="col-lg-1 input-style-1">
                                         <label>조립할 수량</label>
@@ -118,6 +122,7 @@
                 //자재코드와 자재명 리셋
                 $('#assyMaterialCode').val("");
                 $('#assyMaterialName').val("");
+                $('#leftQuantity').val("");
 
                 $('#assyMaterialTable').empty();
                 $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
@@ -160,6 +165,8 @@
 
                 $('#assyMaterialName').val(selectedValue2);
 
+                //해당 조립품의 남은 제작 수량 넣기
+                loadLeftAssyQuantity($("#productionPlanSelect").find("option:selected").data("name"),selectedValue);
 
                 //자재 리스트 리셋
                 $('#assyMaterialTable').empty();
@@ -221,6 +228,8 @@
                         data = {
                             productionPlanCode: productPlanCode,
                             materialCode      : materialCodesArray[j],
+                            assyMaterialCode :  $('#assyMaterialCode').val(),
+                            assyQuantity : $('#quantity').val(),
                             requiredQuantity  : requiredQuantitiesArray[j]
                         }
                         $.ajax({
@@ -244,30 +253,23 @@
                     }
                 }, 100);
 
-
-                // //하나씩 등록 요청하기
-                // for (var j = 0; j < materialCodesArray.length; j++) {
-                //     data = {
-                //         productionPlanCode : productPlanCode,
-                //         materialCode    : materialCodesArray[j],
-                //         requiredQuantity: requiredQuantitiesArray[j]
-                //     }
-                //     $.ajax({
-                //         type       : 'POST',
-                //         url        : '/api/post/export',
-                //         dataType   : 'TEXT',
-                //         contentType: 'application/json; charset=utf-8',
-                //         data       : JSON.stringify(data)
-                //     }).done(function () {
-                //         console.log("출고요청이 등록되었습니다.")
-                //     }).fail(function (error) {
-                //         alert(JSON.stringify(error));
-                //     })
-                // }
-
                 //결과 알려주기
                 alert(materialCodesArray.length + "개의 출고요청이 등록되었습니다.")
-                // window.location.reload();
+            }
+
+            //해당 조립 공정의 남은 제작 수량
+            function loadLeftAssyQuantity(productionPlanCode, assyMaterialCode){
+                $.ajax({
+                    url        : "/api/load/AssyLeft/"+productionPlanCode+"/"+ assyMaterialCode,
+                    type       : "GET",
+                    dataType   : "JSON",
+                    contentType: 'application/json; charset=utf-8',
+                    data       : JSON.stringify(assyMaterialCode),
+                    success    : function (data) {
+                        console.log(data);
+                        $('#leftQuantity').val(data);
+                    }
+                })
             }
 
 

@@ -19,6 +19,9 @@ public class ExportDTO {
     private String productName;
     private String materialCode; //자재
     private String materialName;
+    private String assyMaterialCode;
+    private String assyMaterialName;
+    private int assyQuantity;
     private int requiredQuantity;
     private int availableQuantity;
     private String exportStatus;

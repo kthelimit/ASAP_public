@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><style>
+<head>
+    <style>
     /* 기존 스타일을 그대로 유지합니다 */
     body {
         display: flex;
@@ -15,7 +16,7 @@
     .container {
         margin-top: 100px;
         width: 400px;
-        height: 500px;
+        height: 600px;
         background-color: #ffffff;
         padding: 20px 40px;
         border-radius: 10px;
@@ -127,8 +128,10 @@
 
             <button type="submit" >로그인</button>
 
-            <!-- 에러 메시지 표시 -->
-            <div th:if="${error}" th:text="${error}" style="color: red; margin-top: 10px;"></div>
+
+
+
+
         </form>
 
         <!-- 회원가입, 아이디 찾기, 비밀번호 찾기 링크 -->
@@ -137,6 +140,11 @@
             <a href="#">아이디 찾기</a> |
             <a href="#">비밀번호 찾기</a>
         </div>
+
+        <!-- 에러 메시지 표시 -->
+
+        <div th:if="${error}" th:text="${error}" style="color: red; margin-top: 50px;"></div>
+
     </div>
 
     <script>

@@ -45,7 +45,7 @@ public class MaterialController {
             page = 1; // 페이지 값이 1 미만이면 기본값으로 설정
         }
 
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("materialId").descending());
         Page<MaterialDTO> materials;
 
         String searchKeyword = Optional.ofNullable(keyword).orElse("");

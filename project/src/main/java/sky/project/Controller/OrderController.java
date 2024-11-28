@@ -13,7 +13,6 @@ import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
-import sky.project.Entity.Order;
 import sky.project.Service.MaterialService;
 import sky.project.Service.OrderService;
 import sky.project.Service.ProcurementPlanService;
@@ -41,7 +40,7 @@ public class OrderController {
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
                                         @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "5") int size,
+                                        @RequestParam(defaultValue = "6") int size,
                                         @RequestParam(defaultValue = "1") int page2,
                                         @RequestParam(defaultValue = "5") int size2,
                                         @RequestParam(value = "id", required = false) Long id,

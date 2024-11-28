@@ -2,6 +2,7 @@ package sky.project.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ProcurementPlanDTO;
@@ -11,6 +12,7 @@ import sky.project.Service.ProcurementPlanService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProcurementPlanServiceImpl implements ProcurementPlanService {
@@ -23,9 +25,16 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return procurementPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
+//    @Override
+//    public List<ProcurementPlan> findAll() {
+//        return procurementPlanRepository.findAll();
+//    }
+
+
     @Override
-    public List<ProcurementPlan> findAll() {
-        return procurementPlanRepository.findAll();
+    public Page<ProcurementPlanDTO> getProcurementPlans(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);  // 페이지 번호는 0부터 시작
+        return procurementPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override

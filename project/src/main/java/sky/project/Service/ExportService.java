@@ -11,11 +11,15 @@ public interface ExportService {
 
     Long modify(ExportDTO dto);
 
+    Long modifyFinished(ExportDTO dto);
+
     List<ExportDTO> getCurrentExportList();
 
     Page<ExportDTO> getCurrentExportListPage(Pageable pageable);
 
     Page<ExportDTO> getExports(Pageable pageable);
+
+    Page<ExportDTO> getExportsNotHOLD(Pageable pageable);
 
     Page<ExportDTO> getExportsWithSearchInExportCode(String kerword, Pageable pageable);
 

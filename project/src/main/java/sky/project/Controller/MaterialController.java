@@ -135,7 +135,7 @@ public class MaterialController {
         //현재 상태가 대기중인 출고 요청만 가지고 온다.
         Page<ExportDTO> exports;
 
-        if(keyword2 != null && !keyword2.isEmpty()) {
+        if (keyword2 != null && !keyword2.isEmpty()) {
             if (type2.contains("e")) {
                 exports = exportService.getCurrentExportsWithSearchInExportCode(keyword2, pageable2);
             } else if (type2.contains("p")) {
@@ -149,7 +149,7 @@ public class MaterialController {
             } else {
                 exports = exportService.getCurrentExportListPage(pageable2);
             }
-        }else{
+        } else {
             exports = exportService.getCurrentExportListPage(pageable2);
         }
         model.addAttribute("exports", exports.getContent());
@@ -160,15 +160,23 @@ public class MaterialController {
         model.addAttribute("type2", type2);
 
 
-
         return "/Export/index";
     }
 
     //자재 출고요청
     @RequestMapping("/export/request")
-    public String exportMaterialRequest(Model model) {
+    public String exportMaterialRequest(Model model, @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
         model.addAttribute("productionPlans", productionPlanService.getProductionPlansWithDate());
+        //최근에 요청한 출고내역이 위쪽에 뜨도록
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("exportId").descending());
 
+        Page<ExportDTO> exportDTOS = exportService.getExportsNotHOLD(pageable);
+
+        model.addAttribute("exports", exportDTOS.getContent());
+        model.addAttribute("totalPages", exportDTOS.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
         return "/Export/ExportRequest";
     }
 
@@ -180,19 +188,26 @@ public class MaterialController {
         return "redirect:/material/export";
     }
 
+    //출고 완료
+    @PostMapping("/export/finished")
+    public String exportMaterialFinished(ExportDTO dto) {
+        exportService.modifyFinished(dto);
+        return "redirect:/material/export/request";
+    }
+
     //출고 내역
     @RequestMapping("/export/history")
     public String exportMaterialHistory(Model model, @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int size,
                                         @RequestParam(value = "type", required = false) String type,
                                         @RequestParam(value = "keyword", required = false) String keyword) {
-        
+
         //최근에 요청한 출고내역이 위쪽에 뜨도록
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("exportId").descending());
 
         Page<ExportDTO> exportDTOS;
 
-        if(keyword != null && !keyword.isEmpty()) {
+        if (keyword != null && !keyword.isEmpty()) {
             if (type.contains("e")) {
                 exportDTOS = exportService.getExportsWithSearchInExportCode(keyword, pageable);
             } else if (type.contains("p")) {
@@ -206,7 +221,7 @@ public class MaterialController {
             } else {
                 exportDTOS = exportService.getExports(pageable);
             }
-        }else{
+        } else {
             exportDTOS = exportService.getExports(pageable);
         }
         model.addAttribute("exports", exportDTOS.getContent());

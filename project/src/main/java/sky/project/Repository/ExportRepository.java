@@ -8,7 +8,6 @@ import sky.project.Entity.Export;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ExportRepository extends JpaRepository<Export, Long> {
 
@@ -33,16 +32,18 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
     Export findByExportCode(String exportCode);
 
 
-    //남은 갯수 계산전 체크용
-    @Query("select e from Export e where e.productionPlan.productionPlanCode=:productionPlanCode and e.assyMaterial.materialCode=:assyMaterialCode")
-    Optional<Export> findByProductionPlanCodeAndAssyMaterialCode(String productionPlanCode, String assyMaterialCode);
+    //승인 완료된 건 전부 띄우고, 종료된 것은 정해진 기간 내의 것만 출력한다.
+    @Query("select e from Export e where (e.exportStatus =5 and e.modifiedDate <=:today and e.modifiedDate>=:start) or e.exportStatus=1")
+    Page<Export> findByStatusNotFinished(Pageable pageable, LocalDateTime start , LocalDateTime today);
+
 
     //남은 갯수 계산용1
-    @Query("select sum(e.assyQuantity) from Export e "+
+    @Query("select sum(e.assyQuantity) from Export e " +
             "where e.productionPlan.productionPlanCode=:productionPlanCode and e.assyMaterial.materialCode=:assyMaterialCode ")
     Integer findSumByProductionPlanCodeAndAssyMaterialCode(String productionPlanCode, String assyMaterialCode);
+
     //남은 갯수 계산용2
-    @Query("select count(e.assyQuantity) from Export e "+
+    @Query("select count(e.assyQuantity) from Export e " +
             "where e.productionPlan.productionPlanCode=:productionPlanCode and e.assyMaterial.materialCode=:assyMaterialCode ")
     Integer findCountByProductionPlanCodeAndAssyMaterialCode(String productionPlanCode, String assyMaterialCode);
 
@@ -88,7 +89,6 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
     int countApprovedRequest(LocalDateTime start, LocalDateTime end);
 
     //대시 보드 출력용 이번달 불출 완료 건수(승인한 다음날 불출이 완료된다고 봤다)
-    @Query("select count(e) from Export e where  e.exportStatus!=0 and e.createdDate>=:start and e.createdDate<=:end " +
-            "and e.modifiedDate<=:today")
-    int countFinishedRequest(LocalDateTime start, LocalDateTime end, LocalDateTime today);
+    @Query("select count(e) from Export e where  e.exportStatus=5 and e.createdDate>=:start and e.createdDate<=:end")
+    int countFinishedRequest(LocalDateTime start, LocalDateTime end);
 }

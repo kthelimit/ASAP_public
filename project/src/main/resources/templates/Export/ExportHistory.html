@@ -101,7 +101,7 @@
                                         <h6>출고수량</h6>
                                     </th>
                                     <th class="text-center">
-                                        <h6>출고일</h6>
+                                        <h6>최종 변동일</h6>
                                     </th>
                                     <th class="text-center">
                                         <h6>상태</h6>
@@ -132,7 +132,8 @@
                                            th:text="${#temporals.format(export.modifiedDate, 'yyyy-MM-dd')}"></p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="status-btn active-btn" th:if="${export.exportStatus=='대기 중'}" th:text="${export.exportStatus}"/>
+                                        <span class="status-btn success-btn" th:if="${export.exportStatus=='대기 중'}" th:text="${export.exportStatus}"/>
+                                        <span class="status-btn active-btn" th:if="${export.exportStatus=='승인 완료'}" th:text="${export.exportStatus}"/>
                                         <span class="status-btn close-btn" th:if="${export.exportStatus=='종료'}" th:text="${export.exportStatus}"/>
                                     </td>
                                 </tr>

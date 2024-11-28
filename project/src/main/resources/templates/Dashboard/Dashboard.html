@@ -47,44 +47,51 @@
                 </th:block>
                 <!-- end alert-box -->
                 <!-- 구매부서 전용-->
-                <div class="alert-box danger-alert pl-100" th:if="${countProcurementPlanNotYet>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
+                    <div class="alert-box danger-alert pl-100" th:if="${countProcurementPlanNotYet>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">!IMPORTANT!</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/order/list'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                아직 발주하지 않은 건수가 [[${countProcurementPlanNotYet}]]건 있습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/order/list'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            아직 발주하지 않은 건수가 [[${countProcurementPlanNotYet}]]건 있습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 생산부서 전용-->
-                <div class="alert-box success-alert pl-100" th:if="${(countExportApproved - countExportFinished)>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'}">
+                    <div class="alert-box success-alert pl-100"
+                         th:if="${(countExportApproved - countExportFinished)>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">!IMPORTANT!</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/material/export/history'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                이번달에 요청한 출고 요청 [[${countExportRequest + countExportApproved - countExportFinished}]]건 중
+                                [[${countExportApproved - countExportFinished}]]건이 승인 되었습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/material/export/history'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            이번달에 요청한 출고 요청 [[${countExportRequest + countExportApproved - countExportFinished}]]건 중
-                            [[${countExportApproved - countExportFinished}]]건이 승인 되었습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 자재부서 전용-->
-                <div class="alert-box danger-alert pl-100" th:if="${countExportRequest>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
+                    <div class="alert-box danger-alert pl-100" th:if="${countExportRequest>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">!IMPORTANT!</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/material/export'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                아직 승인하지 않은 출고 요청이 [[${countExportRequest}]]건 있습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/material/export'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            아직 승인하지 않은 출고 요청이 [[${countExportRequest}]]건 있습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 협력업체 전용-->
                 <th:block th:if="${userType=='SUPPLIER'}">
@@ -113,7 +120,6 @@
                     </div>
                 </th:block>
                 <!-- end alert-box -->
-
 
                 <div class="row">
                     <div class="col-xl-3 col-lg-4 col-sm-6">

@@ -80,11 +80,11 @@ public class DashboardController {
         int countExportRequest = exportService.getCountCurrentRequest();
         model.addAttribute("countExportRequest", countExportRequest);
 
-        //승인된 출고 요청 건수
+        //승인된 출고 요청 건수 (승인 혹은 종료인 것을 세어서 출력)
         int countExportApproved = exportService.getCountApprovedRequestThisMonth();
         model.addAttribute("countExportApproved", countExportApproved);
 
-        //불출 완료된 건수 - 승인된 출고 요청 중 승인된 날짜 + 1일이 지난 것들을 출력한다.
+        //불출 완료된 건수 (종료인 것을 세어서 출력)
         int countExportFinished = exportService.getCountFinishedRequestThisMonth();
         model.addAttribute("countExportFinished", countExportFinished);
 

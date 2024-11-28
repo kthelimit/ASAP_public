@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class OrdersDTO {
     private Long orderId;           // 주문 ID
+    private String orderCode;       //발주서 코드
     private LocalDate orderDate;      // 발주일
     private LocalDate expectedDate;   // 입고 예정일
     private String procurePlanCode;   // 조달 계획 코드

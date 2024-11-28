@@ -81,7 +81,14 @@
                                     <p th:text="${procure.procurementQuantity}"></p>
                                 </td>
                                 <td>
-                                    <a class="main-btn primary-btn btn-hover" style="padding: 12px"
+                                    <a class="main-btn success-btn btn-hover" style="padding: 12px" th:if="${id==procure.planId}"
+                                       th:href="@{/order/list(
+                                            id=${procure.planId},
+                                            page=${currentPage},
+                                            size=${pageSize},
+                                            keyword=${keyword})}">
+                                        선택</a>
+                                    <a class="main-btn primary-btn btn-hover" style="padding: 12px" th:if="${id!=procure.planId || id ==null}"
                                        th:href="@{/order/list(
                                             id=${procure.planId},
                                             page=${currentPage},
@@ -96,18 +103,18 @@
                             <ul class="pagination">
                                 <li th:if="${currentPage > 1}">
                                     <a aria-label="Previous"
-                                       th:href="@{/order/list(page=${currentPage - 1}, size=${pageSize},type='procurement',keyword=${keyword})}">
+                                       th:href="@{/order/list(page=${currentPage - 1}, size=${pageSize},type='procurement',keyword=${keyword},type=${type}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                     <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                       th:href="@{/order/list(page=${i}, size=${pageSize}, type='procurement',keyword=${keyword})}"
+                                       th:href="@{/order/list(page=${i}, size=${pageSize}, type='procurement',keyword=${keyword}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}"
                                        th:text="${i}"></a>
                                 </li>
                                 <li th:if="${currentPage < totalPages}">
                                     <a aria-label="Next"
-                                       th:href="@{/order/list(page=${currentPage + 1}, size=${pageSize},type='procurement', keyword=${keyword})}">
+                                       th:href="@{/order/list(page=${currentPage + 1}, size=${pageSize},type='procurement', keyword=${keyword}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -233,7 +240,7 @@
                                     </td>
                                 </tr>
                             </table>
-                            <div style="text-align: right" class="mt-4">
+                            <div class="mt-4" style="text-align: right">
                                 <button class="main-btn primary-btn btn-hover" type="submit">발주서 등록</button>
                             </div>
                         </form>
@@ -253,7 +260,7 @@
                             <input name="type" th:value="orders" type="hidden"/>
                             <div class="row" style="justify-content: flex-end">
                                 <div class="input-style-1 col-lg-4">
-                                    <input id="searchKeyword2" name="keyword"
+                                    <input id="searchKeyword2" name="keyword2"
                                            placeholder="업체명 또는 부품명 입력"
                                            th:value="${keyword2}"
                                            type="text"/>
@@ -267,6 +274,9 @@
                         </form>
                         <table class="table">
                             <tr>
+                                <th class="text-center">
+                                    <h6>발주서번호</h6>
+                                </th>
                                 <th class="text-center">
                                     <h6>조달계획번호</h6>
                                 </th>
@@ -295,16 +305,19 @@
                             <!-- end table row-->
 
                             <tr th:each="orders : ${orders}">
+                                <td class="text-center"><p>[[${orders.orderCode}]]</p></td>
                                 <td class="text-center"><p>[[${orders.procurePlanCode}]]</p></td>
                                 <td class="text-center"><p>[[${orders.supplierName}]]</p></td>
                                 <td><p>[[${orders.materialName}]]</p></td>
                                 <td class="text-align-right"><p>[[${orders.orderQuantity}]]</p></td>
-                                <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3, 'COMMA')}]]</p></td>
+                                <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3,
+                                    'COMMA')}]]</p></td>
                                 <td class="text-center"><p>[[${orders.orderDate}]]</p></td>
                                 <td class="text-center"><p>[[${orders.expectedDate}]]</p></td>
                                 <td class="text-center">
                                     <span class="status-btn success-btn" th:if="${orders.status=='ON_HOLD'}">대기 중</span>
-                                    <span class="status-btn active-btn" th:if="${orders.status=='APPROVAL'}">승인 완료</span>
+                                    <span class="status-btn active-btn"
+                                          th:if="${orders.status=='APPROVAL'}">승인 완료</span>
                                     <span class="status-btn close-btn" th:if="${orders.status=='FINISHED'}">종료</span>
                                 </td>
                             </tr>
@@ -313,15 +326,15 @@
                         <div class="pagination-wrapper">
                             <ul class="pagination">
                                 <li th:if="${currentPage2 > 1}">
-                                    <a th:href="@{/order/list(page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2})}">&laquo;</a>
+                                    <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&laquo;</a>
                                 </li>
                                 <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
                                     <a th:classappend="${i == currentPage2 ? 'active' : ''}"
-                                       th:href="@{/order/list(page2=${i}, size2=${pageSize2}, keyword2=${keyword2})}"
+                                       th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}"
                                        th:text="${i}"></a>
                                 </li>
                                 <li th:if="${currentPage2 < totalPages2}">
-                                    <a th:href="@{/order/list(page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2})}">&raquo;</a>
+                                    <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&raquo;</a>
                                 </li>
                             </ul>
                         </div>

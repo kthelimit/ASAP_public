@@ -44,33 +44,33 @@ public class OrderController {
                                         @RequestParam(defaultValue = "1") int page2,
                                         @RequestParam(defaultValue = "5") int size2,
                                         @RequestParam(value = "id", required = false) Long id,
-                                        @RequestParam(value = "procurePlanCode", required = false) String procurePlanCode,
+//                                        @RequestParam(value = "procurePlanCode", required = false) String procurePlanCode,
                                         @RequestParam(value = "keyword", required = false) String keyword,
-                                        @RequestParam(value = "keyword", required = false) String keyword2) {
+                                        @RequestParam(value = "keyword2", required = false) String keyword2) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
         Pageable pageable2 = PageRequest.of(page2 - 1, size2);
 
 
-            Page<ProcurementPlanDTO> procure;
-            if (keyword != null && !keyword.isEmpty()) {
-                procure = procurementPlanService.searchProcurementPlans(keyword, pageable);
-            } else {
-                procure = procurementPlanService.getAllProcurementPlan(pageable);
-            }
-            model.addAttribute("procure", procure.getContent());
-            model.addAttribute("totalPages", procure.getTotalPages());
+        Page<ProcurementPlanDTO> procure;
+        if (keyword != null && !keyword.isEmpty()) {
+            procure = procurementPlanService.searchProcurementPlans(keyword, pageable);
+        } else {
+            procure = procurementPlanService.getAllProcurementPlan(pageable);
+        }
+        model.addAttribute("procure", procure.getContent());
+        model.addAttribute("totalPages", procure.getTotalPages());
 
-            // OrdersDTO 페이징 및 검색 처리
-            Page<OrdersDTO> orders;
-            if (keyword != null && !keyword.isEmpty()) {
-                orders = orderService.searchOrders(keyword2, pageable2);
-            } else {
-                orders = orderService.getAllOrders(pageable2);
-            }
-            System.out.println("Orders from Service: " + orders.getContent());
-            model.addAttribute("orders", orders.getContent());
-            model.addAttribute("totalPages2", orders.getTotalPages());
+        // OrdersDTO 페이징 및 검색 처리
+        Page<OrdersDTO> orders;
+        if (keyword2 != null && !keyword2.isEmpty()) {
+            orders = orderService.searchOrders(keyword2, pageable2);
+        } else {
+            orders = orderService.getAllOrders(pageable2);
+        }
+        System.out.println("Orders from Service: " + orders.getContent());
+        model.addAttribute("orders", orders.getContent());
+        model.addAttribute("totalPages2", orders.getTotalPages());
 
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
@@ -98,19 +98,39 @@ public class OrderController {
             model.addAttribute("userName", supplier.getUser().getUsername());
             model.addAttribute("unitPrice", unitPrice);
             model.addAttribute("totalPrice", totalPrice);
-            model.addAttribute("orderDTO",new OrdersDTO());
+            model.addAttribute("orderDTO", new OrdersDTO());
+            model.addAttribute("id", id);
         }
 
         return "/Order/Orderindex";
     }
 
+    @RequestMapping("/history")
+    public String OrderHistory(Model model,
+                               @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "10") int size,
+                               @RequestParam(value = "keyword", required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<OrdersDTO> orders;
+        if (keyword != null && !keyword.isEmpty()) {
+            orders = orderService.searchOrders(keyword, pageable);
+        } else {
+            orders = orderService.getAllOrders(pageable);
+        }
+        model.addAttribute("orders", orders.getContent());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalPages", orders.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        return "/Order/OrderHistory";
+    }
 
 
     @PostMapping("/register")
     public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
         // 데이터 확인
         System.out.println("Received OrdersDTO: " + ordersDTO);
-        System.out.println("totalPrice : "+ordersDTO.getTotalPrice());
+        System.out.println("totalPrice : " + ordersDTO.getTotalPrice());
 
         // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
         orderService.registerOrder(ordersDTO);
@@ -125,10 +145,6 @@ public class OrderController {
     }
 
 
-
-
-
-
     @GetMapping("/delivery")
     public String progressPage(
             Model model,
@@ -140,7 +156,7 @@ public class OrderController {
         // 제조품 조회
         Page<OrdersDTO> manufacturingOrders = orderService.findByMaterialTypeAndStatus(
                 "제조품", CurrentStatus.APPROVAL.name(), pageable);
-        System.out.println("제조품 내역확인"+manufacturingOrders.getContent());
+        System.out.println("제조품 내역확인" + manufacturingOrders.getContent());
 
         // 구매품 조회
         Page<OrdersDTO> purchaseOrders = orderService.findByMaterialTypeAndStatus(
@@ -160,7 +176,7 @@ public class OrderController {
     }
 
     @GetMapping("/inspectionrequest")
-    public String inspectionRequest(@RequestParam Long orderId){
+    public String inspectionRequest(@RequestParam Long orderId) {
         orderService.updateOrderStatus(orderId, CurrentStatus.IN_PROGRESS);
         return "redirect:/order/delivery";
     }

@@ -14,6 +14,7 @@ import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -31,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
     public void registerOrder(OrdersDTO ordersDTO) {
         // DTO -> 엔티티 변환 및 저장
         Order order = toEntity(ordersDTO);
+        //발주서 코드 설정
+        order.setOrderCode(generateOrderCode(ordersDTO));
+
         order.setStatus(CurrentStatus.ON_HOLD); // 기본 상태 설정
         orderRepository.save(order);
     }
@@ -90,6 +94,7 @@ public class OrderServiceImpl implements OrderService {
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
+                .orderCode(order.getOrderCode())
                 .expectedDate(order.getExpectedDate())
                 .procurePlanCode(order.getProcurePlanCode())
                 .supplierName(order.getSupplierName())
@@ -108,6 +113,7 @@ public class OrderServiceImpl implements OrderService {
         // DTO -> 엔티티 변환
         Order order = new Order();
         order.setOrderId(dto.getOrderId());
+        order.setOrderCode(dto.getOrderCode());
         order.setOrderDate(dto.getOrderDate());
         order.setExpectedDate(dto.getExpectedDate());
         order.setProcurePlanCode(dto.getProcurePlanCode());
@@ -118,6 +124,62 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환
         return order;
     }
+
+    private String generateOrderCode(OrdersDTO dto) {
+        // 매터리얼 코드에 따른 접두어 설정
+        String prefix = "ORD";
+        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
+        switch (material.getMaterialCode().substring(3, 5)) {
+            case "WH":
+                prefix += "WH";
+                break;
+            case "RI":
+                prefix += "RI";
+                break;
+            case "HA":
+                prefix += "HA";
+                break;
+            case "SA":
+                prefix += "SA";
+                break;
+            case "PE":
+                prefix += "PE";
+                break;
+            case "BO":
+                prefix += "BO";
+                break;
+            case "B1":
+                prefix += "B1";
+                break;
+            case "B2":
+                prefix += "B2";
+                break;
+            case "B3":
+                prefix += "B3";
+                break;
+            case "K1":
+                prefix += "K1";
+                break;
+            case "K2":
+                prefix += "K2";
+                break;
+            default:
+                prefix += "UN";
+                break;
+        }
+
+        // 날짜 포맷 (예: 20231120)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
+        LocalDateTime today = LocalDateTime.now();
+        String dateCode = today.format(formatter);
+
+        // 동일 접두어 코드의 다음 번호
+        Long nextSequence = orderRepository.countByPrefix(prefix) + 1;
+
+        // 코드 생성
+        return String.format("%s%s%03d", prefix, dateCode, nextSequence);
+    }
+
 
     //대시 보드 출력용 이번달 발주 건 수
     @Override

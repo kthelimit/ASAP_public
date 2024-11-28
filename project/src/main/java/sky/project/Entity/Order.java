@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Currency;
 
 
 @Getter
@@ -18,6 +16,8 @@ public class Order  extends Base{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+
+    private String orderCode;
 
     @Column(name = "order_date", nullable = false)
     @Temporal(TemporalType.DATE)

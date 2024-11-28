@@ -23,6 +23,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                             @Param("status") CurrentStatus status,
                                             Pageable pageable);
 
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.orderCode LIKE CONCAT(:prefix, '%')")
+    Long countByPrefix(String prefix);
+
 
     //대시보드 출력용 이번달 발주 건수
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")

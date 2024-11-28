@@ -31,6 +31,12 @@ public class DashboardController {
     @Autowired
     OrderService orderService;
 
+    @RequestMapping("/info")
+    public String info(Model model) {
+        return "Info/information";
+    }
+
+
     @RequestMapping("/index")
     public String index(@SessionAttribute(name = "user", required = false) UserDTO user, Model model) {
 
@@ -42,10 +48,6 @@ public class DashboardController {
         // userId로 supplierName 가져오기
         String userId = user.getUserId();
         String supplierName = supplierService.findSupplierNameByUserId(userId);
-        if (supplierName == null) {
-            model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
-            return "redirect:/";
-        }
 
         //유저 타입 전송하기
         switch (user.getUserType()){

@@ -114,7 +114,7 @@
                             </table>
                             </form>
                             <div class="pagination-wrapper">
-                                <ul class="pagination">
+                                <ul class="pagination" th:if="${totalPages > 0}">
                                     <li th:if="${currentPage > 1}">
                                         <a aria-label="Previous"
                                            th:href="@{/plan/procureRegister(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}">

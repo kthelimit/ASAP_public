@@ -68,7 +68,7 @@ public class MaterialServiceImpl implements MaterialService {
         material.setHeight(materialDTO.getHeight());
         material.setDepth(materialDTO.getDepth());
         material.setWeight(materialDTO.getWeight());
-        material.setLeadtime(materialDTO.getLeadtime());
+        material.setLeadTime(materialDTO.getLeadTime());
 
         // Supplier 설정
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
@@ -103,7 +103,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .weight(material.getWeight())
                 .imageUrl(material.getImageUrl())
                 .supplierName(material.getSupplier().getSupplierName())
-                .leadtime(material.getLeadtime())
+                .leadTime(material.getLeadTime())
                 .build();
     }
 
@@ -153,8 +153,11 @@ public class MaterialServiceImpl implements MaterialService {
         return stock != null ? stock.getAvailableStock() : 0;
     }
 
-
-
+//    @Override
+//    public int getLeadTime(String materialCode) {
+//        Material leadTime = materialRepository.findByMaterialCode(materialCode);
+//        return  leadTime != null ? leadTime.get().getLeadTime() : 0;
+//    }
 
     @Override
    public List<MaterialDTO>  findByMaterialType(String materialType){
@@ -185,5 +188,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         return materials.get(0); // 항상 한 가지 값만 있다고 가정
     }
+
+
 
 }

@@ -98,7 +98,8 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam(value = "productCode", required = false) String productCode) {
+                                         @RequestParam(value = "productCode", required = false) String productCode,
+                                         @RequestParam(value = "materialCode", required = false) String materialCode) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
@@ -142,6 +143,12 @@ public class ProductionPlanController {
             int availableStock = materialService.getAvailableStock(productCode);
             model.addAttribute("availableStock", availableStock);
         }
+
+//        // leadTime 추가
+//    if (productCode != null) {
+//        int leadTime = materialService.getLeadTime(productCode);
+//        model.addAttribute("leadTime", leadTime);
+//    }
 
 
 

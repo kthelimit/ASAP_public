@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.ExportDTO;
+import sky.project.DTO.ImportDTO;
 import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.Service.*;
@@ -30,6 +31,9 @@ public class MaterialController {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private ImportService importService;
 
     @Autowired
     private ProductionPlanService productionPlanService;
@@ -91,8 +95,19 @@ public class MaterialController {
 
     //자재 입고
     @RequestMapping("/import")
-    public String importMaterial(Model model) {
-        return "/import/index";
+    public String importMaterial(Model model, @RequestParam(value = "importId", required = false) Long importId) {
+
+        if (importId != null) {
+            // 특정 입고 정보 조회
+            ImportDTO importDTO = importService.getImportById(importId);
+            model.addAttribute("importDTO", importDTO);
+        } else {
+            // 입고 목록 조회 (예시로 전체 입고 목록 조회)
+            List<ImportDTO> importList = importService.getAllImports();
+            model.addAttribute("importList", importList);
+        }
+
+        return "/import/ImportIndex";
     }
 
     //자재 출고

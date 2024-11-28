@@ -61,8 +61,8 @@ public class UserServiceImpl implements UserService {
             }
 
             // 유저 타입에 따른 분기 처리
-            if (UserType.ADMIN.equals(userType)) {
-                if (UserType.ADMIN.equals(user.getUserType())) {
+            if (UserType.ADMIN.equals(userType) || UserType.PURCHASE_DEPT.equals(userType) || UserType.PRODUCTION_DEPT.equals(userType) || UserType.MATERIAL_DEPT.equals(userType)) {
+                if (UserType.ADMIN.equals(user.getUserType()) || UserType.PURCHASE_DEPT.equals(user.getUserType()) || UserType.PRODUCTION_DEPT.equals(user.getUserType()) || UserType.MATERIAL_DEPT.equals(user.getUserType())) {
                     return toDTO(user);
                 } else {
                     throw new IllegalArgumentException("유저 타입이 일치하지 않습니다. 협력사 계정으로 로그인하세요.");

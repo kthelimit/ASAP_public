@@ -5,11 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import sky.project.DTO.ExportDTO;
+import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.UserDTO;
 import sky.project.Service.ExportService;
 import sky.project.Service.OrderService;
 import sky.project.Service.ProductionPlanService;
 import sky.project.Service.SupplierService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -53,9 +57,6 @@ public class DashboardController {
             case PURCHASE_DEPT -> model.addAttribute("userType", "PURCHASE_DEPT");
         }
 
-
-
-
         //승인 대기 중인 업체 수
         int countPartnerWhoWaitApproval = supplierService.getCountSupplierWhoWaitApproval();
         model.addAttribute("countPartnerWhoWait", countPartnerWhoWaitApproval);
@@ -69,6 +70,9 @@ public class DashboardController {
         int countOrder = orderService.getCountOrderThisMonth();
         model.addAttribute("countOrder", countOrder);
 
+        //이번 달 발주 건수(업체용)
+        int countOrderForSupplier = orderService.getCountOrderBySupplierThisMonth(supplierName);
+        model.addAttribute("countOrderForSupplier", countOrderForSupplier);
 
         //이번 달 입고 건수
 
@@ -93,9 +97,26 @@ public class DashboardController {
         int countProcurementPlanNotYet = 1;
         model.addAttribute("countProcurementPlanNotYet", countProcurementPlanNotYet);
 
-        //업체용 발주 건수
-        int countOrdersForSupplier = orderService.getCountOrderBySupplier(supplierName);
+        //업체용 새 발주 건수
+        int countOrdersForSupplier = orderService.getCountOrderBySupplierOnHOLD(supplierName);
         model.addAttribute("countOrdersForSupplier", countOrdersForSupplier);
+
+        //발주 중인 목록(구매부서용)
+        List<OrdersDTO> ordersDTOS = orderService.getRecentOrderList();
+        model.addAttribute("ordersDTOS", ordersDTOS);
+
+        //진행 중인 출고요청 목록(생산부서용)
+        List<ExportDTO> exportDTOS = exportService.getRecentExportList();
+        model.addAttribute("exportDTOS", exportDTOS);
+
+        //입고 검수 중인 목록
+        
+        
+        //발주 중인 목록(업체용 - 자기네 업체 관련 내용만 떠야함)
+        List<OrdersDTO> ordersDTOSForSupplier = orderService.getRecentOrderListForSupplier(supplierName);
+        model.addAttribute("ordersDTOSForSupplier", ordersDTOSForSupplier);
+
+
 
         return "Dashboard/Dashboard";
     }

@@ -251,6 +251,9 @@ public class ExportServiceImpl implements ExportService {
                 .productName(entity.getProductionPlan().getProductName())
                 .materialName(entity.getMaterial().getMaterialName())
                 .materialCode(entity.getMaterial().getMaterialCode())
+                .assyMaterialName(entity.getAssyMaterial().getMaterialName())
+                .assyMaterialCode(entity.getAssyMaterial().getMaterialCode())
+                .assyQuantity(entity.getAssyQuantity())
                 .requiredQuantity(entity.getRequiredQuantity())
                 .availableQuantity(stock.getQuantity())
                 .exportStatus(exportStatus)
@@ -361,6 +364,12 @@ public class ExportServiceImpl implements ExportService {
         LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
         LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
         return exportRepository.countFinishedRequest(start, end);
+    }
+
+    //대시보드 출력용 최근 출고요청 리스트
+    @Override
+    public List<ExportDTO> getRecentExportList(){
+        return exportRepository.findRecentExport().stream().map(this::entityToDto).toList();
     }
 
 }

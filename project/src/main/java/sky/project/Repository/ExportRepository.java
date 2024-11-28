@@ -88,7 +88,10 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
     @Query("select count(e) from Export e where  e.exportStatus!=0 and e.createdDate>=:start and e.createdDate<=:end")
     int countApprovedRequest(LocalDateTime start, LocalDateTime end);
 
-    //대시 보드 출력용 이번달 불출 완료 건수(승인한 다음날 불출이 완료된다고 봤다)
+    //대시 보드 출력용 이번달 불출 완료 건수
     @Query("select count(e) from Export e where  e.exportStatus=5 and e.createdDate>=:start and e.createdDate<=:end")
     int countFinishedRequest(LocalDateTime start, LocalDateTime end);
+
+    @Query("select e from Export e order by e.exportId desc limit 5")
+    List<Export> findRecentExport();
 }

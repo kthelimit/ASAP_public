@@ -49,4 +49,7 @@ public interface ExportService {
 
     //대시 보드 출력용 불출 완료된 출고 요청 건수
     int getCountFinishedRequestThisMonth();
+
+    //대시보드 출력용 최근 출고요청 리스트
+    List<ExportDTO> getRecentExportList();
 }

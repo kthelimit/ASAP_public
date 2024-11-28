@@ -15,6 +15,7 @@ import sky.project.Service.OrderService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -190,9 +191,31 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.countOrderThisMonth(start, end);
     }
 
+    //대시보드 출력용 업체에 들어온 발주 건수
     @Override
-    public int getCountOrderBySupplier(String supplierName) {
-        return orderRepository.countOrderBySupplierName(supplierName);
+    public int getCountOrderBySupplierThisMonth(String supplierName) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return orderRepository.countOrderBySupplierName(supplierName, start, end);
     }
+    //대시보드 출력용 업체에 들어온 새 발주 건수(승인 전)
+    @Override
+    public int getCountOrderBySupplierOnHOLD(String supplierName) {
+        return orderRepository.countOrderBySupplierNameOnHOLD(supplierName);
+    }
+
+    //대시보드 출력용 최근 발주리스트
+    @Override
+    public List<OrdersDTO> getRecentOrderList() {
+        return orderRepository.findRecentOrder().stream().map(this::toDTO).toList();
+    }
+
+    //대시보드 출력용 최근 발주리스트(업체에 들어온 것)
+    @Override
+    public List<OrdersDTO> getRecentOrderListForSupplier(String supplierName) {
+        return orderRepository.findRecentOrderForSupplier(supplierName).stream().map(this::toDTO).toList();
+    }
+
 
 }

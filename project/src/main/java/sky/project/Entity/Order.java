@@ -18,7 +18,6 @@ public class Order  extends Base{
     private Long orderId;
 
     private String orderCode;
-
     @Column(name = "order_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private LocalDate orderDate;
@@ -36,7 +35,7 @@ public class Order  extends Base{
     @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;
 
-    private double totalprice;
+    private double totalPrice;
 
 
     @Enumerated(EnumType.STRING)

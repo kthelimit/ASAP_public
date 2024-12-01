@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
                 .supplierName(order.getSupplierName())
                 .materialName(order.getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
-                .totalPrice(order.getTotalprice())
+                .totalPrice(order.getTotalPrice())
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name()) // 기본값 설정
                 .materialType(materialType)
                 .build();
@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
         order.setSupplierName(dto.getSupplierName());
         order.setMaterialName(dto.getMaterialName());
         order.setOrderQuantity(dto.getOrderQuantity());
-        order.setTotalprice(dto.getTotalPrice());
+        order.setTotalPrice(dto.getTotalPrice());
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환
         return order;
     }

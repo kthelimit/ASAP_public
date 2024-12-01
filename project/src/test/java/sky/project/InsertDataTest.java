@@ -306,7 +306,7 @@ public class InsertDataTest {
                         .componentType(componentTypes[i - 1])
                         .unitPrice(unitPrices[i - 1])
                         .quantity(quantities[i - 1])
-                        .leadtime(leadtimes[i - 1])
+                        .leadTime(leadtimes[i - 1])
                         .supplier(supplier)
                         .build();
                 materialRepository.save(material);
@@ -415,7 +415,7 @@ public class InsertDataTest {
                         .componentType(componentTypes[i - 1])
                         .unitPrice(unitPrices[i - 1])
                         .quantity(1)
-                        .leadtime(1)
+                        .leadTime(1)
                         .supplier(supplier)
                         .build();
                 materialRepository.save(material);

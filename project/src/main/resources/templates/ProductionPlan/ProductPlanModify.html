@@ -227,7 +227,7 @@
                                 <th class="text-center sticky"><h6>부품코드</h6></th>
                                 <th class="text-center sticky"><h6>부품명</h6></th>
                                 <th class="text-center sticky"><h6>필요 수량</h6></th>
-                                <th class="text-center sticky"><h6>재고</h6></th>
+                                <th class="text-center sticky"><h6>가용 재고</h6></th>
                                 <th class="text-center sticky"><h6 id="day1"
                                                                    th:text="${perDayDTOS[0].getProductionDate()}">
                                     1일</h6></th>
@@ -254,9 +254,9 @@
                                     <input class="none-border" name="requireQuantity"
                                            th:value="${bomDTO.requireQuantity}"></td>
                                 <td class="min-width text-align-right"><p>
-                                    <span title="현재 창고 내의 가용수량 = 창고 재고 - 현재 출고요청 중인 수량">[[${bomDTO.availableStock}]]</span>
+                                    <span title="현재 창고 내의 가용수량 = 창고 재고 - 현재 출고요청 중인 수량" th:text="${bomDTO.availavbleStockProcure}">[[${bomDTO.availableStock}]]</span>
                                     <span class="text-success" title="발주 중인 수량 = 발주 수량 - 납품 지시 완료 수량">(+[[${bomDTO.remainedOrderQuantity}]])</span>
-                                    <input name="availableStock" th:value="${bomDTO.availableStock}" type="hidden">
+                                    <input name="availableStock" th:value="${bomDTO.availavbleStockProcure}" type="hidden">
                                     <input name="remainedOrderQuantity" th:value="${bomDTO.remainedOrderQuantity}"
                                            type="hidden">
                                 </p></td>
@@ -492,7 +492,7 @@
                         //각 날짜 별로 수량을 빼냄.
                         stock -= cur[j];
                         console.log(j+" : "+ stock);
-                        if (stock <= 0) {
+                        if (stock < 0) {
                             switch (j) {
                                 case 0:
                                     $('input[name=day1]').eq(i).css("color", "red");

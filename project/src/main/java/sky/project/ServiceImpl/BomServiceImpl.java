@@ -119,13 +119,15 @@ public class BomServiceImpl implements BomService {
         int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
 
         //생산 계획의 남은 소모량 계산하기
-        //발주중인 생산계획 리스트를 가져온다.
+
+        //발주 중인 생산계획 리스트를 가져온다.
         List<ProductionPlan> planList = productionPlanService.getProductionPlanInProgress(entity.getProduct().getProductCode());
         int leftQuantityForProduction = 0;
         for (int i = 0; i < planList.size(); i++) {
             String productionPlanCode = planList.get(i).getProductionPlanCode();
             int requiredQuantity = planList.get(i).getProductionQuantity() * entity.getRequireQuantity();
             int totalExportRequestQuantity;
+
             //해당 생산 계획에 대해서 출고 요청해둔 수량
             if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, materialCode) == 0) {
                 totalExportRequestQuantity = 0;
@@ -137,7 +139,7 @@ public class BomServiceImpl implements BomService {
         }
         log.info("남은 소모량: "+leftQuantityForProduction);
 
-        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 업체에 발주넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
+        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 업체에 발주 넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
         int availavbleStockProcure = availableStock + remainedOrderQuantity -leftQuantityForProduction;
 
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Service.*;
@@ -263,8 +264,10 @@ public class MaterialController {
 
     //출고 완료
     @PostMapping("/export/finished")
-    public String exportMaterialFinished(ExportDTO dto) {
+    public String exportMaterialFinished(ExportDTO dto, int page,
+                                         RedirectAttributes redirectAttributes) {
         exportService.modifyFinished(dto);
+        redirectAttributes.addAttribute("page", page);
         return "redirect:/material/export/request";
     }
 

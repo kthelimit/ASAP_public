@@ -227,7 +227,9 @@ public class OrderServiceImpl implements OrderService {
     // 추가: `availableStock` 계산 로직
     private int calculateAvailableStock(Order order) {
 
-        List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
+//        List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
+
+        List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS);
 
         //승인된 발주수량?
         int totalApprovedQuantity = orderRepository.findApprovedQuantity(

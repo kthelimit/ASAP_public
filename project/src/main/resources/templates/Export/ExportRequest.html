@@ -184,6 +184,8 @@
                                                        type="hidden">
                                                 <input name="requiredQuantity" th:value="${export.requiredQuantity}"
                                                        type="hidden">
+                                                <input name="page" th:value="${currentPage}"
+                                                       type="hidden">
                                                 <button class="main-btn primary-btn btn-hover" style="padding: 5px 12px"
                                                         th:if="${export.exportStatus=='승인 완료'}" type="submit">출고
                                                 </button>
@@ -199,18 +201,18 @@
                                     <ul class="pagination">
                                         <li th:if="${currentPage > 1}">
                                             <a aria-label="Previous"
-                                               th:href="@{/material/export/history(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                               th:href="@{/material/export/request(page=${currentPage - 1})}">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
                                         <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                             <a th:classappend="${i == currentPage ? 'active' : ''}"
-                                               th:href="@{/material/export/history(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                               th:href="@{/material/export/request(page=${i})}"
                                                th:text="${i}"></a>
                                         </li>
                                         <li th:if="${currentPage < totalPages}">
                                             <a aria-label="Next"
-                                               th:href="@{/material/export/history(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                               th:href="@{/material/export/request(page=${currentPage + 1})}">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>

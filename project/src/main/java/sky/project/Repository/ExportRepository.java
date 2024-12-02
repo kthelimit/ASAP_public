@@ -26,7 +26,7 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
 
 
     @Query("select e from Export e where e.material.materialCode=:materialCode and e.exportStatus=0")
-    List<Export> findByMaterialCode(String materialCode);
+    List<Export> findByMaterialCodeAndStatusOnHold(String materialCode);
 
     @Query("select e from Export e where e.exportCode=:exportCode")
     Export findByExportCode(String exportCode);
@@ -58,7 +58,7 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
     Page<Export> findByMaterialName(String materialName, Pageable pageable);
 
     @Query("select e from Export e where e.material.materialCode like %:materialCode%")
-    Page<Export> findByMaterialCode(String materialCode, Pageable pageable);
+    Page<Export> findByMaterialCodeAndStatusOnHold(String materialCode, Pageable pageable);
 
     @Query("select e from Export e where e.productionPlan.productName like %:productName%")
     Page<Export> findByProductName(String productName, Pageable pageable);

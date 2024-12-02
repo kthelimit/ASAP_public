@@ -254,15 +254,15 @@
                                             </td>
                                             <td style="width: 180px" th:text="${bom.materialName}" ></td>
                                             <td style="width: 70px" th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
-                                            <td style="width: 70px" th:text="${availableStock}"></td>
+                                            <td style="width: 70px" th:text="${bom.availableStock}"></td>
                                             <td style="width: 70px" th:text="${
-                                            (bom.requireQuantity * selectedPlan.productionQuantity - availableStock) > 0 ?
-                                            bom.requireQuantity * selectedPlan.productionQuantity - availableStock
+                                            (bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ?
+                                            bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock
                                             : 0
                                             }">
                                             </td>
                                             <td style="width: 70px">
-                                                <input style="width: 110px" id="startDate" required type="date">
+                                                <input style="width: 110px" id="startDate" required type="date" th:value="${bom.dayAfterLeadTime}">
                                             </td>
                                             <td>
                                                 <div class="action">

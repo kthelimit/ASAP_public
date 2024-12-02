@@ -3,6 +3,7 @@ package sky.project.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sky.project.DTO.StockDTO;
+import sky.project.Entity.Stock;
 
 public interface StockService {
 
@@ -20,4 +21,6 @@ public interface StockService {
     Page<StockDTO> getStocksWithSearchInMaterialCode(String keyword, Pageable pageable);
 
     Page<StockDTO> getStocksWithSearchInComponentType(String keyword, Pageable pageable);
+
+    int calculateAvailableStock(Stock stock);
 }

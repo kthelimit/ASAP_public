@@ -15,6 +15,7 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Service.MaterialService;
+import sky.project.Service.StockService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +34,9 @@ public class MaterialServiceImpl implements MaterialService {
     StockRepository stockRepository;
 
     @Autowired
+    StockService stockService;
+
+    @Autowired
     MaterialRepository materialRepository;
 
     @Autowired
@@ -40,6 +44,7 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     AssyRepository assyRepository;
+
 
     private final String uploadDir = "C:/uploads/Images/";
 
@@ -150,7 +155,9 @@ public class MaterialServiceImpl implements MaterialService {
     public int getAvailableStock(String materialCode) {
         // 자재 코드에 매칭되는 재고 정보 조회
         Stock stock = stockRepository.findByMaterialCode(materialCode);
-        return stock != null ? stock.getAvailableStock() : 0;
+        if(stock!=null){
+            return stockService.calculateAvailableStock(stock);
+        }else return 0;
     }
 
 //    @Override

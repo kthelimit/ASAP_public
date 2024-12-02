@@ -138,20 +138,6 @@ public class ProductionPlanController {
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
-
-        // 가용 재고 추가
-        if (productCode != null) {
-            int availableStock = materialService.getAvailableStock(productCode);
-            model.addAttribute("availableStock", availableStock);
-        }
-
-//        // leadTime 추가
-//    if (productCode != null) {
-//        int leadTime = materialService.getLeadTime(productCode);
-//        model.addAttribute("leadTime", leadTime);
-//    }
-
-
         return "/procure/ProcureIndex";
     }
 

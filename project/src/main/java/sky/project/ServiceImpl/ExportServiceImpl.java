@@ -302,7 +302,7 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public Page<ExportDTO> getExportsWithSearchInMaterialCode(String keyword, Pageable pageable){
-        Page<Export> result = exportRepository.findByMaterialCode(keyword, pageable);
+        Page<Export> result = exportRepository.findByMaterialCodeAndStatusOnHold(keyword, pageable);
         return result.map(this::entityToDto);
     }
 

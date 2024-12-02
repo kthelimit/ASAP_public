@@ -6,17 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.OrdersDTO;
-import sky.project.Entity.CurrentStatus;
-import sky.project.Entity.Material;
-import sky.project.Entity.Order;
-import sky.project.Entity.SupplierStock;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.SupplierStockRepository;
-import sky.project.Entity.ProcurementPlan;
+import sky.project.Entity.*;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
 import sky.project.Repository.ProcurementPlanRepository;
+import sky.project.Repository.SupplierStockRepository;
 import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
@@ -172,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
                 .materialName(order.getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
                 .requiredQuantity(requiredQuantity) //필요 조달 수량
-                .totalPrice(order.getTotalprice())
+                .totalPrice(order.getTotalPrice())
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
                 .materialType(materialType)
                 .availableStock(availableStock) // 요청 가능 수량

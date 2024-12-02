@@ -38,10 +38,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select count(o) from Order o where o.supplierName=:supplierName and o.createdDate>=:start and o.createdDate<=:end")
     int countOrderBySupplierName(String supplierName, LocalDateTime start, LocalDateTime end);
 
-    //대시보드 출력용 업체에 들어온 새 발주 건수
-    @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
-    int countOrderBySupplierName(String supplierName);
-
 
     @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o " +
             "WHERE o.supplierName = :supplierName AND o.materialName = :materialName " +
@@ -50,6 +46,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                              @Param("materialName") String materialName,
                              @Param("statuses") List<CurrentStatus> statuses);
 
+
+    //대시보드 출력용 업체에 들어온 새 발주 건수
+    @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
     int countOrderBySupplierNameOnHOLD(String supplierName);
 
     //대시보드 출력용 최근 발주리스트

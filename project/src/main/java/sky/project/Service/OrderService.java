@@ -27,8 +27,6 @@ public interface OrderService {
     //대시 보드 출력용 이번달 발주 건 수
     int getCountOrderThisMonth();
 
-    int getCountOrderBySupplier(String supplierName);
-
     OrdersDTO processDeliveryRequest(Long orderId, int requestQuantity);
 
 

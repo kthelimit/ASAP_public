@@ -15,6 +15,7 @@ import sky.project.Repository.ProductionPerDayRepository;
 import sky.project.Service.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -142,12 +143,12 @@ public class ProductionPlanController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
 
-
         // 생산 계획 목록 조회
         if (keyword != null && !keyword.isEmpty()) {
             plans = productionPlanService.searchProductionPlans(keyword, pageable);
         } else {
-            plans = productionPlanService.getProductionPlans(pageable);
+            List<String> statuses = Arrays.asList("ON_HOLD", "IN_PROGRESS");
+            plans = productionPlanService.getProductionPlansByStatus(statuses, pageable);
         }
 
         model.addAttribute("plans", plans.getContent());
@@ -156,54 +157,48 @@ public class ProductionPlanController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
 
-        String productPlanCode = null;
+        String productionPlanCode = null;
+
         // 선택된 생산 계획 처리
         if (id != null) {
             ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
             model.addAttribute("selectedPlan", selectedPlan);
-            productPlanCode = selectedPlan.getProductionPlanCode();
+            productionPlanCode = selectedPlan.getProductionPlanCode();
         }
-
 
         // BOM 및 공급업체 정보 조회
         List<BomDTO> selectedBom = bomService.findWithProductCode(productCode);
+        boolean allRegistered = true; // 모든 BOM이 등록되었는지 확인할 변수
+
         for (BomDTO bom : selectedBom) {
             // 각 BOM의 자재에 맞는 공급업체 조회
             List<SupplierDTO> suppliers = supplierService.findSuppliersByMaterialCode(bom.getMaterialCode());
             bom.setSuppliers(suppliers);
 
-            //각 봄의 등록 여부를 체크
-            bom.setRegister(procurementPlanService.ProcurementCheckWithMaterialCodeAndProductionPlanCode(bom.getMaterialCode(), productPlanCode));
+            // 각 BOM의 등록 여부를 체크
+            boolean isRegistered = procurementPlanService.ProcurementCheckWithMaterialCodeAndProductionPlanCode(
+                    bom.getMaterialCode(), productionPlanCode
+            );
+            bom.setRegister(isRegistered);
+
+            // 하나라도 등록되지 않은 BOM이 있으면 allRegistered를 false로 설정
+            if (!isRegistered) {
+                allRegistered = false;
+            }
         }
 
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
-        return "procure/ProcureIndex";
-    }
-
-
-    @GetMapping("/procureHistory")
-    public String getProductionPlanHistory(Model model,
-                                           @RequestParam(defaultValue = "1") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(value = "keyword", required = false) String keyword) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
-        Page<ProcurementPlanDTO> procurementPlanDTOs;
-        if (keyword != null && !keyword.isEmpty()) {
-            procurementPlanDTOs = procurementPlanService.searchProcurementPlans(keyword, pageable);
-        } else {
-            procurementPlanDTOs = procurementPlanService.getProcurementPlans(pageable);
+        // 모든 BOM이 등록되었을 경우 생산계획 상태를 FINISHED로 변경
+        if (allRegistered && productionPlanCode != null) {
+            productionPlanService.updateProductionPlanFinshed(productionPlanCode);
+            System.out.println("Production Plan " + productionPlanCode + " 상태가 FINISHED로 변경되었습니다.");
+        } else if (!allRegistered) {
+            System.out.println("모든 BOM이 등록되지 않았으므로 FINISHED로 변경되지 않았습니다.");
         }
 
-        model.addAttribute("procurementPlans", procurementPlanDTOs.getContent());
-        model.addAttribute("totalPages", procurementPlanDTOs.getTotalPages());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", size);
-        model.addAttribute("keyword", keyword);
-
-
-        return "procure/ProcureHistory";
+        return "procure/ProcureIndex";
     }
 
     @GetMapping("/bomRegister")

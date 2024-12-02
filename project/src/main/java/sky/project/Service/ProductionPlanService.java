@@ -22,7 +22,9 @@ public interface ProductionPlanService {
 
     String updateProductionPlanInProgress(String productionPlanCode);
 
-    void deleteProductionPlan(Long id);
+    String updateProductionPlanFinshed(String productionPlanCode);
+
+     void deleteProductionPlan(Long id);
 
     List<ProductionPlanDTO> getProductionPlansWithDate();
 
@@ -30,4 +32,7 @@ public interface ProductionPlanService {
 
     //대시보드의 생산 계획 수
     int getCountProductionPlan();
+
+    Page<ProductionPlanDTO> getProductionPlansByStatus(List<String> statuses, Pageable pageable);
+
 }

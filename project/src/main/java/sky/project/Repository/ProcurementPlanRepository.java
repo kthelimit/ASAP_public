@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sky.project.Entity.ProcurementPlan;
 
+import java.util.List;
+
 @Repository
 public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan, Long> {
 
@@ -33,6 +35,6 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
     Integer findTotalRequireQuantityByMaterialCode(@Param("materialCode") String materialCode);
 
 
-    @Query("select p from ProcurementPlan  p where p.materialCode=:materialCode and p.productionPlanCode=:productionPlanCode")
-    ProcurementPlan findByMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode);
+    @Query("SELECT p FROM ProcurementPlan p WHERE p.materialCode = :materialCode AND p.productionPlanCode = :productionPlanCode")
+    List<ProcurementPlan> findByMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode);
 }

@@ -3,6 +3,7 @@ package sky.project.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sky.project.DTO.UserDTO;
 import sky.project.Entity.Supplier;
 import sky.project.Entity.User;
@@ -11,6 +12,7 @@ import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -33,6 +35,23 @@ public class UserServiceImpl implements UserService {
     public String encodePassword(String password) {
         return passwordEncoder.encode(password); // PasswordEncoder를 이용해 비밀번호를 암호화합니다.
     }
+
+    @Transactional
+    @Override
+    public void updateProfile(UserDTO userDTO) {
+        User user = userRepository.findById(userDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 업데이트 필드 설정
+        user.setUserId(userDTO.getUserId());
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
+        user.setPhone(userDTO.getPhone());
+        user.setUserAddress(userDTO.getUserAddress());
+
+        userRepository.save(user); // 저장
+    }
+
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
@@ -73,6 +92,8 @@ public class UserServiceImpl implements UserService {
         }
         return toDTO(savedUser);
     }
+
+
 
     @Override
     public UserDTO authenticate(String userId, String password, UserType userType) {
@@ -134,6 +155,8 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .birthdate(user.getBirthdate())
+                .createdDate((user.getCreatedDate()))
+                .modifiedDate((user.getModifiedDate()))
                 .build();
     }
 
@@ -142,6 +165,7 @@ public class UserServiceImpl implements UserService {
                 .userId("dept1")
                 .username("구매부서 직원")
                 .userAddress("주소")
+                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.PURCHASE_DEPT)
@@ -152,6 +176,7 @@ public class UserServiceImpl implements UserService {
                 .userId("dept2")
                 .username("자재부서 직원")
                 .userAddress("주소")
+                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.MATERIAL_DEPT)
@@ -162,6 +187,7 @@ public class UserServiceImpl implements UserService {
                 .userId("dept3")
                 .username("생산부서 직원")
                 .userAddress("주소")
+                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.PRODUCTION_DEPT)

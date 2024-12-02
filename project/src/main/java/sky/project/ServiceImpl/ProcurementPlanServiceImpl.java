@@ -12,6 +12,7 @@ import sky.project.Repository.ProcurementPlanRepository;
 import sky.project.Service.ProcurementPlanService;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class ProcurementPlanServiceImpl implements ProcurementPlanService {
@@ -110,11 +111,9 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 
     @Override
     public boolean ProcurementCheckWithMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode) {
-        ProcurementPlan plan = procurementPlanRepository.findByMaterialCodeAndProductionPlanCode(materialCode, productionPlanCode);
-        return plan != null;
-
+        List<ProcurementPlan> plans = procurementPlanRepository.findByMaterialCodeAndProductionPlanCode(materialCode, productionPlanCode);
+        return plans != null && !plans.isEmpty();
     }
-
 
     public String generateProcurementPlanCode(ProcurementPlanDTO dto) {
         // 제품명에 따른 접두어 설정

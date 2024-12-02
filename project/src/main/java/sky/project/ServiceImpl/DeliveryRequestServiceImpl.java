@@ -38,7 +38,7 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
                 .materialName(order.getMaterialName())
                 .requestedQuantity(requestedQuantity)
                 .requestedAt(LocalDateTime.now())
-                .status(CurrentStatus.ON_HOLD) // 기본 상태 설정
+                .status(CurrentStatus.IN_PROGRESS) // 기본 상태 설정
                 .build();
 
         DeliveryRequest savedRequest = deliveryRequestRepository.save(deliveryRequest);
@@ -62,9 +62,9 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
 
 
     @Override
-    public void updateRequestStatus(Long requestId, String status) {
+    public void updateRequestStatus(Long id, String status) {
         // DeliveryRequest 엔티티 조회
-        DeliveryRequest deliveryRequest = deliveryRequestRepository.findById(requestId)
+        DeliveryRequest deliveryRequest = deliveryRequestRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Delivery request not found"));
 
         // 상태 업데이트
@@ -75,12 +75,12 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     private DeliveryRequestDTO toDTO(DeliveryRequest deliveryRequest) {
         return DeliveryRequestDTO.builder()
                 .id(deliveryRequest.getId())
-                .orderId(deliveryRequest.getOrder().getOrderId())
+                .orderCode(deliveryRequest.getOrder().getOrderCode())
                 .supplierName(deliveryRequest.getSupplierName())
                 .materialName(deliveryRequest.getMaterialName())
                 .requestedQuantity(deliveryRequest.getRequestedQuantity())
                 .requestedAt(deliveryRequest.getRequestedAt())
-                .status(deliveryRequest.getStatus() != null ? deliveryRequest.getStatus().name() : CurrentStatus.ON_HOLD.name())
+                .status(deliveryRequest.getStatus() != null ? deliveryRequest.getStatus().name() : CurrentStatus.IN_PROGRESS.name())
                 .build();
     }
 }

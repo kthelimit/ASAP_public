@@ -38,6 +38,9 @@ public class SupplierController {
     @Autowired
     private DeliveryRequestService deliveryRequestService;
 
+    @Autowired
+    private ImportService importService;
+
     @GetMapping("/list")
     public String getSuppliersList(Model model,
                                    @RequestParam(defaultValue = "1") int page,
@@ -159,7 +162,7 @@ public class SupplierController {
 
 
     @PostMapping("/stockUpdate")
-    public String supplierStockUpdate(SupplierStockDTO dto){
+    public String supplierStockUpdate(SupplierStockDTO dto) {
         supplierStockService.updateStock(dto);
         return "redirect:/suppliers/page";
     }
@@ -195,6 +198,7 @@ public class SupplierController {
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findRequestsBySupplier(supplierName, deliveryPageable);
 
         // Thymeleaf에 데이터 추가
+        model.addAttribute("supplierName", supplierName);
         model.addAttribute("orderRequests", orderRequests.getContent());
         model.addAttribute("totalOrderPages", orderRequests.getTotalPages());
         model.addAttribute("currentOrderPage", page);
@@ -223,6 +227,16 @@ public class SupplierController {
         return "redirect:/suppliers/page";
     }
 
+    @PostMapping("/importregisterbatch")
+    public String handleBatchExport(@ModelAttribute ImportDTO importDTO, @RequestParam("selectedRequests") List<Long> selectedRequestIds) {
+        for (Long id : selectedRequestIds) {
+            // Import 데이터 저장
+            importService.createImport(importDTO);
 
+            // 상태 업데이트
+            deliveryRequestService.updateRequestStatus(id, "FINISHED");
+        }
+        return "redirect:/suppliers/page";
 
+    }
 }

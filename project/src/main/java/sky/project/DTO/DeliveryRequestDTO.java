@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class DeliveryRequestDTO {
     private Long id;
-    private Long orderId;
+    private String orderCode;
     private String supplierName;
     private String materialName;
     private int requestedQuantity;

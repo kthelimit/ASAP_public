@@ -28,7 +28,7 @@
                             <tbody>
                             <!-- 처리 중인 주문 리스트 -->
                             <tr th:each="orderP : ${purchaseOrders}" >
-                                <td th:text="${orderP.orderId}"></td>
+                                <td th:text="${orderP.orderCode}"></td>
                                 <td th:text="${orderP.supplierName}"></td>
                                 <td th:text="${orderP.materialType}"></td>
                                 <td th:text="${orderP.materialName}"></td>
@@ -91,7 +91,7 @@
                         <tbody>
                         <!-- 출고 요청 리스트 -->
                         <tr th:each="deliveryRequest : ${deliveryRequests}">
-                            <td th:text="${deliveryRequest.orderId}"></td>
+                            <td th:text="${deliveryRequest.orderCode}"></td>
                             <td th:text="${deliveryRequest.supplierName}"></td>
                             <td th:text="${deliveryRequest.materialName}"></td>
                             <td th:text="${deliveryRequest.requestedQuantity}"></td>
@@ -146,7 +146,7 @@
                         <tbody>
                         <!-- 처리 완료된 주문 리스트 -->
                         <tr th:each="completedOrder : ${completedOrders}">
-                            <td th:text="${completedOrder.orderId}"></td>
+                            <td th:text="${completedOrder.orderCode}"></td>
                             <td th:text="${completedOrder.supplierName}"></td>
                             <td th:text="${completedOrder.materialType}"></td>
                             <td th:text="${completedOrder.materialName}"></td>

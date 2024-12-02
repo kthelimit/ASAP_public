@@ -23,6 +23,8 @@ import sky.project.Service.ProcurementPlanService;
 import sky.project.Service.SupplierService;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @Log4j2
@@ -170,8 +172,13 @@ public class OrderController {
         // 처리 중인 주문 조회
         Page<OrdersDTO> purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);
 
+
+        List<String> statuses = Arrays.asList(
+                CurrentStatus.IN_PROGRESS.name(),
+                CurrentStatus.FINISHED.name());
+
         // 처리 완료된 주문 조회
-        Page<OrdersDTO> completedOrders = orderService.findByStatus(CurrentStatus.FINISHED.name(), completedPageable);
+        Page<OrdersDTO> completedOrders = orderService. findByStatuses(statuses, completedPageable);
 
         // 납입 요청 조회
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);

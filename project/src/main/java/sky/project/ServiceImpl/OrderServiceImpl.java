@@ -14,8 +14,6 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
 import sky.project.Repository.SupplierStockRepository;
 import sky.project.Entity.ProcurementPlan;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
 import sky.project.Repository.ProcurementPlanRepository;
 import sky.project.Service.OrderService;
 
@@ -108,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 상태 업데이트
         if (newRequiredQuantity == 0) {
-            order.setStatus(CurrentStatus.FINISHED);
+            order.setStatus(CurrentStatus.IN_PROGRESS);
         }
 
         // 변경된 엔티티 저장
@@ -151,6 +149,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+
+
     private OrdersDTO toDTO(Order order) {
         if (order == null) return null;
 
@@ -172,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
                 .materialName(order.getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
                 .requiredQuantity(requiredQuantity) //필요 조달 수량
-                .totalPrice(order.getTotalprice())
+                .totalPrice(order.getTotalPrice())
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
                 .materialType(materialType)
                 .availableStock(availableStock) // 요청 가능 수량
@@ -308,6 +308,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrdersDTO> getRecentOrderListForSupplier(String supplierName) {
         return orderRepository.findRecentOrderForSupplier(supplierName).stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    public Page<OrdersDTO> findByStatuses(List<String> statuses, Pageable pageable) {
+        // String 리스트를 CurrentStatus 리스트로 변환
+        List<CurrentStatus> currentStatuses = statuses.stream()
+                .map(status -> CurrentStatus.valueOf(status.toUpperCase()))
+                .toList();
+
+        // Repository 호출
+        Page<Order> orders = orderRepository.findByStatuses(currentStatuses, pageable);
+
+        // 엔티티 -> DTO 변환
+        return orders.map(this::toDTO);
     }
 
 

@@ -6,6 +6,7 @@ import sky.project.DTO.ImportDTO;
 import sky.project.Entity.Import;
 import sky.project.Entity.Material;
 import sky.project.Repository.ImportRepository;
+import sky.project.Repository.MaterialRepository;
 import sky.project.Service.ImportService;
 
 import java.util.List;
@@ -22,6 +23,9 @@ public class ImportServiceImpl implements ImportService {
         this.importRepository = importRepository;
     }
 
+    @Autowired
+    public MaterialRepository materialRepository;
+
     @Override
     public List<ImportDTO> getAllImports() {
         List<Import> imports = importRepository.findAll();
@@ -30,9 +34,14 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     public ImportDTO createImport(ImportDTO importDTO) {
+        // DTO를 Import 엔티티로 변환
         Import importEntity = toEntity(importDTO);
-        importEntity = importRepository.save(importEntity);
-        return toDTO(importEntity);
+
+        // Import 엔티티 저장
+        Import savedImportEntity = importRepository.save(importEntity);
+
+        // 저장된 엔티티를 ImportDTO로 변환하여 반환
+        return toDTO(savedImportEntity);
     }
 
     @Override
@@ -40,7 +49,7 @@ public class ImportServiceImpl implements ImportService {
         Optional<Import> existingImport = importRepository.findById(importId);
         if (existingImport.isPresent()) {
             Import importEntity = existingImport.get();
-            importEntity.setOrderId(importDTO.getOrderId());
+            importEntity.setOrderCode(importDTO.getOrderCode());
             importEntity.setSupplierName(importDTO.getSupplierName());
             importEntity.setOrderedQuantity(importDTO.getOrderedQuantity());
             importEntity.setQuantity(importDTO.getQuantity());
@@ -74,11 +83,17 @@ public class ImportServiceImpl implements ImportService {
 
     // 엔티티 -> DTO 변환
     private ImportDTO toDTO(Import importEntity) {
+
+        String materialCode = materialRepository.findFirstByMaterialName(importEntity.getMaterialName())
+                .map(Material::getMaterialCode)
+                .orElse("정보 없음");
+
+
         return ImportDTO.builder()
                 .importId(importEntity.getImportId())
-                .orderId(importEntity.getOrderId())
-                .materialCode(importEntity.getMaterial().getMaterialCode())
-                .materialName(importEntity.getMaterial().getMaterialName())
+                .orderCode(importEntity.getOrderCode())
+                .materialCode(materialCode)
+                .materialName(importEntity.getMaterialName())
                 .supplierName(importEntity.getSupplierName())
                 .orderedQuantity(importEntity.getOrderedQuantity())
                 .quantity(importEntity.getQuantity())
@@ -90,11 +105,8 @@ public class ImportServiceImpl implements ImportService {
     // DTO -> 엔티티 변환
     private Import toEntity(ImportDTO importDTO) {
         Import importEntity = new Import();
-        Material material = new Material();
-        material.setMaterialCode(importDTO.getMaterialCode()); // 자재 코드 설정 (실제 자재 조회 필요)
-
-        importEntity.setOrderId(importDTO.getOrderId());
-        importEntity.setMaterial(material); // 실제 자재 엔티티 설정
+        importEntity.setOrderCode(importDTO.getOrderCode());
+        importEntity.setMaterialName(importDTO.getMaterialName()); // materialName 직접 설정
         importEntity.setSupplierName(importDTO.getSupplierName());
         importEntity.setOrderedQuantity(importDTO.getOrderedQuantity());
         importEntity.setQuantity(importDTO.getQuantity());

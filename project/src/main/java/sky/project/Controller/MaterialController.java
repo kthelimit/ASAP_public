@@ -289,4 +289,7 @@ public class MaterialController {
         stockService.register(stockDTO);
         return "redirect:/material/stocklist";
     }
+
+
 }
+

@@ -30,6 +30,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByStatus(CurrentStatus status, Pageable pageable);
 
+    @Query("SELECT o FROM Order o WHERE o.status IN :statuses")
+    Page<Order> findByStatuses(@Param("statuses") List<CurrentStatus> statuses, Pageable pageable);
+
     //대시보드 출력용 이번달 발주 건수
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
     int countOrderThisMonth(LocalDateTime start, LocalDateTime end);
@@ -40,8 +43,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     //대시보드 출력용 업체에 들어온 새 발주 건수
     @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
-    int countOrderBySupplierName(String supplierName);
-
+    int countOrderBySupplierNameOnHOLD(String supplierName);
 
     @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o " +
             "WHERE o.supplierName = :supplierName AND o.materialName = :materialName " +
@@ -50,7 +52,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                              @Param("materialName") String materialName,
                              @Param("statuses") List<CurrentStatus> statuses);
 
-    int countOrderBySupplierNameOnHOLD(String supplierName);
 
     //대시보드 출력용 최근 발주리스트
 

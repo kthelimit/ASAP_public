@@ -11,11 +11,15 @@ public interface ExportService {
 
     Long modify(ExportDTO dto);
 
+    Long modifyFinished(ExportDTO dto);
+
     List<ExportDTO> getCurrentExportList();
 
     Page<ExportDTO> getCurrentExportListPage(Pageable pageable);
 
     Page<ExportDTO> getExports(Pageable pageable);
+
+    Page<ExportDTO> getExportsNotHOLD(Pageable pageable);
 
     Page<ExportDTO> getExportsWithSearchInExportCode(String kerword, Pageable pageable);
 
@@ -45,4 +49,7 @@ public interface ExportService {
 
     //대시 보드 출력용 불출 완료된 출고 요청 건수
     int getCountFinishedRequestThisMonth();
+
+    //대시보드 출력용 최근 출고요청 리스트
+    List<ExportDTO> getRecentExportList();
 }

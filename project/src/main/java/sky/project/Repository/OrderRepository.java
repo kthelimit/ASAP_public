@@ -24,6 +24,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                             @Param("status") CurrentStatus status,
                                             Pageable pageable);
 
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.orderCode LIKE CONCAT(:prefix, '%')")
+    Long countByPrefix(String prefix);
+
 
     Page<Order> findByStatus(CurrentStatus status, Pageable pageable);
 
@@ -31,7 +34,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
     int countOrderThisMonth(LocalDateTime start, LocalDateTime end);
 
-    //대시보드 출력용 업체에 들어온 발주 건수
+    //대시보드 출력용 이번달 업체에 들어온 발주 건수
+    @Query("select count(o) from Order o where o.supplierName=:supplierName and o.createdDate>=:start and o.createdDate<=:end")
+    int countOrderBySupplierName(String supplierName, LocalDateTime start, LocalDateTime end);
+
+    //대시보드 출력용 업체에 들어온 새 발주 건수
     @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
     int countOrderBySupplierName(String supplierName);
 
@@ -43,6 +50,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                              @Param("materialName") String materialName,
                              @Param("statuses") List<CurrentStatus> statuses);
 
+    int countOrderBySupplierNameOnHOLD(String supplierName);
+
+    //대시보드 출력용 최근 발주리스트
+
+    @Query("select o from Order o order by o.orderId desc limit 5")
+    List<Order> findRecentOrder();
+
+    //대시보드 출력용 최근 발주리스트(업체용)
+
+    @Query("select o from Order o where o.supplierName=:supplierName order by o.orderId desc limit 5")
+    List<Order> findRecentOrderForSupplier(String supplierName);
 
 }
 

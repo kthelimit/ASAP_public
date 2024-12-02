@@ -33,6 +33,7 @@
                     <div class="card-style mb-30">
                         <form th:action="@{/plan/save}" th:object="${productionPlanDTO}" method="post">
                             <input type="hidden" th:field="*{planId}">
+                            <input type="hidden" th:field="*{productionPlanCode}">
                             <h3 class="mb-25">생산 계획 수정</h3>
                             <div class="input-style-1">
                                 <label>생산 시작 일자</label>

@@ -64,13 +64,14 @@
                                     </div>
                                     <div class="col-lg-2 input-style-1">
                                         <label>공정 결과물의 자재코드</label>
-                                        <input id="assyMaterialCode" name="assyMaterialCode" readonly type="text"
-                                               placeholder="자재 코드" value="">
+                                        <input id="assyMaterialCode" name="assyMaterialCode" placeholder="자재 코드"
+                                               readonly
+                                               type="text" value="">
                                     </div>
                                     <div class="col-lg-2 input-style-1">
                                         <label>공정 결과물의 자재명</label>
-                                        <input id="assyMaterialName" name="assyMaterialName" readonly type="text"
-                                               placeholder="조립품" value="">
+                                        <input id="assyMaterialName" name="assyMaterialName" placeholder="조립품" readonly
+                                               type="text" value="">
                                     </div>
                                     <div class="col-lg-1 input-style-1">
                                         <label>남은 수량</label>
@@ -107,173 +108,284 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <script>
-            //생산계획을 선택하면 해당 생산계획을 위한 조립공정이 뜬다.
-            function changeProductPlan() {
-                var productPlanSelect = document.getElementById("productionPlanSelect");
-                var selectedValue = productPlanSelect.options[productPlanSelect.selectedIndex].value;
+            <!--승인된 출고요청 목록-->
+            <div class="row mb-20">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="search_tab">
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-5">
+                                    <h3 class="mb-10">승인된 출고 요청 목록</h3>
+                                    <p class="text-sm mb-20">
+                                        승인 완료된 출고요청을 확인할 수 있습니다.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="table-wrapper table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th class="text-center">
+                                            <h6>출고 코드</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>생산 계획 코드</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>생산제품명</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>자재명</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>자재코드</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>출고수량</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>상태</h6>
+                                        </th>
+                                        <th class="text-center">
+                                            <h6>출고 버튼</h6>
+                                        </th>
+                                    </tr>
+                                    <tr th:each="export:${exports}">
+                                        <td class="text-center">
+                                            <p th:text="${export.exportCode}"></p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p th:text="${export.productionPlanCode}"
+                                               th:title="${#temporals.format(export.productionStartDate,'yyyy-MM-dd') + '~'+ #temporals.format(export.productionEndDate,'yyyy-MM-dd')}"></p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p th:text="${export.productName}"></p>
+                                        </td>
+                                        <td>
+                                            <p th:text="${export.materialName}"></p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p th:text="${export.materialCode}"></p>
+                                        </td>
+                                        <td class="text-align-right">
+                                            <p th:text="${export.requiredQuantity}"></p>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="status-btn active-btn" th:if="${export.exportStatus=='승인 완료'}"
+                                                  th:text="${export.exportStatus}"/>
+                                            <span class="status-btn close-btn" th:if="${export.exportStatus=='종료'}"
+                                                  th:text="${export.exportStatus}"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <form method="post" th:action="@{/material/export/finished}">
+                                                <input name="exportCode" th:value="${export.exportCode}" type="hidden">
+                                                <input name="materialCode" th:value="${export.materialCode}"
+                                                       type="hidden">
+                                                <input name="requiredQuantity" th:value="${export.requiredQuantity}"
+                                                       type="hidden">
+                                                <button class="main-btn primary-btn btn-hover" style="padding: 5px 12px"
+                                                        th:if="${export.exportStatus=='승인 완료'}" type="submit">출고
+                                                </button>
+                                                <button class="main-btn disabled btn-hover" disabled
+                                                        style="padding: 5px 12px" th:if="${export.exportStatus=='종료'}"
+                                                        type="button">완료
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="pagination-wrapper">
+                                    <ul class="pagination">
+                                        <li th:if="${currentPage > 1}">
+                                            <a aria-label="Previous"
+                                               th:href="@{/material/export/history(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                            <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                               th:href="@{/material/export/history(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
+                                               th:text="${i}"></a>
+                                        </li>
+                                        <li th:if="${currentPage < totalPages}">
+                                            <a aria-label="Next"
+                                               th:href="@{/material/export/history(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, type=${type})}">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                //조립공정 선택창 리셋
-                $('#assyMaterial').empty();
-                $('#assyMaterial').append('<option>---</option>');
+            <script>
+                //생산계획을 선택하면 해당 생산계획을 위한 조립공정이 뜬다.
+                function changeProductPlan() {
+                    var productPlanSelect = document.getElementById("productionPlanSelect");
+                    var selectedValue = productPlanSelect.options[productPlanSelect.selectedIndex].value;
 
-                //자재코드와 자재명 리셋
-                $('#assyMaterialCode').val("");
-                $('#assyMaterialName').val("");
-                $('#leftQuantity').val("");
+                    //조립공정 선택창 리셋
+                    $('#assyMaterial').empty();
+                    $('#assyMaterial').append('<option>---</option>');
 
-                $('#assyMaterialTable').empty();
-                $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
-                    '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
-                    '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+                    //자재코드와 자재명 리셋
+                    $('#assyMaterialCode').val("");
+                    $('#assyMaterialName').val("");
+                    $('#leftQuantity').val("");
+
+                    $('#assyMaterialTable').empty();
+                    $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
+                        '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
+                        '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+
+                    //선택한 생산계획에 따른 조립공정 불러오기
+                    loadAssyByProduct(selectedValue);
+                }
 
                 //선택한 생산계획에 따른 조립공정 불러오기
-                loadAssyByProduct(selectedValue);
-            }
+                function loadAssyByProduct(productCode) {
+                    $.ajax({
+                        url        : "/api/load/Assy/" + productCode,
+                        type       : "GET",
+                        dataType   : "JSON",
+                        contentType: 'application/json; charset=utf-8',
+                        data       : JSON.stringify(productCode),
+                        success    : function (data) {
+                            str = '';
 
-            //선택한 생산계획에 따른 조립공정 불러오기
-            function loadAssyByProduct(productCode) {
-                $.ajax({
-                    url        : "/api/load/Assy/" + productCode,
-                    type       : "GET",
-                    dataType   : "JSON",
-                    contentType: 'application/json; charset=utf-8',
-                    data       : JSON.stringify(productCode),
-                    success    : function (data) {
-                        str = '';
+                            $.each(data, function (i) {
+                                str += '<option value="' + data[i].materialCode + '" data-name="' + data[i].materialName + '">' + data[i].materialName + '</option>';
+                            })
+                            $('#assyMaterial').append(str);
+                        }
+                    })
 
-                        $.each(data, function (i) {
-                            str += '<option value="' + data[i].materialCode + '" data-name="' + data[i].materialName + '">' + data[i].materialName + '</option>';
-                        })
-                        $('#assyMaterial').append(str);
-                    }
-                })
-
-            }
+                }
 
 
-            //선택한 조립공정에 따른 자재명과 자재코드 출력
-            function changeAssyMaterial() {
-                var assyMaterialSelect = document.getElementById("assyMaterial");
-                var selectedValue = assyMaterialSelect.options[assyMaterialSelect.selectedIndex].value;
+                //선택한 조립공정에 따른 자재명과 자재코드 출력
+                function changeAssyMaterial() {
+                    var assyMaterialSelect = document.getElementById("assyMaterial");
+                    var selectedValue = assyMaterialSelect.options[assyMaterialSelect.selectedIndex].value;
 
-                $('#assyMaterialCode').val(selectedValue);
+                    $('#assyMaterialCode').val(selectedValue);
 
-                var selectedValue2 = $("#assyMaterial").find("option:selected").data("name");
+                    var selectedValue2 = $("#assyMaterial").find("option:selected").data("name");
 
-                $('#assyMaterialName').val(selectedValue2);
+                    $('#assyMaterialName').val(selectedValue2);
 
-                //해당 조립품의 남은 제작 수량 넣기
-                loadLeftAssyQuantity($("#productionPlanSelect").find("option:selected").data("name"),selectedValue);
+                    //해당 조립품의 남은 제작 수량 넣기
+                    loadLeftAssyQuantity($("#productionPlanSelect").find("option:selected").data("name"), selectedValue);
 
-                //자재 리스트 리셋
-                $('#assyMaterialTable').empty();
-                $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
-                    '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
-                    '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+                    //자재 리스트 리셋
+                    $('#assyMaterialTable').empty();
+                    $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
+                        '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
+                        '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+
+                    //선택한 조립품에 따른 자재 리스트 불러오기
+                    loadAssyMaterialListByProduct(selectedValue);
+
+                }
 
                 //선택한 조립품에 따른 자재 리스트 불러오기
-                loadAssyMaterialListByProduct(selectedValue);
+                function loadAssyMaterialListByProduct(assyMaterialCode) {
+                    var quantity = $('#quantity').val();
+                    $.ajax({
+                        url        : "/api/load/AssyList/" + assyMaterialCode,
+                        type       : "GET",
+                        dataType   : "JSON",
+                        contentType: 'application/json; charset=utf-8',
+                        data       : JSON.stringify(assyMaterialCode),
+                        success    : function (data) {
+                            console.log(data);
+                            str = '';
 
-            }
-
-            //선택한 조립품에 따른 자재 리스트 불러오기
-            function loadAssyMaterialListByProduct(assyMaterialCode) {
-                var quantity = $('#quantity').val();
-                $.ajax({
-                    url        : "/api/load/AssyList/" + assyMaterialCode,
-                    type       : "GET",
-                    dataType   : "JSON",
-                    contentType: 'application/json; charset=utf-8',
-                    data       : JSON.stringify(assyMaterialCode),
-                    success    : function (data) {
-                        console.log(data);
-                        str = '';
-
-                        $.each(data, function (i) {
-                            console.log(data[i]);
-                            str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
-                                + '</p><input type="hidden" name="materialCode" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
-                                + data[i].quantity + '</p></td> <td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
-                        })
-                        $('#assyMaterialTable').append(str);
-                    }
-                })
-            }
-
-            //출고 요청 등록
-            function registerExport() {
-                var productPlanCode = $("#productionPlanSelect").find("option:selected").data("name");
-                console.log(productPlanCode);
-
-                var materialCodes = $('input[name=materialCode]').length;
-                var materialCodesArray = new Array(materialCodes);
-
-                var requiredQuantities = $('input[name=requiredQuantity]').length;
-                var requiredQuantitiesArray = new Array(requiredQuantities);
-
-                for (var i = 0; i < materialCodes; i++) {
-                    materialCodesArray[i] = $('input[name=materialCode]').eq(i).val();
-                    requiredQuantitiesArray[i] = $('input[name=requiredQuantity]').eq(i).val();
-                }
-                console.log(materialCodesArray);
-                console.log(requiredQuantitiesArray);
-
-                var j = 0;
-                var it = setInterval(function () {
-                    if (j < materialCodesArray.length) {
-                        //하나씩 등록 요청하기
-                        data = {
-                            productionPlanCode: productPlanCode,
-                            materialCode      : materialCodesArray[j],
-                            assyMaterialCode :  $('#assyMaterialCode').val(),
-                            assyQuantity : $('#quantity').val(),
-                            requiredQuantity  : requiredQuantitiesArray[j]
+                            $.each(data, function (i) {
+                                console.log(data[i]);
+                                str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
+                                    + '</p><input type="hidden" name="materialCode" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
+                                    + data[i].quantity + '</p></td> <td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
+                            })
+                            $('#assyMaterialTable').append(str);
                         }
-                        $.ajax({
-                            type       : 'POST',
-                            url        : '/api/post/export',
-                            dataType   : 'TEXT',
-                            contentType: 'application/json; charset=utf-8',
-                            data       : JSON.stringify(data)
-                        }).done(function () {
-                            console.log("출고요청이 등록되었습니다.")
-                            j++;
-                            if (j === materialCodesArray.length) {
-                                window.location.reload();
+                    })
+                }
+
+                //출고 요청 등록
+                function registerExport() {
+                    var productPlanCode = $("#productionPlanSelect").find("option:selected").data("name");
+                    console.log(productPlanCode);
+
+                    var materialCodes = $('input[name=materialCode]').length;
+                    var materialCodesArray = new Array(materialCodes);
+
+                    var requiredQuantities = $('input[name=requiredQuantity]').length;
+                    var requiredQuantitiesArray = new Array(requiredQuantities);
+
+                    for (var i = 0; i < materialCodes; i++) {
+                        materialCodesArray[i] = $('input[name=materialCode]').eq(i).val();
+                        requiredQuantitiesArray[i] = $('input[name=requiredQuantity]').eq(i).val();
+                    }
+                    console.log(materialCodesArray);
+                    console.log(requiredQuantitiesArray);
+
+                    var j = 0;
+                    var it = setInterval(function () {
+                        if (j < materialCodesArray.length) {
+                            //하나씩 등록 요청하기
+                            data = {
+                                productionPlanCode: productPlanCode,
+                                materialCode      : materialCodesArray[j],
+                                assyMaterialCode  : $('#assyMaterialCode').val(),
+                                assyQuantity      : $('#quantity').val(),
+                                requiredQuantity  : requiredQuantitiesArray[j]
                             }
-                        }).fail(function (error) {
-                            alert(JSON.stringify(error));
-                        })
+                            $.ajax({
+                                type       : 'POST',
+                                url        : '/api/post/export',
+                                dataType   : 'TEXT',
+                                contentType: 'application/json; charset=utf-8',
+                                data       : JSON.stringify(data)
+                            }).done(function () {
+                                console.log("출고요청이 등록되었습니다.")
+                                j++;
+                                if (j === materialCodesArray.length) {
+                                    window.location.reload();
+                                }
+                            }).fail(function (error) {
+                                alert(JSON.stringify(error));
+                            })
 
-                    } else {
-                        clearInterval(it);
-                    }
-                }, 100);
+                        } else {
+                            clearInterval(it);
+                        }
+                    }, 100);
 
-                //결과 알려주기
-                alert(materialCodesArray.length + "개의 출고요청이 등록되었습니다.")
-            }
+                    //결과 알려주기
+                    alert(materialCodesArray.length + "개의 출고요청이 등록되었습니다.")
+                }
 
-            //해당 조립 공정의 남은 제작 수량
-            function loadLeftAssyQuantity(productionPlanCode, assyMaterialCode){
-                $.ajax({
-                    url        : "/api/load/AssyLeft/"+productionPlanCode+"/"+ assyMaterialCode,
-                    type       : "GET",
-                    dataType   : "JSON",
-                    contentType: 'application/json; charset=utf-8',
-                    data       : JSON.stringify(assyMaterialCode),
-                    success    : function (data) {
-                        console.log(data);
-                        $('#leftQuantity').val(data);
-                    }
-                })
-            }
+                //해당 조립 공정의 남은 제작 수량
+                function loadLeftAssyQuantity(productionPlanCode, assyMaterialCode) {
+                    $.ajax({
+                        url        : "/api/load/AssyLeft/" + productionPlanCode + "/" + assyMaterialCode,
+                        type       : "GET",
+                        dataType   : "JSON",
+                        contentType: 'application/json; charset=utf-8',
+                        data       : JSON.stringify(assyMaterialCode),
+                        success    : function (data) {
+                            console.log(data);
+                            $('#leftQuantity').val(data);
+                        }
+                    })
+                }
 
 
-        </script>
+            </script>
 
 
     </th:block>

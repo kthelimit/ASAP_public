@@ -92,15 +92,8 @@ public class StockServiceImpl implements StockService {
     }
 
     public StockDTO entityToDto(Stock stock) {
-        int availableStock = stock.getQuantity();
-        if (exportRepository.findByMaterialCode(stock.getMaterial().getMaterialCode()) != null) {
-            List<Export> exports = exportRepository.findByMaterialCode(stock.getMaterial().getMaterialCode());
-            int exportQuantity = 0;
-            for (Export export : exports) {
-                exportQuantity += export.getRequiredQuantity();
-            }
-            availableStock -= exportQuantity;
-        }
+        int availableStock = calculateAvailableStock(stock);
+        stockRepository.save(stock);
         return StockDTO.builder()
                 .stockId(stock.getStockId())
                 .quantity(stock.getQuantity())
@@ -111,5 +104,19 @@ public class StockServiceImpl implements StockService {
                 .componentType(stock.getMaterial().getComponentType())
                 .unitPrice(stock.getMaterial().getUnitPrice())
                 .build();
+    }
+
+    @Override
+    public int calculateAvailableStock(Stock stock){
+        int availableStock = stock.getQuantity();
+        if (exportRepository.findByMaterialCodeAndStatusOnHold(stock.getMaterial().getMaterialCode()) != null) {
+            List<Export> exports = exportRepository.findByMaterialCodeAndStatusOnHold(stock.getMaterial().getMaterialCode());
+            int exportQuantity = 0;
+            for (Export export : exports) {
+                exportQuantity += export.getRequiredQuantity();
+            }
+            availableStock -= exportQuantity;
+        }
+        return availableStock;
     }
 }

@@ -51,5 +51,5 @@ public class Material extends Base{
     @Column(name = "weight", precision = 10, scale = 2)
     private BigDecimal weight;
 
-    private int leadtime;
+    private int leadTime;
 }

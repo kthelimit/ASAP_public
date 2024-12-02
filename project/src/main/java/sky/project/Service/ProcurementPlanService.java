@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.ProcurementPlan;
 
-import java.util.List;
-
 public interface ProcurementPlanService {
 
 //    void registerProcurementPlan(ProcurementPlanDTO procurementPlanDTO);
@@ -21,9 +19,15 @@ public interface ProcurementPlanService {
 
     ProcurementPlan save(ProcurementPlan procurementPlan);
 
+    Page<ProcurementPlanDTO> getProcurementPlans(Pageable pageable);
+
+    int getCountProcurementPlanOnHold();
+
     String generateProcurementPlanCode(ProcurementPlanDTO dto);
 
-    List<ProcurementPlan> findAll();
+//    List<ProcurementPlan> findAll();
 
     ProcurementPlanDTO getProcurementPlanById(Long id);
+
+    Page<ProcurementPlanDTO> getProcurementPlans(int page, int size);
 }

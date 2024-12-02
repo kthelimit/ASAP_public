@@ -2,6 +2,7 @@ package sky.project.DTO;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +24,11 @@ public class BomDTO {
 
     @Builder.Default
     private List<MaterialDTO> Materials = new ArrayList<>();
+
+    //가용재고 불러오기용
+    private int availableStock;
+
+    //조달 납기일 불러오기용
+    private LocalDate dayAfterLeadTime;
 
 }

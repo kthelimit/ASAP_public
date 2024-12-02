@@ -15,6 +15,7 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Service.MaterialService;
+import sky.project.Service.StockService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +34,9 @@ public class MaterialServiceImpl implements MaterialService {
     StockRepository stockRepository;
 
     @Autowired
+    StockService stockService;
+
+    @Autowired
     MaterialRepository materialRepository;
 
     @Autowired
@@ -40,6 +44,7 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     AssyRepository assyRepository;
+
 
     private final String uploadDir = "C:/uploads/Images/";
 
@@ -68,7 +73,7 @@ public class MaterialServiceImpl implements MaterialService {
         material.setHeight(materialDTO.getHeight());
         material.setDepth(materialDTO.getDepth());
         material.setWeight(materialDTO.getWeight());
-        material.setLeadtime(materialDTO.getLeadtime());
+        material.setLeadTime(materialDTO.getLeadTime());
 
         // Supplier 설정
         Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
@@ -103,7 +108,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .weight(material.getWeight())
                 .imageUrl(material.getImageUrl())
                 .supplierName(material.getSupplier().getSupplierName())
-                .leadtime(material.getLeadtime())
+                .leadTime(material.getLeadTime())
                 .build();
     }
 
@@ -150,11 +155,16 @@ public class MaterialServiceImpl implements MaterialService {
     public int getAvailableStock(String materialCode) {
         // 자재 코드에 매칭되는 재고 정보 조회
         Stock stock = stockRepository.findByMaterialCode(materialCode);
-        return stock != null ? stock.getAvailableStock() : 0;
+        if(stock!=null){
+            return stockService.calculateAvailableStock(stock);
+        }else return 0;
     }
 
-
-
+//    @Override
+//    public int getLeadTime(String materialCode) {
+//        Material leadTime = materialRepository.findByMaterialCode(materialCode);
+//        return  leadTime != null ? leadTime.get().getLeadTime() : 0;
+//    }
 
     @Override
    public List<MaterialDTO>  findByMaterialType(String materialType){
@@ -185,5 +195,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         return materials.get(0); // 항상 한 가지 값만 있다고 가정
     }
+
+
 
 }

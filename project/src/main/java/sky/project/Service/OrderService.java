@@ -4,6 +4,8 @@ import org.springframework.data.domain.Pageable;
 import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.CurrentStatus;
 
+import java.util.List;
+
 public interface OrderService {
 
     void registerOrder(OrdersDTO ordesrDTO);
@@ -31,4 +33,12 @@ public interface OrderService {
 
 
 
+    //대시보드 출력용 업체에 들어온 발주 건수
+    int getCountOrderBySupplierThisMonth(String supplierName);
+
+    int getCountOrderBySupplierOnHOLD(String supplierName);
+
+    List<OrdersDTO> getRecentOrderList();
+
+    List<OrdersDTO>getRecentOrderListForSupplier(String supplierName);
 }

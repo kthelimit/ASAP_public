@@ -15,7 +15,7 @@ public class Export extends Base{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long exportId;
 
-    private String exportCode; // 입고 코드
+    private String exportCode; // 출고 코드
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productionPlan_code", nullable = false)

@@ -11,7 +11,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <div class="title">
-                                <h2>Dashboard</h2>
+                                <h2>대시보드</h2>
                             </div>
                         </div>
                         <!-- end col -->
@@ -20,7 +20,7 @@
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item">
-                                            <a href="#0">Dashboard</a>
+                                            <a href="#0">대시보드</a>
                                         </li>
                                     </ol>
                                 </nav>
@@ -35,7 +35,7 @@
                 <th:block th:if="${userType=='ADMIN'}">
                     <div class="alert-box danger-alert pl-100" th:if="${countPartnerWhoWait>=1}">
                         <div class="left">
-                            <h5 class="text-bold">!IMPORTANT!</h5>
+                            <h5 class="text-bold">관리</h5>
                         </div>
                         <div class="alert" onclick="location.href='/suppliers/pending'" style="cursor: pointer">
                             <h4 class="alert-heading">중요 알림</h4>
@@ -47,50 +47,57 @@
                 </th:block>
                 <!-- end alert-box -->
                 <!-- 구매부서 전용-->
-                <div class="alert-box danger-alert pl-100" th:if="${countProcurementPlanNotYet>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
+                    <div class="alert-box danger-alert pl-100" th:if="${countProcurementPlanNotYet>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">구매</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/order/list'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                아직 발주하지 않은 건수가 [[${countProcurementPlanNotYet}]]건 있습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/order/list'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            아직 발주하지 않은 건수가 [[${countProcurementPlanNotYet}]]건 있습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 생산부서 전용-->
-                <div class="alert-box success-alert pl-100" th:if="${(countExportApproved - countExportFinished)>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'}">
+                    <div class="alert-box success-alert pl-100"
+                         th:if="${(countExportApproved - countExportFinished)>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">생산</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/material/export/history'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                이번달에 요청한 출고 요청 [[${countExportRequest + countExportApproved - countExportFinished}]]건 중
+                                [[${countExportApproved - countExportFinished}]]건이 승인 되었습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/material/export/history'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            이번달에 요청한 출고 요청 [[${countExportRequest + countExportApproved - countExportFinished}]]건 중
-                            [[${countExportApproved - countExportFinished}]]건이 승인 되었습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 자재부서 전용-->
-                <div class="alert-box danger-alert pl-100" th:if="${countExportRequest>=1}">
-                    <div class="left">
-                        <h5 class="text-bold">!IMPORTANT!</h5>
+                <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
+                    <div class="alert-box danger-alert pl-100" th:if="${countExportRequest>=1}">
+                        <div class="left">
+                            <h5 class="text-bold">자재</h5>
+                        </div>
+                        <div class="alert" onclick="location.href='/material/export'" style="cursor: pointer">
+                            <h4 class="alert-heading">중요 알림</h4>
+                            <p class="text-medium">
+                                아직 승인하지 않은 출고 요청이 [[${countExportRequest}]]건 있습니다.
+                            </p>
+                        </div>
                     </div>
-                    <div class="alert" onclick="location.href='/material/export'" style="cursor: pointer">
-                        <h4 class="alert-heading">중요 알림</h4>
-                        <p class="text-medium">
-                            아직 승인하지 않은 출고 요청이 [[${countExportRequest}]]건 있습니다.
-                        </p>
-                    </div>
-                </div>
+                </th:block>
                 <!-- end alert-box -->
                 <!-- 협력업체 전용-->
                 <th:block th:if="${userType=='SUPPLIER'}">
                     <div class="alert-box primary-alert pl-100" th:if="${countOrdersForSupplier>0}">
                         <div class="left">
-                            <h5 class="text-bold">!IMPORTANT!</h5>
+                            <h5 class="text-bold">업체</h5>
                         </div>
                         <div class="alert" onclick="location.href='/suppliers/page'" style="cursor: pointer">
                             <h4 class="alert-heading">중요 알림</h4>
@@ -102,7 +109,7 @@
                     <!-- end alert-box -->
                     <div class="alert-box danger-alert pl-100">
                         <div class="left">
-                            <h5 class="text-bold">!IMPORTANT!</h5>
+                            <h5 class="text-bold">업체</h5>
                         </div>
                         <div class="alert">
                             <h4 class="alert-heading">중요 알림</h4>
@@ -114,12 +121,13 @@
                 </th:block>
                 <!-- end alert-box -->
 
-
                 <div class="row">
+
+                    <!-- 모두에게 출력되어야하는 구역 -->
                     <div class="col-xl-3 col-lg-4 col-sm-6">
                         <div class="icon-card mb-30">
                             <div class="icon purple">
-                                <i class="lni lni-cart-full"></i>
+                                <i class="lni lni-calendar"></i>
                             </div>
                             <div class="content">
                                 <h6 class="mb-10">진행 중인 생산 계획 수</h6>
@@ -132,120 +140,197 @@
                         <!-- End Icon Cart -->
                     </div>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon primary">
-                                <i class="lni lni-credit-cards"></i>
+
+                    <!-- 구매부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon primary">
+                                    <i class="lni lni-write"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">이번 달 발주 건수</h6>
+                                    <h3 class="text-bold mb-10">[[${countOrder}]]</h3>
+                                    <p class="text-sm text-danger">
+                                        <span class="text-gray">더 보기</span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">이번 달 발주 건수</h6>
-                                <h3 class="text-bold mb-10">[[${countOrder}]]</h3>
-                                <p class="text-sm text-danger">
-                                    <span class="text-gray">더 보기</span>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon orange">
-                                <i class="lni lni-user"></i>
+                    <!-- 구매부서 / 자재부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'|| userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon orange">
+                                    <i class="lni lni-phone-set"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">이번달 납품 지시 건수</h6>
+                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <p class="text-sm text-success">
+                                        <span class="text-gray">더 보기</span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">★이번 달 입고 건수</h6>
-                                <h3 class="text-bold mb-10">3</h3>
-                                <p class="text-sm text-danger">
-                                    <span class="text-gray"> 더 보기</span>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon success">
-                                <i class="lni lni-dollar"></i>
+                    <!-- 구매부서 / 자재부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'|| userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon success">
+                                    <i class="lni lni-inbox"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">이번 달 입고 건수</h6>
+                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <p class="text-sm text-danger">
+                                        <span class="text-gray"> 더 보기</span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">★이번달 납품 지시 건수</h6>
-                                <h3 class="text-bold mb-10">15</h3>
-                                <p class="text-sm text-success">
-                                    <span class="text-gray">더 보기</span>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon purple">
-                                <i class="lni lni-cart-full"></i>
+
+                    <!-- 자재부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon blue-light">
+                                    <i class="lni lni-keyword-research"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">입고 검수 예정 건수</h6>
+                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <p class="text-sm text-success">
+                                        <span class="text-gray">더 보기</span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">★입고 검수 예정 건수</h6>
-                                <h3 class="text-bold mb-10">3</h3>
-                                <p class="text-sm text-success">
-                                    <span class="text-gray">더 보기</span>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon primary">
-                                <i class="lni lni-credit-cards"></i>
+                    <!-- 자재부서  / 생산부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'|| userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon primary">
+                                    <i class="lni lni-timer"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">대기 중인 출고 요청 건수</h6>
+                                    <h3 class="text-bold mb-10">[[${countExportRequest}]]</h3>
+                                    <p class="text-sm text-danger">
+                                        <a th:href="@{/material/export}"><span class="text-gray">더 보기</span></a>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">대기 중인 출고 요청 건수</h6>
-                                <h3 class="text-bold mb-10">[[${countExportRequest}]]</h3>
-                                <p class="text-sm text-danger">
-                                    <a th:href="@{/material/export}"><span class="text-gray">더 보기</span></a>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon orange">
-                                <i class="lni lni-user"></i>
+                    <!-- 자재부서  / 생산부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'|| userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon orange">
+                                    <i class="lni lni-wheelbarrow"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">승인된 출고 요청 건수</h6>
+                                    <h3 class="text-bold mb-10">[[${countExportApproved}]]</h3>
+                                    <p class="text-sm text-danger">
+                                        <a th:href="@{/material/export/request}"><span
+                                                class="text-gray"> 더 보기</span></a>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">승인된 출고 요청 건수</h6>
-                                <h3 class="text-bold mb-10">[[${countExportApproved}]]</h3>
-                                <p class="text-sm text-danger">
-                                    <a th:href="@{/material/export/history}"><span class="text-gray"> 더 보기</span></a>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
                     <!-- End Col -->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="icon-card mb-30">
-                            <div class="icon success">
-                                <i class="lni lni-dollar"></i>
+                    <!-- 자재부서  / 생산부서 전용 -->
+                    <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'|| userType=='MATERIAL_DEPT'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon success">
+                                    <i class="lni lni-package"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">불출 완료된 건수</h6>
+                                    <h3 class="text-bold mb-10">[[${countExportFinished}]]</h3>
+                                    <p class="text-sm text-success">
+                                        <a th:href="@{/material/export/history}"><span
+                                                class="text-gray"> 더 보기</span></a>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <h6 class="mb-10">불출 완료된 건수</h6>
-                                <h3 class="text-bold mb-10">[[${countExportFinished}]]</h3>
-                                <p class="text-sm text-success">
-                                    <a th:href="@{/material/export/history}"><span class="text-gray"> 더 보기</span></a>
-                                </p>
-                            </div>
+                            <!-- End Icon Cart -->
                         </div>
-                        <!-- End Icon Cart -->
-                    </div>
+                    </th:block>
+                    <!-- End Col -->
+                    <th:block th:if="${userType=='SUPPLIER'}">
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon success">
+                                    <i class="lni lni-write"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">이번 달 발주 건수</h6>
+                                    <h3 class="text-bold mb-10"> [[${countOrderForSupplier}]]</h3>
+                                    <p class="text-sm text-success">
+                                        <a th:href="@{/suppliers/page}"><span
+                                                class="text-gray"> 더 보기</span></a>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- End Icon Cart -->
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon primary">
+                                    <i class="lni lni-phone-set"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">이번 달 납품 지시 건수</h6>
+                                    <h3 class="text-bold mb-10"> 예정 </h3>
+                                    <p class="text-sm text-success">
+                                        <a th:href="@{/suppliers/page}"><span
+                                                class="text-gray"> 더 보기</span></a>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- End Icon Cart -->
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-6">
+                            <div class="icon-card mb-30">
+                                <div class="icon orange">
+                                    <i class="lni lni-keyword-research"></i>
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">진행 중인 진척 검수 건수</h6>
+                                    <h3 class="text-bold mb-10"> 예정 </h3>
+                                    <p class="text-sm text-success">
+                                        <a th:href="@{/suppliers/page}"><span
+                                                class="text-gray"> 더 보기</span></a>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- End Icon Cart -->
+                        </div>
+                    </th:block>
                     <!-- End Col -->
                 </div>
 
+                <!--모두에게 보여야하는 구역 -->
                 <div class="row">
                     <!-- 달력 -->
                     <div class="col-lg-5">
@@ -256,617 +341,345 @@
                     </div>
                     <!-- 달력 끝 -->
                     <!-- 구매부서 전용-->
-                    <!-- 발주 목록 -->
-                    <div class="col-lg-7">
-                        <div class="card-style mb-30">
-                            <h6 class="mb-10">현재 발주 중인 목록</h6>
-                            <p class="text-sm mb-20">
-                                최근 5건만 표시됩니다.
-                            </p>
-                            <div class="table-wrapper table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            <h6>#</h6>
-                                        </th>
-                                        <th>
-                                            <h6>품목명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>수량</h6>
-                                        </th>
-                                        <th>
-                                            <h6>업체명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>납기일</h6>
-                                        </th>
-                                        <th>
-                                            <h6>상태</h6>
-                                        </th>
-                                    </tr>
-                                    <!-- end table row-->
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td class="min-width">
-                                            <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>볼턴사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="text-danger">
-                                                    <span class="status-btn active-btn">검수중</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td class="min-width">
-                                            <p>스포크 J밴드240</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>600</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>디씨바이크</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">입고 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            3
-                                        </td>
-                                        <td class="min-width">
-                                            <p>시티 바이시클 40mm패드 무통안장</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>WB사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="text-danger">
-                                                    <span class="status-btn danger-btn">반품중</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            4
-                                        </td>
-                                        <td class="min-width">
-                                            <p>RD-R8150 (12단) di2 뒷변속기</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>시마노</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">입고 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            5
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기자전거 2인자전거 브레이크 케이블</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>cs사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">입고 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    </tbody>
-                                </table>
+                    <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
+                        <!-- 발주 목록 -->
+                        <div class="col-lg-7">
+                            <div class="card-style mb-30">
+                                <h6 class="mb-10">현재 발주 중인 목록</h6>
+                                <p class="text-sm mb-20">
+                                    최근 5건만 표시됩니다.
+                                </p>
+                                <div class="table-wrapper table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th class="text-center">
+                                                <h6>품목명</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>수량</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>업체명</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>납기일</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>상태</h6>
+                                            </th>
+                                        </tr>
+                                        <!-- end table row-->
+
+                                        <tr th:each="order : ${ordersDTOS}">
+                                            <td class="min-width">
+                                                <p th:text="${order.materialName}"></p>
+                                            </td>
+                                            <td class="min-width text-align-right">
+                                                <p th:text="${order.orderQuantity}"></p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                                <p th:text="${order.supplierName}"></p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                                <p th:text="${order.expectedDate}"></p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                            <span class="status-btn success-btn"
+                                                  th:if="${order.status=='ON_HOLD'}">대기 중</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${order.status=='APPROVAL'}">승인 완료</span>
+                                                <span class="status-btn close-btn"
+                                                      th:if="${order.status=='FINISHED'}">종료</span>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- 발주 목록 끝 -->
+                        <!-- 발주 목록 끝 -->
+                    </th:block>
                     <!-- 생산 부서 전용-->
-                    <!-- 작업 목록 -->
-                    <div class="col-lg-7">
-                        <div class="card-style mb-30">
-                            <h6 class="mb-10">현재 진행 중인 작업 목록</h6>
-                            <p class="text-sm mb-20">
-                                최근 5건만 표시됩니다.
-                            </p>
-                            <div class="table-wrapper table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            <h6>#</h6>
-                                        </th>
-                                        <th>
-                                            <h6>공정명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>수량</h6>
-                                        </th>
-                                        <th>
-                                            <h6>마감일</h6>
-                                        </th>
-                                        <th>
-                                            <h6>상태</h6>
-                                        </th>
-                                    </tr>
-                                    <!-- end table row-->
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기자전거A 자전거 조립</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">200</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="text-danger">
-                                                    <span class="status-btn danger-btn">불출 대기중</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기 자전거A 핸들 조립</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>100</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">조립 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            3
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기자전거A 안장 조립</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn primary-btn">조립 진행 중</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            4
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전동 킥보드 완제품 조립</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">조립 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            5
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전동킥보드 발판 조립</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">조립 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    </tbody>
-                                </table>
+                    <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'}">
+                        <!-- 작업 목록 -->
+                        <div class="col-lg-7">
+                            <div class="card-style mb-30">
+                                <h6 class="mb-10">현재 출고 요청 목록</h6>
+                                <p class="text-sm mb-20">
+                                    최근 5건만 표시됩니다.
+                                </p>
+                                <div class="table-wrapper table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th class="text-center">
+                                                <h6>조립자재명</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>자재명</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>수량</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>신청일</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>상태</h6>
+                                            </th>
+                                        </tr>
+                                        <!-- end table row-->
+                                        <tr th:each="export:${exportDTOS}">
+                                            <td class="min-width text-center">
+                                                <p th:text="${export.assyMaterialName}">
+                                            </td>
+                                            <td class="min-width">
+                                                <p th:text="${export.materialName}">
+                                            </td>
+                                            <td class="min-width text-align-right">
+                                                <p th:text="${export.requiredQuantity}">
+                                            </td>
+                                            <td class="min-width text-center">
+                                                <p th:text="${#temporals.format(export.createdDate, 'yyyy-MM-dd')}">
+                                            </td>
+                                            <td class="min-width text-center">
+                                            <span class="status-btn success-btn" th:if="${export.exportStatus=='대기 중'}"
+                                                  th:text="${export.exportStatus}"/>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${export.exportStatus=='승인 완료'}"
+                                                      th:text="${export.exportStatus}"/>
+                                                <span class="status-btn close-btn" th:if="${export.exportStatus=='종료'}"
+                                                      th:text="${export.exportStatus}"/>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- 작업 목록 끝-->
-                    <!-- 자재 부서 전용-->
-                    <!-- 입고 검수 목록-->
-                    <div class="col-lg-7">
-                        <div class="card-style mb-30">
-                            <h6 class="mb-10">현재 입고 검수 중인 목록</h6>
-                            <p class="text-sm mb-20">
-                                최근 5건만 표시됩니다.
-                            </p>
-                            <div class="table-wrapper table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            <h6>#</h6>
-                                        </th>
-                                        <th>
-                                            <h6>품목명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>수량</h6>
-                                        </th>
-                                        <th>
-                                            <h6>업체명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>납기일</h6>
-                                        </th>
-                                        <th>
-                                            <h6>상태</h6>
-                                        </th>
-                                    </tr>
-                                    <!-- end table row-->
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td class="min-width">
-                                            <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>볼턴사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="text-danger">
-                                                    <span class="status-btn active-btn">검수중</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td class="min-width">
-                                            <p>스포크 J밴드240</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>600</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>디씨바이크</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">검수 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            3
-                                        </td>
-                                        <td class="min-width">
-                                            <p>시티 바이시클 40mm패드 무통안장</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>WB사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="text-danger">
-                                                    <span class="status-btn danger-btn">반품중</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            4
-                                        </td>
-                                        <td class="min-width">
-                                            <p>RD-R8150 (12단) di2 뒷변속기</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>시마노</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">검수 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            5
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기자전거 2인자전거 브레이크 케이블</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>cs사</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">검수 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    </tbody>
-                                </table>
+                        <!-- 작업 목록 끝-->
+                    </th:block>
+                    <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
+                        <!-- 자재 부서 전용-->
+                        <!-- 입고 검수 목록-->
+                        <div class="col-lg-7">
+                            <div class="card-style mb-30">
+                                <h6 class="mb-10">현재 입고 검수 중인 목록</h6>
+                                <p class="text-sm mb-20">
+                                    최근 5건만 표시됩니다.
+                                </p>
+                                <div class="table-wrapper table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <h6>#</h6>
+                                            </th>
+                                            <th>
+                                                <h6>품목명</h6>
+                                            </th>
+                                            <th>
+                                                <h6>수량</h6>
+                                            </th>
+                                            <th>
+                                                <h6>업체명</h6>
+                                            </th>
+                                            <th>
+                                                <h6>납기일</h6>
+                                            </th>
+                                            <th>
+                                                <h6>상태</h6>
+                                            </th>
+                                        </tr>
+                                        <!-- end table row-->
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                1
+                                            </td>
+                                            <td class="min-width">
+                                                <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p><a href="#0">100</a></p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>볼턴사</p>
+                                            </td>
+                                            <td class="min-width">
+                                                24.11.12
+                                            </td>
+                                            <td>
+                                                <div class="action">
+                                                    <button class="text-danger">
+                                                        <span class="status-btn active-btn">검수중</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                        <tr>
+                                            <td>
+                                                2
+                                            </td>
+                                            <td class="min-width">
+                                                <p>스포크 J밴드240</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>600</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>디씨바이크</p>
+                                            </td>
+                                            <td class="min-width">
+                                                24.11.9
+                                            </td>
+                                            <td>
+                                                <div class="action">
+                                                    <span class="status-btn success-btn">검수 완료</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                        <tr>
+                                            <td>
+                                                3
+                                            </td>
+                                            <td class="min-width">
+                                                <p>시티 바이시클 40mm패드 무통안장</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p><a href="#0">100</a></p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>WB사</p>
+                                            </td>
+                                            <td class="min-width">
+                                                24.11.12
+                                            </td>
+                                            <td>
+                                                <div class="action">
+                                                    <button class="text-danger">
+                                                        <span class="status-btn danger-btn">반품중</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                        <tr>
+                                            <td>
+                                                4
+                                            </td>
+                                            <td class="min-width">
+                                                <p>RD-R8150 (12단) di2 뒷변속기</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>50</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>시마노</p>
+                                            </td>
+                                            <td class="min-width">
+                                                24.11.9
+                                            </td>
+                                            <td>
+                                                <div class="action">
+                                                    <span class="status-btn success-btn">검수 완료</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                        <tr>
+                                            <td>
+                                                5
+                                            </td>
+                                            <td class="min-width">
+                                                <p>전기자전거 2인자전거 브레이크 케이블</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>50</p>
+                                            </td>
+                                            <td class="min-width">
+                                                <p>cs사</p>
+                                            </td>
+                                            <td class="min-width">
+                                                24.11.9
+                                            </td>
+                                            <td>
+                                                <div class="action">
+                                                    <span class="status-btn success-btn">검수 완료</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- 입고 검수 목록 끝-->
+                        <!-- 입고 검수 목록 끝-->
+                    </th:block>
                     <!-- 협력 업체 전용-->
-                    <!-- 발주 들어온 목록-->
-                    <div class="col-lg-7">
-                        <div class="card-style mb-30">
-                            <h6 class="mb-10">현재 발주 중인 목록</h6>
-                            <p class="text-sm mb-20">
-                                최근 5건만 표시됩니다.
-                            </p>
-                            <div class="table-wrapper table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            <h6>#</h6>
-                                        </th>
-                                        <th>
-                                            <h6>품목명</h6>
-                                        </th>
-                                        <th>
-                                            <h6>수량</h6>
-                                        </th>
-                                        <th>
-                                            <h6>납기일</h6>
-                                        </th>
-                                        <th>
-                                            <h6>진척검수</h6>
-                                        </th>
-                                        <th>
-                                            <h6>상태</h6>
-                                        </th>
-                                    </tr>
-                                    <!-- end table row-->
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td class="min-width">
-                                            <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.12.15
-                                        </td>
-                                        <td class="min-width">
-                                            0/1
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn danger-btn">진척 검수</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td class="min-width">
-                                            <p>스포크 J밴드240</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>600</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td class="min-width">
-                                            2/2
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">납품 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            3
-                                        </td>
-                                        <td class="min-width">
-                                            <p>시티 바이시클 40mm패드 무통안장</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p><a href="#0">100</a></p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.12
-                                        </td>
-                                        <td class="min-width">
-                                            -
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn danger-btn">반품중</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            4
-                                        </td>
-                                        <td class="min-width">
-                                            <p>RD-R8150 (12단) di2 뒷변속기</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.15
-                                        </td>
-                                        <td class="min-width">
-                                            -
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn active-btn">배송중</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    <tr>
-                                        <td>
-                                            5
-                                        </td>
-                                        <td class="min-width">
-                                            <p>전기자전거 2인자전거 브레이크 케이블</p>
-                                        </td>
-                                        <td class="min-width">
-                                            <p>50</p>
-                                        </td>
-                                        <td class="min-width">
-                                            24.11.9
-                                        </td>
-                                        <td class="min-width">
-                                            -
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <span class="status-btn success-btn">납품 완료</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- end table row -->
-                                    </tbody>
-                                </table>
+                    <th:block th:if="${userType=='SUPPLIER'}">
+                        <!-- 발주 들어온 목록-->
+                        <div class="col-lg-7">
+                            <div class="card-style mb-30">
+                                <h6 class="mb-10">현재 발주 중인 목록</h6>
+                                <p class="text-sm mb-20">
+                                    최근 5건만 표시됩니다.
+                                </p>
+                                <div class="table-wrapper table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th class="text-center">
+                                                <h6>품목명</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>수량</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>납기일</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>진척검수</h6>
+                                            </th>
+                                            <th class="text-center">
+                                                <h6>상태</h6>
+                                            </th>
+                                        </tr>
+                                        <!-- end table row-->
+
+                                        <tr th:each="order:${ordersDTOSForSupplier}">
+
+                                            <td class="min-width">
+                                                <p th:text="${order.materialName}"></p>
+                                            </td>
+                                            <td class="min-width text-align-right">
+                                                <p th:text="${order.orderQuantity}"></p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                                <p th:text="${order.expectedDate}"></p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                                <p th:if="${order.materialType=='구매품'}">-</p>
+                                                <p th:if="${order.materialType=='제조품'}">0/1</p>
+                                            </td>
+                                            <td class="min-width text-center">
+                                            <span class="status-btn success-btn"
+                                                  th:if="${order.status=='ON_HOLD'}">대기 중</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${order.status=='APPROVAL'}">승인 완료</span>
+                                                <span class="status-btn close-btn"
+                                                      th:if="${order.status=='FINISHED'}">종료</span>
+                                            </td>
+                                        </tr>
+                                        <!-- end table row -->
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- 발주 들어온 목록 끝-->
+                        <!-- 발주 들어온 목록 끝-->
+                    </th:block>
                 </div>
             </div>
         </section>

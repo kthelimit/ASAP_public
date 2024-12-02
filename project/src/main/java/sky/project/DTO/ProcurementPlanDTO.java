@@ -3,7 +3,9 @@ package sky.project.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,5 +21,7 @@ public class ProcurementPlanDTO {
     private String materialCode; // 자재 코드
     private int procurementQuantity; // 조달 수량
     private LocalDate procurementDueDate; // 조달 완료 예정일
+    private LocalDateTime createdDate;
+    private String status; //조달계획 상태
 }
 

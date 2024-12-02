@@ -2,15 +2,16 @@ package sky.project.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ProcurementPlanDTO;
+import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.ProcurementPlan;
 import sky.project.Repository.ProcurementPlanRepository;
 import sky.project.Service.ProcurementPlanService;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Service
 public class ProcurementPlanServiceImpl implements ProcurementPlanService {
@@ -23,9 +24,16 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return procurementPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
+//    @Override
+//    public List<ProcurementPlan> findAll() {
+//        return procurementPlanRepository.findAll();
+//    }
+
+
     @Override
-    public List<ProcurementPlan> findAll() {
-        return procurementPlanRepository.findAll();
+    public Page<ProcurementPlanDTO> getProcurementPlans(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);  // 페이지 번호는 0부터 시작
+        return procurementPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override
@@ -79,6 +87,16 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 //        procurementPlanRepository.save(plan);
 //    }
 
+    @Override
+    public Page<ProcurementPlanDTO> getProcurementPlans(Pageable pageable){
+        return procurementPlanRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    @Override
+    public int getCountProcurementPlanOnHold(){
+        return procurementPlanRepository.countProcurementPlanByStatusOnHold();
+    }
+
     public String generateProcurementPlanCode(ProcurementPlanDTO dto) {
         // 제품명에 따른 접두어 설정
         String prefix;
@@ -125,6 +143,8 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         dto.setMaterialCode(plan.getMaterialCode());
         dto.setProcurementQuantity(plan.getProcurementQuantity());
         dto.setProcurementDueDate(plan.getProcurementDueDate());
+        dto.setCreatedDate(plan.getCreatedDate());
+        dto.setStatus(plan.getStatus() !=null? plan.getStatus().name() : CurrentStatus.ON_HOLD.name());
         return dto;
     }
 
@@ -143,6 +163,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         plan.setMaterialCode(dto.getMaterialCode());
         plan.setProcurementQuantity(dto.getProcurementQuantity());
         plan.setProcurementDueDate(dto.getProcurementDueDate());
+        plan.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD);
         return plan;
     }
 }

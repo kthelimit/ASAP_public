@@ -24,5 +24,7 @@ public class ProcurementPlan  extends Base{
     private String materialCode;
     private int procurementQuantity;
     private LocalDate procurementDueDate;
+    @Enumerated(EnumType.STRING)
+    private CurrentStatus status;
 }
 

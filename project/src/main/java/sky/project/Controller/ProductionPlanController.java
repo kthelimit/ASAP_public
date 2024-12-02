@@ -10,12 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.BomDTO;
+import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.DTO.ProductionPlanDTO;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Service.BomService;
 import sky.project.Service.MaterialService;
 import sky.project.Service.ProductionPlanService;
 import sky.project.Service.SupplierService;
+import sky.project.ServiceImpl.ProcurementPlanServiceImpl;
 
 import java.util.List;
 
@@ -36,6 +38,8 @@ public class ProductionPlanController {
 
     @Autowired
     private SupplierService supplierService;
+    @Autowired
+    private ProcurementPlanServiceImpl procurementPlanServiceImpl;
 
 
     @GetMapping("/list")
@@ -64,7 +68,6 @@ public class ProductionPlanController {
 
         return "ProductionPlan/ProductPlanList";
     }
-
 
 
     @PostMapping("/save")
@@ -98,10 +101,10 @@ public class ProductionPlanController {
                                          @RequestParam(defaultValue = "2") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam(value = "productCode", required = false) String productCode) {
+                                         @RequestParam(value = "productCode", required = false) String productCode,
+                                         @RequestParam(value = "materialCode", required = false) String materialCode) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ProductionPlanDTO> plans;
-
 
 
         // 생산 계획 목록 조회
@@ -118,7 +121,7 @@ public class ProductionPlanController {
         model.addAttribute("keyword", keyword);
 
         // 선택된 생산 계획 처리
-        if (id != null) { 
+        if (id != null) {
             ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
             model.addAttribute("selectedPlan", selectedPlan);
         }
@@ -135,20 +138,32 @@ public class ProductionPlanController {
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
-
-
-        // 가용 재고 추가
-        if (productCode != null) {
-            int availableStock = materialService.getAvailableStock(productCode);
-            model.addAttribute("availableStock", availableStock);
-        }
-
-
-
         return "/procure/ProcureIndex";
     }
 
 
+    @GetMapping("/procureHistory")
+    public String getProductionPlanHistory(Model model,
+                                           @RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @RequestParam(value = "keyword", required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
+        Page<ProcurementPlanDTO> procurementPlanDTOs;
+        if (keyword != null && !keyword.isEmpty()) {
+            procurementPlanDTOs = procurementPlanServiceImpl.searchProcurementPlans(keyword, pageable);
+        } else {
+            procurementPlanDTOs = procurementPlanServiceImpl.getProcurementPlans(pageable);
+        }
+
+        model.addAttribute("procurementPlans", procurementPlanDTOs.getContent());
+        model.addAttribute("totalPages", procurementPlanDTOs.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+
+
+        return "/procure/ProcureHistory";
+    }
 
     @GetMapping("/bomRegister")
     public String bomRegister() {

@@ -62,7 +62,6 @@ public class InsertDataTest {
         insertAssy(); //조립품 구조 등록
         insertSupplierStocks(); //업체별 관리 재고 등록
 
-
     }
 
 
@@ -100,6 +99,36 @@ public class InsertDataTest {
                 .approved(true)
                 .build();
         supplierRepository.save(supplier);
+
+        User userDEPT1 = User.builder()
+                .userId("dept1")
+                .username("구매부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.PURCHASE_DEPT)
+                .build();
+        userRepository.save(userDEPT1);
+
+        User userDEPT2 = User.builder()
+                .userId("dept2")
+                .username("자재부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.MATERIAL_DEPT)
+                .build();
+        userRepository.save(userDEPT2);
+
+        User userDEPT3 = User.builder()
+                .userId("dept3")
+                .username("생산부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.PRODUCTION_DEPT)
+                .build();
+        userRepository.save(userDEPT3);
 
     }
 
@@ -277,7 +306,7 @@ public class InsertDataTest {
                         .componentType(componentTypes[i - 1])
                         .unitPrice(unitPrices[i - 1])
                         .quantity(quantities[i - 1])
-                        .leadtime(leadtimes[i - 1])
+                        .leadTime(leadtimes[i - 1])
                         .supplier(supplier)
                         .build();
                 materialRepository.save(material);
@@ -386,7 +415,7 @@ public class InsertDataTest {
                         .componentType(componentTypes[i - 1])
                         .unitPrice(unitPrices[i - 1])
                         .quantity(1)
-                        .leadtime(1)
+                        .leadTime(1)
                         .supplier(supplier)
                         .build();
                 materialRepository.save(material);

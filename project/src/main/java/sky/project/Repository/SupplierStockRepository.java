@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import sky.project.Entity.SupplierStock;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SupplierStockRepository extends JpaRepository<SupplierStock, Long> {
 
@@ -13,4 +14,8 @@ public interface SupplierStockRepository extends JpaRepository<SupplierStock, Lo
 
     @Query("select s from SupplierStock s where s.supplier.supplierId =:supplierId")
     List<SupplierStock> findBySupplierId(String supplierId);
+
+    Optional<SupplierStock> findBySupplier_SupplierNameAndMaterial_MaterialName(String supplierName, String materialName);
+
+
 }

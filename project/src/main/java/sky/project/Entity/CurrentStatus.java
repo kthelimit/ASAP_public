@@ -7,5 +7,7 @@ public enum CurrentStatus {
     UNDER_INSPECTION, //검수중
     RETURNED, //반품
     FINISHED,
-    REJECT
+    REJECT,
+    DELIVERED
+
 }

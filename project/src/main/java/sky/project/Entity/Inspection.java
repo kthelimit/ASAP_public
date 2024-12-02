@@ -1,38 +1,48 @@
 package sky.project.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDate;
+
+@Entity
 @Getter
 @Setter
-@Entity
-@Table(name = "Inspection")
-public class Inspection  extends Base{
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "inspection")
+public class Inspection {
 
     @Id
-    @Column(name = "inspection_id", length = 20)
-    private String inspectionId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long inspectionId; // PK
 
-    @Column(nullable = false, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order; // Order 테이블과 연관 관계 (FK)
+
+    @Column(nullable = false)
     private String materialName; // 자재 이름
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String materialCode; // 자재 코드
+    @Column(nullable = false)
+    private String supplierName; // 협력사 이름
 
+    @Column(nullable = false)
+    private Integer inspectionRound; // 검수 차수 (1, 2, 3 등)
 
-    @Column(name = "ordered_quantity", nullable = false)
-    private Integer orderedQuantity;
+    @Column(nullable = false)
+    private Integer inspectionQuantity; // 해당 차수에서 검수된 수량
 
-    @Column(name = "received_quantity", nullable = false)
-    private Integer receivedQuantity;
+    @Column(nullable = false)
+    private Integer remainingQuantity; // 남은 검수 수량
 
-    @Column(name = "accepted_quantity", nullable = false)
-    private Integer acceptedQuantity;
+    @Enumerated(EnumType.STRING)
+    private CurrentStatus status; // 검수 상태 (진행 중, 완료 등)
 
-    @Column(name = "order_id", length = 20, nullable = false)
-    private String orderId;
+    @Column(nullable = false)
+    private LocalDate inspectionDate; // 검수 요청 날짜
 
-    @Column(name = "status", length = 50)
-    private String status;
+    @Column(nullable = false)
+    private LocalDate expectedDelivery; // 예상 납품 날짜
 }

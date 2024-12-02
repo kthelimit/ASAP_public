@@ -12,4 +12,5 @@ public interface SupplierStockService {
 
     List<SupplierStockDTO> findBySupplierId(String supplierId);
 
+
 }

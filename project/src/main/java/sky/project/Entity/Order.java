@@ -41,4 +41,11 @@ public class Order  extends Base{
 
     @Enumerated(EnumType.STRING)
     private CurrentStatus status;
+
+    @Column(name = "required_quantity", nullable = true) // 조달 필요 수량
+    private Integer requiredQuantity;
+
+    @Column(name = "available_stock", nullable = true) // 요청 가능 수량
+    private Integer availableStock;
+
 }

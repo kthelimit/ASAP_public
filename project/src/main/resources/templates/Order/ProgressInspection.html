@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+  <th:block th:fragment="content">
+    <div class="title-wrapper pt-30">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="title">
+            <h2>진척검수 요청 및 납품 지시 요청</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- 첫 번째 카드 -->
+        <div class="col-lg-6">
+          <div class="card-style mb-30">
+            <h3 class="mb-10">발주 승인 부품 (제조품) 진척검수 요청</h3>
+            <div class="search_tab">
+              <input type="text" placeholder="공급사를 입력하세요">
+              <button type="submit">검색</button>
+              <div class="table-wrapper table-responsive">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>발주 번호</th>
+                    <th>공급사</th>
+                    <th>부품 종류</th>
+                    <th>자재 이름</th>
+                    <th>발주일</th>
+                    <th>입고 예정일</th>
+                    <th>수량</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each = "orderM : ${manufacturingOrders}" th:unless="${manufacturingOrders.isEmpty()}" >
+                    <td th:text="${orderM.orderId}"></td>
+                    <td th:text="${orderM.supplierName}"></td>
+                    <td th:text="${orderM.materialType}"></td>
+                    <td th:text="${orderM.materialName}"></td>
+                    <td th:text="${orderM.orderDate}"></td>
+                    <td th:text="${orderM.expectedDate}"></td>
+                    <td th:text="${orderM.orderQuantity}"></td>
+                    <td> <button type="submit">진척검수 요청</button><td>
+                  </tr>
+                  <tr th:if="${manufacturingOrders.isEmpty()}">
+                    <td colspan="8">조회된 제조품이 없습니다.</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="pagination-wrapper">
+                  <ul class="pagination">
+                    <!-- 이전 페이지 버튼 -->
+                    <li th:if="${manufacturingCurrentPage > 1}">
+                      <a th:href="@{/order/inspection(page=${manufacturingCurrentPage - 1}, size=${size})}">&laquo;</a>
+                    </li>
+
+                    <!-- 페이지 번호 버튼 -->
+                    <li th:each="i : ${#numbers.sequence(1, manufacturingTotalPages)}">
+                      <a th:classappend="${i == manufacturingCurrentPage ? 'active' : ''}"
+                         th:href="@{/order/inspection(page=${i}, size=${size})}"
+                         th:text="${i}"></a>
+                    </li>
+
+                    <!-- 다음 페이지 버튼 -->
+                    <li th:if="${manufacturingCurrentPage < manufacturingTotalPages}">
+                      <a th:href="@{/order/inspection(page=${manufacturingCurrentPage + 1}, size=${size})}">&raquo;</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </th:block>
+</th:block>

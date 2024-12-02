@@ -1,5 +1,6 @@
 package sky.project.ServiceImpl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,12 +9,15 @@ import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Order;
+import sky.project.Entity.SupplierStock;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
+import sky.project.Repository.SupplierStockRepository;
 import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -26,6 +30,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private SupplierStockRepository supplierStockRepository;
 
     @Override
     public void registerOrder(OrdersDTO ordersDTO) {
@@ -56,6 +63,43 @@ public class OrderServiceImpl implements OrderService {
                 .map(this::toDTO);
     }
 
+    @Transactional
+    @Override
+    public OrdersDTO processDeliveryRequest(Long orderId, int requestedQuantity) {
+        // 엔티티 조회
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        // DTO를 생성하여 작업 (엔티티 값이 없으면 계산)
+        OrdersDTO orderDTO = toDTO(order);
+
+        // 요청 가능 수량 및 필요 수량 확인
+        if (requestedQuantity > orderDTO.getAvailableStock()) {
+            throw new IllegalArgumentException("요청 수량이 요청 가능 수량을 초과할 수 없습니다.");
+        }
+        if (requestedQuantity > orderDTO.getRequiredQuantity()) {
+            throw new IllegalArgumentException("요청 수량이 필요 조달 수량을 초과할 수 없습니다.");
+        }
+
+        // 값 업데이트
+        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
+        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
+
+        // 엔티티 업데이트 (DB에 반영)
+        order.setAvailableStock(newAvailableStock);
+        order.setRequiredQuantity(newRequiredQuantity);
+
+        // 상태 업데이트
+        if (newRequiredQuantity == 0) {
+            order.setStatus(CurrentStatus.FINISHED);
+        }
+
+        // 변경된 엔티티 저장
+        orderRepository.save(order);
+
+        // 갱신된 엔티티를 기반으로 DTO 반환
+        return toDTO(order);
+    }
     @Override
     public void updateOrderStatus(Long orderId, CurrentStatus status) {
         // 주문 상태 업데이트
@@ -77,16 +121,30 @@ public class OrderServiceImpl implements OrderService {
         return orders.map(order -> toDTO(order));
     }
 
-    // Order -> OrdersDTO 변환
+    @Override
+    public Page<OrdersDTO> findByStatus(String status, Pageable pageable) {
+        // String을 CurrentStatus로 변환
+        CurrentStatus currentStatus = CurrentStatus.valueOf(status.toUpperCase());
+
+        // Repository 호출
+        Page<Order> orders = orderRepository.findByStatus(currentStatus, pageable);
+
+        // 엔티티를 DTO로 변환
+        return orders.map(order -> toDTO(order));
+    }
+
+
     private OrdersDTO toDTO(Order order) {
         if (order == null) return null;
 
-        // MaterialType 조회
+        // 기존 엔티티 값 사용 또는 계산
+        int requiredQuantity = order.getRequiredQuantity() != null ? order.getRequiredQuantity() : order.getOrderQuantity();
+        int availableStock = order.getAvailableStock() != null ? order.getAvailableStock() : calculateAvailableStock(order);
+
         String materialType = materialRepository.findFirstByMaterialName(order.getMaterialName())
                 .map(Material::getMaterialType)
                 .orElse("정보 없음");
 
-        // 엔티티 -> DTO 변환
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
@@ -95,10 +153,32 @@ public class OrderServiceImpl implements OrderService {
                 .supplierName(order.getSupplierName())
                 .materialName(order.getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
+                .requiredQuantity(requiredQuantity) //필요 조달 수량
                 .totalPrice(order.getTotalprice())
-                .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name()) // 기본값 설정
+                .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
                 .materialType(materialType)
+                .availableStock(availableStock) // 요청 가능 수량
                 .build();
+    }
+
+    // 추가: `availableStock` 계산 로직
+    private int calculateAvailableStock(Order order) {
+
+        List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
+
+
+        int totalApprovedQuantity = orderRepository.findApprovedQuantity(
+                order.getSupplierName(),
+                order.getMaterialName(),
+                statuses
+        )-order.getOrderQuantity();
+
+        int totalStock = supplierStockRepository.findBySupplier_SupplierNameAndMaterial_MaterialName(
+                        order.getSupplierName(), order.getMaterialName())
+                .map(SupplierStock::getStock)
+                .orElse(0);
+
+        return totalStock - totalApprovedQuantity;
     }
 
     // OrdersDTO -> Order 변환

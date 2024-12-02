@@ -23,4 +23,7 @@ public class SupplierStock {
     private Supplier supplier;
 
     private int stock; //재고
+
+
+
 }

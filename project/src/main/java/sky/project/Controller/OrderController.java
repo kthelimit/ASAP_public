@@ -8,16 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sky.project.DTO.DeliveryRequestDTO;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
 import sky.project.Entity.Order;
-import sky.project.Service.MaterialService;
-import sky.project.Service.OrderService;
-import sky.project.Service.ProcurementPlanService;
-import sky.project.Service.SupplierService;
+import sky.project.Service.*;
 
 import java.time.LocalDate;
 
@@ -37,6 +36,9 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    DeliveryRequestService deliveryRequestService;
 
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
@@ -134,7 +136,80 @@ public class OrderController {
     public String progressPage(
             Model model,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "1") int completedPage,
+            @RequestParam(defaultValue = "10") int completedSize,
+            @RequestParam(defaultValue = "1") int deliveryPage,
+            @RequestParam(defaultValue = "10") int deliverySize,
+            @ModelAttribute("updatedOrder") OrdersDTO updatedOrderDTO) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize);
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize);
+
+        // 처리 중인 주문 조회
+        Page<OrdersDTO> purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);
+
+        // 처리 완료된 주문 조회
+        Page<OrdersDTO> completedOrders = orderService.findByStatus(CurrentStatus.FINISHED.name(), completedPageable);
+
+        // 납입 요청 조회
+        Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);
+
+        // 최신 데이터 전달
+        model.addAttribute("purchaseOrders", purchaseOrders.getContent());
+        model.addAttribute("purchaseTotalPages", purchaseOrders.getTotalPages());
+        model.addAttribute("purchaseCurrentPage", page);
+
+        // 처리 완료된 주문 데이터 전달
+        model.addAttribute("completedOrders", completedOrders.getContent());
+        model.addAttribute("completedTotalPages", completedOrders.getTotalPages());
+        model.addAttribute("completedCurrentPage", completedPage);
+
+        // 납입 요청 데이터 전달
+        model.addAttribute("deliveryRequests", deliveryRequests.getContent());
+        model.addAttribute("deliveryTotalPages", deliveryRequests.getTotalPages());
+        model.addAttribute("deliveryCurrentPage", deliveryPage);
+
+        // 갱신된 주문 전달
+        if (updatedOrderDTO != null) {
+            model.addAttribute("updatedOrder", updatedOrderDTO);
+        }
+
+        return "/Order/DeliveryOrder";
+    }
+
+    @PostMapping("/delivery/request")
+    public String requestDelivery(
+            @RequestParam Long orderId,
+            @RequestParam int requestedQuantity,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            // 요청 처리 및 최신 DTO 반환
+            OrdersDTO updatedOrderDTO = orderService.processDeliveryRequest(orderId, requestedQuantity);
+
+            // DeliveryRequest 테이블에 요청 기록 저장
+            deliveryRequestService.createRequest(orderId, requestedQuantity);
+
+            // 성공 메시지 전달
+            redirectAttributes.addFlashAttribute("success", "납입 요청이 성공적으로 처리되었습니다.");
+            redirectAttributes.addFlashAttribute("updatedOrder", updatedOrderDTO); // 최신 DTO 전달
+        } catch (IllegalArgumentException e) {
+            // 에러 메시지 전달
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        // 요청 후 리디렉션 처리 (DTO는 리디렉션 이후 갱신된 값 전달)
+        return "redirect:/order/delivery";
+    }
+
+
+
+    @GetMapping("/inspection")
+    public String inspectionRequest(Model model,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size){
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -143,27 +218,16 @@ public class OrderController {
                 "제조품", CurrentStatus.APPROVAL.name(), pageable);
         System.out.println("제조품 내역확인"+manufacturingOrders.getContent());
 
-        // 구매품 조회
-        Page<OrdersDTO> purchaseOrders = orderService.findByMaterialTypeAndStatus(
-                "구매품", CurrentStatus.APPROVAL.name(), pageable);
-
         // 제조품 데이터 추가
         model.addAttribute("manufacturingOrders", manufacturingOrders.getContent());
         model.addAttribute("manufacturingTotalPages", manufacturingOrders.getTotalPages());
         model.addAttribute("manufacturingCurrentPage", page);
 
-        // 구매품 데이터 추가
-        model.addAttribute("purchaseOrders", purchaseOrders.getContent());
-        model.addAttribute("purchaseTotalPages", purchaseOrders.getTotalPages());
-        model.addAttribute("purchaseCurrentPage", page);
 
-        return "/Order/DeliveryOrder";
+        return "/Order/ProgressInspection";
     }
 
-    @GetMapping("/inspectionrequest")
-    public String inspectionRequest(@RequestParam Long orderId){
-        orderService.updateOrderStatus(orderId, CurrentStatus.IN_PROGRESS);
-        return "redirect:/order/delivery";
-    }
+
+
 
 }

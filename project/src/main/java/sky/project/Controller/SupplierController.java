@@ -12,10 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
-import sky.project.Service.OrderService;
-import sky.project.Service.ProductService;
-import sky.project.Service.SupplierService;
-import sky.project.Service.SupplierStockService;
+import sky.project.Service.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +34,9 @@ public class SupplierController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private DeliveryRequestService deliveryRequestService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -169,7 +169,9 @@ public class SupplierController {
             @SessionAttribute(name = "user", required = false) UserDTO user,
             Model model,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "1") int deliveryPage,
+            @RequestParam(defaultValue = "5") int deliverySize) {
 
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
@@ -188,6 +190,10 @@ public class SupplierController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<OrdersDTO> orderRequests = orderService.findOrdersBySupplier(supplierName, pageable);
 
+        // supplierName으로 DeliveryRequestDTO 가져오기
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize);
+        Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findRequestsBySupplier(supplierName, deliveryPageable);
+
         // Thymeleaf에 데이터 추가
         model.addAttribute("orderRequests", orderRequests.getContent());
         model.addAttribute("totalOrderPages", orderRequests.getTotalPages());
@@ -196,10 +202,14 @@ public class SupplierController {
         // SupplierStocks 데이터 추가
         model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
 
-        // 출고 요청 관리 테이블 추가
+        // DeliveryRequests 데이터 추가
+        model.addAttribute("deliveryRequests", deliveryRequests.getContent());
+        model.addAttribute("deliveryTotalPages", deliveryRequests.getTotalPages());
+        model.addAttribute("deliveryCurrentPage", deliveryPage);
 
         return "Supplier/SupplierPage";
     }
+
 
     @PostMapping("/orders/approve")
     public String approveOrder(@RequestParam Long orderId) {

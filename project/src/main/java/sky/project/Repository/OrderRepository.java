@@ -11,6 +11,7 @@ import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Order;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -24,6 +25,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                             Pageable pageable);
 
 
+    Page<Order> findByStatus(CurrentStatus status, Pageable pageable);
+
     //대시보드 출력용 이번달 발주 건수
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
     int countOrderThisMonth(LocalDateTime start, LocalDateTime end);
@@ -31,5 +34,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     //대시보드 출력용 업체에 들어온 발주 건수
     @Query("select count(o) from Order o where o.status= 'ON_HOLD' and o.supplierName=:supplierName")
     int countOrderBySupplierName(String supplierName);
+
+
+    @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o " +
+            "WHERE o.supplierName = :supplierName AND o.materialName = :materialName " +
+            "AND o.status IN (:statuses)")
+    int findApprovedQuantity(@Param("supplierName") String supplierName,
+                             @Param("materialName") String materialName,
+                             @Param("statuses") List<CurrentStatus> statuses);
+
+
 }
 

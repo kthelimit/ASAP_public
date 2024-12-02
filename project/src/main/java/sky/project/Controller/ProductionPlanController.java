@@ -147,7 +147,7 @@ public class ProductionPlanController {
                                            @RequestParam(defaultValue = "1") int page,
                                            @RequestParam(defaultValue = "10") int size,
                                            @RequestParam(value = "keyword", required = false) String keyword) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
         Page<ProcurementPlanDTO> procurementPlanDTOs;
         if (keyword != null && !keyword.isEmpty()) {
             procurementPlanDTOs = procurementPlanServiceImpl.searchProcurementPlans(keyword, pageable);

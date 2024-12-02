@@ -235,7 +235,7 @@
                                     <table class="table striped-table">
                                         <tbody>
                                         <tr th:each="bom : ${selectedBom}"
-                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - availableStock) > 0}">
+                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">
                                             <td style="width: 130px" >
                                                 <div class="select-style-1" style="width: 120px; height: 10px">
                                                     <div class="select-position">
@@ -272,11 +272,11 @@
                                                             style="padding: 6px"
                                                             th:attr="
                                             data-bom-id=${bom.bomId},
-                                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - availableStock : 0},
+                                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock : 0},
                                             data-material-name=${bom.materialName},
                                             data-required-quantity=${bom.requireQuantity * selectedPlan.productionQuantity},
                                             data-product-code=${bom.productCode},
-                                            data-available-stock=${availableStock},
+                                            data-available-stock=${bom.availableStock},
                                             data-product-name=${selectedPlan.productName},
                                             data-production-plan-code=${selectedPlan.productionPlanCode},
                                             data-material-code=${bom.materialCode}"

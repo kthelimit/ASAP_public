@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>메인화면</title>
+</head>
+<body>
+<h1>메인입니당 엑셀 업로드 테스트~</h1>
+<form th:action="@{/sample/addExcel}" method="POST" enctype="multipart/form-data">
+    <input type="file" th:name="file">
+    <input th:type="submit" value="업로드 !" />
+</form>
+</body>
+
+</html>

@@ -80,7 +80,7 @@
                                     <td class="min-width text-align-right"><p th:text="${material.unitPrice}"></p></td>
                                     <td class="min-width text-align-right"><p th:text="${material.quantity}"></p></td>
                                     <td class="min-width text-center"><p th:text="${material.supplierName}"></p></td>
-                                    <td class="min-width text-align-right"><p th:text="${material.leadtime}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${material.leadTime}"></p></td>
                                     <td><img alt="이미지" class="thumbnail" style="width: 50px; height: 50px;"
                                              th:if="${material.imageUrl!=null}"
                                              th:src="${material.imageUrl}"/></td>
@@ -223,8 +223,8 @@
                                         </div>
                                     </div>
                                     <div class="input-style-1 form-group col-lg-6">
-                                        <label for="leadtime">leadtime</label>
-                                        <input id="leadtime" placeholder="기간(일) 을 입력하세요" required th:field="*{leadtime}"
+                                        <label for="leadTime">leadTime</label>
+                                        <input id="leadTime" placeholder="기간(일) 을 입력하세요" required th:field="*{leadTime}"
                                                type="text"/>
                                     </div>
                                 </div>

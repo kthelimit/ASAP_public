@@ -15,4 +15,10 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
 
     @Query("SELECT COUNT(p) FROM ProcurementPlan p WHERE p.procurePlanCode LIKE CONCAT(:prefix, '%')")
     Long countByPrefix(String prefix);
+
+    @Query("select p from ProcurementPlan p where p.procurePlanCode =:procurePlanCode")
+    ProcurementPlan findByProcurePlanCode(String procurePlanCode);
+
+    @Query("select count (p) from ProcurementPlan p where p.status='ON_HOLD'")
+    int countProcurementPlanByStatusOnHold();
 }

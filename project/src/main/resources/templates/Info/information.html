@@ -28,37 +28,18 @@
 
             <div class="tables-wrapper">
                 <div class="row">
-                    <!--생산계획코드 설명-->
-                    <div class="col-lg-6">
-                        <div class="card-style mb-30">
-                            <h6 class="mb-10">생산계획코드</h6>
-                            <table class="table">
-                                <tr>
-                                    <th><h6>분류</h6></th>
-                                    <th><h6>제품</h6></th>
-                                    <th><h6>생산등록년월</h6></th>
-                                    <th><h6>일련번호</h6></th>
-                                </tr>
-                                <tr>
-                                    <td style="vertical-align: top">PDP - production plan</td>
-                                    <td style="vertical-align: top">
-                                        <ul>
-                                            <li>BA - 전기자전거A</li>
-                                            <li>BB - 전기자전거B</li>
-                                            <li>KB - 전동킥보드</li>
-                                        </ul>
-                                    </td>
-                                    <td style="vertical-align: top">2401</td>
-                                    <td style="vertical-align: top">001</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- 생산계획코드 종료 -->
                     <!-- 자재코드 설명 -->
                     <div class="col-lg-6">
                         <div class="card-style mb-30">
-                            <h6 class="mb-10">자재/상품코드</h6>
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-6">
+                                    <h3 class="mb-10">자재/상품코드</h3>
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>예시코드</label>
+                                    <input type="text" readonly value="MATWHMAT001">
+                                </div>
+                            </div>
                             <table class="table">
                                 <tr>
                                     <th><h6>분류</h6></th>
@@ -80,17 +61,174 @@
                                             <li>K1~2 - 킥보드 조립</li>
                                         </ul>
                                     </td>
-                                    <td style="vertical-align: top"> <ul>
-                                        <li>MAT - 원자재</li>
-                                        <li>SEM - 반제품(조립품)</li>
-                                        <li>FIN - 완제품</li>
-                                    </ul></td>
+                                    <td style="vertical-align: top">
+                                        <ul>
+                                            <li>MAT - 원자재</li>
+                                            <li>SEM - 반제품(조립품)</li>
+                                            <li>FIN - 완제품</li>
+                                        </ul>
+                                    </td>
                                     <td style="vertical-align: top">001</td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                     <!-- 자재코드 종료 -->
+                    <!-- 조달계획코드 설명 -->
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-6">
+                                    <h3 class="mb-10">조달계획코드</h3>
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>예시코드</label>
+                                    <input type="text" readonly value="PCPWH2411001">
+                                </div>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <th><h6>분류</h6></th>
+                                    <th><h6>공정</h6></th>
+                                    <th><h6>등록년월</h6></th>
+                                    <th><h6>일련번호</h6></th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top">PCP - procurement plan</td>
+                                    <td style="vertical-align: top">
+                                        <ul>
+                                            <li>WH - 바퀴 조립</li>
+                                            <li>RI - 림 조립</li>
+                                            <li>HA - 핸들 조립</li>
+                                            <li>SA - 안장 조립</li>
+                                            <li>PE - 페달 조립</li>
+                                            <li>BO - 바디 조립</li>
+                                            <li>B1~3 - 자전거 조립</li>
+                                            <li>K1~2 - 킥보드 조립</li>
+                                        </ul>
+                                    </td>
+                                    <td style="vertical-align: top">2401</td>
+                                    <td style="vertical-align: top">001</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 조달계획코드 종료 -->
+                    <!-- 입고코드 설명 -->
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-6">
+                                    <h3 class="mb-10">입고코드</h3>
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>예시코드</label>
+                                    <input type="text" readonly value="IMPWH2411001">
+                                </div>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <th><h6>분류</h6></th>
+                                    <th><h6>공정</h6></th>
+                                    <th><h6>등록년월</h6></th>
+                                    <th><h6>일련번호</h6></th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top">IMP - import</td>
+                                    <td style="vertical-align: top">
+                                        <ul>
+                                            <li>WH - 바퀴 조립</li>
+                                            <li>RI - 림 조립</li>
+                                            <li>HA - 핸들 조립</li>
+                                            <li>SA - 안장 조립</li>
+                                            <li>PE - 페달 조립</li>
+                                            <li>BO - 바디 조립</li>
+                                            <li>B1~3 - 자전거 조립</li>
+                                            <li>K1~2 - 킥보드 조립</li>
+                                        </ul>
+                                    </td>
+                                    <td style="vertical-align: top">2401</td>
+                                    <td style="vertical-align: top">001</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 입고코드 종료 -->
+                    <!-- 출고코드 설명 -->
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-6">
+                                    <h3 class="mb-10">출고코드</h3>
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>예시코드</label>
+                                    <input type="text" readonly value="EXPWH2411001">
+                                </div>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <th><h6>분류</h6></th>
+                                    <th><h6>공정</h6></th>
+                                    <th><h6>등록년월</h6></th>
+                                    <th><h6>일련번호</h6></th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top">EXP - export</td>
+                                    <td style="vertical-align: top">
+                                        <ul>
+                                            <li>WH - 바퀴 조립</li>
+                                            <li>RI - 림 조립</li>
+                                            <li>HA - 핸들 조립</li>
+                                            <li>SA - 안장 조립</li>
+                                            <li>PE - 페달 조립</li>
+                                            <li>BO - 바디 조립</li>
+                                            <li>B1~3 - 자전거 조립</li>
+                                            <li>K1~2 - 킥보드 조립</li>
+                                        </ul>
+                                    </td>
+                                    <td style="vertical-align: top">2401</td>
+                                    <td style="vertical-align: top">001</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 출고코드 종료 -->
+                    <!--생산계획코드 설명-->
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <div class="row" style="justify-content: space-between">
+                                <div class="col-lg-6">
+                                    <h3 class="mb-10">생산계획코드</h3>
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>예시코드</label>
+                                    <input type="text" readonly value="PDPBA2411001">
+                                </div>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <th><h6>분류</h6></th>
+                                    <th><h6>제품</h6></th>
+                                    <th><h6>등록년월</h6></th>
+                                    <th><h6>일련번호</h6></th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top">PDP - production plan</td>
+                                    <td style="vertical-align: top">
+                                        <ul>
+                                            <li>BA - 전기자전거A</li>
+                                            <li>BB - 전기자전거B</li>
+                                            <li>KB - 전동킥보드</li>
+                                        </ul>
+                                    </td>
+                                    <td style="vertical-align: top">2401</td>
+                                    <td style="vertical-align: top">001</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 생산계획코드 종료 -->
                 </div>
             </div>
         </div>

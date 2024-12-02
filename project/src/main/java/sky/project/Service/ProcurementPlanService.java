@@ -19,6 +19,10 @@ public interface ProcurementPlanService {
 
     ProcurementPlan save(ProcurementPlan procurementPlan);
 
+    Page<ProcurementPlanDTO> getProcurementPlans(Pageable pageable);
+
+    int getCountProcurementPlanOnHold();
+
     String generateProcurementPlanCode(ProcurementPlanDTO dto);
 
 //    List<ProcurementPlan> findAll();

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.ProcurementPlanDTO;
+import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.ProcurementPlan;
 import sky.project.Service.ProcurementPlanService;
 import sky.project.response.CustomErrorResponse;
@@ -49,6 +50,7 @@ public class ProcurementPlanController {
             procurementPlan.setProductCode(procurementPlanDTO.getProductCode());
             procurementPlan.setProductionPlanCode(procurementPlanDTO.getProductionPlanCode());
             procurementPlan.setProcurePlanCode(procurementPlanDTO.getProcurePlanCode());
+            procurementPlan.setStatus(CurrentStatus.ON_HOLD);
 
             // DB에 저장
             procurementPlanService.save(procurementPlan);

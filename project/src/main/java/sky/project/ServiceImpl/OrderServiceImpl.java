@@ -8,8 +8,10 @@ import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Order;
+import sky.project.Entity.ProcurementPlan;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
+import sky.project.Repository.ProcurementPlanRepository;
 import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
@@ -29,12 +31,21 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private MaterialRepository materialRepository;
 
+    @Autowired
+    private ProcurementPlanRepository procurementPlanRepository;
+
     @Override
     public void registerOrder(OrdersDTO ordersDTO) {
         // DTO -> 엔티티 변환 및 저장
         Order order = toEntity(ordersDTO);
+
         //발주서 코드 설정
         order.setOrderCode(generateOrderCode(ordersDTO));
+
+        //조달계획 상태 변경(ON_HOLD->IN_PROGRESS)
+        ProcurementPlan plan = procurementPlanRepository.findByProcurePlanCode(ordersDTO.getProcurePlanCode());
+        plan.setStatus(CurrentStatus.IN_PROGRESS);
+        procurementPlanRepository.save(plan);
 
         order.setStatus(CurrentStatus.ON_HOLD); // 기본 상태 설정
         orderRepository.save(order);
@@ -199,6 +210,7 @@ public class OrderServiceImpl implements OrderService {
         LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
         return orderRepository.countOrderBySupplierName(supplierName, start, end);
     }
+
     //대시보드 출력용 업체에 들어온 새 발주 건수(승인 전)
     @Override
     public int getCountOrderBySupplierOnHOLD(String supplierName) {

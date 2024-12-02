@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import sky.project.DTO.ExportDTO;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.UserDTO;
-import sky.project.Service.ExportService;
-import sky.project.Service.OrderService;
-import sky.project.Service.ProductionPlanService;
-import sky.project.Service.SupplierService;
+import sky.project.Service.*;
 
 import java.util.List;
 
@@ -30,6 +27,9 @@ public class DashboardController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    ProcurementPlanService procurementPlanService;
 
     @RequestMapping("/info")
     public String info(Model model) {
@@ -94,9 +94,8 @@ public class DashboardController {
         int countExportFinished = exportService.getCountFinishedRequestThisMonth();
         model.addAttribute("countExportFinished", countExportFinished);
 
-        // ★조달계획에 상태 추가해서 아직 발주 안 된 녀석들의 갯수를 세어와야함.
         //발주하지 않은 조달계획 수
-        int countProcurementPlanNotYet = 1;
+        int countProcurementPlanNotYet = procurementPlanService.getCountProcurementPlanOnHold();
         model.addAttribute("countProcurementPlanNotYet", countProcurementPlanNotYet);
 
         //업체용 새 발주 건수

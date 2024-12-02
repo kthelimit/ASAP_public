@@ -180,7 +180,7 @@ public class MaterialController {
                                  @RequestParam(value = "type2", required = false) String type2,
                                  @RequestParam(value = "keyword2", required = false) String keyword2) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Pageable pageable2 = PageRequest.of(page2 - 1, size2);
+        Pageable pageable2 = PageRequest.of(page2 - 1, size2, Sort.by("exportId"));
 
         Page<StockDTO> stocks;
 

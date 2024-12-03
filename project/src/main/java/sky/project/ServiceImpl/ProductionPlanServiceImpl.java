@@ -26,6 +26,11 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     }
 
     @Override
+    public List<ProductionPlan> getProductionPlans() {
+        return productionPlanRepository.findAll();
+    }
+
+    @Override
     public Page<ProductionPlanDTO> searchProductionPlans(String keyword, Pageable pageable) {
         Page<ProductionPlan> productionPlansPage = productionPlanRepository.findByProductNameContaining(keyword, pageable);
         return productionPlansPage.map(this::toDTO);
@@ -35,10 +40,19 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     public void registerProductionPlan(ProductionPlanDTO productionPlanDTO) {
         ProductionPlan plan = toEntity(productionPlanDTO);
 
-        // 생산 계획 코드 생성 로직 추가
-        String productionPlanCode = generateProductionPlanCode(productionPlanDTO);
-        plan.setProductionPlanCode(productionPlanCode);
-
+        //만약 생산계획 코드가 없는 경우(새로 입력된 것인 경우)
+        if (productionPlanDTO.getProductionPlanCode() == null) {
+            // 생산 계획 코드 생성 로직 추가
+            String productionPlanCode = generateProductionPlanCode(productionPlanDTO);
+            plan.setProductionPlanCode(productionPlanCode);
+        } else { //생산 계획 코드가 있는 경우 덮어쓰기한다.
+            plan = productionPlanRepository.findByProductionPlanCode(productionPlanDTO.getProductionPlanCode());
+            plan.setProductName(productionPlanDTO.getProductName());
+            plan.setProductCode(productionPlanDTO.getProductCode());
+            plan.setProductionQuantity(productionPlanDTO.getProductionQuantity());
+            plan.setProductionStartDate(productionPlanDTO.getProductionStartDate());
+            plan.setProductionEndDate(productionPlanDTO.getProductionEndDate());
+        }
         productionPlanRepository.save(plan);
     }
 

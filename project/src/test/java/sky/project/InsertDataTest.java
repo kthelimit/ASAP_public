@@ -10,6 +10,7 @@ import sky.project.DTO.SupplierStockDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.*;
 import sky.project.Service.AssyService;
+import sky.project.Service.ProductionPlanService;
 import sky.project.Service.StockService;
 import sky.project.Service.SupplierStockService;
 
@@ -44,6 +45,9 @@ public class InsertDataTest {
 
     @Autowired
     private SupplierStockService supplierStockService;
+
+    @Autowired
+    private ProductionPlanService productionPlanService;
 
 
     @Test
@@ -534,7 +538,7 @@ public class InsertDataTest {
 
     //업체별 자재 재고
     @Test
-    public void insertSupplierStocks(){
+    public void insertSupplierStocks() {
 
         String[] materialCodes = {"MATB3MAT001", "MATB3MAT002", "MATK2MAT001", "MATB2MAT001", "MATB2MAT002", "MATHAMAT001",
                 "MATBOMAT001", "MATWHMAT001", "MATWHMAT002", "MATWHMAT003", "MATRIMAT001", "MATRIMAT002", "MATK1MAT001",
@@ -573,5 +577,4 @@ public class InsertDataTest {
 
 
     }
-
 }

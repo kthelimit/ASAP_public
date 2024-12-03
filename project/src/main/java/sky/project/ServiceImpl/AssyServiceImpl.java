@@ -61,6 +61,12 @@ public class AssyServiceImpl implements AssyService {
         return requiredQuantityForAssy - totalExportRequestQuantity;
     }
 
+    @Override
+    public List<Assy> getAssys(){
+        return assyRepository.findAll();
+    }
+
+
     public Assy dtoToEntity(AssyDTO dto) {
         Material material;
         Material assyMaterial;

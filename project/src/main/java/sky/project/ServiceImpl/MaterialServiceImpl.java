@@ -30,23 +30,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
+    private final String uploadDir = "C:/uploads/Images/";
     @Autowired
     StockRepository stockRepository;
-
     @Autowired
     StockService stockService;
-
     @Autowired
     MaterialRepository materialRepository;
-
     @Autowired
     SupplierRepository supplierRepository;
-
     @Autowired
     AssyRepository assyRepository;
-
-
-    private final String uploadDir = "C:/uploads/Images/";
 
     @Override
     public Page<MaterialDTO> getMaterials(Pageable pageable) {
@@ -62,27 +56,27 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public void registerMaterial(MaterialDTO materialDTO, MultipartFile imageFile) {
-        Material material = new Material();
-        material.setMaterialName(materialDTO.getMaterialName());
-        material.setMaterialCode(materialDTO.getMaterialCode());
-        material.setMaterialType(materialDTO.getMaterialType());
-        material.setComponentType(materialDTO.getComponentType());
-        material.setUnitPrice(materialDTO.getUnitPrice());
-        material.setQuantity(materialDTO.getQuantity());
-        material.setWidth(materialDTO.getWidth());
-        material.setHeight(materialDTO.getHeight());
-        material.setDepth(materialDTO.getDepth());
-        material.setWeight(materialDTO.getWeight());
-        material.setLeadTime(materialDTO.getLeadTime());
+        Material material;
+        //만약 해당 자재 코드가 이미 존재하는 경우, 덮어쓴다.
+        if (materialRepository.findByMaterialCode(materialDTO.getMaterialCode()).isPresent()) {
+            material = materialRepository.findByMaterialCode(materialDTO.getMaterialCode()).get();
+            material.setMaterialName(materialDTO.getMaterialName());
+            material.setMaterialType(materialDTO.getMaterialType());
+            material.setComponentType(materialDTO.getComponentType());
+            material.setUnitPrice(materialDTO.getUnitPrice());
+            material.setQuantity(materialDTO.getQuantity());
+            material.setWidth(materialDTO.getWidth());
+            material.setHeight(materialDTO.getHeight());
+            material.setDepth(materialDTO.getDepth());
+            material.setWeight(materialDTO.getWeight());
+            material.setLeadTime(materialDTO.getLeadTime());
 
-        // Supplier 설정
-        Supplier supplier = supplierRepository.findById(materialDTO.getSupplierId())
-                .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
-        material.setSupplier(supplier);
-
-        // 이미지 처리
-        material.setImageUrl(handleImageUpload(imageFile));
-
+        } else {
+            material = toEntity(materialDTO);
+        }
+        if (imageFile != null) {
+            material.setImageUrl(handleImageUpload(imageFile));
+        }
         materialRepository.save(material);
     }
 
@@ -110,6 +104,33 @@ public class MaterialServiceImpl implements MaterialService {
                 .supplierName(material.getSupplier().getSupplierName())
                 .leadTime(material.getLeadTime())
                 .build();
+    }
+
+    private Material toEntity(MaterialDTO materialDTO) {
+        Supplier supplier;
+        if (materialDTO.getSupplierId() == null) {
+            supplier = supplierRepository.findBySupplierName(materialDTO.getSupplierName());
+        } else {
+            // Supplier 설정
+            supplier = supplierRepository.findById(materialDTO.getSupplierId())
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
+        }
+
+        Material material = Material.builder()
+                .materialName(materialDTO.getMaterialName())
+                .materialCode(materialDTO.getMaterialCode())
+                .materialType(materialDTO.getMaterialType())
+                .componentType(materialDTO.getComponentType())
+                .unitPrice(materialDTO.getUnitPrice())
+                .quantity(materialDTO.getQuantity())
+                .width(materialDTO.getWidth())
+                .height(materialDTO.getHeight())
+                .depth(materialDTO.getDepth())
+                .weight(materialDTO.getWeight())
+                .leadTime(materialDTO.getLeadTime())
+                .supplier(supplier)
+                .build();
+        return material;
     }
 
     private String handleImageUpload(MultipartFile imageFile) {
@@ -155,9 +176,9 @@ public class MaterialServiceImpl implements MaterialService {
     public int getAvailableStock(String materialCode) {
         // 자재 코드에 매칭되는 재고 정보 조회
         Stock stock = stockRepository.findByMaterialCode(materialCode);
-        if(stock!=null){
+        if (stock != null) {
             return stockService.calculateAvailableStock(stock);
-        }else return 0;
+        } else return 0;
     }
 
 //    @Override
@@ -167,15 +188,15 @@ public class MaterialServiceImpl implements MaterialService {
 //    }
 
     @Override
-   public List<MaterialDTO>  findByMaterialType(String materialType){
-       List<Material> materialList =materialRepository.findByMaterialType(materialType);
-       List<MaterialDTO> materialDTOList = new ArrayList<>();
+    public List<MaterialDTO> findByMaterialType(String materialType) {
+        List<Material> materialList = materialRepository.findByMaterialType(materialType);
+        List<MaterialDTO> materialDTOList = new ArrayList<>();
 
-       materialList.forEach(material -> {
-           materialDTOList.add(toDTO(material));
-       });
-       return materialDTOList;
-   }
+        materialList.forEach(material -> {
+            materialDTOList.add(toDTO(material));
+        });
+        return materialDTOList;
+    }
 
     @Override
     public List<MaterialDTO> findAssyMaterialByProductCode(String productCode) {
@@ -196,6 +217,10 @@ public class MaterialServiceImpl implements MaterialService {
         return materials.get(0); // 항상 한 가지 값만 있다고 가정
     }
 
+    @Override
+    public List<Material> getMaterials() {
+        return materialRepository.findAll();
+    }
 
 
 }

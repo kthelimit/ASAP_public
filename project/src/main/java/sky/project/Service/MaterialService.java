@@ -24,4 +24,6 @@ public interface MaterialService {
     int getAvailableStock(String materialCode);
 
     Material getMaterialByName(String materialName);
+
+    List<Material> getMaterials();
 }

@@ -1,15 +1,32 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>메인화면</title>
+    <meta charset="utf-8" content="upgrade-insecure-requests" http-equiv="Content-Security-Policy">
+    <title>Excel SHOW TEST</title>
+    <link href="/css/showExcel.css" rel="stylesheet"/>
 </head>
+
 <body>
-<h1>메인입니당 엑셀 업로드 테스트~</h1>
-<form th:action="@{/sample/addExcel}" method="POST" enctype="multipart/form-data">
-    <input type="file" th:name="file">
-    <input th:type="submit" value="업로드 !" />
+<form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
+    <input name="file" type="file">
+    <input type="submit" value="업로드">
 </form>
+
+<div id="menuBtn">
+    <button onclick="location.href='/excel/downloadProductPlan/true'" type="button">버튼1</button>
+    <button onclick="location.href='/excel/downloadProductPlan/false'" type="button">버튼2</button>
+</div>
+<div id="content">
+    <div class="subTitle"><p style="font-size:30px;">excel search</p></div>
+    <div class="excelListDiv"></div>
+</div>
+
+<div class="printDiv"></div>
+
+<script src="/js/axios.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/function.js"></script>
+<script>excelListTable();</script>
 </body>
 
 </html>

@@ -19,7 +19,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Long register(ProductDTO dto) {
-        Product entity = dtoToEntity(dto);
+        Product entity;
+        //만약 이미 해당 상품 코드가 등록되어 있는 경우 덮어 쓰기한다(상품코드가 중복되어서는 안되므로)
+        if (repository.findByProductCode(dto.getProductCode()) != null) {
+            entity = repository.findByProductCode(dto.getProductCode());
+            entity.setProductName(dto.getProductName());
+        } else {
+            entity = dtoToEntity(dto);
+        }
         repository.save(entity);
         return entity.getProductId();
     }

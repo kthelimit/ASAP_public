@@ -105,6 +105,7 @@
                                 </li>
                                 <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
                                     <a th:href="@{/invoice/list(page=${pageNum}, size=10)}"
+                                       th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                        th:classappend="${pageNum == currentPage ? 'active' : ''}"
                                        th:text="${pageNum}"></a>
                                 </li>

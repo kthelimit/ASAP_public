@@ -87,6 +87,7 @@
                                 <li th:each="i : ${#numbers.sequence(1, totalPages != null ? totalPages : 1)}">
                                     <a th:href="@{/suppliers/pending(page=${i})}"
                                        th:text="${i}"
+                                       th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                        th:classappend="${i == (currentPage != null ? currentPage : 1) ? 'active' : ''}">1</a>
                                 </li>
                             </ul>

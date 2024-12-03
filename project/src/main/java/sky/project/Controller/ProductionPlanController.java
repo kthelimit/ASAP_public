@@ -201,6 +201,30 @@ public class ProductionPlanController {
         return "procure/ProcureIndex";
     }
 
+
+    @GetMapping("/procureHistory")
+    public String getProductionPlanHistory(Model model,
+                                           @RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @RequestParam(value = "keyword", required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
+        Page<ProcurementPlanDTO> procurementPlanDTOs;
+        if (keyword != null && !keyword.isEmpty()) {
+            procurementPlanDTOs = procurementPlanService.searchProcurementPlans(keyword, pageable);
+        } else {
+            procurementPlanDTOs = procurementPlanService.getProcurementPlans(pageable);
+        }
+
+        model.addAttribute("procurementPlans", procurementPlanDTOs.getContent());
+        model.addAttribute("totalPages", procurementPlanDTOs.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+
+
+        return "procure/ProcureHistory";
+    }
+
     @GetMapping("/bomRegister")
     public String bomRegister() {
         return "ProductionPlan/BomRegister";

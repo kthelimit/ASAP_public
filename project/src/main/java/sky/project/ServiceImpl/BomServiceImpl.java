@@ -115,9 +115,10 @@ public class BomServiceImpl implements BomService {
         //출고 요청용 가용재고 계산 (현재 창고 재고 - 출고 요청중인 수량)
         int availableStock = stockService.calculateAvailableStock(stock);
 
+        log.info("창고 재고 - 출고 요청중인 수량 : "+availableStock);
         //업체에 발주 넣어둔 남은 수량의 합
         int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
-
+        log.info("업체에 발주 넣어둔 남은 수량 : "+remainedOrderQuantity);
         //생산 계획의 남은 소모량 계산하기
 
         //발주 중인 생산계획 리스트를 가져온다.

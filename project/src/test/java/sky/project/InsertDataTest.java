@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sky.project.DTO.AssyDTO;
-import sky.project.DTO.ProductionPlanDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.DTO.SupplierStockDTO;
 import sky.project.Entity.*;
@@ -16,7 +15,6 @@ import sky.project.Service.StockService;
 import sky.project.Service.SupplierStockService;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -579,20 +577,4 @@ public class InsertDataTest {
 
 
     }
-
-    @Test
-    public void inserProductionPlan() {
-        String productCode;
-        String productName;
-        LocalDate productionStartDate;
-        LocalDate productionEndDate;
-        Integer productionQuantity;
-        String productionPlanCode;
-
-
-        ProductionPlanDTO dto = ProductionPlanDTO.builder().build();
-
-        productionPlanService.registerProductionPlan(dto);
-    }
-
 }

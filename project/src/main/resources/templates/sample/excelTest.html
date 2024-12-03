@@ -7,14 +7,14 @@
 </head>
 
 <body>
-<form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
+<form enctype="multipart/form-data" method="post" th:action="@{/excel/addAssy}">
     <input name="file" type="file">
     <input type="submit" value="업로드">
 </form>
 
 <div id="menuBtn">
-    <button onclick="location.href='/excel/downloadProductPlan/true'" type="button">버튼1</button>
-    <button onclick="location.href='/excel/downloadProductPlan/false'" type="button">버튼2</button>
+    <button onclick="location.href='/excel/downloadAssy/true'" type="button">버튼1</button>
+    <button onclick="location.href='/excel/downloadAssy/false'" type="button">버튼2</button>
 </div>
 <div id="content">
     <div class="subTitle"><p style="font-size:30px;">excel search</p></div>

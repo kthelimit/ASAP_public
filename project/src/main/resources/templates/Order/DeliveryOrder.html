@@ -83,7 +83,9 @@
                             <th>발주 번호</th>
                             <th>공급사</th>
                             <th>자재 이름</th>
+                            <th>총 발주 수량</th>
                             <th>요청 수량</th>
+                            <th>남은 조달 수량</th>
                             <th>요청일</th>
                             <th>상태</th>
                         </tr>
@@ -94,7 +96,9 @@
                             <td th:text="${deliveryRequest.orderCode}"></td>
                             <td th:text="${deliveryRequest.supplierName}"></td>
                             <td th:text="${deliveryRequest.materialName}"></td>
+                            <td th:text="${deliveryRequest.orderQuantity}"></td>
                             <td th:text="${deliveryRequest.requestedQuantity}"></td>
+                            <td th:text="${deliveryRequest.requireQuantity}"></td>
                             <td th:text="${deliveryRequest.requestedAt}"></td>
                             <td th:text="${deliveryRequest.status}"></td>
                         </tr>

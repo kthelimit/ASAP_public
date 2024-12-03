@@ -3,8 +3,8 @@ package sky.project.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sky.project.DTO.DeliveryRequestDTO;
+import sky.project.Entity.DeliveryRequest;
 
-import java.util.List;
 
 public interface DeliveryRequestService {
     DeliveryRequestDTO createRequest(Long orderId, int requestedQuantity); // 요청 생성
@@ -12,5 +12,5 @@ public interface DeliveryRequestService {
     void updateRequestStatus(Long id, String status);              // 요청 상태 변경
     Page<DeliveryRequestDTO> findAll(Pageable pageable);
     Page<DeliveryRequestDTO> findRequestsBySupplier(String supplierName, Pageable pageable);
-
+    DeliveryRequest findById(Long id);
 }

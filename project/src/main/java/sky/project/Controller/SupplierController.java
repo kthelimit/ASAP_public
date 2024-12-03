@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
+import sky.project.Entity.DeliveryRequest;
+import sky.project.Entity.Invoice;
 import sky.project.Service.*;
 
 import java.io.File;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -40,6 +43,9 @@ public class SupplierController {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private InvoiceService invoiceService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -174,17 +180,25 @@ public class SupplierController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "1") int deliveryPage,
-            @RequestParam(defaultValue = "5") int deliverySize) {
+            @RequestParam(defaultValue = "5") int deliverySize,
+            @RequestParam(defaultValue = "1") int invoicePage,
+            @RequestParam(defaultValue = "5") int invoiceSize) {
 
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
             return "redirect:/";
         }
 
+        // 유효성 검사
+        if (page < 1 || deliveryPage < 1 || invoicePage < 1) {
+            model.addAttribute("message", "잘못된 페이지 요청입니다.");
+            return "redirect:/";
+        }
+
         // userId로 supplierName 가져오기
         String userId = user.getUserId();
         String supplierName = supplierService.findSupplierNameByUserId(userId);
-        if (supplierName == null) {
+        if (supplierName == null || supplierName.isEmpty()) {
             model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
             return "redirect:/";
         }
@@ -197,19 +211,25 @@ public class SupplierController {
         Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize);
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findRequestsBySupplier(supplierName, deliveryPageable);
 
+        // supplierName으로 InvoiceDTO 가져오기
+        Pageable invoicePageable = PageRequest.of(invoicePage - 1, invoiceSize);
+        Page<InvoiceDTO> invoices = invoiceService.findInvoicesBySupplierName(supplierName, invoicePageable);
+
         // Thymeleaf에 데이터 추가
         model.addAttribute("supplierName", supplierName);
         model.addAttribute("orderRequests", orderRequests.getContent());
         model.addAttribute("totalOrderPages", orderRequests.getTotalPages());
         model.addAttribute("currentOrderPage", page);
 
-        // SupplierStocks 데이터 추가
         model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(userId));
-
-        // DeliveryRequests 데이터 추가
         model.addAttribute("deliveryRequests", deliveryRequests.getContent());
         model.addAttribute("deliveryTotalPages", deliveryRequests.getTotalPages());
         model.addAttribute("deliveryCurrentPage", deliveryPage);
+
+        // Invoice 데이터 추가
+        model.addAttribute("invoices", invoices.getContent());
+        model.addAttribute("invoiceTotalPages", invoices.getTotalPages());
+        model.addAttribute("invoiceCurrentPage", invoicePage);
 
         return "Supplier/SupplierPage";
     }
@@ -230,13 +250,41 @@ public class SupplierController {
     @PostMapping("/importregisterbatch")
     public String handleBatchExport(@ModelAttribute ImportDTO importDTO, @RequestParam("selectedRequests") List<Long> selectedRequestIds) {
         for (Long id : selectedRequestIds) {
+            // DeliveryRequest 가져오기
+            DeliveryRequest deliveryRequest = deliveryRequestService.findById(id);
+
+            if (deliveryRequest == null) {
+                throw new RuntimeException("DeliveryRequest not found for ID: " + id);
+            }
+
             // Import 데이터 저장
+            importDTO.setMaterialName(deliveryRequest.getMaterialName());
+            importDTO.setSupplierName(deliveryRequest.getSupplierName());
+            importDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             importService.createImport(importDTO);
 
-            // 상태 업데이트
+            // InvoiceDTO 생성 및 필드 설정
+            InvoiceDTO invoiceDTO = new InvoiceDTO();
+            invoiceDTO.setSupplierName(deliveryRequest.getSupplierName());
+            invoiceDTO.setMaterialName(deliveryRequest.getMaterialName());
+            invoiceDTO.setQuantity(deliveryRequest.getRequestedQuantity());
+            invoiceService.createInvoice(invoiceDTO);
+
+            // DeliveryRequest 상태 업데이트
             deliveryRequestService.updateRequestStatus(id, "FINISHED");
+
+            // requireQuantity가 0인 경우 주문 상태 업데이트
+            if (deliveryRequest.getRequireQuantity() == 0) {
+                String orderCode = deliveryRequest.getOrder().getOrderCode();
+                OrdersDTO order = orderService.findByOrderCode(orderCode);
+                if (order != null) {
+                    orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.FINISHED);
+                }
+            }
         }
         return "redirect:/suppliers/page";
-
     }
+
+
+
 }

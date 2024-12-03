@@ -30,4 +30,9 @@ public class DeliveryRequest {
 
     @Enumerated(EnumType.STRING)
     private CurrentStatus status;
+
+    private int orderQuantity;
+    private int requireQuantity;
+
+
 }

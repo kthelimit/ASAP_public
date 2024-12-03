@@ -76,6 +76,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrdersDTO findByOrderCode(String orderCode) {
+        Order order = orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() -> new RuntimeException("Order not found with code: " + orderCode));
+
+        // Order -> OrdersDTO 변환
+        return toDTO(order);
+    }
+
+
+    @Override
     public Page<OrdersDTO> findOrdersBySupplier(String supplierName, Pageable pageable) {
         // 특정 공급사의 주문 조회
         return orderRepository.findBySupplierName(supplierName, pageable)
@@ -139,6 +149,8 @@ public class OrderServiceImpl implements OrderService {
         // 엔티티를 DTO로 변환
         return orders.map(order -> toDTO(order));
     }
+
+
 
     @Override
     public Page<OrdersDTO> findByStatus(String status, Pageable pageable) {

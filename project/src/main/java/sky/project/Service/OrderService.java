@@ -26,6 +26,7 @@ public interface OrderService {
 
     Page<OrdersDTO> findByStatuses(List<String> statuses, Pageable pageable);
 
+    OrdersDTO findByOrderCode(String orderCode);
 
     //대시 보드 출력용 이번달 발주 건 수
     int getCountOrderThisMonth();

@@ -217,6 +217,7 @@
                             <div id="ExportTable">
                                 <h3 class="table-title">출고 요청</h3>
                                 <form method="post" th:action="@{/suppliers/importregisterbatch}" th:object="${ImportDTO}">
+                                    <input type="hidden" name="supplierName" th:value="${supplierName}">
                                     <table class="table">
                                         <thead>
                                         <tr>
@@ -225,7 +226,9 @@
                                             </th>
                                             <th class="text-center"><h6>발주 번호</h6></th>
                                             <th class="text-center"><h6>자재 이름</h6></th>
+                                            <th class="text-center"><h6>총 발주 수량</h6></th>
                                             <th class="text-center"><h6>요청 수량</h6></th>
+                                            <th class="text-center"><h6>남은 조달수량</h6></th>
                                             <th class="text-center"><h6>요청일</h6></th>
                                             <th class="text-center"><h6>상태</h6></th>
                                         </tr>
@@ -239,8 +242,10 @@
                                             <input type="hidden" name="orderCode" th:value="${request.orderCode}">
                                             <td class="text-center" th:text="${request.materialName}"></td>
                                             <input type="hidden" name="materialName" th:value="${request.materialName}">
+                                            <td class="text-center" th:text="${request.orderQuantity}"></td>
                                             <td class="text-center" th:text="${request.requestedQuantity}"></td>
-                                            <input type="hidden" name="importQuantity" th:value="${request.requestedQuantity}">
+                                            <input type="hidden" name="quantity" th:value="${request.requestedQuantity}">
+                                            <td class="text-center" th:text="${request.requireQuantity}"></td>
                                             <td class="text-center" th:text="${request.requestedAt}"></td>
                                             <input type="hidden" name="expectedDate" th:value="${request.requestedAt}">
                                             <td class="text-center">
@@ -255,6 +260,26 @@
                                         <button class="btn btn-primary" type="submit">일괄 출고</button>
                                     </div>
                                 </form>
+                                <div class="pagination-wrapper">
+                                    <ul class="pagination">
+                                        <!-- 이전 페이지 버튼 -->
+                                        <li th:if="${deliveryCurrentPage > 1}">
+                                            <a th:href="@{/suppliers/page(deliveryPage=${deliveryCurrentPage - 1}, deliverySize=${deliverySize})}">&laquo;</a>
+                                        </li>
+
+                                        <!-- 페이지 번호 버튼 -->
+                                        <li th:each="i : ${#numbers.sequence(1, deliveryTotalPages)}">
+                                            <a th:classappend="${i == deliveryCurrentPage ? 'active' : ''}"
+                                               th:href="@{/suppliers/page(deliveryPage=${i}, deliverySize=${deliverySize})}"
+                                               th:text="${i}"></a>
+                                        </li>
+
+                                        <!-- 다음 페이지 버튼 -->
+                                        <li th:if="${deliveryCurrentPage < deliveryTotalPages}">
+                                            <a th:href="@{/suppliers/page(deliveryPage=${deliveryCurrentPage + 1}, deliverySize=${deliverySize})}">&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -265,41 +290,57 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <h3>거래 명세서</h3>
-                            <table>
+                            <h3 class="table-title">거래 명세서</h3>
+                            <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>자재 이름</th>
-                                    <th>단가</th>
-                                    <th>수량</th>
-                                    <th>총 가격</th>
-                                    <th>거래 날짜</th>
-                                    <th>상세 보기</th>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>단가</h6></th>
+                                    <th class="text-center"><h6>수량</h6></th>
+                                    <th class="text-center"><h6>총 가격</h6></th>
+<!--                                    <th class="text-center"><h6>거래 날짜</h6></th>-->
+<!--                                    <th class="text-center"><h6>상세 보기</h6></th>-->
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>[자재 이름]</td>
-                                    <td>[단가]</td>
-                                    <td>[수량]</td>
-                                    <td>[총 가격]</td>
-                                    <td>[거래 날짜]</td>
-                                    <td><a href="#">상세 보기</a></td>
+                                <tr th:each="invoice : ${invoices}">
+                                    <td class="text-center" th:text="${invoice.materialName}"></td>
+                                    <td class="text-center" th:text="${invoice.unitPrice}"></td>
+                                    <td class="text-center" th:text="${invoice.quantity}"></td>
+                                    <td class="text-center" th:text="${invoice.totalPrice}"></td>
+<!--                                    <td class="text-center" th:text="${#temporals.format(invoice.transactionDate, 'yyyy-MM-dd')}"></td>-->
+<!--                                    <td class="text-center">-->
+<!--                                        <a class="main-btn primary-btn btn-hover"-->
+<!--                                           th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}">상세 보기</a>-->
+<!--                                    </td>-->
                                 </tr>
                                 </tbody>
                             </table>
-
                             <!-- 거래 명세서 페이징 -->
-                            <ul class="pagination">
-                                <li><a class="active" href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                            </ul>
+                            <div class="pagination-wrapper" th:if="${invoiceTotalPages > 0}">
+                                <ul class="pagination">
+                                    <!-- 이전 페이지 버튼 -->
+                                    <li th:if="${invoiceCurrentPage > 1}">
+                                        <a th:href="@{/suppliers/page(invoicePage=${invoiceCurrentPage - 1}, invoiceSize=${invoiceSize})}">&laquo;</a>
+                                    </li>
+
+                                    <!-- 페이지 번호 버튼 -->
+                                    <li th:each="i : ${#numbers.sequence(1, invoiceTotalPages)}">
+                                        <a th:classappend="${i == invoiceCurrentPage ? 'active' : ''}"
+                                           th:href="@{/suppliers/page(invoicePage=${i}, invoiceSize=${invoiceSize})}"
+                                           th:text="${i}"></a>
+                                    </li>
+
+                                    <!-- 다음 페이지 버튼 -->
+                                    <li th:if="${invoiceCurrentPage < invoiceTotalPages}">
+                                        <a th:href="@{/suppliers/page(invoicePage=${invoiceCurrentPage + 1}, invoiceSize=${invoiceSize})}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
         <script>

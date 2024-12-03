@@ -48,41 +48,45 @@
                                         <h6>거래한 품목</h6>
                                     </th>
                                     <th>
-                                        <h6>최종 거래 날짜</h6>
+                                        <h6>단가</h6>
                                     </th>
                                     <th>
-                                        <h6>명세서 발행 날짜</h6>
+                                        <h6>거래 수량</h6>
                                     </th>
                                     <th>
-                                        <h6>상태</h6>
+                                        <h6>총 거래 금액</h6>
                                     </th>
                                     <th>
-                                        <h6>선택</h6>
+                                        <h6>거래 날짜</h6>
+                                    </th>
+                                    <th>
+                                        <h6>상세보기</h6>
                                     </th>
                                 </tr>
                                 <!-- end table row-->
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="invoice : ${invoices}">
                                     <td class="min-width">
-                                        <p>볼턴사</p>
+                                        <p th:text="${invoice.supplierName}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p>48V 리튬이온 배터리 볼턴 배터리 외 2종</p>
+                                        <p th:text="${invoice.materialName}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p>24.11.12</p>
+                                        <p th:text="${invoice.unitPrice}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p>24.11.25</p>
+                                        <p th:text="${invoice.quantity}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p>발행 완료</p>
+                                        <p th:text="${invoice.totalPrice}"></p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p th:text="${invoice.createdDate}"></p>
                                     </td>
                                     <td>
-                                        <button class="main-btn primary-btn btn-hover"
-                                                onclick="window.open('/sample/invoicedetail','거래명세서','width=1200, height=600,location=no,status=no,scrollbars=no');"
-                                                style="padding: 12px">선택
+                                        <button class="main-btn primary-btn btn-hover">
                                         </button>
                                     </td>
                                 </tr>
@@ -90,8 +94,25 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
 
+                        <!-- Pagination -->
+                        <div class="pagination-wrapper">
+                            <ul class="pagination">
+                                <li th:if="${currentPage > 1}">
+                                    <a th:href="@{/invoice/list(page=${currentPage - 1}, size=10)}">&laquo;</a>
+                                </li>
+                                <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
+                                    <a th:href="@{/invoice/list(page=${pageNum}, size=10)}"
+                                       th:classappend="${pageNum == currentPage ? 'active' : ''}"
+                                       th:text="${pageNum}"></a>
+                                </li>
+                                <li th:if="${currentPage < totalPages}">
+                                    <a th:href="@{/invoice/list(page=${currentPage + 1}, size=10)}">&raquo;</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

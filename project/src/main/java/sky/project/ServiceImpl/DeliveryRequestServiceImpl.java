@@ -38,12 +38,20 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
                 .materialName(order.getMaterialName())
                 .requestedQuantity(requestedQuantity)
                 .requestedAt(LocalDateTime.now())
+                .requireQuantity(order.getRequiredQuantity())
                 .status(CurrentStatus.IN_PROGRESS) // 기본 상태 설정
+                .orderQuantity(order.getOrderQuantity())
                 .build();
 
         DeliveryRequest savedRequest = deliveryRequestRepository.save(deliveryRequest);
 
         return toDTO(savedRequest);
+    }
+
+    @Override
+    public DeliveryRequest findById(Long id) {
+        return deliveryRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("DeliveryRequest not found with ID: " + id));
     }
 
     @Override
@@ -73,6 +81,9 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     }
 
     private DeliveryRequestDTO toDTO(DeliveryRequest deliveryRequest) {
+
+
+
         return DeliveryRequestDTO.builder()
                 .id(deliveryRequest.getId())
                 .orderCode(deliveryRequest.getOrder().getOrderCode())
@@ -80,6 +91,8 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
                 .materialName(deliveryRequest.getMaterialName())
                 .requestedQuantity(deliveryRequest.getRequestedQuantity())
                 .requestedAt(deliveryRequest.getRequestedAt())
+                .orderQuantity(deliveryRequest.getOrderQuantity())
+                .requireQuantity(deliveryRequest.getRequireQuantity())
                 .status(deliveryRequest.getStatus() != null ? deliveryRequest.getStatus().name() : CurrentStatus.IN_PROGRESS.name())
                 .build();
     }

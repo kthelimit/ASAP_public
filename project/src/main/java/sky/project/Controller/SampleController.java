@@ -110,6 +110,6 @@ public class SampleController {
 
     @GetMapping("/invoice")
     public String exInvoiceList() {
-        return "Invoice/Invoicelist";
+        return "InvoiceList";
     }
 }

@@ -18,4 +18,6 @@ public class DeliveryRequestDTO {
     private int requestedQuantity;
     private LocalDateTime requestedAt;
     private String status;
+    private int orderQuantity;
+    private int requireQuantity;
 }

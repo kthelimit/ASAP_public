@@ -59,6 +59,7 @@
                                 가능합니다.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProduct}">
+                                <input type="hidden" name="where" value="BOM">
                                 <div class="row">
                                     <div class="input-style-1 col-lg-7" style="width: auto">
                                         <input name="file" type="file">
@@ -89,6 +90,7 @@
                                 조립구조는 현재 엑셀 파일로 일괄 등록만 할 수 있습니다. 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addAssy}">
+                                <input type="hidden" name="where" value="BOM">
                                 <div class="row">
                                     <div class="input-style-1 col-lg-7" style="width: auto">
                                         <input name="file" type="file">
@@ -183,6 +185,7 @@
                                 받는 것도 가능합니다.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addBOM}">
+                                <input type="hidden" name="where" value="BOM">
                                 <div class="row">
                                     <div class="input-style-1 col-lg-7" style="width: auto">
                                         <input name="file" type="file">

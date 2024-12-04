@@ -39,6 +39,10 @@ public class DashboardController {
         return "Info/information";
     }
 
+    @RequestMapping("/dataUpload")
+    public String dataUpload(Model model) {
+        return "Info/DataUpload";
+    }
 
     @RequestMapping("/index")
     public String index(@SessionAttribute(name = "user", required = false) UserDTO user, Model model) {

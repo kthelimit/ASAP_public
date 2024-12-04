@@ -156,6 +156,7 @@ public class SupplierServiceImpl implements SupplierService {
         }
         return supplier;
     }
+
     @Override
     public String findSupplierNameByUserId(String userId) {
         Supplier supplier = supplierRepository.findByUser_UserId(userId);
@@ -168,5 +169,14 @@ public class SupplierServiceImpl implements SupplierService {
         return supplierRepository.countByApprovedYet();
     }
 
+    @Override
+    public List<Supplier> getSuppliers() {
+        List<Supplier> list = supplierRepository.findAll();
+        //관리자(우리회사) 제거
+        if (supplierRepository.findById("admin").isPresent()) {
+            list.remove(supplierRepository.findById("admin").get());
+        }
+        return list;
+    }
 
 }

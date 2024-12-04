@@ -44,6 +44,11 @@ public class SupplierStockServiceImpl implements SupplierStockService {
         }
     }
 
+    @Override
+    public List<SupplierStock> getStocks() {
+        return supplierStockRepository.findAll();
+    }
+
 
     @Override
     public List<SupplierStockDTO> findBySupplierId(String supplierId) {
@@ -68,7 +73,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
         List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
 
         // APPROVAL 상태인 발주 요청 수량 조회
-        int approvedQuantity = orderRepository.findApprovedQuantity(supplierName, materialName,statuses);
+        int approvedQuantity = orderRepository.findApprovedQuantity(supplierName, materialName, statuses);
 
         // 가용 재고 계산
         int availableStock = stock - approvedQuantity;
@@ -90,9 +95,15 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
     public SupplierStock dtoToEntity(SupplierStockDTO dto) {
 
-        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent() && supplierRepository.findById(dto.getSupplierId()).isPresent()) {
+        String supplierId = dto.getSupplierId();
+        if (supplierId == null) {
+            supplierId = supplierRepository.findSupplierIdBySupplierName(dto.getSupplierName());
+        }
+
+        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent() && supplierRepository.findById(supplierId).isPresent()) {
             Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
-            Supplier supplier = supplierRepository.findById(dto.getSupplierId()).get();
+
+            Supplier supplier = supplierRepository.findById(supplierId).get();
 
             return SupplierStock.builder()
                     .supplierStockId(dto.getSupplierStockId())

@@ -7,14 +7,14 @@
 </head>
 
 <body>
-<form enctype="multipart/form-data" method="post" th:action="@{/excel/addStock}">
+<form enctype="multipart/form-data" method="post" th:action="@{/excel/addSupplier}">
     <input name="file" type="file">
     <input type="submit" value="업로드">
 </form>
 
 <div id="menuBtn">
-    <button onclick="location.href='/excel/downloadStock/true'" type="button">버튼1</button>
-    <button onclick="location.href='/excel/downloadStock/false'" type="button">버튼2</button>
+    <button onclick="location.href='/excel/downloadSupplier/true'" type="button">버튼1</button>
+    <button onclick="location.href='/excel/downloadSupplier/false'" type="button">버튼2</button>
 </div>
 <div id="content">
     <div class="subTitle"><p style="font-size:30px;">excel search</p></div>

@@ -152,7 +152,7 @@
                                     <h6 class="mb-10">이번 달 발주 건수</h6>
                                     <h3 class="text-bold mb-10">[[${countOrder}]]</h3>
                                     <p class="text-sm text-danger">
-                                        <span class="text-gray">더 보기</span>
+                                        <a th:href="@{/order/history}"> <span class="text-gray">더 보기</span></a>
                                     </p>
                                 </div>
                             </div>
@@ -169,9 +169,9 @@
                                 </div>
                                 <div class="content">
                                     <h6 class="mb-10">이번달 납품 지시 건수</h6>
-                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <h3 class="text-bold mb-10">[[${countDeliveryRequest}]]</h3>
                                     <p class="text-sm text-success">
-                                        <span class="text-gray">더 보기</span>
+                                        <a th:href="@{/order/delivery}"> <span class="text-gray">더 보기</span></a>
                                     </p>
                                 </div>
                             </div>
@@ -301,7 +301,7 @@
                                 </div>
                                 <div class="content">
                                     <h6 class="mb-10">이번 달 납품 지시 건수</h6>
-                                    <h3 class="text-bold mb-10"> 예정 </h3>
+                                    <h3 class="text-bold mb-10"> [[${countDeliveryRequestForSupplier}]] </h3>
                                     <p class="text-sm text-success">
                                         <a th:href="@{/suppliers/page}"><span
                                                 class="text-gray"> 더 보기</span></a>

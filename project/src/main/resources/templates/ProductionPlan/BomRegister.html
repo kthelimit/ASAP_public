@@ -55,7 +55,8 @@
                             </form>
                             <h6 class="mb-10">일괄 등록</h6>
                             <p class="text-sm mb-20">
-                                엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도 가능합니다.
+                                엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도
+                                가능합니다.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProduct}">
                                 <div class="row">
@@ -68,13 +69,15 @@
                                         </button>
                                     </div>
                                     <div class="col-lg-1  text-align-right" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadProduct/true'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadProduct/true'"
                                                 style="padding: 18px"
                                                 type="button">템플릿 다운로드
                                         </button>
                                     </div>
                                     <div class="col-lg-1  text-align-right" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadProduct/false'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadProduct/false'"
                                                 style="padding: 18px"
                                                 type="button">데이터 다운로드
                                         </button>
@@ -96,13 +99,15 @@
                                         </button>
                                     </div>
                                     <div class="col-lg-1  text-align-right" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadAssy/true'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadAssy/true'"
                                                 style="padding: 18px"
                                                 type="button">템플릿 다운로드
                                         </button>
                                     </div>
                                     <div class="col-lg-1  text-align-right" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadAssy/false'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadAssy/false'"
                                                 style="padding: 18px"
                                                 type="button">데이터 다운로드
                                         </button>
@@ -118,12 +123,12 @@
                             <form>
                                 <h3 class="mb-10 col-lg-3">BOM 등록</h3>
                                 <p class="text-sm mb-20">
-                                    엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도 가능합니다.
+                                    상품을 선택 시 맨 아래의 BOM 리스트에 해당 상품에 등록되어 있는 BOM의 내용이 뜹니다.
                                 </p>
-                                <h6 class="mb-10 col-lg-3">상품 선택</h6>
                                 <div class="row">
                                     <div class="select-style-1 col-lg-9">
                                         <div class="select-position">
+                                            <label>상품 선택</label>
                                             <select id="productSelect" name="productSelect"
                                                     onchange="changeProductSelect()">
                                                 <option>----------</option>
@@ -131,14 +136,19 @@
                                         </div>
                                     </div>
                                     <div class="input-style-1 col-lg-3">
+                                        <label>상품 코드</label>
                                         <input id="productCode2" name="productCode" placeholder="상품 코드" readonly
                                                type="text"
                                                value="">
                                     </div>
                                 </div>
-                                <h6 class="mb-10">부품 추가</h6>
+                                <h6 class="mb-10">직접 등록</h6>
+                                <p class="text-sm mb-20">
+                                    선택되어 있는 상품에 추가할 부품 종류를 선택 후, 자재를 골라 수량을 입력하고 등록하면 BOM을 추가할 수 있습니다.
+                                </p>
                                 <div class="row">
                                     <div class="col-lg-4 select-style-1">
+                                        <label>부품 종류 선택</label>
                                         <div class="select-position">
                                             <select id="componentType" name="componentType"
                                                     onchange="changeComponentType()" required>
@@ -147,9 +157,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4 select-style-1">
-                                        <!--                                        <input id="materialName" name="materialName" placeholder="부품명을 입력하세요."-->
-                                        <!--                                               type="text">-->
-
+                                        <label>자재 선택</label>
                                         <div class="select-position">
                                             <select id="materialCode" name="materialCode">
                                                 <option>---</option>
@@ -157,12 +165,45 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 input-style-1">
+                                        <label>필요 수량</label>
                                         <input id="requireQuantity" name="requireQuantity" placeholder="수량"
                                                type="number">
                                     </div>
-                                    <div class="col-lg-2 text-align-right" style="min-width:118px">
+                                    <div class="col-lg-2 text-align-right input-style-1" style="min-width:118px">
+                                        <label>&nbsp;</label>
                                         <button class="main-btn primary-btn btn-hover" onclick="bomRegister()"
                                                 type="button">추가
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <h6 class="mb-10">일괄 등록</h6>
+                            <p class="text-sm mb-20">
+                                엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드
+                                받는 것도 가능합니다.
+                            </p>
+                            <form enctype="multipart/form-data" method="post" th:action="@{/excel/addBOM}">
+                                <div class="row">
+                                    <div class="input-style-1 col-lg-7" style="width: auto">
+                                        <input name="file" type="file">
+                                    </div>
+                                    <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                                        <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                                type="submit">데이터 업로드
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadBOM/true'"
+                                                style="padding: 18px"
+                                                type="button">템플릿 다운로드
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadBOM/false'"
+                                                style="padding: 18px"
+                                                type="button">데이터 다운로드
                                         </button>
                                     </div>
                                 </div>
@@ -275,7 +316,8 @@
                 $('#componentType').append('<option>---</option>');
 
                 //부품종류 리스트 추가
-                var code = selectValue.substring(3,5);
+                var code = selectValue.substring(3, 5);
+                console.log(selectValue);
                 console.log(code);
 
                 if (code == 'B3') {

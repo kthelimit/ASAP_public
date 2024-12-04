@@ -13,8 +13,10 @@ import sky.project.Repository.OrderRepository;
 import sky.project.Service.DeliveryRequestService;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalTime;
+
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Service
 public class DeliveryRequestServiceImpl implements DeliveryRequestService {
@@ -79,6 +81,25 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
         deliveryRequest.setStatus(CurrentStatus.valueOf(status.toUpperCase()));
         deliveryRequestRepository.save(deliveryRequest);
     }
+
+    //대시보드 출력용 이번달 납품 지시 건수
+    @Override
+    public int getCountRequestThisMonth(){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return deliveryRequestRepository.countDeliveryRequestsThisMonth(start, end);
+    }
+
+    //대시보드 출력용 이번달 납품 지시 건수 업체용
+    @Override
+    public int getCountRequestThisMonth(String supplierName){
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime start = today.with(firstDayOfMonth()).with(LocalTime.MIN);
+        LocalDateTime end = today.with(lastDayOfMonth()).with(LocalTime.MAX);
+        return deliveryRequestRepository.countDeliveryRequestsThisMonth(start, end, supplierName);
+    }
+
 
     private DeliveryRequestDTO toDTO(DeliveryRequest deliveryRequest) {
 

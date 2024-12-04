@@ -13,4 +13,10 @@ public interface DeliveryRequestService {
     Page<DeliveryRequestDTO> findAll(Pageable pageable);
     Page<DeliveryRequestDTO> findRequestsBySupplier(String supplierName, Pageable pageable);
     DeliveryRequest findById(Long id);
+
+    //대시보드 출력용 이번달 납품 지시 건수
+    int getCountRequestThisMonth();
+
+    //대시보드 출력용 이번달 납품 지시 건수 업체용
+    int getCountRequestThisMonth(String supplierName);
 }

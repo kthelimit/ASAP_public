@@ -31,6 +31,9 @@ public class DashboardController {
     @Autowired
     ProcurementPlanService procurementPlanService;
 
+    @Autowired
+    DeliveryRequestService deliveryRequestService;
+
     @RequestMapping("/info")
     public String info(Model model) {
         return "Info/information";
@@ -76,9 +79,17 @@ public class DashboardController {
         int countOrderForSupplier = orderService.getCountOrderBySupplierThisMonth(supplierName);
         model.addAttribute("countOrderForSupplier", countOrderForSupplier);
 
+        //이번 달 납품 지시 건수
+        int countDeliveryRequest = deliveryRequestService.getCountRequestThisMonth();
+        model.addAttribute("countDeliveryRequest", countDeliveryRequest);
+
+        //이번 달 납품 지시 건수(업체용)
+        int countDeliveryRequestForSupplier = deliveryRequestService.getCountRequestThisMonth(supplierName);
+        model.addAttribute("countDeliveryRequestForSupplier", countDeliveryRequestForSupplier);
+
         //이번 달 입고 건수
 
-        //이번 달 입고 예정 건수
+
 
         //입고 검수 예정 건수
 

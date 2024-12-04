@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.DeliveryRequest;
-import sky.project.Entity.Invoice;
+import sky.project.Repository.SupplierRepository;
 import sky.project.Service.*;
 
 import java.io.File;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -46,6 +45,8 @@ public class SupplierController {
 
     @Autowired
     private InvoiceService invoiceService;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -202,6 +203,13 @@ public class SupplierController {
             model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
             return "redirect:/";
         }
+
+        //supplier 정보 가져와서 출력해주기
+        SupplierDTO supplierDTO = supplierService.getSupplierById(userId);
+        model.addAttribute("supplierDTO", supplierDTO);
+
+
+
 
         // supplierName으로 OrdersDTO 가져오기
         Pageable pageable = PageRequest.of(page - 1, size);

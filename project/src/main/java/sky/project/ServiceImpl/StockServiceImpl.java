@@ -49,6 +49,11 @@ public class StockServiceImpl implements StockService {
         return stockRepository.findAll(pageable).map(this::entityToDto);
     }
 
+    @Override
+    public List<Stock> getStocks(){
+        return stockRepository.findAll();
+    }
+
     //검색
     @Override
     public Page<StockDTO> getStocksWithSearchInMaterialName(String keyword, Pageable pageable) {

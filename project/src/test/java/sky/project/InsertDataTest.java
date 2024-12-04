@@ -446,9 +446,9 @@ public class InsertDataTest {
                 "MATB1SEM003", "MATB1SEM004", "MATB1SEM005", "MATB2SEM001", "MATB3SEM001", "MATB3FIN001", "MATK1SEM001",
                 "MATK1SEM002", "MATK1SEM003", "MATK1SEM004", "MATK2SEM001", "MATK2FIN001", "MATWHSEM003", "MATWHSEM004",
                 "MATB1SEM006", "MATB1SEM007", "MATB1SEM008", "MATB1SEM009", "MATB1SEM010", "MATB2SEM002", "MATB3SEM002",
-                "MATB3FIN002"};
+                "MATB3FIN002", "MATWHMAT016"};
 
-        IntStream.rangeClosed(1, 105).forEach(i -> {
+        IntStream.rangeClosed(1, 106).forEach(i -> {
             StockDTO stockDTO = StockDTO.builder()
                     .materialCode(materialCodes[i - 1])
                     .quantity(100)

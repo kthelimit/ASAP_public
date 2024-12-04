@@ -10,17 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.DeliveryRequestDTO;
+import sky.project.DTO.InspectionDTO;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
-import sky.project.Entity.Order;
 import sky.project.Service.*;
-import sky.project.Service.MaterialService;
-import sky.project.Service.OrderService;
-import sky.project.Service.ProcurementPlanService;
-import sky.project.Service.SupplierService;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -45,6 +41,9 @@ public class OrderController {
 
     @Autowired
     DeliveryRequestService deliveryRequestService;
+
+    @Autowired
+    InspectionService inspectionService;
 
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
@@ -178,7 +177,7 @@ public class OrderController {
                 CurrentStatus.FINISHED.name());
 
         // 처리 완료된 주문 조회
-        Page<OrdersDTO> completedOrders = orderService. findByStatuses(statuses, completedPageable);
+        Page<OrdersDTO> completedOrders = orderService.findByStatuses(statuses, completedPageable);
 
         // 납입 요청 조회
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);
@@ -232,11 +231,11 @@ public class OrderController {
     }
 
 
-
     @GetMapping("/inspection")
     public String inspectionRequest(Model model,
                                     @RequestParam(defaultValue = "1") int page,
-                                    @RequestParam(defaultValue = "10") int size){
+                                    @RequestParam(defaultValue = "10") int size,
+                                    @RequestParam(value = "orderCode", required = false) String orderCode) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -250,6 +249,15 @@ public class OrderController {
         model.addAttribute("manufacturingTotalPages", manufacturingOrders.getTotalPages());
         model.addAttribute("manufacturingCurrentPage", page);
 
+        //진척 검수 테이블 추가
+        if (orderCode != null) {
+            OrdersDTO orderDTO = orderService.findByOrderCode(orderCode);
+            model.addAttribute("orderDTO", orderDTO);
+            List<InspectionDTO> inspectionDTOS = inspectionService.findByOrderCode(orderCode);
+            model.addAttribute("inspectionDTOS", inspectionDTOS);
+
+        }
+
 
         return "/Order/ProgressInspection";
     }
@@ -258,6 +266,12 @@ public class OrderController {
     public String inspectionRequest(@RequestParam Long orderId) {
         orderService.updateOrderStatus(orderId, CurrentStatus.IN_PROGRESS);
         return "redirect:/order/delivery";
+    }
+
+    @PostMapping("/inspectionRegister")
+    public String inspectionRegister(InspectionDTO dto, String orderCode) {
+        inspectionService.register(dto);
+        return "redirect:/order/inspection";
     }
 
 }

@@ -605,11 +605,11 @@ public class ExcelController {
 
             String supplierName = formatter.formatCellValue(row.getCell(0));
             String materialCode = formatter.formatCellValue(row.getCell(3));
-            int quantity = Integer.parseInt(formatter.formatCellValue(row.getCell(5)));
+            int stock = Integer.parseInt(formatter.formatCellValue(row.getCell(5)));
 
             entity.setSupplierName(supplierName);
             entity.setMaterialCode(materialCode);
-            entity.setQuantity(quantity);
+            entity.setStock(stock);
 
 
             supplierStockService.register(entity);

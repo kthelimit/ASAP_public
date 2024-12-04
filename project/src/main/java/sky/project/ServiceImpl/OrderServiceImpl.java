@@ -1,19 +1,12 @@
 package sky.project.ServiceImpl;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.OrdersDTO;
-import sky.project.Entity.CurrentStatus;
-import sky.project.Entity.Material;
-import sky.project.Entity.Order;
-import sky.project.Entity.SupplierStock;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.SupplierStockRepository;
-import sky.project.Entity.ProcurementPlan;
 import sky.project.Entity.*;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
@@ -29,6 +22,7 @@ import java.util.List;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -79,7 +73,6 @@ public class OrderServiceImpl implements OrderService {
     public OrdersDTO findByOrderCode(String orderCode) {
         Order order = orderRepository.findByOrderCode(orderCode)
                 .orElseThrow(() -> new RuntimeException("Order not found with code: " + orderCode));
-
         // Order -> OrdersDTO 변환
         return toDTO(order);
     }
@@ -129,6 +122,7 @@ public class OrderServiceImpl implements OrderService {
         // 갱신된 엔티티를 기반으로 DTO 반환
         return toDTO(order);
     }
+
     @Override
     public void updateOrderStatus(Long orderId, CurrentStatus status) {
         // 주문 상태 업데이트
@@ -151,7 +145,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     @Override
     public Page<OrdersDTO> findByStatus(String status, Pageable pageable) {
         // String을 CurrentStatus로 변환
@@ -163,8 +156,6 @@ public class OrderServiceImpl implements OrderService {
         // 엔티티를 DTO로 변환
         return orders.map(order -> toDTO(order));
     }
-
-
 
 
     private OrdersDTO toDTO(Order order) {
@@ -205,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getSupplierName(),
                 order.getMaterialName(),
                 statuses
-        )-order.getOrderQuantity();
+        ) - order.getOrderQuantity();
 
         int totalStock = supplierStockRepository.findBySupplier_SupplierNameAndMaterial_MaterialName(
                         order.getSupplierName(), order.getMaterialName())

@@ -30,8 +30,15 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
     @Override
     public Long register(SupplierStockDTO dto) {
-        SupplierStock entity = dtoToEntity(dto);
-        supplierStockRepository.save(entity);
+        SupplierStock entity;
+        //공급업체와 자재로 중복이 있는지 검사
+        if (supplierStockRepository.findBySupplierNameAndMaterialCode(dto.getSupplierName(), dto.getMaterialCode()) != null) {
+            entity = supplierStockRepository.findBySupplierNameAndMaterialCode(dto.getSupplierName(), dto.getMaterialCode());
+            entity.setStock(dto.getStock());
+        } else {
+            entity = dtoToEntity(dto);
+            supplierStockRepository.save(entity);
+        }
         return entity.getSupplierStockId();
     }
 

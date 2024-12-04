@@ -17,5 +17,7 @@ public interface SupplierStockRepository extends JpaRepository<SupplierStock, Lo
 
     Optional<SupplierStock> findBySupplier_SupplierNameAndMaterial_MaterialName(String supplierName, String materialName);
 
+    @Query("select s from SupplierStock s where s.supplier.supplierName=:supplierName and s.material.materialCode=:materialCode")
+    SupplierStock findBySupplierNameAndMaterialCode(String supplierName, String materialCode);
 
 }

@@ -40,6 +40,7 @@
                                 엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도 가능합니다.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addMaterial}">
+                                <input type="hidden" name="where" value="Material">
                                 <div class="row">
                                     <div class="input-style-1 col-lg-6" style="width: auto">
                                         <input name="file" type="file">

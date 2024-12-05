@@ -36,14 +36,13 @@
                             <!-- 협력사 기본 정보 -->
                             <h3 class="mb-10">협력사 기본 정보</h3>
                             <div class="supplier-info">
-                                <p>사업자 등록번호: <span th:text="${supplier.businessRegistrationNumber}">N/A</span></p>
-                                <p>공급사 이름: <span th:text="${supplier.supplierName}">N/A</span></p>
-                                <p>연락처: <span th:text="${supplier.contactInfo}">N/A</span></p>
-                                <p>주소: <span th:text="${supplier.address}">N/A</span></p>
-                                <p>사업 유형: <span th:text="${supplier.businessType}">N/A</span></p>
-                                <p>사업 품목: <span th:text="${supplier.businessItem}">N/A</span></p>
-
-                                <button class="btn-approve">정보 수정</button>
+                                <p><strong>업체명:</strong> [[${supplierDTO.supplierName}]]</p>
+                                <p><strong>사업자 번호:</strong> [[${supplierDTO.businessRegistrationNumber}]]</p>
+                                <p><strong>연락처:</strong> [[${supplierDTO.contactInfo}]]</p>
+                                <p><strong>주소:</strong> [[${supplierDTO.address}]]</p>
+                                <p><strong>업태:</strong> [[${supplierDTO.businessType}]]</p>
+                                <p><strong>종목:</strong> [[${supplierDTO.businessItem}]]</p>
+                                <button class="btn-approve">수정</button>
                             </div>
                         </div>
                     </div>

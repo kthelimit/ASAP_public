@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name="deliveryrequest")
-public class DeliveryRequest {
+public class DeliveryRequest extends Base{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

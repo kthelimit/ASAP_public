@@ -30,8 +30,15 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
     @Override
     public Long register(SupplierStockDTO dto) {
-        SupplierStock entity = dtoToEntity(dto);
-        supplierStockRepository.save(entity);
+        SupplierStock entity;
+        //공급업체와 자재로 중복이 있는지 검사
+        if (supplierStockRepository.findBySupplierNameAndMaterialCode(dto.getSupplierName(), dto.getMaterialCode()) != null) {
+            entity = supplierStockRepository.findBySupplierNameAndMaterialCode(dto.getSupplierName(), dto.getMaterialCode());
+            entity.setStock(dto.getStock());
+        } else {
+            entity = dtoToEntity(dto);
+            supplierStockRepository.save(entity);
+        }
         return entity.getSupplierStockId();
     }
 
@@ -42,6 +49,11 @@ public class SupplierStockServiceImpl implements SupplierStockService {
             entity.setStock(dto.getStock());
             supplierStockRepository.save(entity);
         }
+    }
+
+    @Override
+    public List<SupplierStock> getStocks() {
+        return supplierStockRepository.findAll();
     }
 
 
@@ -68,7 +80,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
         List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
 
         // APPROVAL 상태인 발주 요청 수량 조회
-        int approvedQuantity = orderRepository.findApprovedQuantity(supplierName, materialName,statuses);
+        int approvedQuantity = orderRepository.findApprovedQuantity(supplierName, materialName, statuses);
 
         // 가용 재고 계산
         int availableStock = stock - approvedQuantity;
@@ -90,9 +102,15 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 
     public SupplierStock dtoToEntity(SupplierStockDTO dto) {
 
-        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent() && supplierRepository.findById(dto.getSupplierId()).isPresent()) {
+        String supplierId = dto.getSupplierId();
+        if (supplierId == null) {
+            supplierId = supplierRepository.findSupplierIdBySupplierName(dto.getSupplierName());
+        }
+
+        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent() && supplierRepository.findById(supplierId).isPresent()) {
             Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
-            Supplier supplier = supplierRepository.findById(dto.getSupplierId()).get();
+
+            Supplier supplier = supplierRepository.findById(supplierId).get();
 
             return SupplierStock.builder()
                     .supplierStockId(dto.getSupplierStockId())

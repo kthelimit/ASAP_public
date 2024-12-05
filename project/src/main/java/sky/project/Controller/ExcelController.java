@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.*;
-import sky.project.Entity.Assy;
-import sky.project.Entity.Material;
-import sky.project.Entity.Product;
-import sky.project.Entity.ProductionPlan;
+import sky.project.Entity.*;
+import sky.project.Repository.SupplierRepository;
+import sky.project.Repository.UserRepository;
 import sky.project.Service.*;
 
 import java.io.IOException;
@@ -40,10 +40,16 @@ public class ExcelController {
     private final MaterialService materialService;
     private final ProductionPlanService productionPlanService;
     private final AssyService assyService;
+    private final StockService stockService;
+    private final SupplierStockService supplierStockService;
+    private final SupplierService supplierService;
+    private final SupplierRepository supplierRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
 
     //상품 등록
     @PostMapping("/addProduct")
-    public String uploadProduct(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadProduct(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
         for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
@@ -58,11 +64,14 @@ public class ExcelController {
 
             productService.register(entity);
         }
-        return "redirect:/plan/bomRegister";
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/plan/bomRegister";
+        }
     }
 
     //상품 시트 다운로드
-
     @RequestMapping(value = "/downloadProduct/{template}")
     public void downloadProduct(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
 
@@ -114,7 +123,7 @@ public class ExcelController {
 
     //자재 등록
     @PostMapping("/addMaterial")
-    public String uploadMaterial(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadMaterial(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
         for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
@@ -152,7 +161,11 @@ public class ExcelController {
 
             materialService.registerMaterial(entity, null);
         }
-        return "redirect:/plan/bomRegister";
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/plan/bomRegister";
+        }
     }
 
     //자재 시트 다운로드
@@ -229,7 +242,7 @@ public class ExcelController {
 
     //생산계획 등록
     @PostMapping("/addProductPlan")
-    public String uploadProductPlan(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadProductPlan(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
         for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
@@ -256,11 +269,14 @@ public class ExcelController {
 
             productionPlanService.registerProductionPlan(entity);
         }
-        return "redirect:/plan/list";
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/plan/list";
+        }
     }
 
     //생산계획 다운로드
-
     @RequestMapping(value = "/downloadProductPlan/{template}")
     public void downloadProductPlan(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
 
@@ -321,7 +337,7 @@ public class ExcelController {
 
     //조립구조 등록
     @PostMapping("/addAssy")
-    public String uploadAssy(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadAssy(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
         for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
@@ -340,11 +356,14 @@ public class ExcelController {
 
             assyService.register(entity);
         }
-        return "redirect:/plan/bomRegister";
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/plan/bomRegister";
+        }
     }
 
     //조립구조 다운로드
-
     @RequestMapping(value = "/downloadAssy/{template}")
     public void downloadAssy(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
 
@@ -409,7 +428,7 @@ public class ExcelController {
 
     //BOM 등록
     @PostMapping("/addBOM")
-    public String uploadBOM(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadBOM(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
 
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
@@ -419,11 +438,350 @@ public class ExcelController {
             DataFormatter formatter = new DataFormatter();
             XSSFRow row = worksheet.getRow(i);
 
-            //insertDataTest를 참고해서 BOM입력에 필요한 데이터를 넣어두자.
+            String productCode = formatter.formatCellValue(row.getCell(0));
+            String materialCode = formatter.formatCellValue(row.getCell(2));
+            String componentType = formatter.formatCellValue(row.getCell(4));
+            int requireQuantity = Integer.parseInt(formatter.formatCellValue(row.getCell(5)));
+
+            entity.setProductCode(productCode);
+            entity.setMaterialCode(materialCode);
+            entity.setComponentType(componentType);
+            entity.setRequireQuantity(requireQuantity);
 
             bomService.register(entity);
         }
-        return "redirect:/plan/bomRegister";
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/plan/bomRegister";
+        }
     }
+
+    //BOM 다운로드
+    @RequestMapping(value = "/downloadBOM/{template}")
+    public void downloadBOM(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
+
+        //엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        //엑셀 파일 내 시트 생성
+        Sheet sheet = workbook.createSheet("bom");
+
+        //Row 순서 / Cell 순서 변수 선언 및 초기화
+        int rowCount = 0;
+        int cellCount = 0;
+
+        //Header 설정
+        Row headerRow = sheet.createRow(rowCount++);
+        headerRow.createCell(0).setCellValue("※상품 코드");
+        headerRow.createCell(1).setCellValue("상품 이름");
+        headerRow.createCell(2).setCellValue("※자재 코드");
+        headerRow.createCell(3).setCellValue("자재 이름");
+        headerRow.createCell(4).setCellValue("※부품 타입");
+        headerRow.createCell(5).setCellValue("※사용 수량");
+
+        if (!template) {
+            //Body 설정
+            List<Bom> bomList = bomService.getbomList();
+            for (int i = 0; i < bomList.size(); i++) {
+                Row bodyRow = sheet.createRow(rowCount++);
+                bodyRow.createCell(0).setCellValue(bomList.get(i).getProduct().getProductCode());
+                bodyRow.createCell(1).setCellValue(bomList.get(i).getProduct().getProductName());
+                bodyRow.createCell(2).setCellValue(bomList.get(i).getMaterial().getMaterialCode());
+                bodyRow.createCell(3).setCellValue(bomList.get(i).getMaterial().getMaterialName());
+                bodyRow.createCell(4).setCellValue(bomList.get(i).getComponentType());
+                bodyRow.createCell(5).setCellValue(bomList.get(i).getRequireQuantity());
+            }
+        }
+
+        //Excel 파일 다운로드
+        //컨텐츠 타입 및 파일명 지정
+        String fileName = "bom" + "_ASAP";
+        if (template) {
+            fileName += "_template";
+        } else {
+            fileName = fileName + "_" + LocalDate.now();
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+        try {
+            workbook.write(response.getOutputStream());
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //창고 자재 등록
+    @PostMapping("/addStock")
+    public String uploadStock(@RequestParam("file") MultipartFile file, String where, Model model) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+            StockDTO entity = new StockDTO();
+            DataFormatter formatter = new DataFormatter();
+            XSSFRow row = worksheet.getRow(i);
+            String materialCode = formatter.formatCellValue(row.getCell(3));
+            int quantity = Integer.parseInt(formatter.formatCellValue(row.getCell(5)));
+
+            entity.setMaterialCode(materialCode);
+            entity.setQuantity(quantity);
+
+            stockService.register(entity);
+        }
+        if (where.equals("dataUpload")) {
+            return "redirect:/dashboard/dataUpload";
+        } else {
+            return "redirect:/material/stocklist";
+        }
+    }
+
+    //창고 자재 다운로드
+    @RequestMapping(value = "/downloadStock/{template}")
+    public void downloadStock(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
+
+        //엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        //엑셀 파일 내 시트 생성
+        Sheet sheet = workbook.createSheet("stock");
+
+        //Row 순서 / Cell 순서 변수 선언 및 초기화
+        int rowCount = 0;
+        int cellCount = 0;
+
+        //Header 설정
+        Row headerRow = sheet.createRow(rowCount++);
+        headerRow.createCell(0).setCellValue("인덱스");
+        headerRow.createCell(1).setCellValue("자재 유형");
+        headerRow.createCell(2).setCellValue("부품 종류");
+        headerRow.createCell(3).setCellValue("※자재 코드");
+        headerRow.createCell(4).setCellValue("자재명");
+        headerRow.createCell(5).setCellValue("※창고 내 재고 수량");
+
+        if (!template) {
+            //Body 설정
+            List<Stock> stockList = stockService.getStocks();
+            for (int i = 0; i < stockList.size(); i++) {
+                Row bodyRow = sheet.createRow(rowCount);
+                bodyRow.createCell(0).setCellValue(rowCount++);
+                bodyRow.createCell(1).setCellValue(stockList.get(i).getMaterial().getMaterialType());
+                bodyRow.createCell(2).setCellValue(stockList.get(i).getMaterial().getComponentType());
+                bodyRow.createCell(3).setCellValue(stockList.get(i).getMaterial().getMaterialCode());
+                bodyRow.createCell(4).setCellValue(stockList.get(i).getMaterial().getMaterialName());
+                bodyRow.createCell(5).setCellValue(stockList.get(i).getQuantity());
+            }
+        }
+
+        //Excel 파일 다운로드
+        //컨텐츠 타입 및 파일명 지정
+        String fileName = "stock" + "_ASAP";
+        if (template) {
+            fileName += "_template";
+        } else {
+            fileName = fileName + "_" + LocalDate.now();
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+        try {
+            workbook.write(response.getOutputStream());
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //업체 창고 자재등록
+    @PostMapping("/addSupplierStock")
+    public String uploadSupplierStock(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+            SupplierStockDTO entity = new SupplierStockDTO();
+            DataFormatter formatter = new DataFormatter();
+            XSSFRow row = worksheet.getRow(i);
+
+            String supplierName = formatter.formatCellValue(row.getCell(0));
+            String materialCode = formatter.formatCellValue(row.getCell(3));
+            int stock = Integer.parseInt(formatter.formatCellValue(row.getCell(5)));
+
+            entity.setSupplierName(supplierName);
+            entity.setMaterialCode(materialCode);
+            entity.setStock(stock);
+
+
+            supplierStockService.register(entity);
+        }
+        return "redirect:/dashboard/dataUpload";
+    }
+
+    //업체 창고 자재 다운로드
+    @RequestMapping(value = "/downloadSupplierStock/{template}")
+    public void downloadSupplierStock(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
+
+        //엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        //엑셀 파일 내 시트 생성
+        Sheet sheet = workbook.createSheet("product");
+
+        //Row 순서 / Cell 순서 변수 선언 및 초기화
+        int rowCount = 0;
+        int cellCount = 0;
+
+        //Header 설정
+        Row headerRow = sheet.createRow(rowCount++);
+        headerRow.createCell(0).setCellValue("※공급업체");
+        headerRow.createCell(1).setCellValue("자재 유형");
+        headerRow.createCell(2).setCellValue("부품 종류");
+        headerRow.createCell(3).setCellValue("※자재 코드");
+        headerRow.createCell(4).setCellValue("자재명");
+        headerRow.createCell(5).setCellValue("※창고 내 재고 수량");
+
+        if (!template) {
+            //Body 설정
+            List<SupplierStock> stockList = supplierStockService.getStocks();
+            for (int i = 0; i < stockList.size(); i++) {
+                Row bodyRow = sheet.createRow(rowCount++);
+                bodyRow.createCell(0).setCellValue(stockList.get(i).getSupplier().getSupplierName());
+                bodyRow.createCell(1).setCellValue(stockList.get(i).getMaterial().getMaterialType());
+                bodyRow.createCell(2).setCellValue(stockList.get(i).getMaterial().getComponentType());
+                bodyRow.createCell(3).setCellValue(stockList.get(i).getMaterial().getMaterialCode());
+                bodyRow.createCell(4).setCellValue(stockList.get(i).getMaterial().getMaterialName());
+                bodyRow.createCell(5).setCellValue(stockList.get(i).getStock());
+            }
+        }
+
+        //Excel 파일 다운로드
+        //컨텐츠 타입 및 파일명 지정
+        String fileName = "supplierStock" + "_ASAP";
+        if (template) {
+            fileName += "_template";
+        } else {
+            fileName = fileName + "_" + LocalDate.now();
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+        try {
+            workbook.write(response.getOutputStream());
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //업체 등록
+    @PostMapping("/addSupplier")
+    public String uploadSupplier(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+
+        String password = "1234"; //이 기능을 사용해서 가입하는 이들의 패스워드를 여기서 지정(추후 각자가 로그인해서 변경할 것)
+
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+            User user = new User();
+            Supplier supplier = new Supplier();
+
+            DataFormatter formatter = new DataFormatter();
+            XSSFRow row = worksheet.getRow(i);
+
+            String supplierId = formatter.formatCellValue(row.getCell(0));
+            String supplierName = formatter.formatCellValue(row.getCell(1));
+            String businessType = formatter.formatCellValue(row.getCell(2));
+            String businessItem = formatter.formatCellValue(row.getCell(3));
+            String businessRegistrationNumber = formatter.formatCellValue(row.getCell(4));
+            String contactInfo = formatter.formatCellValue(row.getCell(5));
+            String address = formatter.formatCellValue(row.getCell(6));
+
+            //유저 정보 세팅
+            user.setUserId(supplierId);
+            user.setUsername(supplierName);
+            user.setUserAddress(address);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setPhone(contactInfo);
+            user.setUserType(UserType.SUPPLIER);
+
+            //유저 등록을 먼저 한다.
+            userRepository.save(user);
+
+
+            //공급업체 정보 세팅
+            supplier.setSupplierId(supplierId);
+            supplier.setSupplierName(supplierName);
+            supplier.setBusinessType(businessType);
+            supplier.setBusinessItem(businessItem);
+            supplier.setBusinessRegistrationNumber(businessRegistrationNumber);
+            supplier.setContactInfo(contactInfo);
+            supplier.setAddress(address);
+            supplier.setApproved(true);
+            supplier.setUser(user);
+
+            //업체 등록
+            supplierRepository.save(supplier);
+        }
+        return "redirect:/dashboard/dataUpload";
+    }
+
+    //업체 다운로드
+    @RequestMapping(value = "/downloadSupplier/{template}")
+    public void downloadSupplier(HttpServletResponse response, @PathVariable boolean template, Model model) throws IOException {
+
+        //엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        //엑셀 파일 내 시트 생성
+        Sheet sheet = workbook.createSheet("supplier");
+
+        //Row 순서 / Cell 순서 변수 선언 및 초기화
+        int rowCount = 0;
+        int cellCount = 0;
+
+        //Header 설정
+        Row headerRow = sheet.createRow(rowCount++);
+        headerRow.createCell(0).setCellValue("※ID");
+        headerRow.createCell(1).setCellValue("※공급업체명");
+        headerRow.createCell(2).setCellValue("※업종");
+        headerRow.createCell(3).setCellValue("※업태");
+        headerRow.createCell(4).setCellValue("※사업자번호");
+        headerRow.createCell(5).setCellValue("※연락처");
+        headerRow.createCell(6).setCellValue("※주소");
+
+        if (!template) {
+            //Body 설정
+            List<Supplier> supplierList = supplierService.getSuppliers();
+            for (int i = 0; i < supplierList.size(); i++) {
+                Row bodyRow = sheet.createRow(rowCount++);
+                bodyRow.createCell(0).setCellValue(supplierList.get(i).getSupplierId());
+                bodyRow.createCell(1).setCellValue(supplierList.get(i).getSupplierName());
+                bodyRow.createCell(2).setCellValue(supplierList.get(i).getBusinessType());
+                bodyRow.createCell(3).setCellValue(supplierList.get(i).getBusinessItem());
+                bodyRow.createCell(4).setCellValue(supplierList.get(i).getBusinessRegistrationNumber());
+                bodyRow.createCell(5).setCellValue(supplierList.get(i).getContactInfo());
+                bodyRow.createCell(6).setCellValue(supplierList.get(i).getAddress());
+            }
+        }
+
+        //Excel 파일 다운로드
+        //컨텐츠 타입 및 파일명 지정
+        String fileName = "supplier" + "_ASAP";
+        if (template) {
+            fileName += "_template";
+        } else {
+            fileName = fileName + "_" + LocalDate.now();
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+        try {
+            workbook.write(response.getOutputStream());
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

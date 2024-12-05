@@ -20,7 +20,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findByMaterialType(String materialType);
 
 
-
     Optional<Material> findByMaterialCode(String materialCode);
 
     Page<Material> findByMaterialNameContainingOrMaterialCodeContaining(
@@ -30,6 +29,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 
     Optional<Material> findFirstByMaterialName(String materialName);
 
-
+    @Query("select m.materialCode from Material m where m.materialName=:materialName")
+    String findCodeByMaterialName(String materialName);
 
 }

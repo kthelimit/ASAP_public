@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>데이터 업로드</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">데이터 업로드</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <div class="card-style mb-30">
+                <p class="text-sm mb-20">
+                    이곳에서 각종 엑셀 파일을 업로드해 일괄 등록할 수 있습니다. 먼저 진행해두어야하는 과정을 표시해두었으므로 해당 등록을 먼저 진행해주세요.
+                </p>
+                <h6 class="mb-10">상품 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-success">※이 과정이 선행 과정인 과정 : 조립 구조 등록, bom 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProduct}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-7" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadProduct/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadProduct/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h6 class="mb-10">생산계획 등록</h6>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadProductPlan/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadProductPlan/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h6 class="mb-10">업체 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-success">※이 과정이 선행 과정인 과정 : 자재 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addSupplier}">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadSupplier/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadSupplier/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h6 class="mb-10">자재 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-danger">※진행해두어야하는 선행 과정 : 업체 등록</span>
+                    <br><span class="text-success">※이 과정이 선행 과정인 과정 : 창고 재고 등록, 업체 재고 등록, 조립 구조 등록, BOM 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addMaterial}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadMaterial/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadMaterial/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h6 class="mb-10">업체 재고 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-danger">※진행해두어야하는 선행 과정 : 자재 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addSupplierStock}">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadSupplierStock/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadSupplierStock/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+                <h6 class="mb-10">조립 구조 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-danger">※진행해두어야하는 선행 과정 : 상품 등록, 자재 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addAssy}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-7" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadAssy/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadAssy/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h6 class="mb-10">BOM 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-danger">※진행해두어야하는 선행 과정 : 상품 등록, 자재 등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addBOM}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-7" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadBOM/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadBOM/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <h6 class="mb-10">창고 재고 등록</h6>
+                <p class="text-sm mb-20">
+                    <span class="text-danger">※진행해두어야하는 선행 과정 : 자재등록</span>
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addStock}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-7" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadStock/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadStock/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </th:block>
+</th:block>

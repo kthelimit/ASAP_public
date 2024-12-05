@@ -40,7 +40,7 @@
                         <span class="text">대시보드</span>
                     </a>
                 </li>
-                <li class="nav-item nav-item-has-children active">
+                <li class="nav-item nav-item-has-children active" th:if="${user != null and user.userType.name() == 'PARTNER' or  user.userType.name() == 'ADMIN'   or  user.userType.name() == 'SUPPLIER' }" >
                     <a
                             aria-controls="ddmenu_2"
                             aria-expanded="false"
@@ -57,19 +57,19 @@
       fill-rule="evenodd"/>
 </svg>
               </span>
-                        <span class="text">업체 관리</span>
+                        <span >업체 관리</span>
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_2">
-                        <li>
+                        <li th:if="${user != null and user.userType.name() == 'PARTNER' }" >
                             <a href="/suppliers/register"> 업체 등록 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and user.userType.name() == 'ADMIN'}">
                             <a href="/suppliers/pending"> 업체 승인 대기 목록 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and user.userType.name() == 'ADMIN'}">
                             <a href="/suppliers/list"> 업체 목록 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and user.userType.name() == 'SUPPLIER'}">
                             <a href="/suppliers/page"> 협력사 페이지 </a>
                         </li>
                     </ul>
@@ -77,7 +77,7 @@
                 <li class="nav-item">
                 </li>
                 <span class="divider"><hr/></span>
-                <li class="nav-item active nav-item-has-children ">
+                <li class="nav-item active nav-item-has-children " th:if="${user != null and (user.userType.name() == 'PRODUCTION_DEPT' or user.userType.name() == 'ADMIN')}">
                     <a
                             aria-controls="ddmenu_3"
                             aria-expanded="false"
@@ -96,7 +96,8 @@
       fill-rule="evenodd"/>
 </svg>
                               </span>
-                        <span class="text">생산계획 관리</span>
+                        <span class="text" >생산계획 관리</span>
+
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_3">
                         <li>
@@ -108,7 +109,7 @@
                     </ul>
                 </li>
                 </li>
-                <li class="nav-item nav-item-has-children active">
+                <li class="nav-item nav-item-has-children active" th:if="${user != null and (user.userType.name() == 'PURCHASE_DEPT' or user.userType.name() == 'ADMIN')}">
                     <a
                             aria-controls="ddmenu_5"
                             aria-expanded="false"
@@ -127,7 +128,8 @@
       fill-rule="evenodd"/>
 </svg>
               </span>
-                        <span class="text"> 조달 관리 </span>
+                        <span class="text" >조달 관리</span>
+
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_5">
                         <li>
@@ -141,7 +143,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item nav-item-has-children active">
+                <li class="nav-item nav-item-has-children active" th:if="${user != null and (user.userType.name() == 'PURCHASE_DEPT' or user.userType.name() == 'ADMIN')}">
                     <a
                             aria-controls="ddmenu_4"
                             aria-expanded="false"
@@ -159,7 +161,7 @@
       fill-rule="evenodd"/>
 </svg>
               </span>
-                        <span class="text">발주 관리 </span>
+                        <span class="text" >발주 관리 </span>
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_4">
                         <li>
@@ -180,7 +182,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item nav-item-has-children active">
+                <li class="nav-item nav-item-has-children active" th:if="${user != null and (user.userType.name() == 'PRODUCTION_DEPT' or user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                     <a
                             aria-controls="ddmenu_55"
                             aria-expanded="false"
@@ -200,25 +202,25 @@
 <path d="M2.95969 6.64132L12 11.1615L15.4112 9.4559L6.52456 4.37785L6.42229 4.43152C4.64855 5.36234 3.6059 5.90949 2.95969 6.64132Z"/>
 </svg>
               </span>
-                        <span class="text">자재 관리</span>
+                        <span class="text" >자재 관리</span>
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_55">
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/stocklist}">창고 자재 목록</a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/import}"> 입고 관리 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a href="#0"> 입고 내역 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/export}"> 출고 관리 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'PRODUCTION_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/export/request}"> 출고 요청 </a>
                         </li>
-                        <li>
+                        <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/export/history}"> 출고 내역 </a>
                         </li>
                     </ul>
@@ -239,7 +241,7 @@
                         <span class="text">기준 정보</span>
                     </a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item active" th:if="${user != null and user.userType.name() == 'ADMIN'}">
                     <a th:href="@{/dashboard/dataUpload}">
               <span class="icon">
 

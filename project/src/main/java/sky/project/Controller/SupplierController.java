@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -257,6 +258,16 @@ public class SupplierController {
         model.addAttribute("inspectionDTOS", inspections.getContent());
         model.addAttribute("inspectionTotalPages", inspections.getTotalPages());
         model.addAttribute("inspectionCurrentPage", inspectionPage);
+
+
+        // 거래 내역 요약 데이터 추가
+        double totalAmount = invoiceService.getTotalAmount(supplierName);
+        Map<Integer, Double> yearlySummary = invoiceService.getYearlySummary(supplierName);
+        Map<String, Double> monthlySummary = invoiceService.getMonthlySummary(supplierName);
+
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("yearlySummary", yearlySummary);
+        model.addAttribute("monthlySummary", monthlySummary);
 
 
         return "Supplier/SupplierPage";

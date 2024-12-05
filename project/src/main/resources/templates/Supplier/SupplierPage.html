@@ -58,13 +58,48 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <div class="transaction-summary">
-                                <h3>거래 내역 요약</h3>
-                                <p><strong>총 거래 금액:</strong> [총 거래 금액]</p>
-                                <p><strong>연별 금액:</strong> [연별 거래 금액]</p>
-                                <p><strong>월별 거래 금액:</strong> [월별 거래 금액]</p>
-                                <p><strong>주별 거래 금액:</strong> [주별 거래 금액]</p>
-                            </div>
+                            <h3>거래 내역 요약</h3>
+                            <p><strong>총 거래 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>
+
+                            <!-- 연별 거래 요약 -->
+                            <h4 class="mt-20">연별 거래 금액</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50%"><h6>연도</h6></th>
+                                    <th class="text-center" style="width: 50%"><h6>거래 금액</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${yearlySummary}">
+                                    <td class="text-center">[[${entry.key}]]</td>
+                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value, 3, 'COMMA')}]]</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(yearlySummary)}">
+                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 월별 거래 요약 -->
+                            <h4 class="mt-20">월별 거래 금액</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50%"><h6>월</h6></th>
+                                    <th class="text-center" style="width: 50%"><h6>거래 금액</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${monthlySummary}">
+                                    <td class="text-center">[[${entry.key}]]</td>
+                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value, 3, 'COMMA')}]]</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(monthlySummary)}">
+                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

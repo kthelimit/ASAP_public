@@ -66,7 +66,7 @@ public class InvoiceController {
         model.addAttribute("invoice", invoice);
         model.addAttribute("supplier", supplier);
 
-        return "Invoice/InvoiceDetailView"; // 뷰 이름
+        return "Invoice/InvoiceDetail"; // 뷰 이름
     }
 
 

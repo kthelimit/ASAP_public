@@ -4,7 +4,6 @@
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
 </head>
-<!-- ========== title-wrapper end ========== -->
 <div class="row">
     <div class="col-lg-12">
         <div class="card-style mb-30">
@@ -18,7 +17,7 @@
                     <table class="table" style="text-align: center">
                         <tr>
                             <th><h6>거래일자</h6></th>
-                            <td>2024.11.13</td>
+                            <td th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
                         </tr>
                         <tr>
                             <th colspan="2"><h6>하기와 같이 계산합니다.</h6></th>
@@ -32,19 +31,19 @@
                         </tr>
                         <tr>
                             <th><h6>상호</h6></th>
-                            <td th:text="${supplier2.supplierName}"></td>
+                            <td th:text="${supplier.supplierName}"></td>
                         </tr>
                         <tr>
                             <th><h6>사업자 등록 번호</h6></th>
-                            <td th:text="${supplier2.Busi}"></td>
+                            <td th:text="${supplier.businessRegistrationNumber}"></td>
                         </tr>
                         <tr>
                             <th><h6>주소</h6></th>
-                            <td colspan="3"><p>경기도 화성시 반월동</p></td>
+                            <td th:text="${supplier.address}"></td>
                         </tr>
                         <tr>
                             <th><h6>연락처</h6></th>
-                            <td colspan="3"><p>000-0000-0000</p></td>
+                            <td th:text="${supplier.contactInfo}"></td>
                         </tr>
                     </table>
                 </div>
@@ -52,10 +51,8 @@
             <hr>
             <table class="table" style="background-color: lightgrey">
                 <tr>
-                    <td class="min-width" style="padding-left: 20px ; padding-top: 0">합계(공급가액 + 세액)
-                        :
-                    </td>
-                    <td class="min-width" style="text-align: right; padding-top: 0">₩55,000,000</td>
+                    <td class="min-width" style="padding-left: 20px; padding-top: 0">합계(공급가액 + 세액):</td>
+                    <td th:text="${invoice.totalPrice + (invoice.totalPrice / 10)}"></td>
                 </tr>
             </table>
             <hr>
@@ -63,71 +60,34 @@
                 <table class="table" style="text-align: right">
                     <thead>
                     <tr style="text-align: center">
-                        <th>
-                            <h6>일자</h6>
-                        </th>
-                        <th>
-                            <h6>품목명[규격]</h6>
-                        </th>
-                        <th>
-                            <h6>수량(단위 포함)</h6>
-                        </th>
-                        <th>
-                            <h6>단가</h6>
-                        </th>
-                        <th>
-                            <h6>공급가액</h6>
-                        </th>
-                        <th>
-                            <h6>부가세</h6>
-                        </th>
+                        <th>거래일자</th>
+                        <td th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
+                        <th>자재이름</th>
+                        <td th:text="${invoice.materialName}"></td>
+                        <th>수량</th>
+                        <td th:text="${invoice.quantity}"></td>
+                        <th>단위당 가격</th>
+                        <td th:text="${invoice.unitPrice}"></td>
+                        <th>공급가액</th>
+                        <td th:text="${invoice.totalPrice}"></td>
+                        <th>부가세</th>
+                        <td th:text="${invoice.totalPrice / 10}"></td>
                     </tr>
-                    <!-- end table row-->
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td class="min-width" style="text-align: center">
-                            <p>11/24</p>
-                        </td>
-                        <td class="min-width" style="text-align: left">
-                            <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
-                        </td>
-                        <td class="min-width">
-                            <p>100EA</p>
-                        </td>
-                        <td class="min-width">
-                            <p>500,000</p>
-                        </td>
-                        <td class="min-width">
-                            <p>500,000</p>
-                        </td>
-                        <td class="min-width">
-                            <p>50,000</p>
-                        </td>
-                    </tr>
-
-                    <!-- end table row -->
-                    <tr>
-                        <td colspan="6">
-
-                        </td>
-                    </tr>
-                    <!-- end table row -->
-                    </tbody>
                 </table>
                 <table class="table" style="text-align: right">
                     <tbody>
                     <tr>
                         <th><h6>수량</h6></th>
-                        <td><p>100</p></td>
+                        <td th:text="${invoice.quantity}"></td>
                         <th><h6>공급가액</h6></th>
-                        <td><p>50,000,000</p></td>
+                        <td th:text="${invoice.totalPrice}"></td>
                         <th><h6>VAT</h6></th>
-                        <td><p>5,000,000</p></td>
+                        <td th:text="${invoice.totalPrice / 10}"></td>
                         <th><h6>합계</h6></th>
-                        <td><p>₩55,000,000</p></td>
+                        <td th:text="${invoice.totalPrice + (invoice.totalPrice / 10)}"></td>
                         <th><h6>인수자</h6></th>
-                        <td><p>윤하늘</p></td>
+                        <td>윤하늘</td>
                     </tr>
                     </tbody>
                 </table>

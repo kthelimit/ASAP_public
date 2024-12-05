@@ -84,7 +84,9 @@
                                     <td class="min-width text-center" th:text="${orderM.orderDate}"></td>
                                     <td class="min-width text-center" th:text="${orderM.expectedDate}"></td>
                                     <td class="min-width text-center" th:text="${orderM.orderQuantity}"></td>
-                                    <td class="min-width text-center">0/0</td>
+                                    <td class="min-width text-center">
+                                        [[${orderM.finishedInspection}]]/[[${orderM.totalInspection}]]
+                                    </td>
                                     <td class="min-width text-center">
 
                                         <a class="main-btn primary-btn btn-hover" style="padding: 12px"
@@ -128,9 +130,9 @@
                     <div class="card-style mb-30">
                         <h3 class="mb-10">선택된 발주서에 대한 진척 검수 목록</h3>
                         <p class="text-sm mb-20">
-                            선택된 발주서에 대해 현재 요청해둔 진척 검수 목록입니다.
+                            선택된 발주서에 대해 현재 요청해둔 진척 검수 목록입니다. 진척 검수는 총 3번까지 요청할 수 있습니다.
                         </p>
-                        <form th:action="@{/order/inspectionRegister}" method="post">
+                        <form method="post" th:action="@{/order/inspectionRegister}">
                             <div class="row" th:if="${orderDTO!=null}">
                                 <div class="col-lg-2 input-style-1">
                                     <label>발주 번호</label>
@@ -164,7 +166,12 @@
                                 </div>
                                 <div class="col-lg-1 input-style-1" style="min-width: 172px">
                                     <label>&nbsp;</label>
-                                    <button class="main-btn primary-btn btn-hover">검수 요청</button>
+                                    <th:block th:if="${orderDTO.totalInspection>=3}">
+                                        <button class="main-btn btn-hover disabled" disabled>검수 요청</button>
+                                    </th:block>
+                                    <th:block th:if="${orderDTO.totalInspection<3}">
+                                        <button class="main-btn primary-btn btn-hover" type="submit">검수 요청</button>
+                                    </th:block>
                                 </div>
                             </div>
                         </form>
@@ -177,9 +184,21 @@
                             </tr>
                             <tr th:each="inspection : ${inspectionDTOS}">
                                 <td class="text-center" th:text="${inspection.inspectionRound}"></td>
-                                <td class="text-center" th:text="${inspection.inspectionQuantity}"></td>
+                                <td class="text-center">
+                                    <th:block th:if="${inspection.inspectionQuantity!=null}">
+                                        [[${inspection.inspectionQuantity}]]
+                                    </th:block>
+                                    <th:block th:if="${inspection.inspectionQuantity==null}">
+                                        아직 검수가 진행되지 않았습니다.
+                                    </th:block>
+                                </td>
                                 <td class="text-center" th:text="${inspection.inspectionDate}"></td>
-                                <td class="text-center" th:text="${inspection.status}"></td>
+                                <td class="text-center">
+                                    <span class="status-btn success-btn"
+                                          th:if="${inspection.status=='ON_HOLD'}">대기 중</span>
+                                    <span class="status-btn close-btn"
+                                          th:if="${inspection.status=='FINISHED'}">검수 완료</span>
+                                </td>
                             </tr>
                         </table>
                     </div>

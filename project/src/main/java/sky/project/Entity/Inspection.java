@@ -18,8 +18,6 @@ public class Inspection extends Base{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inspectionId; // PK
 
-    private String inspectionCode; //진척 검수 코드
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order; // Order 테이블과 연관 관계 (FK)

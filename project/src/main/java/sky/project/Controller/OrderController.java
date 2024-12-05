@@ -259,7 +259,7 @@ public class OrderController {
         }
 
 
-        return "/Order/ProgressInspection";
+        return "Order/ProgressInspection";
     }
 
     @GetMapping("/inspectionrequest")
@@ -269,9 +269,16 @@ public class OrderController {
     }
 
     @PostMapping("/inspectionRegister")
-    public String inspectionRegister(InspectionDTO dto, String orderCode) {
+    public String inspectionRegister(InspectionDTO dto, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addAttribute("orderCode", dto.getOrderCode());
         inspectionService.register(dto);
         return "redirect:/order/inspection";
+    }
+
+    @PostMapping("/inspectionUpdate")
+    public String inspectionUpdate(InspectionDTO dto) {
+        inspectionService.updateInspection(dto);
+        return "redirect:/suppliers/page";
     }
 
 }

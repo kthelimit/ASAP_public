@@ -8,10 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.*;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.ProcurementPlanRepository;
-import sky.project.Repository.SupplierStockRepository;
+import sky.project.Repository.*;
 import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
@@ -37,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProcurementPlanRepository procurementPlanRepository;
+
+    @Autowired
+    private InspectionRepository inspectionRepository;
 
     @Override
     public void registerOrder(OrdersDTO ordersDTO) {
@@ -169,6 +169,14 @@ public class OrderServiceImpl implements OrderService {
                 .map(Material::getMaterialType)
                 .orElse("정보 없음");
 
+        //해당 발주코드를 갖고 있는 진척검수갯수를 세어준다.
+        int totalInspection = 0;
+        int finishedInspection = 0;
+        if (inspectionRepository.countByOrderCode(order.getOrderCode()) > 0) {
+            totalInspection = inspectionRepository.countByOrderCode(order.getOrderCode());
+            finishedInspection = inspectionRepository.countByOrderCodeWithFinished(order.getOrderCode());
+        }
+
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
@@ -183,6 +191,8 @@ public class OrderServiceImpl implements OrderService {
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
                 .materialType(materialType)
                 .availableStock(availableStock) // 요청 가능 수량
+                .totalInspection(totalInspection)
+                .finishedInspection(finishedInspection)
                 .build();
     }
 

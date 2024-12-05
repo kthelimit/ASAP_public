@@ -23,5 +23,6 @@ public class OrdersDTO {
     private String materialType;
     private int availableStock; //요청 가능재고
     private int requestedQuantity;
-    private int requrieQunatity;
+    private int totalInspection;
+    private int finishedInspection;
 }

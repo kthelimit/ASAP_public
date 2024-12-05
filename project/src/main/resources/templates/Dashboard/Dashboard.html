@@ -107,11 +107,11 @@
                         </div>
                     </div>
                     <!-- end alert-box -->
-                    <div class="alert-box danger-alert pl-100">
+                    <div class="alert-box danger-alert pl-100" th:if="${isInspectionDate}">
                         <div class="left">
                             <h5 class="text-bold">업체</h5>
                         </div>
-                        <div class="alert">
+                        <div class="alert" onclick="location.href='/suppliers/page'"  style="cursor: pointer">
                             <h4 class="alert-heading">중요 알림</h4>
                             <p class="text-medium">
                                 오늘은 진척 검수 예정일입니다.
@@ -317,7 +317,7 @@
                                 </div>
                                 <div class="content">
                                     <h6 class="mb-10">진행 중인 진척 검수 건수</h6>
-                                    <h3 class="text-bold mb-10"> 예정 </h3>
+                                    <h3 class="text-bold mb-10"> [[${countInspectionForSupplier}]] </h3>
                                     <p class="text-sm text-success">
                                         <a th:href="@{/suppliers/page}"><span
                                                 class="text-gray"> 더 보기</span></a>
@@ -662,7 +662,7 @@
                                             </td>
                                             <td class="min-width text-center">
                                                 <p th:if="${order.materialType=='구매품'}">-</p>
-                                                <p th:if="${order.materialType=='제조품'}">0/1</p>
+                                                <p th:if="${order.materialType=='제조품'}">[[${order.finishedInspection}]]/[[${order.totalInspection}]]</p>
                                             </td>
                                             <td class="min-width text-center">
                                             <span class="status-btn success-btn"

@@ -47,8 +47,12 @@ public class SupplierController {
 
     @Autowired
     private InvoiceService invoiceService;
+
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private InspectionService inspectionService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -215,8 +219,9 @@ public class SupplierController {
         SupplierDTO supplierDTO = supplierService.getSupplierById(userId);
         model.addAttribute("supplierDTO", supplierDTO);
 
-
-
+        //진척 검수 요청 가져와서 출력해주기
+        List<InspectionDTO> inspectionDTOS = inspectionService.findBySupplierName(supplierName);
+        model.addAttribute("inspectionDTOS", inspectionDTOS);
 
         // supplierName으로 OrdersDTO 가져오기
         Pageable pageable = PageRequest.of(page - 1, size);

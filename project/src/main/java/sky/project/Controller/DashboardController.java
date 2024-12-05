@@ -34,6 +34,9 @@ public class DashboardController {
     @Autowired
     DeliveryRequestService deliveryRequestService;
 
+    @Autowired
+    InspectionService inspectionService;
+
     @RequestMapping("/info")
     public String info(Model model) {
         return "Info/information";
@@ -96,6 +99,15 @@ public class DashboardController {
 
 
         //입고 검수 예정 건수
+
+        //진척 검수일 체크(업체용)
+        boolean isInspectionDate = inspectionService.checkInspectionDate();
+        model.addAttribute("isInspectionDate", isInspectionDate);
+
+
+        //진행 중인 진척 검수 건수(업체용)
+        int countInspectionForSupplier = inspectionService.getCountInspectionForSupplier(supplierName);
+        model.addAttribute("countInspectionForSupplier", countInspectionForSupplier);
 
         //대기 중인 출고 요청 건수
         int countExportRequest = exportService.getCountCurrentRequest();

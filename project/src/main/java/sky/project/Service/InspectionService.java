@@ -8,4 +8,12 @@ public interface InspectionService {
     Long register(InspectionDTO dto);
 
     List<InspectionDTO> findByOrderCode(String orderCode);
+
+    List<InspectionDTO> findBySupplierName(String supplierName);
+
+    int getCountInspectionForSupplier(String supplierName);
+
+    boolean checkInspectionDate();
+
+    Long updateInspection(InspectionDTO dto);
 }

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 public class InspectionDTO {
 
     private Long inspectionId; // PK
-    private String inspectionCode;
     private String orderCode; // 발주코드
     private String materialName; // 자재 이름
     private String materialCode;

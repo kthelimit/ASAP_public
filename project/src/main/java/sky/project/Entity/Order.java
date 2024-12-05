@@ -26,25 +26,21 @@ public class Order  extends Base{
     private LocalDate expectedDate;
 
     private String procurePlanCode;
-    private String supplierName;
 
+    @ManyToOne
+    @JoinColumn(name = "supplier_name", nullable = false)
+    private Supplier supplier;
 
-    @Column(nullable = false, length = 100)
-    private String materialName; // 자재 이름
+    @ManyToOne
+    @JoinColumn(name = "material_name")
+    private Material material;
 
     @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;
 
     private double totalPrice;
 
-
     @Enumerated(EnumType.STRING)
     private CurrentStatus status;
-
-    @Column(name = "required_quantity", nullable = true) // 조달 필요 수량
-    private Integer requiredQuantity;
-
-    @Column(name = "available_stock", nullable = true) // 요청 가능 수량
-    private Integer availableStock;
 
 }

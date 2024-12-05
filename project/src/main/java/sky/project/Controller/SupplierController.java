@@ -14,7 +14,8 @@ import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.DeliveryRequest;
 import sky.project.Entity.Supplier;
-import sky.project.Repository.SupplierRepository;
+import sky.project.Entity.SupplierStock;
+import sky.project.Repository.SupplierStockRepository;
 import sky.project.Service.*;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class SupplierController {
     private InvoiceService invoiceService;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    private SupplierStockRepository supplierStockRepository;
 
     @Autowired
     private InspectionService inspectionService;
@@ -191,7 +192,7 @@ public class SupplierController {
             @RequestParam(defaultValue = "5") int invoiceSize,
             @RequestParam(defaultValue = "1") int inspectionPage,
             @RequestParam(defaultValue = "5") int inspectionSize
-            ) {
+    ) {
 
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
@@ -222,7 +223,7 @@ public class SupplierController {
         model.addAttribute("supplierDTO", supplierDTO);
 
         //진척 검수 요청 가져와서 출력해주기
-        Pageable inspectionPageable = PageRequest.of(inspectionPage-1, inspectionSize);
+        Pageable inspectionPageable = PageRequest.of(inspectionPage - 1, inspectionSize);
         Page<InspectionDTO> inspections = inspectionService.findBySupplierName(supplierName, inspectionPageable);
 
         // supplierName으로 OrdersDTO 가져오기
@@ -286,33 +287,41 @@ public class SupplierController {
             }
 
             // Import 데이터 저장
-            importDTO.setMaterialName(deliveryRequest.getMaterialName());
-            importDTO.setSupplierName(deliveryRequest.getSupplierName());
+            importDTO.setOrderCode(deliveryRequest.getOrder().getOrderCode());
+            importDTO.setMaterialName(deliveryRequest.getMaterial().getMaterialName());
+            importDTO.setSupplierName(deliveryRequest.getSupplier().getSupplierName());
             importDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             importService.createImport(importDTO);
 
             // InvoiceDTO 생성 및 필드 설정
             InvoiceDTO invoiceDTO = new InvoiceDTO();
-            invoiceDTO.setSupplierName(deliveryRequest.getSupplierName());
-            invoiceDTO.setMaterialName(deliveryRequest.getMaterialName());
+            invoiceDTO.setSupplierName(deliveryRequest.getSupplier().getSupplierName());
+            invoiceDTO.setMaterialName(deliveryRequest.getMaterial().getMaterialName());
             invoiceDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             invoiceService.createInvoice(invoiceDTO);
 
-            // DeliveryRequest 상태 업데이트
+            // DeliveryRequest 상태 업데이트(배달중으로 바꿈)
             deliveryRequestService.updateRequestStatus(id, "FINISHED");
+            // 업체 재고에서 뺀다.
+            SupplierStock stock = supplierStockRepository.findBySupplierNameAndMaterialCode(deliveryRequest.getSupplier().getSupplierName(), deliveryRequest.getMaterial().getMaterialCode());
+            stock.setStock(stock.getStock() - deliveryRequest.getRequestedQuantity());
+            supplierStockRepository.save(stock);
 
-            // requireQuantity가 0인 경우 주문 상태 업데이트
-            if (deliveryRequest.getRequireQuantity() == 0) {
-                String orderCode = deliveryRequest.getOrder().getOrderCode();
-                OrdersDTO order = orderService.findByOrderCode(orderCode);
-                if (order != null) {
-                    orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.FINISHED);
-                }
+            // 발주서의 모든 조달 수량을 만족한 경우 주문 상태 업데이트
+            String orderCode = deliveryRequest.getOrder().getOrderCode();
+            OrdersDTO order = orderService.findByOrderCode(orderCode);
+            List<DeliveryRequest> deliveryRequestsInSameOrder = deliveryRequestService.findByFinishedRequests(orderCode);
+            int sum = 0;
+            for (DeliveryRequest deliveryRequestInSameOrder : deliveryRequestsInSameOrder) {
+                sum += deliveryRequestInSameOrder.getRequestedQuantity();
             }
+            if (order.getOrderQuantity() <= sum) {
+                orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.DELIVERED);
+            }
+
         }
         return "redirect:/suppliers/page";
     }
-
 
 
 }

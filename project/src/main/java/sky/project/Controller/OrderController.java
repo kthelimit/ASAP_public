@@ -138,6 +138,7 @@ public class OrderController {
     public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
         // 데이터 확인
         System.out.println("Received OrdersDTO: " + ordersDTO);
+        System.out.println("supplierName: " + ordersDTO.getSupplierName());
         System.out.println("totalPrice : " + ordersDTO.getTotalPrice());
 
         // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
@@ -182,6 +183,9 @@ public class OrderController {
         // 납입 요청 조회
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);
 
+        //내일을 배달 기본일로 넣음
+        model.addAttribute("date", LocalDate.now().plusDays(1));
+
         // 최신 데이터 전달
         model.addAttribute("purchaseOrders", purchaseOrders.getContent());
         model.addAttribute("purchaseTotalPages", purchaseOrders.getTotalPages());
@@ -207,16 +211,15 @@ public class OrderController {
 
     @PostMapping("/delivery/request")
     public String requestDelivery(
-            @RequestParam Long orderId,
-            @RequestParam int requestedQuantity,
+          DeliveryRequestDTO dto,
             RedirectAttributes redirectAttributes) {
 
         try {
             // 요청 처리 및 최신 DTO 반환
-            OrdersDTO updatedOrderDTO = orderService.processDeliveryRequest(orderId, requestedQuantity);
+            OrdersDTO updatedOrderDTO = orderService.processDeliveryRequest(dto.getOrderId(), dto.getRequestedQuantity());
 
             // DeliveryRequest 테이블에 요청 기록 저장
-            deliveryRequestService.createRequest(orderId, requestedQuantity);
+            deliveryRequestService.createRequest(dto);
 
             // 성공 메시지 전달
             redirectAttributes.addFlashAttribute("success", "납입 요청이 성공적으로 처리되었습니다.");

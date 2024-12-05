@@ -44,10 +44,10 @@
                                         <th class="text-center"><h6>자재 이름</h6></th>
                                         <th class="text-center"><h6>발주일</h6></th>
                                         <th class="text-center"><h6>입고 예정일</h6></th>
-                                        <th class="text-center"><h6>요청 가능 수량</h6></th>
-                                        <th class="text-center"><h6>필요 조달 수량</h6></th>
-                                        <th class="text-center"><h6>요청 수량</h6></th>
-                                        <th class="text-center"><h6>상태</h6></th>
+                                        <th class="text-center"><h6>업체 재고</h6></th>
+                                        <th class="text-center"><h6>총 발주량</h6></th>
+                                        <th class="text-center"><h6>남은 발주량</h6></th>
+                                        <th class="text-center"><h6>납입 지시</h6></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -62,25 +62,20 @@
                                         <td class="min-width text-center"><p
                                                 th:text="${orderP.availableStock > 0 ? orderP.availableStock : 0}"></p>
                                         </td>
-                                        <td class="min-width text-center"><p th:text="${orderP.requiredQuantity}"></p>
+                                        <td class="min-width text-center"><p th:text="${orderP.orderQuantity}"></p>
+                                        </td>
+                                        <td class="min-width text-center"><p th:text="${orderP.remainedQuantity}"></p>
                                         </td>
                                         <td class="min-width text-center">
                                             <form method="post" th:action="@{/order/delivery/request}">
                                                 <input name="orderId" th:value="${orderP.orderId}" type="hidden">
+                                                <input name="requestedDate" type="date" th:value="${date}">
                                                 <input min="1" name="requestedQuantity" required
                                                        th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}"
                                                        type="number">
                                                 <button type="submit">납입 요청</button>
                                             </form>
                                         </td>
-                                        <td class="min-width text-center">
-                                            <span class="status-btn success-btn" th:if="${orderP.status=='ON_HOLD'}">대기 중</span>
-                                            <span class="status-btn close-btn"
-                                                  th:if="${orderP.status=='REJECT'}">거절 완료</span>
-                                            <span class="status-btn active-btn"
-                                                  th:if="${orderP.status=='APPROVAL'}">승인 완료</span>
-                                            <span class="status-btn info-btn"
-                                                  th:if="${orderP.status=='FINISHED'}">종료</span></td>
                                     </tr>
 
                                     <!-- 리스트가 비어 있을 경우 -->
@@ -125,8 +120,8 @@
                                     <th class="text-center"><h6>자재 이름</h6></th>
                                     <th class="text-center"><h6>총 발주 수량</h6></th>
                                     <th class="text-center"><h6>요청 수량</h6></th>
-                                    <th class="text-center"><h6>남은 조달 수량</h6></th>
-                                    <th class="text-center"><h6>요청일</h6></th>
+                                    <th class="text-center"><h6>남은 발주량</h6></th>
+                                    <th class="text-center"><h6>배달 요청일</h6></th>
                                     <th class="text-center"><h6>상태</h6></th>
                                 </tr>
                                 </thead>
@@ -139,13 +134,13 @@
                                     </td>
                                     <td class="min-width text-center"><p th:text="${deliveryRequest.materialName}"></p>
                                     </td>
-                                    <td class="min-width text-center"><p th:text="${deliveryRequest.orderQuantity}"></p>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.totalOrderQuantity}"></p>
                                     </td>
                                     <td class="min-width text-center"><p
                                             th:text="${deliveryRequest.requestedQuantity}"></p></td>
                                     <td class="min-width text-center"><p
-                                            th:text="${deliveryRequest.requireQuantity}"></p></td>
-                                    <td class="min-width text-center"><p th:text="${deliveryRequest.requestedAt}"></p>
+                                            th:text="${deliveryRequest.remainingQuantityAfter}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.requestedDate}"></p>
                                     </td>
                                     <td class="min-width text-center">
                                         <span class="status-btn success-btn"
@@ -186,7 +181,7 @@
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
                         <!-- 처리 완료된 주문 테이블 -->
-                        <h4 class="mb-10">처리 완료된 납입 지시 요청 목록</h4>
+                        <h4 class="mb-10">처리 완료된 발주서 목록</h4>
                         <div class="table-wrapper table-responsive">
                             <table class="table">
                                 <thead>

@@ -7,11 +7,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sky.project.DTO.InvoiceDTO;
+import sky.project.Entity.Invoice;
+import sky.project.Entity.Supplier;
 import sky.project.Service.InvoiceService;
 import org.springframework.ui.Model;
+import sky.project.Service.SupplierService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/invoice")
@@ -19,6 +25,9 @@ public class InvoiceController {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    SupplierService supplierService;
 
 
     @GetMapping("/list")
@@ -41,4 +50,29 @@ public class InvoiceController {
         return "Invoice/InvoiceList"; // Thymeleaf 뷰 이름
     }
 
+
+    @GetMapping("/detail/{id}")
+    public String getInvoiceDetail(@PathVariable Long id, Model model) {
+        // 단일 거래 명세서 가져오기
+        InvoiceDTO invoice = invoiceService.getInvoiceById(id);
+
+        // InvoiceDTO에서 supplierName 가져오기
+        String supplierName = invoice.getSupplierName();
+
+        // 공급자 정보 조회
+        Supplier supplier = supplierService.getSupplierByName(supplierName);
+
+        // Model에 추가
+        model.addAttribute("invoice", invoice);
+        model.addAttribute("supplier", supplier);
+
+        return "Invoice/InvoiceDetailView"; // 뷰 이름
+    }
+
+
+
 }
+
+
+
+

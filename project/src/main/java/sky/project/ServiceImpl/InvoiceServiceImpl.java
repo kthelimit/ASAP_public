@@ -51,6 +51,18 @@ public class InvoiceServiceImpl  implements InvoiceService {
                 .map(invoice -> toDTO(invoice));
     }
 
+    @Override
+    public InvoiceDTO getInvoiceById(Long invoiceId) {
+        // Invoice 엔티티 조회
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found for ID: " + invoiceId));
+
+        // Entity -> DTO 변환
+        return toDTO(invoice);
+    }
+
+
+
     // DTO -> Entity 변환
     private Invoice toEntity(InvoiceDTO dto) {
         if (dto == null) throw new IllegalArgumentException("InvoiceDTO cannot be null");
@@ -86,6 +98,7 @@ public class InvoiceServiceImpl  implements InvoiceService {
                 .unitPrice(entity.getUnitPrice())
                 .quantity(entity.getQuantity())
                 .totalPrice(entity.getTotalPrice()) // 이미 계산된 값을 사용
+                .createdDate(entity.getCreatedDate()) //
                 .build();
     }
 }

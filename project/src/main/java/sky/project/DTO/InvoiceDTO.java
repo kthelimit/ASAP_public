@@ -3,6 +3,7 @@ package sky.project.DTO;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,5 +18,5 @@ public class InvoiceDTO {
     private Double unitPrice; // 자재 단가
     private Integer quantity; // 거래 수량
     private Double totalPrice; // 총 가격 (unitPrice * quantity)
-    private LocalDate createdDate; // 거래 발생 날짜
+    private LocalDateTime createdDate; // 거래 발생 날짜
 }

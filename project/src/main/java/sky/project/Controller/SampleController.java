@@ -105,7 +105,7 @@ public class SampleController {
     @GetMapping("/invoicedetail")
     public String exInvoice() {
         log.info("exInvoice...............");
-        return "Invoice/Invoice";
+        return "InvoiceDetail";
     }
 
     @GetMapping("/invoice")

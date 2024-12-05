@@ -14,6 +14,7 @@ import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.DeliveryRequest;
 import sky.project.Entity.Invoice;
+import sky.project.Entity.Supplier;
 import sky.project.Service.*;
 
 import java.io.File;
@@ -202,6 +203,14 @@ public class SupplierController {
             model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
             return "redirect:/";
         }
+
+
+        // supplierName으로 SupplierDTO 가져오기
+        Supplier supplier = supplierService.getSupplierByName(supplierName);
+
+        model.addAttribute("supplier", supplier);
+
+
 
         // supplierName으로 OrdersDTO 가져오기
         Pageable pageable = PageRequest.of(page - 1, size);

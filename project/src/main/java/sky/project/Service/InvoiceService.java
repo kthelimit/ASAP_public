@@ -13,4 +13,6 @@ public interface InvoiceService {
     Page<InvoiceDTO> getAllInvoice(Pageable pageable);
 
     Page<InvoiceDTO> findInvoicesBySupplierName(String supplierName, Pageable pageable);
+
+    InvoiceDTO getInvoiceById(Long invoiceId);
 }

@@ -36,12 +36,14 @@
                             <!-- 협력사 기본 정보 -->
                             <h3 class="mb-10">협력사 기본 정보</h3>
                             <div class="supplier-info">
-                                <p><strong>사업자 번호:</strong> [사업자 번호]</p>
-                                <p><strong>연락처:</strong> [연락처]</p>
-                                <p><strong>주소:</strong> [주소]</p>
-                                <p><strong>업태:</strong> [업태]</p>
-                                <p><strong>종목:</strong> [종목]</p>
-                                <button class="btn-approve">수정</button>
+                                <p>사업자 등록번호: <span th:text="${supplier.businessRegistrationNumber}">N/A</span></p>
+                                <p>공급사 이름: <span th:text="${supplier.supplierName}">N/A</span></p>
+                                <p>연락처: <span th:text="${supplier.contactInfo}">N/A</span></p>
+                                <p>주소: <span th:text="${supplier.address}">N/A</span></p>
+                                <p>사업 유형: <span th:text="${supplier.businessType}">N/A</span></p>
+                                <p>사업 품목: <span th:text="${supplier.businessItem}">N/A</span></p>
+
+                                <button class="btn-approve">정보 수정</button>
                             </div>
                         </div>
                     </div>
@@ -246,7 +248,7 @@
                                             <td class="text-center" th:text="${request.requestedQuantity}"></td>
                                             <input type="hidden" name="quantity" th:value="${request.requestedQuantity}">
                                             <td class="text-center" th:text="${request.requireQuantity}"></td>
-                                            <td class="text-center" th:text="${request.requestedAt}"></td>
+                                            <td class="text-center" th:text="${#temporals.format(request.requestedAt)}"></td>
                                             <input type="hidden" name="expectedDate" th:value="${request.requestedAt}">
                                             <td class="text-center">
                                                 <span th:if="${request.status == 'FINISHED'}">출고 완료</span>
@@ -298,8 +300,8 @@
                                     <th class="text-center"><h6>단가</h6></th>
                                     <th class="text-center"><h6>수량</h6></th>
                                     <th class="text-center"><h6>총 가격</h6></th>
-<!--                                    <th class="text-center"><h6>거래 날짜</h6></th>-->
-<!--                                    <th class="text-center"><h6>상세 보기</h6></th>-->
+                                    <th class="text-center"><h6>거래 날짜</h6></th>
+                                    <th class="text-center"><h6>상세 보기</h6></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -308,11 +310,11 @@
                                     <td class="text-center" th:text="${invoice.unitPrice}"></td>
                                     <td class="text-center" th:text="${invoice.quantity}"></td>
                                     <td class="text-center" th:text="${invoice.totalPrice}"></td>
-<!--                                    <td class="text-center" th:text="${#temporals.format(invoice.transactionDate, 'yyyy-MM-dd')}"></td>-->
-<!--                                    <td class="text-center">-->
-<!--                                        <a class="main-btn primary-btn btn-hover"-->
-<!--                                           th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}">상세 보기</a>-->
-<!--                                    </td>-->
+                                    <td class="text-center" th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
+                                    <td>
+                                        <a th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}"
+                                           class="main-btn primary-btn btn-hover">상세보기</a>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

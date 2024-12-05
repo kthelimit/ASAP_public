@@ -133,52 +133,55 @@
                             선택된 발주서에 대해 현재 요청해둔 진척 검수 목록입니다. 진척 검수는 총 3번까지 요청할 수 있습니다.
                         </p>
                         <form method="post" th:action="@{/order/inspectionRegister}">
-                            <div class="row" th:if="${orderDTO!=null}">
-                                <div class="col-lg-2 input-style-1">
-                                    <label>발주 번호</label>
-                                    <input name="orderCode" placeholder="발주 번호" readonly
-                                           th:value="${orderDTO.orderCode}" type="text">
+                            <th:block th:if="${orderDTO!=null}">
+                                <div class="row">
+                                    <div class="col-lg-2 input-style-1">
+                                        <label>발주 번호</label>
+                                        <input name="orderCode" placeholder="발주 번호" readonly
+                                               th:value="${orderDTO.orderCode}" type="text">
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <label>공급 업체</label>
+                                        <input name="supplierName" placeholder="공급 업체" readonly
+                                               th:value="${orderDTO.supplierName}" type="text">
+                                    </div>
+                                    <div class="col-lg-4 input-style-1">
+                                        <label>발주 자재</label>
+                                        <input name="materialName" placeholder="발주 자재" readonly
+                                               th:value="${orderDTO.materialName}" type="text">
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <label>발주 수량</label>
+                                        <input name="orderQuantity" placeholder="발주 수량" readonly
+                                               th:value="${orderDTO.orderQuantity}" type="number">
+                                    </div>
+                                    <div class="col-lg-2 input-style-1">
+                                        <label>조달 납기일</label>
+                                        <input readonly th:value="${orderDTO.expectedDate}" type="date">
+                                    </div>
                                 </div>
-                                <div class="col-lg-2 input-style-1">
-                                    <label>공급 업체</label>
-                                    <input name="supplierName" placeholder="공급 업체" readonly
-                                           th:value="${orderDTO.supplierName}" type="text">
+                                <div class="row" style="justify-content: flex-end">
+                                    <div class="col-lg-4 input-style-1">
+                                        <label>검수 요청 날짜</label>
+                                        <input name="inspectionDate" type="date">
+                                    </div>
+                                    <div class="col-lg-1 input-style-1" style="min-width: 172px">
+                                        <label>&nbsp;</label>
+                                        <th:block th:if="${orderDTO.totalInspection>=3}">
+                                            <button class="main-btn btn-hover disabled" disabled>검수 요청</button>
+                                        </th:block>
+                                        <th:block th:if="${orderDTO.totalInspection<3}">
+                                            <button class="main-btn primary-btn btn-hover" type="submit">검수 요청</button>
+                                        </th:block>
+                                    </div>
                                 </div>
-                                <div class="col-lg-4 input-style-1">
-                                    <label>발주 자재</label>
-                                    <input name="materialName" placeholder="발주 자재" readonly
-                                           th:value="${orderDTO.materialName}" type="text">
-                                </div>
-                                <div class="col-lg-2 input-style-1">
-                                    <label>발주 수량</label>
-                                    <input name="orderQuantity" placeholder="발주 수량" readonly
-                                           th:value="${orderDTO.orderQuantity}" type="number">
-                                </div>
-                                <div class="col-lg-2 input-style-1">
-                                    <label>조달 납기일</label>
-                                    <input readonly th:value="${orderDTO.expectedDate}" type="date">
-                                </div>
-                            </div>
-                            <div class="row" style="justify-content: flex-end">
-                                <div class="col-lg-4 input-style-1">
-                                    <label>검수 요청 날짜</label>
-                                    <input name="inspectionDate" type="date">
-                                </div>
-                                <div class="col-lg-1 input-style-1" style="min-width: 172px">
-                                    <label>&nbsp;</label>
-                                    <th:block th:if="${orderDTO.totalInspection>=3}">
-                                        <button class="main-btn btn-hover disabled" disabled>검수 요청</button>
-                                    </th:block>
-                                    <th:block th:if="${orderDTO.totalInspection<3}">
-                                        <button class="main-btn primary-btn btn-hover" type="submit">검수 요청</button>
-                                    </th:block>
-                                </div>
-                            </div>
+                            </th:block>
                         </form>
                         <table class="table">
                             <tr>
                                 <th class="text-center"><h6>진척 검수 차수</h6></th>
                                 <th class="text-center"><h6>진척 검수 수량</h6></th>
+                                <th class="text-center"><h6>남은 수량</h6></th>
                                 <th class="text-center"><h6>검수 요청 날짜</h6></th>
                                 <th class="text-center"><h6>검수 상태</h6></th>
                             </tr>
@@ -192,6 +195,7 @@
                                         아직 검수가 진행되지 않았습니다.
                                     </th:block>
                                 </td>
+                                <td class="text-center" th:text="${inspection.remainingQuantity}"></td>
                                 <td class="text-center" th:text="${inspection.inspectionDate}"></td>
                                 <td class="text-center">
                                     <span class="status-btn success-btn"

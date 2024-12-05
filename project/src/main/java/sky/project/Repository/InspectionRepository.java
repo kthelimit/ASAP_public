@@ -1,5 +1,7 @@
 package sky.project.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sky.project.Entity.Inspection;
@@ -30,6 +32,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, Long> {
     @Query("select i from Inspection i where i.order.orderCode=:orderCode")
     List<Inspection> findByOrderCode(String orderCode);
 
-    @Query("select i from Inspection i where i.supplier.supplierName=:supplierName")
-    List<Inspection> findBySupplierName(String supplierName);
+    //협력사 페이지에 띄워주는 진척검수 목록
+    @Query("select i from Inspection i where i.supplier.supplierName=:supplierName and (i.status='ON_HOLD' or (i.status='FINISHED' and i.inspectionDate >:limitDate))")
+    Page<Inspection> findBySupplierName(String supplierName, LocalDate limitDate, Pageable pageable);
 }

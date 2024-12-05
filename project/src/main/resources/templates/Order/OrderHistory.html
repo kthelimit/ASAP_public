@@ -93,6 +93,9 @@
                                     <h6>입고 예정일</h6>
                                 </th>
                                 <th class="text-center">
+                                    <h6>진척 검수</h6>
+                                </th>
+                                <th class="text-center">
                                     <h6>발주 상태</h6>
                                 </th>
                             </tr>
@@ -108,6 +111,10 @@
                                     'COMMA')}]]</p></td>
                                 <td class="text-center"><p>[[${orders.orderDate}]]</p></td>
                                 <td class="text-center"><p>[[${orders.expectedDate}]]</p></td>
+                                <td class="text-center">
+                                    <p th:if="${orders.materialType=='제조품'}">[[${orders.finishedInspection}]]/[[${orders.totalInspection}]]</p>
+                                    <p th:if="${orders.materialType!='제조품'}">-</p>
+                                </td>
                                 <td class="text-center">
                                     <span class="status-btn success-btn" th:if="${orders.status=='ON_HOLD'}">대기 중</span>
                                     <span class="status-btn active-btn"

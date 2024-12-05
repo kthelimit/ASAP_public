@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.DeliveryRequest;
-import sky.project.Entity.Invoice;
 import sky.project.Entity.Supplier;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Service.*;
@@ -87,7 +86,7 @@ public class SupplierController {
 
         if (userId != null && supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("alertMessage", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");
-            return "/sample/admin";
+            return "redirect:/dashboard/index";
         }
 
         model.addAttribute("supplierDTO", new SupplierDTO());
@@ -189,7 +188,10 @@ public class SupplierController {
             @RequestParam(defaultValue = "1") int deliveryPage,
             @RequestParam(defaultValue = "5") int deliverySize,
             @RequestParam(defaultValue = "1") int invoicePage,
-            @RequestParam(defaultValue = "5") int invoiceSize) {
+            @RequestParam(defaultValue = "5") int invoiceSize,
+            @RequestParam(defaultValue = "1") int inspectionPage,
+            @RequestParam(defaultValue = "5") int inspectionSize
+            ) {
 
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
@@ -197,7 +199,7 @@ public class SupplierController {
         }
 
         // 유효성 검사
-        if (page < 1 || deliveryPage < 1 || invoicePage < 1) {
+        if (page < 1 || deliveryPage < 1 || invoicePage < 1 || inspectionPage < 1) {
             model.addAttribute("message", "잘못된 페이지 요청입니다.");
             return "redirect:/";
         }
@@ -220,8 +222,8 @@ public class SupplierController {
         model.addAttribute("supplierDTO", supplierDTO);
 
         //진척 검수 요청 가져와서 출력해주기
-        List<InspectionDTO> inspectionDTOS = inspectionService.findBySupplierName(supplierName);
-        model.addAttribute("inspectionDTOS", inspectionDTOS);
+        Pageable inspectionPageable = PageRequest.of(inspectionPage-1, inspectionSize);
+        Page<InspectionDTO> inspections = inspectionService.findBySupplierName(supplierName, inspectionPageable);
 
         // supplierName으로 OrdersDTO 가져오기
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -250,6 +252,12 @@ public class SupplierController {
         model.addAttribute("invoices", invoices.getContent());
         model.addAttribute("invoiceTotalPages", invoices.getTotalPages());
         model.addAttribute("invoiceCurrentPage", invoicePage);
+
+        //Inspection 데이터 추가
+        model.addAttribute("inspectionDTOS", inspections.getContent());
+        model.addAttribute("inspectionTotalPages", inspections.getTotalPages());
+        model.addAttribute("inspectionCurrentPage", inspectionPage);
+
 
         return "Supplier/SupplierPage";
     }

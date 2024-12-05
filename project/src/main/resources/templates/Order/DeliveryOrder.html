@@ -2,190 +2,259 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-
-        <div class="col-lg-12">
-            <div class="card-style mb-30">
-                <h3 class="mb-10">납입지시 요청</h3>
-                <div class="search_tab">
-                    <div class="table-wrapper table-responsive">
-                        <!-- 처리 중인 주문 테이블 -->
-                        <h4>처리 중인 주문</h4>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>발주 번호</th>
-                                <th>공급사</th>
-                                <th>부품 종류</th>
-                                <th>자재 이름</th>
-                                <th>발주일</th>
-                                <th>입고 예정일</th>
-                                <th>요청 가능 수량</th>
-                                <th>필요 조달 수량</th>
-                                <th>요청 수량</th>
-                                <th>상태</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <!-- 처리 중인 주문 리스트 -->
-                            <tr th:each="orderP : ${purchaseOrders}" >
-                                <td th:text="${orderP.orderCode}"></td>
-                                <td th:text="${orderP.supplierName}"></td>
-                                <td th:text="${orderP.materialType}"></td>
-                                <td th:text="${orderP.materialName}"></td>
-                                <td th:text="${orderP.orderDate}"></td>
-                                <td th:text="${orderP.expectedDate}"></td>
-                                <td th:text="${orderP.availableStock > 0 ? orderP.availableStock : 0}"></td>
-                                <td th:text="${orderP.requiredQuantity}"></td>
-                                <td>
-                                    <form th:action="@{/order/delivery/request}" method="post">
-                                        <input type="hidden" name="orderId" th:value="${orderP.orderId}">
-                                        <input type="number" name="requestedQuantity" min="1"
-                                               th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}" required>
-                                        <button type="submit">납입 요청</button>
-                                    </form>
-                                </td>
-                                <td th:text="${orderP.status}"></td>
-                            </tr>
-
-                            <!-- 리스트가 비어 있을 경우 -->
-                            <tr th:if="${#lists.isEmpty(purchaseOrders)}">
-                                <td colspan="10" style="text-align: center;">등록된 정보가 없습니다.</td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- 처리 중인 주문 페이지네이션 -->
-                        <div class="pagination-wrapper">
-                            <ul class="pagination">
-                                <li th:if="${purchaseCurrentPage > 1}">
-                                    <a th:href="@{/order/delivery(page=${purchaseCurrentPage - 1}, size=${size})}">&laquo;</a>
-                                </li>
-                                <li th:each="i : ${#numbers.sequence(1, purchaseTotalPages)}">
-                                    <a th:classappend="${i == purchaseCurrentPage ? 'active' : ''}"
-                                       th:href="@{/order/delivery(page=${i}, size=${size})}"
-                                       th:text="${i}"></a>
-                                </li>
-                                <li th:if="${purchaseCurrentPage < purchaseTotalPages}">
-                                    <a th:href="@{/order/delivery(page=${purchaseCurrentPage + 1}, size=${size})}">&raquo;</a>
-                                </li>
-                            </ul>
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>납입 지시 요청</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">발주 관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">납입 지시 요청</a>
+                                    </li>
+                                </ol>
+                            </nav>
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="search_tab">
+                            <div class="table-wrapper table-responsive">
+                                <!-- 처리 중인 주문 테이블 -->
+                                <h4 class="mb-10">진행 중인 발주서 목록</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center"><h6>발주 번호</h6></th>
+                                        <th class="text-center"><h6>공급사</h6></th>
+                                        <th class="text-center"><h6>부품 종류</h6></th>
+                                        <th class="text-center"><h6>자재 이름</h6></th>
+                                        <th class="text-center"><h6>발주일</h6></th>
+                                        <th class="text-center"><h6>입고 예정일</h6></th>
+                                        <th class="text-center"><h6>요청 가능 수량</h6></th>
+                                        <th class="text-center"><h6>필요 조달 수량</h6></th>
+                                        <th class="text-center"><h6>요청 수량</h6></th>
+                                        <th class="text-center"><h6>상태</h6></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!-- 처리 중인 주문 리스트 -->
+                                    <tr th:each="orderP : ${purchaseOrders}">
+                                        <td class="min-width text-center"><p th:text="${orderP.orderCode}"></p></td>
+                                        <td class="min-width text-center"><p th:text="${orderP.supplierName}"></p></td>
+                                        <td class="min-width text-center"><p th:text="${orderP.materialType}"></p></td>
+                                        <td class="min-width"><p th:text="${orderP.materialName}"></p></td>
+                                        <td class="min-width text-center"><p th:text="${orderP.orderDate}"></p></td>
+                                        <td class="min-width text-center"><p th:text="${orderP.expectedDate}"></p></td>
+                                        <td class="min-width text-center"><p
+                                                th:text="${orderP.availableStock > 0 ? orderP.availableStock : 0}"></p>
+                                        </td>
+                                        <td class="min-width text-center"><p th:text="${orderP.requiredQuantity}"></p>
+                                        </td>
+                                        <td class="min-width text-center">
+                                            <form method="post" th:action="@{/order/delivery/request}">
+                                                <input name="orderId" th:value="${orderP.orderId}" type="hidden">
+                                                <input min="1" name="requestedQuantity" required
+                                                       th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}"
+                                                       type="number">
+                                                <button type="submit">납입 요청</button>
+                                            </form>
+                                        </td>
+                                        <td class="min-width text-center">
+                                            <span class="status-btn success-btn" th:if="${orderP.status=='ON_HOLD'}">대기 중</span>
+                                            <span class="status-btn close-btn"
+                                                  th:if="${orderP.status=='REJECT'}">거절 완료</span>
+                                            <span class="status-btn active-btn"
+                                                  th:if="${orderP.status=='APPROVAL'}">승인 완료</span>
+                                            <span class="status-btn info-btn"
+                                                  th:if="${orderP.status=='FINISHED'}">종료</span></td>
+                                    </tr>
 
-                <hr/>
-                <!-- 출고 요청 테이블 -->
-                <h4>출고 요청 목록</h4>
-                <div class="table-wrapper table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>발주 번호</th>
-                            <th>공급사</th>
-                            <th>자재 이름</th>
-                            <th>총 발주 수량</th>
-                            <th>요청 수량</th>
-                            <th>남은 조달 수량</th>
-                            <th>요청일</th>
-                            <th>상태</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- 출고 요청 리스트 -->
-                        <tr th:each="deliveryRequest : ${deliveryRequests}">
-                            <td th:text="${deliveryRequest.orderCode}"></td>
-                            <td th:text="${deliveryRequest.supplierName}"></td>
-                            <td th:text="${deliveryRequest.materialName}"></td>
-                            <td th:text="${deliveryRequest.orderQuantity}"></td>
-                            <td th:text="${deliveryRequest.requestedQuantity}"></td>
-                            <td th:text="${deliveryRequest.requireQuantity}"></td>
-                            <td th:text="${deliveryRequest.requestedAt}"></td>
-                            <td th:text="${deliveryRequest.status}"></td>
-                        </tr>
+                                    <!-- 리스트가 비어 있을 경우 -->
+                                    <tr th:if="${#lists.isEmpty(purchaseOrders)}">
+                                        <td colspan="10" style="text-align: center;">등록된 정보가 없습니다.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
 
-                        <!-- 리스트가 비어 있을 경우 -->
-                        <tr th:if="${#lists.isEmpty(deliveryRequests)}">
-                            <td colspan="7" style="text-align: center;">출고 요청이 없습니다.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- 출고 요청 목록 페이지네이션 -->
-                    <div class="pagination-wrapper">
-                        <ul class="pagination">
-                            <li th:if="${deliveryCurrentPage > 1}">
-                                <a th:href="@{/order/delivery(deliveryPage=${deliveryCurrentPage - 1}, deliverySize=${size})}">&laquo;</a>
-                            </li>
-                            <li th:each="i : ${#numbers.sequence(1, deliveryTotalPages)}">
-                                <a th:classappend="${i == deliveryCurrentPage ? 'active' : ''}"
-                                   th:href="@{/order/delivery(deliveryPage=${i}, deliverySize=${size})}"
-                                   th:text="${i}"></a>
-                            </li>
-                            <li th:if="${deliveryCurrentPage < deliveryTotalPages}">
-                                <a th:href="@{/order/delivery(deliveryPage=${deliveryCurrentPage + 1}, deliverySize=${size})}">&raquo;</a>
-                            </li>
-                        </ul>
+                                <!-- 처리 중인 주문 페이지네이션 -->
+                                <div class="pagination-wrapper">
+                                    <ul class="pagination">
+                                        <li th:if="${purchaseCurrentPage > 1}">
+                                            <a th:href="@{/order/delivery(page=${purchaseCurrentPage - 1}, size=${size})}">&laquo;</a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, purchaseTotalPages)}">
+                                            <a th:classappend="${i == purchaseCurrentPage ? 'active' : ''}"
+                                               th:href="@{/order/delivery(page=${i}, size=${size})}"
+                                               th:text="${i}"></a>
+                                        </li>
+                                        <li th:if="${purchaseCurrentPage < purchaseTotalPages}">
+                                            <a th:href="@{/order/delivery(page=${purchaseCurrentPage + 1}, size=${size})}">&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <!-- 출고 요청 테이블 -->
+                        <h4 class="mb-10">납입 지시 요청 목록</h4>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><h6>발주 번호</h6></th>
+                                    <th class="text-center"><h6>공급사</h6></th>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>총 발주 수량</h6></th>
+                                    <th class="text-center"><h6>요청 수량</h6></th>
+                                    <th class="text-center"><h6>남은 조달 수량</h6></th>
+                                    <th class="text-center"><h6>요청일</h6></th>
+                                    <th class="text-center"><h6>상태</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- 출고 요청 리스트 -->
+                                <tr th:each="deliveryRequest : ${deliveryRequests}">
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.orderCode}"></p>
+                                    </td>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.supplierName}"></p>
+                                    </td>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.materialName}"></p>
+                                    </td>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.orderQuantity}"></p>
+                                    </td>
+                                    <td class="min-width text-center"><p
+                                            th:text="${deliveryRequest.requestedQuantity}"></p></td>
+                                    <td class="min-width text-center"><p
+                                            th:text="${deliveryRequest.requireQuantity}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${deliveryRequest.requestedAt}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <span class="status-btn success-btn"
+                                              th:if="${deliveryRequest.status=='IN_PROGRESS'}">대기 중</span>
+                                        <span class="status-btn close-btn"
+                                              th:if="${deliveryRequest.status=='FINISHED'}">종료</span></td>
+                                </tr>
 
-                <hr/>
+                                <!-- 리스트가 비어 있을 경우 -->
+                                <tr th:if="${#lists.isEmpty(deliveryRequests)}">
+                                    <td colspan="7" style="text-align: center;">출고 요청이 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
 
-
-                <!-- 처리 완료된 주문 테이블 -->
-                <h4>처리 완료된 주문</h4>
-                <div class="table-wrapper table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>발주 번호</th>
-                            <th>공급사</th>
-                            <th>부품 종류</th>
-                            <th>자재 이름</th>
-                            <th>납입 총 수량</th>
-                            <th>발주일</th>
-                            <th>입고 예정일</th>
-                            <th>최종 상태</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- 처리 완료된 주문 리스트 -->
-                        <tr th:each="completedOrder : ${completedOrders}">
-                            <td th:text="${completedOrder.orderCode}"></td>
-                            <td th:text="${completedOrder.supplierName}"></td>
-                            <td th:text="${completedOrder.materialType}"></td>
-                            <td th:text="${completedOrder.materialName}"></td>
-                            <td th:text="${completedOrder.orderQuantity}"></td>
-                            <td th:text="${completedOrder.orderDate}"></td>
-                            <td th:text="${completedOrder.expectedDate}"></td>
-                            <td th:text="${completedOrder.status}"></td>
-                        </tr>
-
-                        <!-- 리스트가 비어 있을 경우 -->
-                        <tr th:if="${#lists.isEmpty(completedOrders)}">
-                            <td colspan="8" style="text-align: center;">처리 완료된 주문이 없습니다.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- 처리 완료된 주문 페이지네이션 -->
-                    <div class="pagination-wrapper">
-                        <ul class="pagination">
-                            <li th:if="${completedCurrentPage > 1}">
-                                <a th:href="@{/order/delivery(completedPage=${completedCurrentPage - 1}, completedSize=${size})}">&laquo;</a>
-                            </li>
-                            <li th:each="i : ${#numbers.sequence(1, completedTotalPages)}">
-                                <a th:classappend="${i == completedCurrentPage ? 'active' : ''}"
-                                   th:href="@{/order/delivery(completedPage=${i}, completedSize=${size})}"
-                                   th:text="${i}"></a>
-                            </li>
-                            <li th:if="${completedCurrentPage < completedTotalPages}">
-                                <a th:href="@{/order/delivery(completedPage=${completedCurrentPage + 1}, completedSize=${size})}">&raquo;</a>
-                            </li>
-                        </ul>
+                            <!-- 출고 요청 목록 페이지네이션 -->
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${deliveryCurrentPage > 1}">
+                                        <a th:href="@{/order/delivery(deliveryPage=${deliveryCurrentPage - 1}, deliverySize=${size})}">&laquo;</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, deliveryTotalPages)}">
+                                        <a th:classappend="${i == deliveryCurrentPage ? 'active' : ''}"
+                                           th:href="@{/order/delivery(deliveryPage=${i}, deliverySize=${size})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${deliveryCurrentPage < deliveryTotalPages}">
+                                        <a th:href="@{/order/delivery(deliveryPage=${deliveryCurrentPage + 1}, deliverySize=${size})}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <!-- 처리 완료된 주문 테이블 -->
+                        <h4 class="mb-10">처리 완료된 납입 지시 요청 목록</h4>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><h6>발주 번호</h6></th>
+                                    <th class="text-center"><h6>공급사</h6></th>
+                                    <th class="text-center"><h6>부품 종류</h6></th>
+                                    <th class="text-center"><h6>자재 이름</h6></th>
+                                    <th class="text-center"><h6>납입 총 수량</h6></th>
+                                    <th class="text-center"><h6>발주일</h6></th>
+                                    <th class="text-center"><h6>입고 예정일</h6></th>
+                                    <th class="text-center"><h6>최종 상태</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- 처리 완료된 주문 리스트 -->
+                                <tr th:each="completedOrder : ${completedOrders}">
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.orderCode}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.supplierName}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.materialType}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.materialName}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.orderQuantity}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.orderDate}"></p></td>
+                                    <td class="min-width text-center">
+                                        <p th:text="${completedOrder.expectedDate}"></p>
+                                    </td>
+                                    <td class="min-width text-center">
+                                        <span class="status-btn close-btn"
+                                              th:if="${completedOrder.status=='FINISHED'}">종료</span></td></td>
+                                </tr>
 
+                                <!-- 리스트가 비어 있을 경우 -->
+                                <tr th:if="${#lists.isEmpty(completedOrders)}">
+                                    <td colspan="8" style="text-align: center;">처리 완료된 주문이 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 처리 완료된 주문 페이지네이션 -->
+                            <div class="pagination-wrapper">
+                                <ul class="pagination">
+                                    <li th:if="${completedCurrentPage > 1}">
+                                        <a th:href="@{/order/delivery(completedPage=${completedCurrentPage - 1}, completedSize=${size})}">&laquo;</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(1, completedTotalPages)}">
+                                        <a th:classappend="${i == completedCurrentPage ? 'active' : ''}"
+                                           th:href="@{/order/delivery(completedPage=${i}, completedSize=${size})}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                    <li th:if="${completedCurrentPage < completedTotalPages}">
+                                        <a th:href="@{/order/delivery(completedPage=${completedCurrentPage + 1}, completedSize=${size})}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </th:block>

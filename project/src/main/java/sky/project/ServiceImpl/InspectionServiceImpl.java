@@ -2,6 +2,8 @@ package sky.project.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.InspectionDTO;
 import sky.project.Entity.*;
@@ -35,9 +37,12 @@ public class InspectionServiceImpl implements InspectionService {
         return inspectionRepository.findByOrderCode(orderCode).stream().map(this::entityToDto).toList();
     }
 
+    //협력사 페이지 출력용
     @Override
-    public List<InspectionDTO> findBySupplierName(String supplierName) {
-        return inspectionRepository.findBySupplierName(supplierName).stream().map(this::entityToDto).toList();
+    public Page<InspectionDTO> findBySupplierName(String supplierName, Pageable pageable) {
+        //완료된 것은 3일 전까지의 내용만 출력해줄 것.
+        LocalDate limitDate = LocalDate.now().minusDays(3);
+        return inspectionRepository.findBySupplierName(supplierName, limitDate, pageable).map(this::entityToDto);
     }
 
     //대시보드 출력용 남은 진척 검수 갯수

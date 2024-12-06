@@ -23,6 +23,8 @@ public class OrdersDTO {
     private String materialType;
     private int availableStock; //요청 가능재고
     private int remainedQuantity; //남은 수량
-    private int finishedInspection;
-    private int totalInspection;
+    private int deliveryQuantity; //납품 지시중인 재고
+
+    private int finishedInspection; //끝난 진척 검수 수
+    private int totalInspection; //총 진척 검수 수
 }

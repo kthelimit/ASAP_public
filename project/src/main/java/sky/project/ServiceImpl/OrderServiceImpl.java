@@ -179,6 +179,13 @@ public class OrderServiceImpl implements OrderService {
         int totalInspection = inspectionRepository.countByOrderCode(order.getOrderCode());
 
 
+        //현재 납품지시 중이고 아직 도착하지 않은 수량
+        List<DeliveryRequest> deliveryRequestsOnHOLD = deliveryRequestRepository.findDeliveryRequestsByOrderCodeInProgress(order.getOrderCode());
+        int deliveryQuantity=0;
+        for(DeliveryRequest deliveryRequest : deliveryRequestsOnHOLD) {
+            deliveryQuantity += deliveryRequest.getRequestedQuantity();
+        }
+
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
@@ -193,6 +200,7 @@ public class OrderServiceImpl implements OrderService {
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
                 .materialType(order.getMaterial().getMaterialType())
                 .availableStock(availableStock) // 요청 가능 수량
+                .deliveryQuantity(deliveryQuantity)
                 .finishedInspection(finishedInspection)
                 .totalInspection(totalInspection)
                 .build();

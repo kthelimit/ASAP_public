@@ -328,6 +328,8 @@ public class SupplierController {
             }
             if (order.getOrderQuantity() <= sum) {
                 orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.DELIVERED);
+            }else{
+                orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.IN_PROGRESS);
             }
 
         }

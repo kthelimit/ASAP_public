@@ -31,8 +31,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
-                        <div class="search_tab">
-                            <div class="table-wrapper table-responsive">
                                 <!-- 처리 중인 주문 테이블 -->
                                 <h4 class="mb-10">진행 중인 발주서 목록</h4>
                                 <table class="table">
@@ -69,15 +67,22 @@
                                         <td class="min-width text-center">
                                             <form method="post" th:action="@{/order/delivery/request}">
                                                 <input name="orderId" th:value="${orderP.orderId}" type="hidden">
-                                                <input name="requestedDate" type="date" th:value="${date}">
-                                                <input min="1" name="requestedQuantity" required
-                                                       th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}"
-                                                       type="number">
-                                                <button type="submit">납입 요청</button>
+                                                <div class="row" style="justify-content: flex-end">
+                                                    <div class="input-style-1 col-lg-5 mb-0">
+                                                        <input name="requestedDate" th:value="${date}" type="date">
+                                                    </div>
+                                                    <div class="input-style-1 col-lg-3 mb-0">
+                                                        <input min="1" name="requestedQuantity" required
+                                                               th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}"
+                                                               type="number">
+                                                    </div>
+                                                    <div class="input-style-1 col-lg-3 mb-0">
+                                                        <button type="submit" class="main-btn primary-btn btn-hover" style="padding: 12px">납입 요청</button>
+                                                    </div>
+                                                </div>
                                             </form>
                                         </td>
                                     </tr>
-
                                     <!-- 리스트가 비어 있을 경우 -->
                                     <tr th:if="${#lists.isEmpty(purchaseOrders)}">
                                         <td colspan="10" style="text-align: center;">등록된 정보가 없습니다.</td>
@@ -102,8 +107,8 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+
+
                 </div>
             </div>
             <div class="row">
@@ -134,7 +139,8 @@
                                     </td>
                                     <td class="min-width text-center"><p th:text="${deliveryRequest.materialName}"></p>
                                     </td>
-                                    <td class="min-width text-center"><p th:text="${deliveryRequest.totalOrderQuantity}"></p>
+                                    <td class="min-width text-center"><p
+                                            th:text="${deliveryRequest.totalOrderQuantity}"></p>
                                     </td>
                                     <td class="min-width text-center"><p
                                             th:text="${deliveryRequest.requestedQuantity}"></p></td>
@@ -221,7 +227,8 @@
                                     </td>
                                     <td class="min-width text-center">
                                         <span class="status-btn close-btn"
-                                              th:if="${completedOrder.status=='FINISHED'}">종료</span></td></td>
+                                              th:if="${completedOrder.status=='FINISHED'}">종료</span></td>
+                                    </td>
                                 </tr>
 
                                 <!-- 리스트가 비어 있을 경우 -->

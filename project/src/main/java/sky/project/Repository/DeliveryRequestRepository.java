@@ -33,5 +33,6 @@ public interface DeliveryRequestRepository extends JpaRepository<DeliveryRequest
     @Query("select d from DeliveryRequest d where d.order.orderCode =:orderCode and d.status='FINISHED'")
     List<DeliveryRequest> findDeliveryRequestsByOrderCodeFinished(String orderCode);
 
-
+    @Query("select d from DeliveryRequest d where d.order.orderCode =:orderCode and d.status='IN_PROGRESS'")
+    List<DeliveryRequest> findDeliveryRequestsByOrderCodeInProgress(String orderCode);
 }

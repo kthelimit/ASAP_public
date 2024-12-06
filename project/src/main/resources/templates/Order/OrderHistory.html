@@ -84,6 +84,9 @@
                                     <h6>발주 수량</h6>
                                 </th>
                                 <th class="text-center">
+                                    <h6>납품 수량</h6>
+                                </th>
+                                <th class="text-center">
                                     <h6>합계 금액</h6>
                                 </th>
                                 <th class="text-center">
@@ -107,6 +110,7 @@
                                 <td class="text-center"><p>[[${orders.supplierName}]]</p></td>
                                 <td><p>[[${orders.materialName}]]</p></td>
                                 <td class="text-align-right"><p>[[${orders.orderQuantity}]]</p></td>
+                                <td class="text-align-right"><p title="받은 수량 + 납품 지시 중인 수량(납품 지시중인 수량)">[[${orders.orderQuantity - orders.remainedQuantity}]]([[${orders.deliveryQuantity}]])</p></td>
                                 <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3,
                                     'COMMA')}]]</p></td>
                                 <td class="text-center"><p>[[${orders.orderDate}]]</p></td>

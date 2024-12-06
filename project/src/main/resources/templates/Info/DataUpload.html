@@ -29,6 +29,38 @@
                 <p class="text-sm mb-20">
                     이곳에서 각종 엑셀 파일을 업로드해 일괄 등록할 수 있습니다. 먼저 진행해두어야하는 과정을 표시해두었으므로 해당 등록을 먼저 진행해주세요.
                 </p>
+                <h6 class="mb-10">통합 등록</h6>
+                <p class="text-sm mb-20">
+                    아래의 시트들을 한번에 등록할 수 있습니다.
+                </p>
+                <form enctype="multipart/form-data" method="post" th:action="@{/excel/addTotal}">
+                    <input type="hidden" name="where" value="dataUpload">
+                    <div class="row">
+                        <div class="input-style-1 col-lg-7" style="width: auto">
+                            <input name="file" type="file">
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 142px">
+                            <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                    type="submit">데이터 업로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadTotal/true'"
+                                    style="padding: 18px"
+                                    type="button">템플릿 다운로드
+                            </button>
+                        </div>
+                        <div class="col-lg-1  text-align-right" style="min-width: 155px">
+                            <button class="main-btn primary-btn btn-hover"
+                                    onclick="location.href='/excel/downloadTotal/false'"
+                                    style="padding: 18px"
+                                    type="button">데이터 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <hr class="mt-0 mb-30">
                 <h6 class="mb-10">상품 등록</h6>
                 <p class="text-sm mb-20">
                     <span class="text-success">※이 과정이 선행 과정인 과정 : 조립 구조 등록, bom 등록</span>

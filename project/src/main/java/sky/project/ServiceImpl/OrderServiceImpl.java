@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -340,5 +341,10 @@ public class OrderServiceImpl implements OrderService {
         return orders.map(this::toDTO);
     }
 
+    public List<OrdersDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
 }

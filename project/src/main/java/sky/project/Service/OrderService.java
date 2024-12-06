@@ -3,6 +3,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.CurrentStatus;
+import sky.project.Entity.Material;
 
 import java.util.List;
 
@@ -43,4 +44,6 @@ public interface OrderService {
     List<OrdersDTO> getRecentOrderList();
 
     List<OrdersDTO>getRecentOrderListForSupplier(String supplierName);
+
+    List<OrdersDTO> getAllOrders();
 }

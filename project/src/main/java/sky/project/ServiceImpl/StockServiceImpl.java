@@ -5,16 +5,17 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.Entity.Export;
 import sky.project.Entity.Material;
+import sky.project.Entity.Order;
 import sky.project.Entity.Stock;
-import sky.project.Repository.ExportRepository;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.StockRepository;
+import sky.project.Repository.*;
 import sky.project.Service.StockService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -24,6 +25,8 @@ public class StockServiceImpl implements StockService {
     private final StockRepository stockRepository;
     private final MaterialRepository materialRepository;
     private final ExportRepository exportRepository;
+    private final OrderRepository orderRepository;
+
 
     @Override
     public Long register(StockDTO dto) {
@@ -41,6 +44,8 @@ public class StockServiceImpl implements StockService {
         stockRepository.save(entity);
         return entity.getStockId();
     }
+
+
 
     //목록 불러오기
     @Override
@@ -118,5 +123,11 @@ public class StockServiceImpl implements StockService {
             availableStock -= exportQuantity;
         }
         return availableStock;
+    }
+
+    public List<StockDTO> getAllStocks() {
+        return stockRepository.findAll().stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
     }
 }

@@ -26,4 +26,6 @@ public interface MaterialService {
     Material getMaterialByName(String materialName);
 
     List<Material> getMaterials();
+
+    List<MaterialDTO> getAllMaterials();
 }

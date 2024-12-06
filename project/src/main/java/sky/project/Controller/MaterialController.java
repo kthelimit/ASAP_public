@@ -5,17 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sky.project.DTO.ExportDTO;
-import sky.project.DTO.ImportDTO;
-import sky.project.DTO.MaterialDTO;
-import sky.project.DTO.StockDTO;
+import sky.project.DTO.*;
+import sky.project.Entity.CurrentStatus;
+import sky.project.Entity.Material;
 import sky.project.Service.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -37,8 +40,12 @@ public class MaterialController {
 
     @Autowired
     private ProductionPlanService productionPlanService;
+
     @Autowired
     private ExportService exportService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/list")
     public String getMaterialsList(Model model,
@@ -95,19 +102,52 @@ public class MaterialController {
 
     //자재 입고
     @RequestMapping("/import")
-    public String importMaterial(Model model, @RequestParam(value = "importId", required = false) Long importId) {
+    public String importMaterial(Model model,
+                                 @RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "1000") int size,
+                                 @RequestParam(value = "type", required = false) String type,
+                                 @RequestParam(value = "keyword", required = false) String keyword) {
 
-        if (importId != null) {
-            // 특정 입고 정보 조회
-            ImportDTO importDTO = importService.getImportById(importId);
-            model.addAttribute("importDTO", importDTO);
-        } else {
-            // 입고 목록 조회 (예시로 전체 입고 목록 조회)
-            List<ImportDTO> importList = importService.getAllImports();
-            model.addAttribute("importList", importList);
-        }
+        // 페이징 처리
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // 모든 데이터 가져오기
+        Page<ImportDTO> imports = importService.getImportsByCriteria(type, keyword, pageable);
+
+        // Orders, Materials, Stock 데이터는 페이징 없이 모두 가져옴
+        List<OrdersDTO> orders = orderService.getAllOrders();
+        List<MaterialDTO> materials = materialService.getAllMaterials();
+        List<StockDTO> stocks = stockService.getAllStocks();
+
+        // 모델에 데이터 추가
+        model.addAttribute("importList", imports.getContent());
+        model.addAttribute("orderList", orders); // Orders 데이터
+        model.addAttribute("materialList", materials); // Material 데이터
+        model.addAttribute("stockList", stocks); // Stock 데이터
+
+        // 페이지네이션 정보
+        model.addAttribute("totalPages", imports.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
 
         return "/import/ImportIndex";
+    }
+
+    // 상태 변경 처리
+    @PostMapping("/updateImportStatus")
+    public String updateImportStatus(
+            @RequestParam Long importId,
+            @RequestParam String status,
+            @RequestParam(required = false) Integer passedQuantity) {
+        try {
+            CurrentStatus currentStatus = CurrentStatus.valueOf(status); // 문자열을 Enum으로 변환
+            importService.updateImportStatus(importId, currentStatus, passedQuantity); // DB 업데이트
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/material/import"; // 페이지 리다이렉트
     }
 
     //자재 출고
@@ -289,7 +329,4 @@ public class MaterialController {
         stockService.register(stockDTO);
         return "redirect:/material/stocklist";
     }
-
-
 }
-

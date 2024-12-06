@@ -3,6 +3,8 @@ package sky.project.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,7 +29,9 @@ public class Import extends Base {
 
     private int passedQuantity; // 합격 수량
 
+    private int defectiveQuantity;      // 결함 수량
 
+    @Enumerated(EnumType.STRING)
     private CurrentStatus importStatus; //현재 상태
 
 }

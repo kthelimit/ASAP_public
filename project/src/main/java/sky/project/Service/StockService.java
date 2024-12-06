@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import sky.project.DTO.StockDTO;
 import sky.project.Entity.Stock;
 
+import java.util.List;
+
 public interface StockService {
 
     //등록
@@ -23,4 +25,7 @@ public interface StockService {
     Page<StockDTO> getStocksWithSearchInComponentType(String keyword, Pageable pageable);
 
     int calculateAvailableStock(Stock stock);
+
+    List<StockDTO> getAllStocks();
+
 }

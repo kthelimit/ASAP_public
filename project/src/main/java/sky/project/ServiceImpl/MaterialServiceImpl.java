@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
+import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.Material;
 import sky.project.Entity.Stock;
 import sky.project.Entity.Supplier;
@@ -220,6 +221,12 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public List<Material> getMaterials() {
         return materialRepository.findAll();
+    }
+
+    public List<MaterialDTO> getAllMaterials() {
+        return materialRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
 

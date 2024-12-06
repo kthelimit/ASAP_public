@@ -98,7 +98,7 @@ public class ProductionPlanController {
     @GetMapping("/procureRegister")
     public String getProductionPlanCheck(Model model,
                                          @RequestParam(defaultValue = "1") int page,
-                                         @RequestParam(defaultValue = "2") int size,
+                                         @RequestParam(defaultValue = "10") int size,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "id", required = false) Long id,
                                          @RequestParam(value = "productCode", required = false) String productCode,

@@ -23,5 +23,6 @@ public class ImportDTO {
     private int importQuantity;        // 딜리버리 오더로받은수량
     private int quantity;               // 실제 납품 수량 (입고 수량)
     private int passedQuantity;         // 합격 수량
+    private int defectiveQuantity;      // 결함 수량
     private CurrentStatus importStatus; // 현재 상태 (검수 전, 검수 완료 등)
 }

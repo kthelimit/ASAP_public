@@ -220,13 +220,12 @@
                                 </th>
                             </tr>
                             </thead>
-                            <tbody id="inspection-tbody">
-                            <tr th:each="import : ${importList}">
-
-
+                            <tbody>
+                            <tr th:each="import : ${importList}"
+                                th:if="${import.importStatus.name() == 'UNDER_INSPECTION'}">
                                 <form method="post"
                                       th:action="@{/material/updateImportStatus}"
-                                      th:if="${import.importStatus.name() == 'UNDER_INSPECTION'}">
+                                      >
 
                                     <td th:text="${import.orderCode}"></td>
                                     <td th:text="${import.supplierName}"></td>
@@ -262,70 +261,12 @@
 
                                         <input type="hidden" name="importId" th:value="${import.importId}"/>
 
-                                        <!-- 검수이행 버튼 -->
+                                        <!-- 검수 버튼 -->
                                         <button type="submit" name="status" value="FINISHED"
                                                 class="main-btn active-btn btn-hover choice">
-                                            검수이행
+                                            검수
                                         </button>
 
-                                        <!-- 반품 버튼 -->
-                                        <button type="submit" name="status" value="RETURNED"
-                                                class="main-btn danger-btn btn-hover choice">
-                                            반품
-                                        </button>
-                                    </td>
-                                </form>
-
-
-                                <form method="post"
-                                      th:action="@{/material/updateImportStatus}"
-                                      th:if="${import.importStatus.name() == 'RETURNED'}">
-
-                                    <td th:text="${import.orderCode}"></td>
-                                    <td th:text="${import.supplierName}"></td>
-
-                                    <!-- 중첩 반복문 -->
-                                    <td th:each="material : ${materialList}"
-                                        th:if="${material.materialName == import.materialName}"
-                                        th:text="${material.materialType}">
-                                    </td>
-
-                                    <td th:text="${import.materialName}"></td>
-
-                                    <!-- 중첩 반복문 -->
-                                    <td th:each="order : ${orderList}"
-                                        th:if="${order.orderCode == import.orderCode}"
-                                        th:text="${order.orderDate}">
-                                    </td>
-
-
-                                    <td th:text="${import.quantity}"></td>
-                                    <td>
-                                        <!-- passedQuantity 값을 입력 -->
-                                        <input class="how-ea" type="number" name="passedQuantity"
-                                               th:value="${import.passedQuantity}"/>
-                                    </td>
-                                    <td>
-                                        <span th:if="${import.importStatus.name() == 'ON_HOLD'}">검수 대기</span>
-                                        <span th:if="${import.importStatus.name() == 'UNDER_INSPECTION'}">검수 중</span>
-                                        <span th:if="${import.importStatus.name() == 'RETURNED'}">반품 처리</span>
-                                        <span th:if="${import.importStatus.name() == 'FINISHED'}">검수 완료</span>
-                                    </td>
-                                    <td class="choice-column">
-                                        <!-- 공통 데이터 -->
-                                        <input type="hidden" name="importId" th:value="${import.importId}"/>
-
-                                        <!-- 검수이행 버튼 -->
-                                        <button type="submit" name="status" value="FINISHED"
-                                                class="main-btn active-btn btn-hover choice">
-                                            검수이행
-                                        </button>
-
-                                        <!-- 반품 버튼 -->
-                                        <button type="submit" name="status" value="RETURNED"
-                                                class="main-btn danger-btn btn-hover choice">
-                                            반품
-                                        </button>
                                     </td>
                                 </form>
                             </tr>

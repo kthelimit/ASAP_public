@@ -108,15 +108,7 @@ public class OrderServiceImpl implements OrderService {
         if (requestedQuantity > orderDTO.getRemainedQuantity()) {
             throw new IllegalArgumentException("요청 수량이 남은 발주량을 초과할 수 없습니다.");
         }
-//
-//        // 값 업데이트
-//        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
-//        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
-//
-//        // 상태 업데이트
-//        if (newRequiredQuantity == 0) {
-//            order.setStatus(CurrentStatus.IN_PROGRESS);
-//        }
+
 
         // 변경된 엔티티 저장
         orderRepository.save(order);
@@ -163,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
     private OrdersDTO toDTO(Order order) {
         if (order == null) return null;
 
-        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량 + 불량이라 판정된 수량)
+        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량)
         int remainedQuantity = order.getOrderQuantity();
         List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findDeliveryRequestsByOrderCode(order.getOrderCode());
         int sumOfRequests = 0;
@@ -171,6 +163,11 @@ public class OrderServiceImpl implements OrderService {
             sumOfRequests += deliveryRequest.getRequestedQuantity();
         }
         remainedQuantity -= sumOfRequests;
+
+        // 상태 업데이트
+        if (remainedQuantity == 0) {
+            order.setStatus(CurrentStatus.DELIVERED);
+        }
 
         //업체의 가용 재고
         int availableStock = calculateAvailableStock(order);

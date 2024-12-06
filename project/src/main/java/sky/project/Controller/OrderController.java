@@ -175,7 +175,8 @@ public class OrderController {
 
         List<String> statuses = Arrays.asList(
                 CurrentStatus.IN_PROGRESS.name(),
-                CurrentStatus.FINISHED.name());
+                CurrentStatus.FINISHED.name(),
+                CurrentStatus.DELIVERED.name());
 
         // 처리 완료된 주문 조회
         Page<OrdersDTO> completedOrders = orderService.findByStatuses(statuses, completedPageable);

@@ -92,6 +92,7 @@
                                         <th class="text-center"><h6>자재코드</h6></th>
                                         <th class="text-center"><h6>자재명</h6></th>
                                         <th class="text-center"><h6>조립품 하나에 필요한 수량</h6></th>
+                                        <th class="text-center"><h6>현재 재고 수량</h6></th>
                                         <th class="text-center"><h6>총 요청 수량</h6></th>
 
                                     </tr>
@@ -239,7 +240,7 @@
                     $('#assyMaterialTable').empty();
                     $('#assyMaterialTable').append('<tr><th class="text-center"><h6>부품종류</h6></th> <th class="text-center">' +
                         '<h6>자재코드</h6></th> <th class="text-center"><h6>자재명</h6></th> <th class="text-center"><h6>' +
-                        '조립품 하나에 필요한 수량</h6></th> <th class="text-center"><h6>총 요청 수량</h6></th></tr>');
+                        '조립품 하나에 필요한 수량</h6></th><th class="text-center"><h6>현재 재고 수량</h6></th><th class="text-center"><h6>총 요청 수량</h6></th></tr>');
 
                     //선택한 생산계획에 따른 조립공정 불러오기
                     loadAssyByProduct(selectedValue);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -118,7 +119,7 @@ public class OrderController {
                                @RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "10") int size,
                                @RequestParam(value = "keyword", required = false) String keyword) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
         Page<OrdersDTO> orders;
         if (keyword != null && !keyword.isEmpty()) {
             orders = orderService.searchOrders(keyword, pageable);
@@ -165,9 +166,9 @@ public class OrderController {
             @RequestParam(defaultValue = "10") int deliverySize,
             @ModelAttribute("updatedOrder") OrdersDTO updatedOrderDTO) {
 
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize);
-        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
+        Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize, Sort.by("orderId"));
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id") );
 
         // 처리 중인 주문 조회
         Page<OrdersDTO> purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);
@@ -241,7 +242,7 @@ public class OrderController {
                                     @RequestParam(defaultValue = "10") int size,
                                     @RequestParam(value = "orderCode", required = false) String orderCode) {
 
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
 
         // 제조품 조회
         Page<OrdersDTO> manufacturingOrders = orderService.findByMaterialTypeAndStatus(

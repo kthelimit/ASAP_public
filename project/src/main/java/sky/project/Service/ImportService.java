@@ -28,4 +28,10 @@ public interface ImportService {
     void updateImportStatus(Long importId, CurrentStatus status, Integer passedQuantity);
 
     List<ImportDTO> calculateDefectiveQuantity(List<ImportDTO> importList);
+
+    List<ImportDTO> getRecentImportList();
+
+    int getCountImportOnHold();
+
+    int getCountImportInInspection();
 }

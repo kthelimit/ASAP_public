@@ -3,9 +3,7 @@ package sky.project.Controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -25,6 +23,7 @@ import sky.project.Service.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -352,10 +351,14 @@ public class ExcelController {
                 bodyRow.createCell(1).setCellValue(planList.get(i).getProductCode());
                 bodyRow.createCell(2).setCellValue(planList.get(i).getProductName());
 
+                CellStyle cellStyle = workbook.createCellStyle();
+                CreationHelper creationHelper = workbook.getCreationHelper();
+                cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy-MM-dd"));
                 //날짜 형식이라 포맷을 해줘야함
-                bodyRow.createCell(3).setCellValue(String.valueOf(planList.get(i).getProductionStartDate()));
-                bodyRow.createCell(4).setCellValue(String.valueOf(planList.get(i).getProductionEndDate()));
-
+                bodyRow.createCell(3).setCellValue(Date.valueOf(planList.get(i).getProductionStartDate()));
+                bodyRow.getCell(3).setCellStyle(cellStyle);
+                bodyRow.createCell(4).setCellValue(Date.valueOf(planList.get(i).getProductionEndDate()));
+                bodyRow.getCell(4).setCellStyle(cellStyle);
                 bodyRow.createCell(5).setCellValue(planList.get(i).getProductionQuantity());
             }
         }

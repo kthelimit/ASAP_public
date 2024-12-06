@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.MaterialDTO;
-import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.Material;
 import sky.project.Entity.Stock;
 import sky.project.Entity.Supplier;
@@ -71,6 +70,7 @@ public class MaterialServiceImpl implements MaterialService {
             material.setDepth(materialDTO.getDepth());
             material.setWeight(materialDTO.getWeight());
             material.setLeadTime(materialDTO.getLeadTime());
+            material.setSupplier(supplierRepository.findBySupplierName(materialDTO.getSupplierName()));
 
         } else {
             material = toEntity(materialDTO);

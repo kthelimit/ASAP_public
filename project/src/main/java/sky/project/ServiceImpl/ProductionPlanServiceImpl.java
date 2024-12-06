@@ -41,7 +41,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         ProductionPlan plan = toEntity(productionPlanDTO);
 
         //만약 생산계획 코드가 없는 경우(새로 입력된 것인 경우)
-        if (productionPlanDTO.getProductionPlanCode() == null) {
+        if (productionPlanDTO.getProductionPlanCode() == null || productionPlanRepository.findByProductionPlanCode(productionPlanDTO.getProductionPlanCode()) == null) {
             // 생산 계획 코드 생성 로직 추가
             String productionPlanCode = generateProductionPlanCode(productionPlanDTO);
             plan.setProductionPlanCode(productionPlanCode);

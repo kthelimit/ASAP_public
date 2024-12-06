@@ -38,6 +38,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private InspectionRepository inspectionRepository;
 
+    @Autowired
+    private SupplierRepository supplierRepository;
+    @Autowired
+    private DeliveryRequestRepository deliveryRequestRepository;
+
     @Override
     public void registerOrder(OrdersDTO ordersDTO) {
         // DTO -> 엔티티 변환 및 저장
@@ -99,22 +104,18 @@ public class OrderServiceImpl implements OrderService {
         if (requestedQuantity > orderDTO.getAvailableStock()) {
             throw new IllegalArgumentException("요청 수량이 요청 가능 수량을 초과할 수 없습니다.");
         }
-        if (requestedQuantity > orderDTO.getRequiredQuantity()) {
-            throw new IllegalArgumentException("요청 수량이 필요 조달 수량을 초과할 수 없습니다.");
+        if (requestedQuantity > orderDTO.getRemainedQuantity()) {
+            throw new IllegalArgumentException("요청 수량이 남은 발주량을 초과할 수 없습니다.");
         }
-
-        // 값 업데이트
-        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
-        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
-
-        // 엔티티 업데이트 (DB에 반영)
-        order.setAvailableStock(newAvailableStock);
-        order.setRequiredQuantity(newRequiredQuantity);
-
-        // 상태 업데이트
-        if (newRequiredQuantity == 0) {
-            order.setStatus(CurrentStatus.IN_PROGRESS);
-        }
+//
+//        // 값 업데이트
+//        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
+//        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
+//
+//        // 상태 업데이트
+//        if (newRequiredQuantity == 0) {
+//            order.setStatus(CurrentStatus.IN_PROGRESS);
+//        }
 
         // 변경된 엔티티 저장
         orderRepository.save(order);
@@ -161,21 +162,22 @@ public class OrderServiceImpl implements OrderService {
     private OrdersDTO toDTO(Order order) {
         if (order == null) return null;
 
-        // 기존 엔티티 값 사용 또는 계산
-        int requiredQuantity = order.getRequiredQuantity() != null ? order.getRequiredQuantity() : order.getOrderQuantity();
-        int availableStock = order.getAvailableStock() != null ? order.getAvailableStock() : calculateAvailableStock(order);
-
-        String materialType = materialRepository.findFirstByMaterialName(order.getMaterialName())
-                .map(Material::getMaterialType)
-                .orElse("정보 없음");
-
-        //해당 발주코드를 갖고 있는 진척검수갯수를 세어준다.
-        int totalInspection = 0;
-        int finishedInspection = 0;
-        if (inspectionRepository.countByOrderCode(order.getOrderCode()) > 0) {
-            totalInspection = inspectionRepository.countByOrderCode(order.getOrderCode());
-            finishedInspection = inspectionRepository.countByOrderCodeWithFinished(order.getOrderCode());
+        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량 + 불량이라 판정된 수량)
+        int remainedQuantity = order.getOrderQuantity();
+        List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findDeliveryRequestsByOrderCode(order.getOrderCode());
+        int sumOfRequests = 0;
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            sumOfRequests += deliveryRequest.getRequestedQuantity();
         }
+        remainedQuantity -= sumOfRequests;
+
+        //업체의 가용 재고
+        int availableStock = calculateAvailableStock(order);
+
+        //검수 횟수
+        int finishedInspection = inspectionRepository.countByOrderCodeWithFinished(order.getOrderCode());
+        int totalInspection = inspectionRepository.countByOrderCode(order.getOrderCode());
+
 
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
@@ -183,16 +185,16 @@ public class OrderServiceImpl implements OrderService {
                 .orderCode(order.getOrderCode())
                 .expectedDate(order.getExpectedDate())
                 .procurePlanCode(order.getProcurePlanCode())
-                .supplierName(order.getSupplierName())
-                .materialName(order.getMaterialName())
+                .supplierName(order.getSupplier().getSupplierName())
+                .materialName(order.getMaterial().getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
-                .requiredQuantity(requiredQuantity) //필요 조달 수량
+                .remainedQuantity(remainedQuantity) //남은 수량
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
-                .materialType(materialType)
+                .materialType(order.getMaterial().getMaterialType())
                 .availableStock(availableStock) // 요청 가능 수량
-                .totalInspection(totalInspection)
                 .finishedInspection(finishedInspection)
+                .totalInspection(totalInspection)
                 .build();
     }
 
@@ -201,15 +203,16 @@ public class OrderServiceImpl implements OrderService {
 
         List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
 
-
+        //승인된 발주수량?
         int totalApprovedQuantity = orderRepository.findApprovedQuantity(
-                order.getSupplierName(),
-                order.getMaterialName(),
+                order.getSupplier().getSupplierName(),
+                order.getMaterial().getMaterialName(),
                 statuses
         ) - order.getOrderQuantity();
 
+
         int totalStock = supplierStockRepository.findBySupplier_SupplierNameAndMaterial_MaterialName(
-                        order.getSupplierName(), order.getMaterialName())
+                        order.getSupplier().getSupplierName(), order.getMaterial().getMaterialName())
                 .map(SupplierStock::getStock)
                 .orElse(0);
 
@@ -219,6 +222,8 @@ public class OrderServiceImpl implements OrderService {
     // OrdersDTO -> Order 변환
     private Order toEntity(OrdersDTO dto) {
         if (dto == null) return null;
+        Supplier supplier = supplierRepository.findBySupplierName(dto.getSupplierName());
+        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).isEmpty() ? null : materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
 
         // DTO -> 엔티티 변환
         Order order = new Order();
@@ -227,8 +232,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(dto.getOrderDate());
         order.setExpectedDate(dto.getExpectedDate());
         order.setProcurePlanCode(dto.getProcurePlanCode());
-        order.setSupplierName(dto.getSupplierName());
-        order.setMaterialName(dto.getMaterialName());
+        order.setSupplier(supplier);
+        order.setMaterial(material);
         order.setOrderQuantity(dto.getOrderQuantity());
         order.setTotalPrice(dto.getTotalPrice());
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환

@@ -1,24 +1,14 @@
 package sky.project.ServiceImpl;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.OrdersDTO;
-import sky.project.Entity.CurrentStatus;
-import sky.project.Entity.Material;
-import sky.project.Entity.Order;
-import sky.project.Entity.SupplierStock;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.SupplierStockRepository;
-import sky.project.Entity.ProcurementPlan;
 import sky.project.Entity.*;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.ProcurementPlanRepository;
-import sky.project.Repository.SupplierStockRepository;
+import sky.project.Repository.*;
 import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
@@ -30,6 +20,7 @@ import java.util.stream.Collectors;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -44,6 +35,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProcurementPlanRepository procurementPlanRepository;
+
+    @Autowired
+    private InspectionRepository inspectionRepository;
+
+    @Autowired
+    private SupplierRepository supplierRepository;
+    @Autowired
+    private DeliveryRequestRepository deliveryRequestRepository;
 
     @Override
     public void registerOrder(OrdersDTO ordersDTO) {
@@ -80,7 +79,6 @@ public class OrderServiceImpl implements OrderService {
     public OrdersDTO findByOrderCode(String orderCode) {
         Order order = orderRepository.findByOrderCode(orderCode)
                 .orElseThrow(() -> new RuntimeException("Order not found with code: " + orderCode));
-
         // Order -> OrdersDTO 변환
         return toDTO(order);
     }
@@ -107,22 +105,18 @@ public class OrderServiceImpl implements OrderService {
         if (requestedQuantity > orderDTO.getAvailableStock()) {
             throw new IllegalArgumentException("요청 수량이 요청 가능 수량을 초과할 수 없습니다.");
         }
-        if (requestedQuantity > orderDTO.getRequiredQuantity()) {
-            throw new IllegalArgumentException("요청 수량이 필요 조달 수량을 초과할 수 없습니다.");
+        if (requestedQuantity > orderDTO.getRemainedQuantity()) {
+            throw new IllegalArgumentException("요청 수량이 남은 발주량을 초과할 수 없습니다.");
         }
-
-        // 값 업데이트
-        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
-        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
-
-        // 엔티티 업데이트 (DB에 반영)
-        order.setAvailableStock(newAvailableStock);
-        order.setRequiredQuantity(newRequiredQuantity);
-
-        // 상태 업데이트
-        if (newRequiredQuantity == 0) {
-            order.setStatus(CurrentStatus.IN_PROGRESS);
-        }
+//
+//        // 값 업데이트
+//        int newAvailableStock = orderDTO.getAvailableStock() - requestedQuantity;
+//        int newRequiredQuantity = orderDTO.getRequiredQuantity() - requestedQuantity;
+//
+//        // 상태 업데이트
+//        if (newRequiredQuantity == 0) {
+//            order.setStatus(CurrentStatus.IN_PROGRESS);
+//        }
 
         // 변경된 엔티티 저장
         orderRepository.save(order);
@@ -130,6 +124,7 @@ public class OrderServiceImpl implements OrderService {
         // 갱신된 엔티티를 기반으로 DTO 반환
         return toDTO(order);
     }
+
     @Override
     public void updateOrderStatus(Long orderId, CurrentStatus status) {
         // 주문 상태 업데이트
@@ -152,7 +147,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     @Override
     public Page<OrdersDTO> findByStatus(String status, Pageable pageable) {
         // String을 CurrentStatus로 변환
@@ -166,18 +160,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
-
     private OrdersDTO toDTO(Order order) {
         if (order == null) return null;
 
-        // 기존 엔티티 값 사용 또는 계산
-        int requiredQuantity = order.getRequiredQuantity() != null ? order.getRequiredQuantity() : order.getOrderQuantity();
-        int availableStock = order.getAvailableStock() != null ? order.getAvailableStock() : calculateAvailableStock(order);
+        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량 + 불량이라 판정된 수량)
+        int remainedQuantity = order.getOrderQuantity();
+        List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findDeliveryRequestsByOrderCode(order.getOrderCode());
+        int sumOfRequests = 0;
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            sumOfRequests += deliveryRequest.getRequestedQuantity();
+        }
+        remainedQuantity -= sumOfRequests;
 
-        String materialType = materialRepository.findFirstByMaterialName(order.getMaterialName())
-                .map(Material::getMaterialType)
-                .orElse("정보 없음");
+        //업체의 가용 재고
+        int availableStock = calculateAvailableStock(order);
+
+        //검수 횟수
+        int finishedInspection = inspectionRepository.countByOrderCodeWithFinished(order.getOrderCode());
+        int totalInspection = inspectionRepository.countByOrderCode(order.getOrderCode());
+
+
+        //현재 납품지시 중이고 아직 도착하지 않은 수량
+        List<DeliveryRequest> deliveryRequestsOnHOLD = deliveryRequestRepository.findDeliveryRequestsByOrderCodeInProgress(order.getOrderCode());
+        int deliveryQuantity=0;
+        for(DeliveryRequest deliveryRequest : deliveryRequestsOnHOLD) {
+            deliveryQuantity += deliveryRequest.getRequestedQuantity();
+        }
 
         return OrdersDTO.builder()
                 .orderId(order.getOrderId())
@@ -185,14 +193,17 @@ public class OrderServiceImpl implements OrderService {
                 .orderCode(order.getOrderCode())
                 .expectedDate(order.getExpectedDate())
                 .procurePlanCode(order.getProcurePlanCode())
-                .supplierName(order.getSupplierName())
-                .materialName(order.getMaterialName())
+                .supplierName(order.getSupplier().getSupplierName())
+                .materialName(order.getMaterial().getMaterialName())
                 .orderQuantity(order.getOrderQuantity())
-                .requiredQuantity(requiredQuantity) //필요 조달 수량
+                .remainedQuantity(remainedQuantity) //남은 수량
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus() != null ? order.getStatus().name() : CurrentStatus.ON_HOLD.name())
-                .materialType(materialType)
+                .materialType(order.getMaterial().getMaterialType())
                 .availableStock(availableStock) // 요청 가능 수량
+                .deliveryQuantity(deliveryQuantity)
+                .finishedInspection(finishedInspection)
+                .totalInspection(totalInspection)
                 .build();
     }
 
@@ -201,15 +212,16 @@ public class OrderServiceImpl implements OrderService {
 
         List<CurrentStatus> statuses = List.of(CurrentStatus.APPROVAL, CurrentStatus.IN_PROGRESS, CurrentStatus.FINISHED);
 
-
+        //승인된 발주수량?
         int totalApprovedQuantity = orderRepository.findApprovedQuantity(
-                order.getSupplierName(),
-                order.getMaterialName(),
+                order.getSupplier().getSupplierName(),
+                order.getMaterial().getMaterialName(),
                 statuses
-        )-order.getOrderQuantity();
+        ) - order.getOrderQuantity();
+
 
         int totalStock = supplierStockRepository.findBySupplier_SupplierNameAndMaterial_MaterialName(
-                        order.getSupplierName(), order.getMaterialName())
+                        order.getSupplier().getSupplierName(), order.getMaterial().getMaterialName())
                 .map(SupplierStock::getStock)
                 .orElse(0);
 
@@ -219,6 +231,8 @@ public class OrderServiceImpl implements OrderService {
     // OrdersDTO -> Order 변환
     private Order toEntity(OrdersDTO dto) {
         if (dto == null) return null;
+        Supplier supplier = supplierRepository.findBySupplierName(dto.getSupplierName());
+        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).isEmpty() ? null : materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
 
         // DTO -> 엔티티 변환
         Order order = new Order();
@@ -227,8 +241,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(dto.getOrderDate());
         order.setExpectedDate(dto.getExpectedDate());
         order.setProcurePlanCode(dto.getProcurePlanCode());
-        order.setSupplierName(dto.getSupplierName());
-        order.setMaterialName(dto.getMaterialName());
+        order.setSupplier(supplier);
+        order.setMaterial(material);
         order.setOrderQuantity(dto.getOrderQuantity());
         order.setTotalPrice(dto.getTotalPrice());
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환

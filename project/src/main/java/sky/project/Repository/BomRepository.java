@@ -10,4 +10,7 @@ public interface BomRepository extends JpaRepository<Bom, Long> {
 
     @Query("select b from Bom b where b.product.productCode =:productCode")
     List<Bom> findByProductCode(String productCode);
+
+    @Query("select b from Bom b where b.product.productCode =:productCode and b.material.materialCode=:materialCode")
+    Bom findByProductCodeAndMaterialCode(String productCode, String materialCode);
 }

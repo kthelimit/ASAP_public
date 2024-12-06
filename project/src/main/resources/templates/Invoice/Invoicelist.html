@@ -83,11 +83,11 @@
                                         <p th:text="${invoice.totalPrice}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p th:text="${invoice.createdDate}"></p>
+                                        <p th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p>
                                     </td>
                                     <td>
-                                        <button class="main-btn primary-btn btn-hover">
-                                        </button>
+                                        <a th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}"
+                                           class="main-btn primary-btn btn-hover">상세보기</a>
                                     </td>
                                 </tr>
                                 <!-- end table row -->

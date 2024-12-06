@@ -84,6 +84,9 @@
                                     <h6>발주 수량</h6>
                                 </th>
                                 <th class="text-center">
+                                    <h6>납품 수량</h6>
+                                </th>
+                                <th class="text-center">
                                     <h6>합계 금액</h6>
                                 </th>
                                 <th class="text-center">
@@ -91,6 +94,9 @@
                                 </th>
                                 <th class="text-center">
                                     <h6>입고 예정일</h6>
+                                </th>
+                                <th class="text-center">
+                                    <h6>진척 검수</h6>
                                 </th>
                                 <th class="text-center">
                                     <h6>발주 상태</h6>
@@ -104,10 +110,15 @@
                                 <td class="text-center"><p>[[${orders.supplierName}]]</p></td>
                                 <td><p>[[${orders.materialName}]]</p></td>
                                 <td class="text-align-right"><p>[[${orders.orderQuantity}]]</p></td>
+                                <td class="text-align-right"><p title="받은 수량 + 납품 지시 중인 수량(납품 지시중인 수량)">[[${orders.orderQuantity - orders.remainedQuantity}]]([[${orders.deliveryQuantity}]])</p></td>
                                 <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3,
                                     'COMMA')}]]</p></td>
                                 <td class="text-center"><p>[[${orders.orderDate}]]</p></td>
                                 <td class="text-center"><p>[[${orders.expectedDate}]]</p></td>
+                                <td class="text-center">
+                                    <p th:if="${orders.materialType=='제조품'}">[[${orders.finishedInspection}]]/[[${orders.totalInspection}]]</p>
+                                    <p th:if="${orders.materialType!='제조품'}">-</p>
+                                </td>
                                 <td class="text-center">
                                     <span class="status-btn success-btn" th:if="${orders.status=='ON_HOLD'}">대기 중</span>
                                     <span class="status-btn active-btn"

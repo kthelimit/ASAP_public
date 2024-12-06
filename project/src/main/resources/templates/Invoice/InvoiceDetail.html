@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+</head>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card-style mb-30">
+            <div class="row">
+                <div class="col-lg-6" style="text-align: center">
+                    <h3 class="mb-0">거래 명세서</h3>
+                    <p class="text-sm mb-50">(공급 받는 자 보관용)</p>
+                    <h4 class="mb-30">DG전동 귀하</h4>
+                    <table class="table" style="text-align: center">
+                        <tr>
+                            <th><h6>거래일자</h6></th>
+                            <td th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                        <tr>
+                            <th colspan="2"><h6>하기와 같이 계산합니다.</h6></th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="table-wrapper col-lg-6">
+                    <table class="table">
+                        <tr style="text-align: center">
+                            <th colspan="4">공급자</th>
+                        </tr>
+                        <tr>
+                            <th><h6>상호</h6></th>
+                            <td th:text="${supplier.supplierName}"></td>
+                        </tr>
+                        <tr>
+                            <th><h6>사업자 등록 번호</h6></th>
+                            <td th:text="${supplier.businessRegistrationNumber}"></td>
+                        </tr>
+                        <tr>
+                            <th><h6>주소</h6></th>
+                            <td th:text="${supplier.address}"></td>
+                        </tr>
+                        <tr>
+                            <th><h6>연락처</h6></th>
+                            <td th:text="${supplier.contactInfo}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <table class="table" style="background-color: lightgrey">
+                <tr>
+                    <td class="min-width" style="padding-left: 20px; padding-top: 0">합계(공급가액 + 세액):</td>
+                    <td th:text="${#numbers.formatInteger(invoice.totalPrice + (invoice.totalPrice / 10), 3,'COMMA')}"></td>
+                </tr>
+            </table>
+            <hr>
+            <div class="table-wrapper table-responsive">
+                <table class="table" style="text-align: right">
+                    <thead>
+                    <tr style="text-align: center">
+                        <th>거래일자</th>
+                        <td th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
+                        <th>자재이름</th>
+                        <td th:text="${invoice.materialName}"></td>
+                        <th>수량</th>
+                        <td th:text="${invoice.quantity}"></td>
+                        <th>단위당 가격</th>
+                        <td th:text="${#numbers.formatInteger(invoice.unitPrice, 3,'COMMA')}"></td>
+                        <th>공급가액</th>
+                        <td th:text="${#numbers.formatInteger(invoice.totalPrice, 3,'COMMA')}"></td>
+                        <th>부가세</th>
+                        <td th:text="${#numbers.formatInteger(invoice.totalPrice / 10,3, 'COMMA')}"></td>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

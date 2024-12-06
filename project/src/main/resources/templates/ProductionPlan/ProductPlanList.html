@@ -28,36 +28,41 @@
 
             <div class="row">
                 <!-- 생산계획 리스트 -->
-                <div class="col-lg-8"><div class="card-style mb-30">
-                    <h3 class="mb-10">생산계획 일괄 등록</h3>
-                    <p class="text-sm mb-20">
-                        엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도 가능합니다.
-                    </p>
-                    <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
-                        <div class="row">
-                            <div class="input-style-1 col-lg-6" style="width: auto">
-                                <input name="file" type="file">
+                <div class="col-lg-8">
+                    <div class="card-style mb-30">
+                        <h3 class="mb-10">생산계획 일괄 등록</h3>
+                        <p class="text-sm mb-20">
+                            엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도
+                            가능합니다.
+                        </p>
+                        <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
+                            <input type="hidden" name="where" value="Plan">
+                            <div class="row">
+                                <div class="input-style-1 col-lg-6" style="width: auto">
+                                    <input name="file" type="file">
+                                </div>
+                                <div class="col-lg-1" style="min-width: 142px">
+                                    <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
+                                            type="submit">데이터 업로드
+                                    </button>
+                                </div>
+                                <div class="col-lg-1" style="min-width: 155px">
+                                    <button class="main-btn primary-btn btn-hover"
+                                            onclick="location.href='/excel/downloadProductPlan/true'"
+                                            style="padding: 18px"
+                                            type="button">템플릿 다운로드
+                                    </button>
+                                </div>
+                                <div class="col-lg-1" style="min-width: 155px">
+                                    <button class="main-btn primary-btn btn-hover"
+                                            onclick="location.href='/excel/downloadProductPlan/false'"
+                                            style="padding: 18px"
+                                            type="button">데이터 다운로드
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-lg-1" style="min-width: 142px">
-                                <button class="main-btn secondary-btn btn-hover" style="padding: 18px"
-                                        type="submit">데이터 업로드
-                                </button>
-                            </div>
-                            <div class="col-lg-1" style="min-width: 155px">
-                                <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadProductPlan/true'"
-                                        style="padding: 18px"
-                                        type="button">템플릿 다운로드
-                                </button>
-                            </div>
-                            <div class="col-lg-1" style="min-width: 155px">
-                                <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadProductPlan/false'"
-                                        style="padding: 18px"
-                                        type="button">데이터 다운로드
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
                     <div class="card-style mb-30">
                         <h3 class="mb-10">등록된 생산 계획 목록</h3>
                         <p class="text-sm mb-20">현재 등록되어 있는 생산 계획 목록입니다. 오른쪽의 폼을 통해 생산 계획을 등록하면 이곳에 추가됩니다.</p>
@@ -96,7 +101,8 @@
                                     <td class="min-width text-center"><p th:text="${plan.productionEndDate}"></p></td>
                                     <td class="min-width text-center"><p th:text="${plan.productCode}"></p></td>
                                     <td class="min-width text-center"><p th:text="${plan.productName}"></p></td>
-                                    <td class="min-width text-align-right"><p th:text="${plan.productionQuantity}"></p></td>
+                                    <td class="min-width text-align-right"><p th:text="${plan.productionQuantity}"></p>
+                                    </td>
                                     <td class="min-width  text-center">
                                         <a class="main-btn primary-btn btn-hover"
                                            style="padding: 6px" th:href="@{/plan/edit/{id}(id=${plan.planId})}">

@@ -15,6 +15,8 @@ public interface StockService {
     //목록 불러오기
     Page<StockDTO> getStocks(Pageable pageable);
 
+    List<Stock> getStocks();
+
     //검색 목록 불러오기
     Page<StockDTO> getStocksWithSearchInMaterialName(String keyword, Pageable pageable);
 

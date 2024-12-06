@@ -10,17 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.DeliveryRequestDTO;
+import sky.project.DTO.InspectionDTO;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
 import sky.project.Entity.Supplier;
-import sky.project.Entity.Order;
 import sky.project.Service.*;
-import sky.project.Service.MaterialService;
-import sky.project.Service.OrderService;
-import sky.project.Service.ProcurementPlanService;
-import sky.project.Service.SupplierService;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -45,6 +41,9 @@ public class OrderController {
 
     @Autowired
     DeliveryRequestService deliveryRequestService;
+
+    @Autowired
+    InspectionService inspectionService;
 
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
@@ -139,6 +138,7 @@ public class OrderController {
     public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
         // 데이터 확인
         System.out.println("Received OrdersDTO: " + ordersDTO);
+        System.out.println("supplierName: " + ordersDTO.getSupplierName());
         System.out.println("totalPrice : " + ordersDTO.getTotalPrice());
 
         // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
@@ -178,10 +178,13 @@ public class OrderController {
                 CurrentStatus.FINISHED.name());
 
         // 처리 완료된 주문 조회
-        Page<OrdersDTO> completedOrders = orderService. findByStatuses(statuses, completedPageable);
+        Page<OrdersDTO> completedOrders = orderService.findByStatuses(statuses, completedPageable);
 
         // 납입 요청 조회
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);
+
+        //내일을 배달 기본일로 넣음
+        model.addAttribute("date", LocalDate.now().plusDays(1));
 
         // 최신 데이터 전달
         model.addAttribute("purchaseOrders", purchaseOrders.getContent());
@@ -208,16 +211,15 @@ public class OrderController {
 
     @PostMapping("/delivery/request")
     public String requestDelivery(
-            @RequestParam Long orderId,
-            @RequestParam int requestedQuantity,
+          DeliveryRequestDTO dto,
             RedirectAttributes redirectAttributes) {
 
         try {
             // 요청 처리 및 최신 DTO 반환
-            OrdersDTO updatedOrderDTO = orderService.processDeliveryRequest(orderId, requestedQuantity);
+            OrdersDTO updatedOrderDTO = orderService.processDeliveryRequest(dto.getOrderId(), dto.getRequestedQuantity());
 
             // DeliveryRequest 테이블에 요청 기록 저장
-            deliveryRequestService.createRequest(orderId, requestedQuantity);
+            deliveryRequestService.createRequest(dto);
 
             // 성공 메시지 전달
             redirectAttributes.addFlashAttribute("success", "납입 요청이 성공적으로 처리되었습니다.");
@@ -232,11 +234,11 @@ public class OrderController {
     }
 
 
-
     @GetMapping("/inspection")
     public String inspectionRequest(Model model,
                                     @RequestParam(defaultValue = "1") int page,
-                                    @RequestParam(defaultValue = "10") int size){
+                                    @RequestParam(defaultValue = "10") int size,
+                                    @RequestParam(value = "orderCode", required = false) String orderCode) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -250,14 +252,36 @@ public class OrderController {
         model.addAttribute("manufacturingTotalPages", manufacturingOrders.getTotalPages());
         model.addAttribute("manufacturingCurrentPage", page);
 
+        //진척 검수 테이블 추가
+        if (orderCode != null) {
+            OrdersDTO orderDTO = orderService.findByOrderCode(orderCode);
+            model.addAttribute("orderDTO", orderDTO);
+            List<InspectionDTO> inspectionDTOS = inspectionService.findByOrderCode(orderCode);
+            model.addAttribute("inspectionDTOS", inspectionDTOS);
 
-        return "/Order/ProgressInspection";
+        }
+
+
+        return "Order/ProgressInspection";
     }
 
     @GetMapping("/inspectionrequest")
     public String inspectionRequest(@RequestParam Long orderId) {
         orderService.updateOrderStatus(orderId, CurrentStatus.IN_PROGRESS);
         return "redirect:/order/delivery";
+    }
+
+    @PostMapping("/inspectionRegister")
+    public String inspectionRegister(InspectionDTO dto, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addAttribute("orderCode", dto.getOrderCode());
+        inspectionService.register(dto);
+        return "redirect:/order/inspection";
+    }
+
+    @PostMapping("/inspectionUpdate")
+    public String inspectionUpdate(InspectionDTO dto) {
+        inspectionService.updateInspection(dto);
+        return "redirect:/suppliers/page";
     }
 
 }

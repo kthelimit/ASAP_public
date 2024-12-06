@@ -13,7 +13,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.DeliveryRequest;
-import sky.project.Entity.Invoice;
+import sky.project.Entity.Supplier;
+import sky.project.Entity.SupplierStock;
+import sky.project.Repository.SupplierStockRepository;
 import sky.project.Service.*;
 
 import java.io.File;
@@ -21,8 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -46,6 +48,12 @@ public class SupplierController {
 
     @Autowired
     private InvoiceService invoiceService;
+
+    @Autowired
+    private SupplierStockRepository supplierStockRepository;
+
+    @Autowired
+    private InspectionService inspectionService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -80,7 +88,7 @@ public class SupplierController {
 
         if (userId != null && supplierService.isAlreadyRegistered(userId)) {
             model.addAttribute("alertMessage", "이미 공급업체 등록을 마친 상태입니다. 승인을 기다려주세요.");
-            return "/sample/admin";
+            return "redirect:/dashboard/index";
         }
 
         model.addAttribute("supplierDTO", new SupplierDTO());
@@ -182,7 +190,10 @@ public class SupplierController {
             @RequestParam(defaultValue = "1") int deliveryPage,
             @RequestParam(defaultValue = "5") int deliverySize,
             @RequestParam(defaultValue = "1") int invoicePage,
-            @RequestParam(defaultValue = "5") int invoiceSize) {
+            @RequestParam(defaultValue = "5") int invoiceSize,
+            @RequestParam(defaultValue = "1") int inspectionPage,
+            @RequestParam(defaultValue = "5") int inspectionSize
+    ) {
 
         if (user == null) {
             model.addAttribute("message", "로그인이 필요합니다.");
@@ -190,7 +201,7 @@ public class SupplierController {
         }
 
         // 유효성 검사
-        if (page < 1 || deliveryPage < 1 || invoicePage < 1) {
+        if (page < 1 || deliveryPage < 1 || invoicePage < 1 || inspectionPage < 1) {
             model.addAttribute("message", "잘못된 페이지 요청입니다.");
             return "redirect:/";
         }
@@ -202,6 +213,19 @@ public class SupplierController {
             model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
             return "redirect:/";
         }
+
+
+        // supplierName으로 SupplierDTO 가져오기
+        Supplier supplier = supplierService.getSupplierByName(supplierName);
+
+        model.addAttribute("supplier", supplier);
+        //supplier 정보 가져와서 출력해주기
+        SupplierDTO supplierDTO = supplierService.getSupplierById(userId);
+        model.addAttribute("supplierDTO", supplierDTO);
+
+        //진척 검수 요청 가져와서 출력해주기
+        Pageable inspectionPageable = PageRequest.of(inspectionPage - 1, inspectionSize);
+        Page<InspectionDTO> inspections = inspectionService.findBySupplierName(supplierName, inspectionPageable);
 
         // supplierName으로 OrdersDTO 가져오기
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -231,6 +255,22 @@ public class SupplierController {
         model.addAttribute("invoiceTotalPages", invoices.getTotalPages());
         model.addAttribute("invoiceCurrentPage", invoicePage);
 
+        //Inspection 데이터 추가
+        model.addAttribute("inspectionDTOS", inspections.getContent());
+        model.addAttribute("inspectionTotalPages", inspections.getTotalPages());
+        model.addAttribute("inspectionCurrentPage", inspectionPage);
+
+
+        // 거래 내역 요약 데이터 추가
+        double totalAmount = invoiceService.getTotalAmount(supplierName);
+        Map<Integer, Double> yearlySummary = invoiceService.getYearlySummary(supplierName);
+        Map<String, Double> monthlySummary = invoiceService.getMonthlySummary(supplierName);
+
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("yearlySummary", yearlySummary);
+        model.addAttribute("monthlySummary", monthlySummary);
+
+
         return "Supplier/SupplierPage";
     }
 
@@ -258,8 +298,9 @@ public class SupplierController {
             }
 
             // Import 데이터 저장
-            importDTO.setMaterialName(deliveryRequest.getMaterialName());
-            importDTO.setSupplierName(deliveryRequest.getSupplierName());
+            importDTO.setOrderCode(deliveryRequest.getOrder().getOrderCode());
+            importDTO.setMaterialName(deliveryRequest.getMaterial().getMaterialName());
+            importDTO.setSupplierName(deliveryRequest.getSupplier().getSupplierName());
             importDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             importDTO.setImportStatus(CurrentStatus.ON_HOLD);
             importDTO.setOrderedQuantity(deliveryRequest.getRequestedQuantity());
@@ -267,26 +308,35 @@ public class SupplierController {
 
             // InvoiceDTO 생성 및 필드 설정
             InvoiceDTO invoiceDTO = new InvoiceDTO();
-            invoiceDTO.setSupplierName(deliveryRequest.getSupplierName());
-            invoiceDTO.setMaterialName(deliveryRequest.getMaterialName());
+            invoiceDTO.setSupplierName(deliveryRequest.getSupplier().getSupplierName());
+            invoiceDTO.setMaterialName(deliveryRequest.getMaterial().getMaterialName());
             invoiceDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             invoiceService.createInvoice(invoiceDTO);
 
-            // DeliveryRequest 상태 업데이트
+            // DeliveryRequest 상태 업데이트(배달중으로 바꿈)
             deliveryRequestService.updateRequestStatus(id, "FINISHED");
+            // 업체 재고에서 뺀다.
+            SupplierStock stock = supplierStockRepository.findBySupplierNameAndMaterialCode(deliveryRequest.getSupplier().getSupplierName(), deliveryRequest.getMaterial().getMaterialCode());
+            stock.setStock(stock.getStock() - deliveryRequest.getRequestedQuantity());
+            supplierStockRepository.save(stock);
 
-            // requireQuantity가 0인 경우 주문 상태 업데이트
-            if (deliveryRequest.getRequireQuantity() == 0) {
-                String orderCode = deliveryRequest.getOrder().getOrderCode();
-                OrdersDTO order = orderService.findByOrderCode(orderCode);
-                if (order != null) {
-                    orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.FINISHED);
-                }
+            // 발주서의 모든 조달 수량을 만족한 경우 주문 상태 업데이트
+            String orderCode = deliveryRequest.getOrder().getOrderCode();
+            OrdersDTO order = orderService.findByOrderCode(orderCode);
+            List<DeliveryRequest> deliveryRequestsInSameOrder = deliveryRequestService.findByFinishedRequests(orderCode);
+            int sum = 0;
+            for (DeliveryRequest deliveryRequestInSameOrder : deliveryRequestsInSameOrder) {
+                sum += deliveryRequestInSameOrder.getRequestedQuantity();
             }
+            if (order.getOrderQuantity() <= sum) {
+                orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.DELIVERED);
+            }else{
+                orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.IN_PROGRESS);
+            }
+
         }
         return "redirect:/suppliers/page";
     }
-
 
 
 }

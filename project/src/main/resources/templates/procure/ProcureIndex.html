@@ -235,7 +235,10 @@
                                     <table class="table striped-table">
                                         <tbody>
                                         <tr th:each="bom : ${selectedBom}"
-                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">
+                                            >
+                                            <!-- 생산계획이 많다보니 미래에 필요한 양도 계산할 수 있어야할 것으로 보임.... 일단은 전부 출력하게 바꿔둠-->
+                                            <!-- 출력할 가용재고의 양을 계산하는 수식을 바꿔야할지도....        -->
+<!--                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">-->
                                             <td style="width: 130px" >
                                                 <div class="select-style-1" style="width: 120px; height: 10px">
                                                     <div class="select-position">

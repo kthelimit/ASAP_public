@@ -30,32 +30,40 @@ public class BomServiceImpl implements BomService {
     private final MaterialRepository materialRepository;
     private final StockRepository stockRepository;
     private final StockService stockService;
+    private final BomRepository bomRepository;
 
     //등록
     @Override
     public Long register(BomDTO dto) {
-        Product product = productRepository.findByProductCode(dto.getProductCode());
 
-        if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
-            Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
+        //해당 상품에 같은 자재로 bom이 등록되어 있는지 확인하고, 없으면 새로 등록한다.
+        if (bomRepository.findByProductCodeAndMaterialCode(dto.getProductCode(), dto.getMaterialCode()) != null) {
 
-            Bom bom = Bom.builder()
-                    .product(product)
-                    .material(material)
-                    .componentType(dto.getComponentType())
-                    .requireQuantity(dto.getRequireQuantity())
-                    .build();
+            Bom bom = bomRepository.findByProductCodeAndMaterialCode(dto.getProductCode(), dto.getMaterialCode());
+            bom.setComponentType(dto.getComponentType());
+            bom.setRequireQuantity(dto.getRequireQuantity());
             repository.save(bom);
             return bom.getBomId();
+
         } else {
-            return null;
+
+            Product product = productRepository.findByProductCode(dto.getProductCode());
+
+            if (materialRepository.findByMaterialCode(dto.getMaterialCode()).isPresent()) {
+                Material material = materialRepository.findByMaterialCode(dto.getMaterialCode()).get();
+
+                Bom bom = Bom.builder()
+                        .product(product)
+                        .material(material)
+                        .componentType(dto.getComponentType())
+                        .requireQuantity(dto.getRequireQuantity())
+                        .build();
+                repository.save(bom);
+                return bom.getBomId();
+            } else {
+                return null;
+            }
         }
-    }
-
-    //수정
-    @Override
-    public void modify(BomDTO dto) {
-
     }
 
     //삭제
@@ -66,6 +74,7 @@ public class BomServiceImpl implements BomService {
     }
 
     //상품코드로 불러오기
+    @Override
     public List<BomDTO> findWithProductCode(String productCode) {
         List<Bom> bomList = repository.findByProductCode(productCode);
         List<BomDTO> bomDTOList = new ArrayList<>();
@@ -75,8 +84,14 @@ public class BomServiceImpl implements BomService {
         return bomDTOList;
     }
 
+    @Override
+    public List<Bom> getbomList() {
+        return repository.findAll();
+    }
 
     public BomDTO entityToDTO(Bom entity) {
+
+        //조달계획 출력용 가용재고 계산
         Stock stock = stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode());
         int availableStock = stockService.calculateAvailableStock(stock);
         LocalDate today = LocalDate.now();

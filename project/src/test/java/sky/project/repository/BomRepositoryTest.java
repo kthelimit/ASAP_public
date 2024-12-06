@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sky.project.DTO.ExportDTO;
 import sky.project.Entity.ProductionPlan;
+import sky.project.Entity.Stock;
 import sky.project.Repository.BomRepository;
 import sky.project.Repository.ProductionPlanRepository;
+import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
 
 @SpringBootTest
@@ -19,6 +21,9 @@ public class BomRepositoryTest {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
 
     @Test
     public void testFindByProductionPlanCode() {
@@ -38,5 +43,11 @@ public class BomRepositoryTest {
 
 
         exportService.register(exportDTO);
+    }
+
+    @Test
+    public void findStockWithMaterialCode(){
+        Stock stock = stockRepository.findByMaterialCode("MATWHMAT016");
+        System.out.println(stock.getAvailableStock());
     }
 }

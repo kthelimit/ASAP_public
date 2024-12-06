@@ -151,6 +151,20 @@ public class ImportServiceImpl implements ImportService {
         return importList;
     }
 
+    @Override
+    public List<ImportDTO> getRecentImportList(){
+        return importRepository.findRecentImport().stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    public int getCountImportOnHold(){
+        return importRepository.countImportOnHold();
+    }
+
+    @Override
+    public int getCountImportInInspection(){
+        return importRepository.countImportUnderInspection();
+    }
 
     // 엔티티 -> DTO 변환
     private ImportDTO toDTO(Import importEntity) {

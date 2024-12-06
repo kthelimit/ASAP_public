@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import sky.project.DTO.ExportDTO;
+import sky.project.DTO.ImportDTO;
 import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.UserDTO;
 import sky.project.Service.*;
@@ -37,6 +38,9 @@ public class DashboardController {
     @Autowired
     InspectionService inspectionService;
 
+    @Autowired
+    ImportService importService;
+
     @RequestMapping("/info")
     public String info(Model model) {
         return "Info/information";
@@ -60,7 +64,7 @@ public class DashboardController {
         String supplierName = supplierService.findSupplierNameByUserId(userId);
 
         //유저 타입 전송하기
-        switch (user.getUserType()){
+        switch (user.getUserType()) {
             case SUPPLIER -> model.addAttribute("userType", "SUPPLIER");
             case ADMIN -> model.addAttribute("userType", "ADMIN");
             case PARTNER -> model.addAttribute("userType", "PARTNER");
@@ -94,11 +98,15 @@ public class DashboardController {
         int countDeliveryRequestForSupplier = deliveryRequestService.getCountRequestThisMonth(supplierName);
         model.addAttribute("countDeliveryRequestForSupplier", countDeliveryRequestForSupplier);
 
-        //이번 달 입고 건수
-
+        //입고 예정 건수
+        int countImport= importService.getCountImportOnHold();
+        model.addAttribute("countImport", countImport);
 
 
         //입고 검수 예정 건수
+        int countImportInspection = importService.getCountImportInInspection();
+        model.addAttribute("countImportInspection", countImportInspection);
+
 
         //진척 검수일 체크(업체용)
         boolean isInspectionDate = inspectionService.checkInspectionDate();
@@ -137,13 +145,14 @@ public class DashboardController {
         List<ExportDTO> exportDTOS = exportService.getRecentExportList();
         model.addAttribute("exportDTOS", exportDTOS);
 
-        //입고 검수 중인 목록
-        
-        
+        //진행 중인 입고 목록(자재부서용)
+
+        List<ImportDTO> importDTOS = importService.getRecentImportList();
+        model.addAttribute("importDTOS", importDTOS);
+
         //발주 중인 목록(업체용 - 자기네 업체 관련 내용만 떠야함)
         List<OrdersDTO> ordersDTOSForSupplier = orderService.getRecentOrderListForSupplier(supplierName);
         model.addAttribute("ordersDTOSForSupplier", ordersDTOSForSupplier);
-
 
 
         return "Dashboard/Dashboard";

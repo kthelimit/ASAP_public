@@ -111,7 +111,7 @@
                         <div class="left">
                             <h5 class="text-bold">업체</h5>
                         </div>
-                        <div class="alert" onclick="location.href='/suppliers/page'"  style="cursor: pointer">
+                        <div class="alert" onclick="location.href='/suppliers/page'" style="cursor: pointer">
                             <h4 class="alert-heading">중요 알림</h4>
                             <p class="text-medium">
                                 오늘은 진척 검수 예정일입니다.
@@ -187,10 +187,10 @@
                                     <i class="lni lni-inbox"></i>
                                 </div>
                                 <div class="content">
-                                    <h6 class="mb-10">이번 달 입고 건수</h6>
-                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <h6 class="mb-10">입고 예정 건수</h6>
+                                    <h3 class="text-bold mb-10">[[${countImport}]]</h3>
                                     <p class="text-sm text-danger">
-                                        <span class="text-gray"> 더 보기</span>
+                                        <a th:href="@{/material/import}"> <span class="text-gray"> 더 보기</span></a>
                                     </p>
                                 </div>
                             </div>
@@ -208,9 +208,9 @@
                                 </div>
                                 <div class="content">
                                     <h6 class="mb-10">입고 검수 예정 건수</h6>
-                                    <h3 class="text-bold mb-10">예정</h3>
+                                    <h3 class="text-bold mb-10">[[${countImportInspection}]]</h3>
                                     <p class="text-sm text-success">
-                                        <span class="text-gray">더 보기</span>
+                                        <a th:href="@{/material/import}"> <span class="text-gray">더 보기</span></a>
                                     </p>
                                 </div>
                             </div>
@@ -340,10 +340,10 @@
                         </div>
                     </div>
                     <!-- 달력 끝 -->
-                    <!-- 구매부서 전용-->
-                    <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
-                        <!-- 발주 목록 -->
-                        <div class="col-lg-7">
+                    <div class="col-lg-7">
+                        <!-- 구매부서 전용-->
+                        <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
+                            <!-- 발주 목록 -->
                             <div class="card-style mb-30">
                                 <h6 class="mb-10">현재 발주 중인 목록</h6>
                                 <p class="text-sm mb-20">
@@ -395,14 +395,14 @@
                                         <!-- end table row -->
                                     </table>
                                 </div>
+
                             </div>
-                        </div>
-                        <!-- 발주 목록 끝 -->
-                    </th:block>
-                    <!-- 생산 부서 전용-->
-                    <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'}">
-                        <!-- 작업 목록 -->
-                        <div class="col-lg-7">
+                            <!-- 발주 목록 끝 -->
+                        </th:block>
+                        <!-- 생산 부서 전용-->
+                        <th:block th:if="${userType=='ADMIN' || userType=='PRODUCTION_DEPT'}">
+                            <!-- 작업 목록 -->
+
                             <div class="card-style mb-30">
                                 <h6 class="mb-10">현재 출고 요청 목록</h6>
                                 <p class="text-sm mb-20">
@@ -455,15 +455,14 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <!-- 작업 목록 끝-->
-                    </th:block>
-                    <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
-                        <!-- 자재 부서 전용-->
-                        <!-- 입고 검수 목록-->
-                        <div class="col-lg-7">
+
+                            <!-- 작업 목록 끝-->
+                        </th:block>
+                        <th:block th:if="${userType=='ADMIN' || userType=='MATERIAL_DEPT'}">
+                            <!-- 자재 부서 전용-->
+                            <!-- 입고 검수 목록-->
                             <div class="card-style mb-30">
-                                <h6 class="mb-10">현재 입고 검수 중인 목록</h6>
+                                <h6 class="mb-10">현재 입고 중인 목록</h6>
                                 <p class="text-sm mb-20">
                                     최근 5건만 표시됩니다.
                                 </p>
@@ -471,144 +470,46 @@
                                     <table class="table">
                                         <thead>
                                         <tr>
-                                            <th>
-                                                <h6>#</h6>
-                                            </th>
-                                            <th>
+                                            <th class="text-center">
                                                 <h6>품목명</h6>
                                             </th>
-                                            <th>
+                                            <th class="text-center">
                                                 <h6>수량</h6>
                                             </th>
-                                            <th>
+                                            <th class="text-center">
                                                 <h6>업체명</h6>
                                             </th>
-                                            <th>
+                                            <th class="text-center">
                                                 <h6>납기일</h6>
                                             </th>
-                                            <th>
+                                            <th class="text-center">
                                                 <h6>상태</h6>
                                             </th>
                                         </tr>
                                         <!-- end table row-->
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>
-                                                1
+                                        <tr th:each="import : ${importDTOS}">
+                                            <td class="min-width">
+                                                <p th:text="${import.materialName}"></p>
                                             </td>
                                             <td class="min-width">
-                                                <p>XRB 엑스라이더 LG KTX배터리팩 48V 15Ah</p>
+                                                <p th:text="${import.quantity}"></p>
                                             </td>
                                             <td class="min-width">
-                                                <p><a href="#0">100</a></p>
+                                                <p th:text="${import.supplierName}"></p>
                                             </td>
                                             <td class="min-width">
-                                                <p>볼턴사</p>
+                                                -(예정)
                                             </td>
                                             <td class="min-width">
-                                                24.11.12
-                                            </td>
-                                            <td>
-                                                <div class="action">
-                                                    <button class="text-danger">
-                                                        <span class="status-btn active-btn">검수중</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <!-- end table row -->
-                                        <tr>
-                                            <td>
-                                                2
-                                            </td>
-                                            <td class="min-width">
-                                                <p>스포크 J밴드240</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>600</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>디씨바이크</p>
-                                            </td>
-                                            <td class="min-width">
-                                                24.11.9
-                                            </td>
-                                            <td>
-                                                <div class="action">
-                                                    <span class="status-btn success-btn">검수 완료</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <!-- end table row -->
-                                        <tr>
-                                            <td>
-                                                3
-                                            </td>
-                                            <td class="min-width">
-                                                <p>시티 바이시클 40mm패드 무통안장</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p><a href="#0">100</a></p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>WB사</p>
-                                            </td>
-                                            <td class="min-width">
-                                                24.11.12
-                                            </td>
-                                            <td>
-                                                <div class="action">
-                                                    <button class="text-danger">
-                                                        <span class="status-btn danger-btn">반품중</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <!-- end table row -->
-                                        <tr>
-                                            <td>
-                                                4
-                                            </td>
-                                            <td class="min-width">
-                                                <p>RD-R8150 (12단) di2 뒷변속기</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>50</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>시마노</p>
-                                            </td>
-                                            <td class="min-width">
-                                                24.11.9
-                                            </td>
-                                            <td>
-                                                <div class="action">
-                                                    <span class="status-btn success-btn">검수 완료</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <!-- end table row -->
-                                        <tr>
-                                            <td>
-                                                5
-                                            </td>
-                                            <td class="min-width">
-                                                <p>전기자전거 2인자전거 브레이크 케이블</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>50</p>
-                                            </td>
-                                            <td class="min-width">
-                                                <p>cs사</p>
-                                            </td>
-                                            <td class="min-width">
-                                                24.11.9
-                                            </td>
-                                            <td>
-                                                <div class="action">
-                                                    <span class="status-btn success-btn">검수 완료</span>
-                                                </div>
+                                                -(예정)
+                                                <span class="status-btn success-btn"
+                                                      th:if="${import.importStatus=='ON_HOLD'}">대기 중</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${import.importStatus=='UNDER_INSPECTION'}">검수 중</span>
+                                                <span class="status-btn close-btn"
+                                                      th:if="${import.importStatus=='FINISHED'}">종료</span>
                                             </td>
                                         </tr>
                                         <!-- end table row -->
@@ -616,13 +517,11 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <!-- 입고 검수 목록 끝-->
-                    </th:block>
-                    <!-- 협력 업체 전용-->
-                    <th:block th:if="${userType=='SUPPLIER'}">
-                        <!-- 발주 들어온 목록-->
-                        <div class="col-lg-7">
+                            <!-- 입고 검수 목록 끝-->
+                        </th:block>
+                        <!-- 협력 업체 전용-->
+                        <th:block th:if="${userType=='SUPPLIER'}">
+                            <!-- 발주 들어온 목록-->
                             <div class="card-style mb-30">
                                 <h6 class="mb-10">현재 발주 중인 목록</h6>
                                 <p class="text-sm mb-20">
@@ -662,7 +561,8 @@
                                             </td>
                                             <td class="min-width text-center">
                                                 <p th:if="${order.materialType=='구매품'}">-</p>
-                                                <p th:if="${order.materialType=='제조품'}">[[${order.finishedInspection}]]/[[${order.totalInspection}]]</p>
+                                                <p th:if="${order.materialType=='제조품'}">
+                                                    [[${order.finishedInspection}]]/[[${order.totalInspection}]]</p>
                                             </td>
                                             <td class="min-width text-center">
                                             <span class="status-btn success-btn"
@@ -677,9 +577,9 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <!-- 발주 들어온 목록 끝-->
-                    </th:block>
+                            <!-- 발주 들어온 목록 끝-->
+                        </th:block>
+                    </div>
                 </div>
             </div>
         </section>

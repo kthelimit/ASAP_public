@@ -139,6 +139,8 @@ public class SupplierController {
                                        @RequestParam(defaultValue = "10") int size) {
         List<SupplierDTO> suppliers = supplierService.getPendingApprovals(page, size);
         int totalPages = (int) Math.ceil((double) supplierService.getTotalPendingCount() / size);
+
+
         model.addAttribute("suppliers", suppliers);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -168,11 +170,31 @@ public class SupplierController {
     }
 
     @GetMapping("/detail/{id}")
-    public String getSupplierDetail(@PathVariable String id, Model model) {
+    public String getSupplierDetail(@PathVariable String id, Model model,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "5") int size) {
+        // 협력사 정보 가져오기
         SupplierDTO supplierDTO = supplierService.getSupplierById(id);
         model.addAttribute("supplierDTO", supplierDTO);
+
+        // 거래 요약
+        double totalAmount = invoiceService.getTotalAmount(supplierDTO.getSupplierName());
+        model.addAttribute("totalAmount", totalAmount);
+
+        // 취급 자재 품목
+        model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(supplierDTO.getSupplierId()));
+
+        // 거래 명세서 (페이지네이션 적용)
+        Pageable invoicePageable = PageRequest.of(page - 1, size);
+        Page<InvoiceDTO> invoices = invoiceService.findInvoicesBySupplierName(supplierDTO.getSupplierName(), invoicePageable);
+        model.addAttribute("invoices", invoices.getContent());
+        model.addAttribute("TotalPages", invoices.getTotalPages());
+        model.addAttribute("CurrentPage", page);
+        model.addAttribute("size", size);
+
         return "Supplier/SupplierDetail";
     }
+
 
 
     @PostMapping("/stockUpdate")
@@ -330,8 +352,6 @@ public class SupplierController {
             }
             if (order.getOrderQuantity() <= sum) {
                 orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.DELIVERED);
-            }else{
-                orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.IN_PROGRESS);
             }
 
         }

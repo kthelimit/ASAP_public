@@ -1,16 +1,19 @@
 package sky.project.ServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ImportDTO;
+import sky.project.DTO.ReturnDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.DeliveryRequestRepository;
 import sky.project.Repository.ImportRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.ImportService;
+import sky.project.Service.ReturnService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ImportServiceImpl implements ImportService {
 
@@ -30,6 +34,8 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     public MaterialRepository materialRepository;
+    @Autowired
+    public ReturnService returnService;
     @Autowired
     private DeliveryRequestRepository deliveryRequestRepository;
 
@@ -67,10 +73,23 @@ public class ImportServiceImpl implements ImportService {
 
             // 결함 수량 계산 및 업데이트
             int defectiveQuantity = importEntity.getOrderedQuantity() - passedQuantity;
-            if (defectiveQuantity < 0) {
-                throw new RuntimeException("Defective quantity cannot be negative");
-            }
+
+            // 파본 대비로 더 넣었다거나 해서 실제보다 더 많은 수량이 합격하면 오류나게 되므로 일단 주석 처리함.
+//            if (defectiveQuantity < 0) {
+//                throw new RuntimeException("Defective quantity cannot be negative");
+//            }
+
             importEntity.setDefectiveQuantity(defectiveQuantity);
+            log.info("defectiveQuantity : " + defectiveQuantity);
+            //결함수량이 0보다 크면 반품 테이블에 입력함
+            if (defectiveQuantity > 0) {
+                ReturnDTO returnDTO = ReturnDTO.builder()
+                        .quantity(defectiveQuantity)
+                        .importId(importId)
+                        .build();
+                returnService.register(returnDTO);
+                //반품 수량이 있으니 반품중으로 표시
+            }
 
             // Stock 업데이트 로직
             Material material = materialRepository.findFirstByMaterialName(importEntity.getMaterialName())
@@ -178,12 +197,17 @@ public class ImportServiceImpl implements ImportService {
                 .map(Material::getMaterialCode)
                 .orElse("정보 없음");
 
+        ReturnDTO returnDTO = null;
+        if (importEntity.getDefectiveQuantity() > 0) {
+            returnDTO = returnService.findByImportId(importEntity.getImportId());
+        }
 
         return ImportDTO.builder()
                 .importId(importEntity.getImportId())
                 .orderCode(importEntity.getOrderCode())
                 .importCode(importEntity.getImportCode())
                 .deliveryId(importEntity.getDeliveryRequest().getId())
+                .defectiveQuantity(importEntity.getDefectiveQuantity())
                 .materialCode(materialCode)
                 .materialName(importEntity.getMaterialName())
                 .supplierName(importEntity.getSupplierName())
@@ -191,6 +215,7 @@ public class ImportServiceImpl implements ImportService {
                 .quantity(importEntity.getQuantity())
                 .passedQuantity(importEntity.getPassedQuantity())
                 .importStatus(importEntity.getImportStatus())
+                .returnDTO(returnDTO)
                 .build();
     }
 

@@ -117,7 +117,7 @@
                                         <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(invoice.totalPrice, 3, 'COMMA')}"></p></td>
                                         <td class="min-width text-center"><p th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p></td>
                                         <td class="min-width text-center">
-                                            <a class="btn btn-primary"
+                                            <a class="main-btn primary-btn btn-hover"
                                                href="javascript:void(0);"
                                                th:onclick="window.open('/invoice/detail/[[${invoice.invoiceId}]]', '거래 명세서', 'width=1200, height=600, resizable=yes')">상세보기</a>
                                         </td>

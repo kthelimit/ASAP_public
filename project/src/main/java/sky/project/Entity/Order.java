@@ -40,6 +40,7 @@ public class Order  extends Base{
 
     private double totalPrice;
 
+    private String remarks; //비고
     @Enumerated(EnumType.STRING)
     private CurrentStatus status;
 

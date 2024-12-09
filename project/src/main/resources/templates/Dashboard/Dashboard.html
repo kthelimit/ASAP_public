@@ -500,16 +500,15 @@
                                                 <p th:text="${import.supplierName}"></p>
                                             </td>
                                             <td class="min-width">
-                                                -(예정)
+                                                <p th:text="${import.deliveryDate}"></p>
                                             </td>
                                             <td class="min-width">
-                                                -(예정)
                                                 <span class="status-btn success-btn"
-                                                      th:if="${import.importStatus=='ON_HOLD'}">대기 중</span>
+                                                      th:if="${import.importStatus.name()=='ON_HOLD'}">대기 중</span>
                                                 <span class="status-btn active-btn"
-                                                      th:if="${import.importStatus=='UNDER_INSPECTION'}">검수 중</span>
+                                                      th:if="${import.importStatus.name()=='UNDER_INSPECTION'}">검수 중</span>
                                                 <span class="status-btn close-btn"
-                                                      th:if="${import.importStatus=='FINISHED'}">종료</span>
+                                                      th:if="${import.importStatus.name()=='FINISHED'}">종료</span>
                                             </td>
                                         </tr>
                                         <!-- end table row -->

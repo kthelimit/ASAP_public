@@ -203,6 +203,7 @@ public class OrderServiceImpl implements OrderService {
                 .materialType(order.getMaterial().getMaterialType())
                 .availableStock(availableStock) // 요청 가능 수량
                 .deliveryQuantity(deliveryQuantity)
+                .remarks(order.getRemarks())
                 .finishedInspection(finishedInspection)
                 .totalInspection(totalInspection)
                 .build();
@@ -246,6 +247,7 @@ public class OrderServiceImpl implements OrderService {
         order.setMaterial(material);
         order.setOrderQuantity(dto.getOrderQuantity());
         order.setTotalPrice(dto.getTotalPrice());
+        order.setRemarks(dto.getRemarks());
         order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환
         return order;
     }

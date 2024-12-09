@@ -226,7 +226,7 @@
                     </ul>
                 </li>
 
-                <span class="divider"><hr/></span>
+                <span class="divider" th:if="${user != null and user.userType.name() != 'SUPPLIER'}"><hr/></span>
                 <li class="nav-item active">
                     <a th:href="@{/dashboard/info}">
               <span class="icon">

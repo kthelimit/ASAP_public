@@ -28,4 +28,6 @@ public class ImportDTO {
     private int defectiveQuantity;      // 결함 수량
     private CurrentStatus importStatus; // 현재 상태 (검수 전, 검수 완료 등)
 
+    private ReturnDTO returnDTO;
+
 }

@@ -17,6 +17,8 @@ public class AssyDTO {
     private String materialName; //재료로 들어가는 자재명
     private String materialCode; //재료로 들어가는 자재코드
     private int quantity; //들어가는 자재 수량
+    private int stock; //현재 재고 출력용
+    private int availableStock; //현재 가용재고 출력용
     
     private String productCode; //최종 상품코드
     private String productName; //최종 상품명

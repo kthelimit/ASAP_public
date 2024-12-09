@@ -9,6 +9,7 @@ import sky.project.Entity.Material;
 import sky.project.Entity.Product;
 import sky.project.Repository.*;
 import sky.project.Service.AssyService;
+import sky.project.Service.StockService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,8 @@ public class AssyServiceImpl implements AssyService {
     private final ProductRepository productRepository;
     private final ExportRepository exportRepository;
     private final ProductionPlanRepository productionPlanRepository;
+    private final StockService stockService;
+    private final StockRepository stockRepository;
 
     @Override
     public Long register(AssyDTO dto) {
@@ -62,7 +65,7 @@ public class AssyServiceImpl implements AssyService {
     }
 
     @Override
-    public List<Assy> getAssys(){
+    public List<Assy> getAssys() {
         return assyRepository.findAll();
     }
 
@@ -86,6 +89,12 @@ public class AssyServiceImpl implements AssyService {
     }
 
     public AssyDTO entityToDto(Assy entity) {
+
+        //가용재고 출력용
+        int availableStock = stockService.calculateAvailableStock(stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode()));
+
+        //재고 출력용
+        int stock = stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode()).getQuantity();
         return AssyDTO.builder()
                 .assyId(entity.getAssyId())
                 .quantity(entity.getQuantity())
@@ -96,6 +105,8 @@ public class AssyServiceImpl implements AssyService {
                 .productName(entity.getProduct().getProductName())
                 .materialCode(entity.getMaterial().getMaterialCode())
                 .materialName(entity.getMaterial().getMaterialName())
+                .availableStock(availableStock)
+                .stock(stock)
                 .build();
     }
 

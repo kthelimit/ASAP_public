@@ -114,6 +114,18 @@ public class OrderController {
         return "/Order/Orderindex";
     }
 
+    @GetMapping("/detail/{orderCode}")
+    public String getOrderDetail(Model model, @PathVariable String orderCode) {
+
+        //타임리프가 문자열에 쌍따옴표를 넣어줘서 그것을 제거하는 코드
+        orderCode=orderCode.replace("\"","");
+
+        OrdersDTO ordersDTO = orderService.findByOrderCode(orderCode);
+        model.addAttribute("ordersDTO", ordersDTO);
+        return "/Order/OrderDetail";
+    }
+
+
     @RequestMapping("/history")
     public String OrderHistory(Model model,
                                @RequestParam(defaultValue = "1") int page,

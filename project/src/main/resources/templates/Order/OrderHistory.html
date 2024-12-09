@@ -101,6 +101,9 @@
                                 <th class="text-center">
                                     <h6>발주 상태</h6>
                                 </th>
+                                <th class="text-center">
+                                    <h6>발주서</h6>
+                                </th>
                             </tr>
                             <!-- end table row-->
 
@@ -124,6 +127,11 @@
                                     <span class="status-btn active-btn"
                                           th:if="${orders.status=='APPROVAL'}">승인 완료</span>
                                     <span class="status-btn close-btn" th:if="${orders.status=='FINISHED'}">종료</span>
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-primary"
+                                       href="javascript:void(0);"
+                                       th:onclick="window.open('/order/detail/[[${orders.orderCode}]]', '발주서', 'width=1200, height=600, resizable=yes')">상세보기</a>
                                 </td>
                             </tr>
                             <!-- end table row -->

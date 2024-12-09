@@ -3,7 +3,59 @@
 <head>
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <style>
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+
+            header {
+                display: none;
+            }
+
+            .col-lg-6 {
+                width: 50%;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            th {
+                font-size: 10pt;
+            }
+
+            td {
+                font-size: 8pt;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tfoot {
+                display: table-footer-group;
+            }
+        }
+    </style>
 </head>
+<header>
+    <div class="row" style="justify-content: flex-end">
+        <div class="col-lg-1" style="min-width: 144px">
+            <button class="main-btn primary-btn btn-hover" onclick="window.print()">인쇄</button>
+        </div>
+    </div>
+</header>
+<body>
 <div class="row">
     <div class="col-lg-12">
         <div class="card-style mb-30">
@@ -49,8 +101,8 @@
             <hr>
             <table class="table" style="background-color: lightgrey">
                 <tr>
-                    <td class="min-width" style="padding-left: 20px; padding-top: 0">합계(공급가액 + 세액):</td>
-                    <td th:text="${#numbers.formatInteger(invoice.totalPrice + (invoice.totalPrice / 10), 3,'COMMA')}"></td>
+                    <td class="min-width text-center" style="padding-top: 10px; padding-bottom: 10px; width: 50%">합계(공급가액 + 세액):</td>
+                    <td class="min-width text-center" style="padding-top: 10px; padding-bottom: 10px; width: 50%" th:text="${#numbers.formatInteger(invoice.totalPrice + (invoice.totalPrice / 10), 3,'COMMA')}"></td>
                 </tr>
             </table>
             <hr>
@@ -77,4 +129,5 @@
         </div>
     </div>
 </div>
+</body>
 </html>

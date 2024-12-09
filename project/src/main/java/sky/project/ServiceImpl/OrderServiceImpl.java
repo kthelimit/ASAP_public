@@ -191,7 +191,11 @@ public class OrderServiceImpl implements OrderService {
                 .expectedDate(order.getExpectedDate())
                 .procurePlanCode(order.getProcurePlanCode())
                 .supplierName(order.getSupplier().getSupplierName())
+                .supplierAddress(order.getSupplier().getAddress())
+                .businessRegistrationNumber(order.getSupplier().getBusinessRegistrationNumber())
+                .managerName(order.getSupplier().getUser().getUsername())
                 .materialName(order.getMaterial().getMaterialName())
+                .unitPrice(order.getMaterial().getUnitPrice())
                 .orderQuantity(order.getOrderQuantity())
                 .remainedQuantity(remainedQuantity) //남은 수량
                 .totalPrice(order.getTotalPrice())

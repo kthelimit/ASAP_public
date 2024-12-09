@@ -2,101 +2,156 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <head>
-            <meta charset="UTF-8">
-            <title>협력사 상세 정보</title>
-        </head>
-        <body>
-        <!-- 협력사 기본 정보 -->
-        <h2>협력사 상세 정보</h2>
-        <div class="supplier-info">
-            <p><strong>업체명:</strong> [[${supplierDTO.supplierName}]]</p>
-            <p><strong>사업자 번호:</strong> [[${supplierDTO.businessRegistrationNumber}]]</p>
-            <p><strong>연락처:</strong> [[${supplierDTO.contactInfo}]]</p>
-            <p><strong>주소:</strong> [[${supplierDTO.address}]]</p>
-            <p><strong>업태:</strong> [[${supplierDTO.businessType}]]</p>
-            <p><strong>종목:</strong> [[${supplierDTO.businessItem}]]</p>
-        </div>
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h3 class="mb-10">협력사 상세 정보</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">업체 관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">업체 목록</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">협력사 상세 정보</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <!-- 협력사 기본 정보 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <h3 class="mb-10">협력사 상세 정보</h3>
+                            <div class="supplier-info">
+                                <p><strong>업체명:</strong> [[${supplierDTO.supplierName}]]</p>
+                                <p><strong>사업자 번호:</strong> [[${supplierDTO.businessRegistrationNumber}]]</p>
+                                <p><strong>연락처:</strong> [[${supplierDTO.contactInfo}]]</p>
+                                <p><strong>주소:</strong> [[${supplierDTO.address}]]</p>
+                                <p><strong>업태:</strong> [[${supplierDTO.businessType}]]</p>
+                                <p><strong>종목:</strong> [[${supplierDTO.businessItem}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- 거래 내역 -->
-        <div class="transaction-summary mt-4">
-            <h3>거래 내역</h3>
-            <p><strong>총 거래 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>
-        </div>
 
-        <!-- 취급 자재 품목 -->
-        <div class="material-list mt-4">
-            <h3>취급 자재 품목</h3>
-            <table class="table ">
-                <thead>
-                <tr>
-                    <th>자재 이름</th>
-                    <th>단가</th>
-                    <th>최소 공급수량</th>
+                <!-- 거래 내역 -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div class="transaction-summary ">
+                                <h3 class="mb-10">거래 내역</h3>
+                                <p><strong>총 거래 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="stock : ${supplierStocks}">
-                    <td th:text="${stock.materialName}"></td>
-                    <td th:text="${#numbers.formatInteger(stock.unitPrice, 3, 'COMMA')}"></td>
-                    <td th:text="${stock.quantity}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                <!-- 취급 자재 품목 -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div class="material-list ">
+                                <h3 class="mb-10">취급 자재 품목</h3>
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center"><h6>자재 이름</h6></th>
+                                        <th class="text-center"><h6>단가</h6></th>
+                                        <th class="text-center"><h6>최소 공급수량</h6></th>
 
-        <!-- 거래 명세서 -->
-        <div class="invoice-list mt-4">
-            <h3>거래 명세서</h3>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>자재 이름</th>
-                    <th>단가</th>
-                    <th>수량</th>
-                    <th>총 가격</th>
-                    <th>거래 날짜</th>
-                    <th>상세 보기</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="invoice : ${invoices}">
-                    <td th:text="${invoice.materialName}"></td>
-                    <td th:text="${#numbers.formatInteger(invoice.unitPrice, 3, 'COMMA')}"></td>
-                    <td th:text="${invoice.quantity}"></td>
-                    <td th:text="${#numbers.formatInteger(invoice.totalPrice, 3, 'COMMA')}"></td>
-                    <td th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></td>
-                    <td>
-                        <a th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}" class="btn btn-primary">상세 보기</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="stock : ${supplierStocks}">
+                                        <td class="min-width"><p th:text="${stock.materialName}"></p></td>
+                                        <td class="min-width text-align-right"><p
+                                                th:text="${#numbers.formatInteger(stock.unitPrice, 3, 'COMMA')}"></p>
+                                        </td>
+                                        <td class="min-width text-align-right"><p th:text="${stock.quantity}"></p></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- 페이지네이션 -->
-            <div class="pagination-wrapper">
-                <ul class="pagination">
-                    <!-- 이전 페이지 버튼 -->
-                    <li th:if="${CurrentPage > 1}">
-                        <a th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${CurrentPage - 1}, size=${size})}">&laquo;</a>
-                    </li>
+                <!-- 거래 명세서 -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div class="invoice-list ">
+                                <h3 class="mb-10">거래 명세서</h3>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center"><h6>자재 이름</h6></th>
+                                        <th class="text-center"><h6>단가</h6></th>
+                                        <th class="text-center"><h6>수량</h6></th>
+                                        <th class="text-center"><h6>총 가격</h6></th>
+                                        <th class="text-center"><h6>거래 날짜</h6></th>
+                                        <th class="text-center"><h6>상세 보기</h6></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="invoice : ${invoices}">
+                                        <td class="min-width"><p th:text="${invoice.materialName}"></p></td>
+                                        <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(invoice.unitPrice, 3, 'COMMA')}"></p></td>
+                                        <td class="min-width text-align-right"><p th:text="${invoice.quantity}"></p></td>
+                                        <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(invoice.totalPrice, 3, 'COMMA')}"></p></td>
+                                        <td class="min-width text-center"><p th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p></td>
+                                        <td class="min-width text-center">
+                                            <a class="btn btn-primary"
+                                               href="javascript:void(0);"
+                                               th:onclick="window.open('/invoice/detail/[[${invoice.invoiceId}]]', '거래 명세서', 'width=1200, height=600, resizable=yes')">상세보기</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
 
-                    <!-- 페이지 번호 버튼 -->
-                    <li th:each="i : ${#numbers.sequence(1, TotalPages)}">
-                        <a th:classappend="${i == CurrentPage ? 'active' : ''}"
-                           th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${i}, size=${size})}"
-                           th:text="${i}"></a>
-                    </li>
+                                <!-- 페이지네이션 -->
+                                <div class="pagination-wrapper">
+                                    <ul class="pagination">
+                                        <!-- 이전 페이지 버튼 -->
+                                        <li th:if="${CurrentPage > 1}">
+                                            <a th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${CurrentPage - 1}, size=${size})}">&laquo;</a>
+                                        </li>
 
-                    <!-- 다음 페이지 버튼 -->
-                    <li th:if="${CurrentPage < TotalPages}">
-                        <a th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${CurrentPage + 1}, size=${size})}">&raquo;</a>
-                    </li>
-                </ul>
+                                        <!-- 페이지 번호 버튼 -->
+                                        <li th:each="i : ${#numbers.sequence(1, TotalPages)}">
+                                            <a th:classappend="${i == CurrentPage ? 'active' : ''}"
+                                               th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${i}, size=${size})}"
+                                               th:text="${i}"></a>
+                                        </li>
+
+                                        <!-- 다음 페이지 버튼 -->
+                                        <li th:if="${CurrentPage < TotalPages}">
+                                            <a th:href="@{/suppliers/detail/{id}(id=${supplierDTO.supplierId}, page=${CurrentPage + 1}, size=${size})}">&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        </body>
     </th:block>
 </th:block>
 </html>

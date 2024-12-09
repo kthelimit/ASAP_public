@@ -10,7 +10,9 @@ import sky.project.Entity.CurrentStatus;
 @Builder
 public class ImportDTO {
     private Long importId;              // 입고 ID (PK)
+    private Long deliveryId;
     private String orderCode;          // 발주 번호
+    private String importCode;
     private String materialCode;        // 자재 코드
     private String materialName;        // 품명
     private String supplierName;        // 업체명

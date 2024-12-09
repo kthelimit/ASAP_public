@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.UserDTO;
+import sky.project.Entity.Supplier;
 import sky.project.Entity.User;
 import sky.project.Entity.UserType;
+import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
@@ -19,6 +21,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder; // PasswordEncoder 주입
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     @Override
     public boolean isUserIdExists(String userId) {
@@ -36,11 +40,37 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(userDTO.getUserId())) { // 아이디가 이미 존재하는지 확인
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다."); // 적절한 예외를 던짐
         }
+
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
         User user = toEntity(userDTO);
+
+        //admin 계정인 경우 권한 넣어주기
+        if (userDTO.getUserId().equals("admin")) {
+            user.setUserType(UserType.ADMIN);
+        }
         User savedUser = userRepository.save(user);
+
+        //admin 계정인 경우 DG전동 업체 정보를 넣어주기
+        if (userDTO.getUserId().equals("admin")) {
+            Supplier supplier = Supplier.builder()
+                    .user(savedUser)
+                    .supplierId(savedUser.getUserId())
+                    .supplierName("DG전동")
+                    .businessType("제조업")
+                    .businessItem("자전거")
+                    .businessRegistrationNumber("000-00-00000")
+                    .contactInfo("000-0000-0000")
+                    .address(savedUser.getUserAddress())
+                    .approved(true)
+                    .build();
+            supplierRepository.save(supplier);
+
+            //부서 계정 넣어주기
+            makeDeptUser();
+        }
         return toDTO(savedUser);
     }
 
@@ -105,6 +135,38 @@ public class UserServiceImpl implements UserService {
                 .phone(user.getPhone())
                 .birthdate(user.getBirthdate())
                 .build();
+    }
+
+    private void makeDeptUser(){
+        User userDEPT1 = User.builder()
+                .userId("dept1")
+                .username("구매부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.PURCHASE_DEPT)
+                .build();
+        userRepository.save(userDEPT1);
+
+        User userDEPT2 = User.builder()
+                .userId("dept2")
+                .username("자재부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.MATERIAL_DEPT)
+                .build();
+        userRepository.save(userDEPT2);
+
+        User userDEPT3 = User.builder()
+                .userId("dept3")
+                .username("생산부서 직원")
+                .userAddress("주소")
+                .password(passwordEncoder.encode("1234"))
+                .phone("000-0000-0000")
+                .userType(UserType.PRODUCTION_DEPT)
+                .build();
+        userRepository.save(userDEPT3);
     }
 
 

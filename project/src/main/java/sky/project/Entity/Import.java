@@ -3,8 +3,6 @@ package sky.project.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,7 +15,13 @@ public class Import extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long importId;
 
-    private String orderCode; // 입고 코드
+    private String orderCode; // 발주 번호
+
+    @ManyToOne
+    @JoinColumn(name = "delivery_id")
+    private DeliveryRequest deliveryRequest;
+
+    private String importCode;
 
     private String materialName; // 자재이름
 

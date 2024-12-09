@@ -326,6 +326,7 @@ public class SupplierController {
             importDTO.setQuantity(deliveryRequest.getRequestedQuantity());
             importDTO.setImportStatus(CurrentStatus.ON_HOLD);
             importDTO.setOrderedQuantity(deliveryRequest.getRequestedQuantity());
+            importDTO.setDeliveryId(deliveryRequest.getId());
             importService.createImport(importDTO);
 
             // InvoiceDTO 생성 및 필드 설정

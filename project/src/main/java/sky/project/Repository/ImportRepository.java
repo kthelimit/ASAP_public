@@ -22,4 +22,9 @@ public interface ImportRepository extends JpaRepository<Import, Long> {
 
     @Query("select i from Import i order by i.importId desc limit 5")
     List<Import> findRecentImport();
+
+
+    @Query("SELECT COUNT(i) FROM Import i WHERE i.importCode LIKE CONCAT(:prefix, '%')")
+    Long countByPrefix(String prefix);
+
 }

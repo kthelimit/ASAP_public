@@ -5,22 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ImportDTO;
-import sky.project.Entity.CurrentStatus;
-import sky.project.Entity.Import;
-import sky.project.Entity.Material;
-import sky.project.Entity.Stock;
+import sky.project.Entity.*;
+import sky.project.Repository.DeliveryRequestRepository;
 import sky.project.Repository.ImportRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.ImportService;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ImportServiceImpl implements ImportService {
-
 
 
     @Autowired
@@ -31,6 +30,8 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     public MaterialRepository materialRepository;
+    @Autowired
+    private DeliveryRequestRepository deliveryRequestRepository;
 
     @Override
     public Page<ImportDTO> getImportsByCriteria(String type, String keyword, Pageable pageable) {
@@ -98,6 +99,9 @@ public class ImportServiceImpl implements ImportService {
         // DTO를 Import 엔티티로 변환
         Import importEntity = toEntity(importDTO);
 
+        //입고 코드 생성
+        importEntity.setImportCode(generateOrderCode(importDTO));
+
         // Import 엔티티 저장
         Import savedImportEntity = importRepository.save(importEntity);
 
@@ -141,6 +145,7 @@ public class ImportServiceImpl implements ImportService {
             throw new RuntimeException("Import not found with ID " + importId);
         }
     }
+
     @Override
     public List<ImportDTO> calculateDefectiveQuantity(List<ImportDTO> importList) {
         for (ImportDTO importDTO : importList) {
@@ -152,17 +157,17 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public List<ImportDTO> getRecentImportList(){
+    public List<ImportDTO> getRecentImportList() {
         return importRepository.findRecentImport().stream().map(this::toDTO).toList();
     }
 
     @Override
-    public int getCountImportOnHold(){
+    public int getCountImportOnHold() {
         return importRepository.countImportOnHold();
     }
 
     @Override
-    public int getCountImportInInspection(){
+    public int getCountImportInInspection() {
         return importRepository.countImportUnderInspection();
     }
 
@@ -177,6 +182,8 @@ public class ImportServiceImpl implements ImportService {
         return ImportDTO.builder()
                 .importId(importEntity.getImportId())
                 .orderCode(importEntity.getOrderCode())
+                .importCode(importEntity.getImportCode())
+                .deliveryId(importEntity.getDeliveryRequest().getId())
                 .materialCode(materialCode)
                 .materialName(importEntity.getMaterialName())
                 .supplierName(importEntity.getSupplierName())
@@ -189,7 +196,11 @@ public class ImportServiceImpl implements ImportService {
 
     // DTO -> 엔티티 변환
     private Import toEntity(ImportDTO importDTO) {
+
         Import importEntity = new Import();
+
+        DeliveryRequest deliveryRequest = deliveryRequestRepository.findById(importDTO.getDeliveryId()).orElse(null);
+
         importEntity.setOrderCode(importDTO.getOrderCode());
         importEntity.setMaterialName(importDTO.getMaterialName()); // materialName 직접 설정
         importEntity.setSupplierName(importDTO.getSupplierName());
@@ -197,6 +208,62 @@ public class ImportServiceImpl implements ImportService {
         importEntity.setQuantity(importDTO.getQuantity());
         importEntity.setPassedQuantity(importDTO.getPassedQuantity());
         importEntity.setImportStatus(importDTO.getImportStatus());
+        importEntity.setDeliveryRequest(deliveryRequest);
         return importEntity;
+    }
+
+    private String generateOrderCode(ImportDTO dto) {
+        // 매터리얼 코드에 따른 접두어 설정
+        String prefix = "IMP";
+        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
+        switch (material.getMaterialCode().substring(3, 5)) {
+            case "WH":
+                prefix += "WH";
+                break;
+            case "RI":
+                prefix += "RI";
+                break;
+            case "HA":
+                prefix += "HA";
+                break;
+            case "SA":
+                prefix += "SA";
+                break;
+            case "PE":
+                prefix += "PE";
+                break;
+            case "BO":
+                prefix += "BO";
+                break;
+            case "B1":
+                prefix += "B1";
+                break;
+            case "B2":
+                prefix += "B2";
+                break;
+            case "B3":
+                prefix += "B3";
+                break;
+            case "K1":
+                prefix += "K1";
+                break;
+            case "K2":
+                prefix += "K2";
+                break;
+            default:
+                prefix += "UN";
+                break;
+        }
+
+        // 날짜 포맷 (예: 20231120)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
+        LocalDateTime today = LocalDateTime.now();
+        String dateCode = today.format(formatter);
+
+        // 동일 접두어 코드의 다음 번호
+        Long nextSequence = importRepository.countByPrefix(prefix) + 1;
+
+        // 코드 생성
+        return String.format("%s%s%03d", prefix, dateCode, nextSequence);
     }
 }

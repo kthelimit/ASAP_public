@@ -164,11 +164,6 @@ public class OrderServiceImpl implements OrderService {
         }
         remainedQuantity -= sumOfRequests;
 
-        // 상태 업데이트
-        if (remainedQuantity == 0) {
-            order.setStatus(CurrentStatus.DELIVERED);
-        }
-
         //업체의 가용 재고
         int availableStock = calculateAvailableStock(order);
 

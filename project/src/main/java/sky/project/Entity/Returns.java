@@ -9,11 +9,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Returns {
+public class Returns extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long returnId;
+    private String returnCode;
 
     @ManyToOne
     @JoinColumn(name = "import_id", nullable = false)

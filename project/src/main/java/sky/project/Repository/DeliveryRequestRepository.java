@@ -33,6 +33,14 @@ public interface DeliveryRequestRepository extends JpaRepository<DeliveryRequest
     @Query("select d from DeliveryRequest d where d.order.orderCode =:orderCode and d.status='FINISHED'")
     List<DeliveryRequest> findDeliveryRequestsByOrderCodeFinished(String orderCode);
 
+    @Query("select d from DeliveryRequest d where d.order.orderCode =:orderCode and d.status='DELIVERED'")
+    List<DeliveryRequest> findDeliveryRequestsByOrderCodeDelivered(String orderCode);
+
+
     @Query("select d from DeliveryRequest d where d.order.orderCode =:orderCode and d.status='IN_PROGRESS'")
     List<DeliveryRequest> findDeliveryRequestsByOrderCodeInProgress(String orderCode);
+
+    @Query("SELECT COUNT(d) FROM DeliveryRequest d WHERE d.deliveryCode LIKE CONCAT(:prefix, '%')")
+    Long countByPrefix(String prefix);
+
 }

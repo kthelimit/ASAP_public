@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import sky.project.DTO.ImportDTO;
 import sky.project.DTO.ReturnDTO;
 import sky.project.Entity.*;
-import sky.project.Repository.DeliveryRequestRepository;
-import sky.project.Repository.ImportRepository;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.StockRepository;
+import sky.project.Repository.*;
+import sky.project.Service.DeliveryRequestService;
 import sky.project.Service.ImportService;
 import sky.project.Service.ReturnService;
 
@@ -37,7 +35,12 @@ public class ImportServiceImpl implements ImportService {
     @Autowired
     public ReturnService returnService;
     @Autowired
+    private DeliveryRequestService deliveryRequestService;
+    @Autowired
     private DeliveryRequestRepository deliveryRequestRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+
 
     @Override
     public Page<ImportDTO> getImportsByCriteria(String type, String keyword, Pageable pageable) {
@@ -67,6 +70,10 @@ public class ImportServiceImpl implements ImportService {
                 .orElseThrow(() -> new RuntimeException("Import not found"));
 
         importEntity.setImportStatus(status);
+        //검수를 시작하면 납품지시 쪽을 도착으로 바꿔준다.
+        if(status==CurrentStatus.UNDER_INSPECTION){
+            deliveryRequestService.updateRequestStatus(importEntity.getDeliveryRequest().getId(), "ARRIVED");
+        }
 
         if (passedQuantity != null) {
             importEntity.setPassedQuantity(passedQuantity);
@@ -84,11 +91,28 @@ public class ImportServiceImpl implements ImportService {
             //결함수량이 0보다 크면 반품 테이블에 입력함
             if (defectiveQuantity > 0) {
                 ReturnDTO returnDTO = ReturnDTO.builder()
+                        .materialName(importEntity.getMaterialName())
                         .quantity(defectiveQuantity)
                         .importId(importId)
                         .build();
                 returnService.register(returnDTO);
                 //반품 수량이 있으니 반품중으로 표시
+            }else{
+                //결함수량이 0보다 크지 않다면 무사히 완료된 것이므로 납품지시를 완료로 바꿈
+                deliveryRequestService.updateRequestStatus(importEntity.getDeliveryRequest().getId(), "FINISHED");
+                String orderCode = importEntity.getOrderCode();
+                Order order = orderRepository.findByOrderCode(orderCode).orElse(null);
+                //만약 발주서가 전부 배송된 상태라면
+                if (order != null && order.getStatus() == CurrentStatus.DELIVERED) {
+                    //납품지시들이 전부 완료된 경우 발주 완료 처리
+                    List<DeliveryRequest> deliveryRequests = deliveryRequestService.findByOrderCode(orderCode);
+                    List<DeliveryRequest> finishedRequests = deliveryRequestService.findByFinishedRequests(orderCode);
+                    if (deliveryRequests.size() == finishedRequests.size()) {
+                        order.setStatus(CurrentStatus.FINISHED);
+                        orderRepository.save(order);
+                    }
+                }
+
             }
 
             // Stock 업데이트 로직
@@ -197,6 +221,10 @@ public class ImportServiceImpl implements ImportService {
                 .map(Material::getMaterialCode)
                 .orElse("정보 없음");
 
+        Material material = materialRepository.findByMaterialCode(materialCode).orElse(null);
+
+        Order order = orderRepository.findByOrderCode(importEntity.getOrderCode()).orElse(null);
+
         ReturnDTO returnDTO = null;
         if (importEntity.getDefectiveQuantity() > 0) {
             returnDTO = returnService.findByImportId(importEntity.getImportId());
@@ -210,8 +238,10 @@ public class ImportServiceImpl implements ImportService {
                 .defectiveQuantity(importEntity.getDefectiveQuantity())
                 .materialCode(materialCode)
                 .materialName(importEntity.getMaterialName())
+                .materialType(material == null ? "" : material.getMaterialType())
                 .supplierName(importEntity.getSupplierName())
                 .orderedQuantity(importEntity.getOrderedQuantity())
+                .orderDate(order == null ? null : order.getOrderDate())
                 .quantity(importEntity.getQuantity())
                 .passedQuantity(importEntity.getPassedQuantity())
                 .importStatus(importEntity.getImportStatus())

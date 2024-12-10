@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 public class DeliveryRequestDTO {
     private Long id;
+    private String deliveryCode;
     private Long orderId;
     private String orderCode; //발주 코드
     private String supplierName;

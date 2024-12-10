@@ -86,20 +86,11 @@
                                         <td class="min-width text-center"><p th:text="${import.importCode}"></p></td>
                                         <td class="min-width text-center"><p th:text="${import.orderCode}"></p></td>
                                         <td class="min-width text-center"><p th:text="${import.supplierName}"></p></td>
-
-                                        <!-- 중첩 반복문 -->
-                                        <td th:each="material : ${materialList}"
-                                            th:if="${material.materialName == import.materialName}">
-                                            <p th:text="${material.materialType}"></p>
-                                        </td>
+                                        <td class="min-width text-center"><p th:text="${import.materialType}"></p></td>
 
                                         <td class="min-width text-center"><p th:text="${import.materialName}"></p></td>
 
-                                        <!-- 중첩 반복문 -->
-                                        <td th:each="order : ${orderList}"
-                                            th:if="${order.orderCode == import.orderCode}">
-                                            <p th:text="${order.orderDate}"></p>
-                                        </td>
+                                        <td class="min-width text-center"><p th:text="${import.orderDate}"></p></td>
 
                                         <td class="min-width text-center"><p th:text="${import.orderedQuantity}"></p>
                                         </td>
@@ -113,7 +104,7 @@
                                             <span class="status-btn success-btn"
                                                   th:if="${import.importStatus.name() == 'FINISHED'}">검수 완료</span>
                                         </td>
-                                        <td>
+                                        <td class="min-width text-center">
                                             <form method="post" th:action="@{/material/updateImportStatus}">
                                                 <input name="importId" th:value="${import.importId}" type="hidden"/>
                                                 <input name="status" type="hidden" value="UNDER_INSPECTION"/>
@@ -196,26 +187,22 @@
                                             <td class="min-width text-center"><p th:text="${import.supplierName}"></p>
                                             </td>
 
-                                            <!-- 중첩 반복문 -->
-                                            <td th:each="material : ${materialList}"
-                                                th:if="${material.materialName == import.materialName}">
-                                                <p th:text="${material.materialType}"></p>
+                                            <td class="min-width text-center"><p th:text="${import.materialType}"></p>
                                             </td>
 
-                                            <td class="min-width text-center"><p th:text="${import.materialName}"></p>
+                                            <td class="min-width text-center">
+                                                <input name="materialName" th:value="${import.materialName}"
+                                                       type="hidden">
+                                                <p th:text="${import.materialName}"></p>
                                             </td>
 
-                                            <!-- 중첩 반복문 -->
-                                            <td th:each="order : ${orderList}"
-                                                th:if="${order.orderCode == import.orderCode}">
-                                                <p th:text="${order.orderDate}"></p>
-                                            </td>
+                                            <td class="min-width text-center"><p th:text="${import.orderDate}"></p></td>
 
 
                                             <td class="min-width text-center"><p th:text="${import.quantity}"></p></td>
                                             <td class="text-center">
                                                 <!-- passedQuantity 값을 입력 -->
-                                                <input class="how-ea" name="passedQuantity"   style="width: 80px"
+                                                <input class="how-ea" name="passedQuantity" style="width: 80px"
                                                        th:value="${import.passedQuantity}"
                                                        type="number"/>
                                             </td>
@@ -308,12 +295,7 @@
                                         <td class="min-width text-center"><p th:text="${import.importCode}"></p></td>
                                         <td class="min-width text-center"><p th:text="${import.orderCode}"></p></td>
                                         <td class="min-width text-center"><p th:text="${import.supplierName}"></p></td>
-
-                                        <!-- 중첩 반복문 -->
-                                        <td th:each="material : ${materialList}"
-                                            th:if="${material.materialName == import.materialName}">
-                                            <p th:text="${material.materialType}"></p>
-                                        </td>
+                                        <td class="min-width text-center"><p th:text="${import.materialType}"></p></td>
 
                                         <td class="min-width text-center"><p th:text="${import.materialName}"></p></td>
                                         <td class="min-width text-center"><p th:text="${import.passedQuantity}"></p>
@@ -330,12 +312,7 @@
                                             <span class="status-btn success-btn"
                                                   th:if="${import.importStatus.name() == 'FINISHED'}">검수 완료</span>
                                         </td>
-
-                                        <!-- 중첩 반복문 -->
-                                        <td th:each="order : ${orderList}"
-                                            th:if="${order.orderCode == import.orderCode}">
-                                            <p th:text="${order.orderDate}"></p>
-                                        </td>
+                                        <td class="min-width text-center"><p th:text="${import.orderDate}"></p></td>
 
                                     </tr>
                                     </tbody>

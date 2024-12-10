@@ -3,6 +3,8 @@ package sky.project.DTO;
 import lombok.*;
 import sky.project.Entity.CurrentStatus;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,9 +17,10 @@ public class ImportDTO {
     private String importCode;
     private String materialCode;        // 자재 코드
     private String materialName;        // 품명
+    private String materialType;
     private String supplierName;        // 업체명
     private String orderNumber;         // 발주 번호
-    private String orderDate;           // 발주일
+    private LocalDate orderDate;           // 발주일
     private String expectedDate;        // 입고 예정일
     private String deliveryDate;        // 조달 납기일
     private int stock;                  // 재고

@@ -185,7 +185,8 @@
                                     <td class="text-center min-width" th:text="${orderRequest.materialType}"></td>
                                     <td class="min-width" th:text="${orderRequest.materialName}"></td>
                                     <td class="text-align-right min-width" th:text="${orderRequest.orderQuantity}"></td>
-                                    <td class="text-align-right min-width" th:text="${orderRequest.remainedQuantity}"></td>
+                                    <td class="text-align-right min-width"
+                                        th:text="${orderRequest.remainedQuantity}"></td>
                                     <td class="text-align-right min-width" th:text="${#numbers.formatInteger(orderRequest.totalPrice, 3,
                                     'COMMA')}"></td>
                                     <td class="text-center min-width" th:text="${orderRequest.orderDate}"></td>
@@ -205,14 +206,26 @@
                                     </td>
                                     <td class="text-center min-width">
                                         <div th:if="${orderRequest.status == 'ON_HOLD'}">
-                                            <form method="post" th:action="@{/suppliers/orders/approve}">
-                                                <input name="orderId" th:value="${orderRequest.orderId}" type="hidden">
-                                                <button class="main-btn btn-approve" type="submit">수락</button>
-                                            </form>
-                                            <form method="post" th:action="@{/suppliers/orders/reject}">
-                                                <input name="orderId" th:value="${orderRequest.orderId}" type="hidden">
-                                                <button class="main-btn btn-reject" type="submit">거절</button>
-                                            </form>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <form method="post" th:action="@{/suppliers/orders/approve}">
+                                                        <input name="orderId" th:value="${orderRequest.orderId}"
+                                                               type="hidden">
+                                                        <button class="main-btn primary-btn btn-hover btn-approve"
+                                                                type="submit">수락
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <form method="post" th:action="@{/suppliers/orders/reject}">
+                                                        <input name="orderId" th:value="${orderRequest.orderId}"
+                                                               type="hidden">
+                                                        <button class="main-btn primary-btn btn-hover btn-reject"
+                                                                type="submit">거절
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                         <span th:if="${orderRequest.status != 'ON_HOLD'}">-</span>
                                     </td>
@@ -351,6 +364,7 @@
                                                 <input id="selectAll" onclick="toggleAllCheckboxes(this)"
                                                        type="checkbox"> <!-- 전체 선택 -->
                                             </th>
+                                            <th class="text-center"><h6>납품 지시 번호</h6></th>
                                             <th class="text-center"><h6>발주 번호</h6></th>
                                             <th class="text-center"><h6>자재 이름</h6></th>
                                             <th class="text-center"><h6>요청 수량</h6></th>
@@ -361,9 +375,10 @@
                                         <tbody>
                                         <tr th:each="request : ${deliveryRequests}">
                                             <td class="text-center">
-                                                <input name="selectedRequests" th:if="${request.status != 'FINISHED'}"
+                                                <input name="selectedRequests" th:if="${request.status == 'IN_PROGRESS'}"
                                                        th:value="${request.id}" type="checkbox">
                                             </td>
+                                            <td class="text-center" th:text="${request.deliveryCode}"></td>
                                             <td class="text-center" th:text="${request.orderCode}"></td>
                                             <input name="orderCode" th:value="${request.orderCode}" type="hidden">
                                             <td class="text-center" th:text="${request.materialName}"></td>
@@ -373,12 +388,17 @@
                                                    type="hidden">
                                             <td class="text-center"
                                                 th:text="${#temporals.format(request.requestedDate)}"></td>
-                                            <input name="expectedDate" th:value="${request.requestedDate}" type="hidden">
+                                            <input name="expectedDate" th:value="${request.requestedDate}"
+                                                   type="hidden">
                                             <td class="text-center">
+                                                   <span class="status-btn success-btn"
+                                                         th:if="${request.status == 'FINISHED'}">납품 완료</span>
                                                 <span class="status-btn success-btn"
-                                                      th:if="${request.status == 'FINISHED'}">출고 완료</span>
+                                                      th:if="${request.status == 'DELIVERED'}">배달중</span>
+                                                <span class="status-btn success-btn"
+                                                      th:if="${request.status == 'ARRIVED'}">도착</span>
                                                 <span class="status-btn close-btn"
-                                                      th:if="${request.status != 'FINISHED'}">요청 중</span>
+                                                      th:if="${request.status == 'IN_PROGRESS'}">요청 중</span>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -413,6 +433,47 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 반품 테이블 -->
+            <div class="tables-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div id="returnTable">
+                                <h3 class="table-title">불량품 재배송</h3>
+                                <p class="text-sm mb-20">
+                                    상대업체에 도착했으나 불량으로 검수된 것들을 다시 보냅니다. 아직 완료되지 않은 건수만 뜹니다.
+                                </p>
+                                <table class="table">
+                                    <tr>
+                                        <th class="text-center"><h6>반품 번호</h6></th>
+                                        <th class="text-center"><h6>발주 번호</h6></th>
+                                        <th class="text-center"><h6>자재 이름</h6></th>
+                                        <th class="text-center"><h6>불량품 수</h6></th>
+                                        <th class="text-center"><h6>요청일</h6></th>
+                                        <th class="text-center"><h6>Action</h6></th>
+                                    </tr>
+                                    <tr th:each="return : ${returns}">
+                                        <td class="min-width text-center"><p th:text="${return.returnCode}"></td>
+                                        <td class="min-width text-center"><p th:text="${return.importCode}"></td>
+                                        <td class="min-width text-center"><p th:text="${return.materialName}"></td>
+                                        <td class="min-width text-center"><p th:text="${return.quantity}"></td>
+                                        <td class="min-width text-center"><p th:text="${return.createdDate}"></td>
+                                        <td class="min-width text-center">
+                                            <form method="post" th:action="@{/suppliers/returnUpdate}">
+                                                <input name="returnId" th:value="${return.returnId}" type="hidden">
+                                                <button class="main-btn primary-btn btn-hover">재출고</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 거래 명세서 -->
             <div class="tables-wrapper">
                 <div class="row">

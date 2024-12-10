@@ -11,22 +11,22 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name="deliveryrequest")
-public class DeliveryRequest extends Base{
+@Table(name = "deliveryrequest")
+public class DeliveryRequest extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String deliveryCode;
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name= "supplier_name", nullable = false)
+    @JoinColumn(name = "supplier_name", nullable = false)
     private Supplier supplier;
 
     @ManyToOne
-    @JoinColumn(name="material_id", nullable = false)
+    @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
     private int requestedQuantity; //납품 지시를 요청한 수량

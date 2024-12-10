@@ -388,6 +388,8 @@
                                                   th:if="${order.status=='ON_HOLD'}">대기 중</span>
                                                 <span class="status-btn active-btn"
                                                       th:if="${order.status=='APPROVAL'}">승인 완료</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${order.status=='DELIVERED'}">전부 배송됨</span>
                                                 <span class="status-btn close-btn"
                                                       th:if="${order.status=='FINISHED'}">종료</span>
                                             </td>
@@ -568,6 +570,8 @@
                                                   th:if="${order.status=='ON_HOLD'}">대기 중</span>
                                                 <span class="status-btn active-btn"
                                                       th:if="${order.status=='APPROVAL'}">승인 완료</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${order.status=='DELIVERED'}">전부 배송됨</span>
                                                 <span class="status-btn close-btn"
                                                       th:if="${order.status=='FINISHED'}">종료</span>
                                             </td>

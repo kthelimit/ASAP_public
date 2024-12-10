@@ -1,5 +1,6 @@
 package sky.project.ServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,17 +12,18 @@ import sky.project.Service.DeliveryRequestService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
+@Slf4j
 @Service
 public class DeliveryRequestServiceImpl implements DeliveryRequestService {
 
     @Autowired
     private DeliveryRequestRepository deliveryRequestRepository;
-
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -37,6 +39,9 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
         // DeliveryRequest 생성 및 저장
         DeliveryRequest deliveryRequest = toEntity(dto);
 
+        //납품 코드
+        deliveryRequest.setDeliveryCode(generateDeliveryCode(dto));
+
         deliveryRequestRepository.save(deliveryRequest);
 
         return deliveryRequest.getId();
@@ -46,6 +51,11 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     public DeliveryRequest findById(Long id) {
         return deliveryRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("DeliveryRequest not found with ID: " + id));
+    }
+
+    @Override
+    public List<DeliveryRequest> findByOrderCode(String orderCode){
+        return deliveryRequestRepository.findDeliveryRequestsByOrderCode(orderCode);
     }
 
     @Override
@@ -91,6 +101,12 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     }
 
     @Override
+    public List<DeliveryRequest> findByDeliveredRequests(String orderCode){
+        return deliveryRequestRepository.findDeliveryRequestsByOrderCodeDelivered(orderCode);
+    }
+
+
+    @Override
     public List<DeliveryRequest> findByFinishedRequests(String orderCode){
         return deliveryRequestRepository.findDeliveryRequestsByOrderCodeFinished(orderCode);
     }
@@ -106,6 +122,7 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
         // DeliveryRequest 생성
         return DeliveryRequest.builder()
                 .order(order)
+                .deliveryCode(dto.getDeliveryCode())
                 .supplier(supplier)
                 .material(material)
                 .requestedQuantity(dto.getRequestedQuantity())
@@ -142,6 +159,7 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
 
         return DeliveryRequestDTO.builder()
                 .id(entity.getId())
+                .deliveryCode(entity.getDeliveryCode())
                 .orderId(entity.getOrder().getOrderId())
                 .orderCode(entity.getOrder().getOrderCode())
                 .supplierName(entity.getSupplier().getSupplierName())
@@ -154,5 +172,60 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
                 .remainingQuantityAfter(remainingQuantityAfter)
                 .totalOrderQuantity(entity.getOrder().getOrderQuantity())
                 .build();
+    }
+
+    private String generateDeliveryCode(DeliveryRequestDTO dto) {
+        // 매터리얼 코드에 따른 접두어 설정
+        String prefix = "DEL";
+        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
+        switch (material.getMaterialCode().substring(3, 5)) {
+            case "WH":
+                prefix += "WH";
+                break;
+            case "RI":
+                prefix += "RI";
+                break;
+            case "HA":
+                prefix += "HA";
+                break;
+            case "SA":
+                prefix += "SA";
+                break;
+            case "PE":
+                prefix += "PE";
+                break;
+            case "BO":
+                prefix += "BO";
+                break;
+            case "B1":
+                prefix += "B1";
+                break;
+            case "B2":
+                prefix += "B2";
+                break;
+            case "B3":
+                prefix += "B3";
+                break;
+            case "K1":
+                prefix += "K1";
+                break;
+            case "K2":
+                prefix += "K2";
+                break;
+            default:
+                prefix += "UN";
+                break;
+        }
+
+        // 날짜 포맷 (예: 20231120)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
+        LocalDateTime today = LocalDateTime.now();
+        String dateCode = today.format(formatter);
+
+        // 동일 접두어 코드의 다음 번호
+        Long nextSequence = deliveryRequestRepository.countByPrefix(prefix) + 1;
+
+        // 코드 생성
+        return String.format("%s%s%03d", prefix, dateCode, nextSequence);
     }
 }

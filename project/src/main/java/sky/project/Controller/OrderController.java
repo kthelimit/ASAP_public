@@ -131,7 +131,7 @@ public class OrderController {
                                @RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "10") int size,
                                @RequestParam(value = "keyword", required = false) String keyword) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId").descending());
         Page<OrdersDTO> orders;
         if (keyword != null && !keyword.isEmpty()) {
             orders = orderService.searchOrders(keyword, pageable);
@@ -179,8 +179,8 @@ public class OrderController {
             @ModelAttribute("updatedOrder") OrdersDTO updatedOrderDTO) {
 
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
-        Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize, Sort.by("orderId"));
-        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id") );
+        Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize, Sort.by("orderId").descending());
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id").descending());
 
         // 처리 중인 주문 조회
         Page<OrdersDTO> purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);

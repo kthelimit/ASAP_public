@@ -67,6 +67,7 @@
                                         <td class="min-width text-center">
                                             <form method="post" th:action="@{/order/delivery/request}">
                                                 <input name="orderId" th:value="${orderP.orderId}" type="hidden">
+                                                <input name="materialName" th:value="${orderP.materialName}" type="hidden">
                                                 <div class="row" style="justify-content: flex-end">
                                                     <div class="input-style-1 col-lg-5 mb-0">
                                                         <input name="requestedDate" th:value="${date}" type="date">
@@ -151,6 +152,8 @@
                                     <td class="min-width text-center">
                                         <span class="status-btn success-btn"
                                               th:if="${deliveryRequest.status=='IN_PROGRESS'}">대기 중</span>
+                                        <span class="status-btn success-btn"
+                                              th:if="${deliveryRequest.status=='DELIVERED'}">배달 중</span>
                                         <span class="status-btn close-btn"
                                               th:if="${deliveryRequest.status=='FINISHED'}">종료</span></td>
                                 </tr>
@@ -226,6 +229,7 @@
                                         <p th:text="${completedOrder.expectedDate}"></p>
                                     </td>
                                     <td class="min-width text-center">
+                                        <span class="status-btn active-btn" th:if="${completedOrder.status=='DELIVERED'}">전부 배송됨</span>
                                         <span class="status-btn close-btn"
                                               th:if="${completedOrder.status=='FINISHED'}">종료</span></td>
                                     </td>

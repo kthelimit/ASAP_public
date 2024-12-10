@@ -5,20 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sky.project.DTO.*;
 import sky.project.Entity.CurrentStatus;
-import sky.project.Entity.Material;
 import sky.project.Service.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -114,16 +109,8 @@ public class MaterialController {
         // 모든 데이터 가져오기
         Page<ImportDTO> imports = importService.getImportsByCriteria(type, keyword, pageable);
 
-        // Orders, Materials, Stock 데이터는 페이징 없이 모두 가져옴
-        List<OrdersDTO> orders = orderService.getAllOrders();
-        List<MaterialDTO> materials = materialService.getAllMaterials();
-        List<StockDTO> stocks = stockService.getAllStocks();
-
         // 모델에 데이터 추가
         model.addAttribute("importList", imports.getContent());
-        model.addAttribute("orderList", orders); // Orders 데이터
-        model.addAttribute("materialList", materials); // Material 데이터
-        model.addAttribute("stockList", stocks); // Stock 데이터
 
         // 페이지네이션 정보
         model.addAttribute("totalPages", imports.getTotalPages());

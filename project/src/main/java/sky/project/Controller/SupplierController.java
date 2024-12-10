@@ -1,10 +1,12 @@
 package sky.project.Controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@Log4j2
 @Controller
 @RequestMapping("/suppliers")
 public class SupplierController {
@@ -54,6 +57,9 @@ public class SupplierController {
 
     @Autowired
     private InspectionService inspectionService;
+
+    @Autowired
+    private ReturnService returnService;
 
     @GetMapping("/list")
     public String getSuppliersList(Model model,
@@ -196,7 +202,6 @@ public class SupplierController {
     }
 
 
-
     @PostMapping("/stockUpdate")
     public String supplierStockUpdate(SupplierStockDTO dto) {
         supplierStockService.updateStock(dto);
@@ -254,7 +259,7 @@ public class SupplierController {
         Page<OrdersDTO> orderRequests = orderService.findOrdersBySupplier(supplierName, pageable);
 
         // supplierName으로 DeliveryRequestDTO 가져오기
-        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize);
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id"));
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findRequestsBySupplier(supplierName, deliveryPageable);
 
         // supplierName으로 InvoiceDTO 가져오기
@@ -281,6 +286,10 @@ public class SupplierController {
         model.addAttribute("inspectionDTOS", inspections.getContent());
         model.addAttribute("inspectionTotalPages", inspections.getTotalPages());
         model.addAttribute("inspectionCurrentPage", inspectionPage);
+
+        //반품 테이블 데이터 추가
+        List<ReturnDTO> returns = returnService.findBySupplierNameOnHOLD(supplierName);
+        model.addAttribute("returns", returns);
 
 
         // 거래 내역 요약 데이터 추가
@@ -309,6 +318,7 @@ public class SupplierController {
         return "redirect:/suppliers/page";
     }
 
+    //선택 출고
     @PostMapping("/importregisterbatch")
     public String handleBatchExport(@ModelAttribute ImportDTO importDTO, @RequestParam("selectedRequests") List<Long> selectedRequestIds) {
         for (Long id : selectedRequestIds) {
@@ -337,7 +347,8 @@ public class SupplierController {
             invoiceService.createInvoice(invoiceDTO);
 
             // DeliveryRequest 상태 업데이트(배달중으로 바꿈)
-            deliveryRequestService.updateRequestStatus(id, "FINISHED");
+            deliveryRequestService.updateRequestStatus(id, "DELIVERED");
+
             // 업체 재고에서 뺀다.
             SupplierStock stock = supplierStockRepository.findBySupplierNameAndMaterialCode(deliveryRequest.getSupplier().getSupplierName(), deliveryRequest.getMaterial().getMaterialCode());
             stock.setStock(stock.getStock() - deliveryRequest.getRequestedQuantity());
@@ -346,16 +357,28 @@ public class SupplierController {
             // 발주서의 모든 조달 수량을 만족한 경우 주문 상태 업데이트
             String orderCode = deliveryRequest.getOrder().getOrderCode();
             OrdersDTO order = orderService.findByOrderCode(orderCode);
-            List<DeliveryRequest> deliveryRequestsInSameOrder = deliveryRequestService.findByFinishedRequests(orderCode);
+            List<DeliveryRequest> deliveryRequestsInSameOrder = deliveryRequestService.findByDeliveredRequests(orderCode);
+
+            //현재 같은 발주 코드를 가진 납품 수량을 합친다.
             int sum = 0;
             for (DeliveryRequest deliveryRequestInSameOrder : deliveryRequestsInSameOrder) {
                 sum += deliveryRequestInSameOrder.getRequestedQuantity();
             }
+            log.info("총 납품수량 : " + sum);
+            log.info("주문 수량 : " + order.getOrderQuantity());
+            //만약 합친 수량이 발주코드의 총 수량보다 크거나 같으면 배달중으로 변경
             if (order.getOrderQuantity() <= sum) {
                 orderService.updateOrderStatus(order.getOrderId(), CurrentStatus.DELIVERED);
             }
 
         }
+        return "redirect:/suppliers/page";
+    }
+
+    @PostMapping("/returnUpdate")
+    public String returnUpdate(@RequestParam Long returnId) {
+        //재출고를 누르면 상태를 변환시켜줄 것.
+        returnService.returnUpdate(returnId);
         return "redirect:/suppliers/page";
     }
 

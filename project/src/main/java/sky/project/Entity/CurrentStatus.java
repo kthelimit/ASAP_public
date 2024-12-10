@@ -8,6 +8,7 @@ public enum CurrentStatus {
     RETURNED, //반품
     FINISHED,
     REJECT,
-    DELIVERED
+    DELIVERED,
+    ARRIVED
 
 }

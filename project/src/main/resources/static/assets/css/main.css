@@ -6624,3 +6624,10 @@ h6,
 .text-align-center{
     text-align: center;
 }
+
+.anchor{
+    display: block;
+    height: 75px;
+    margin-top: -75px;
+    visibility: hidden;
+}

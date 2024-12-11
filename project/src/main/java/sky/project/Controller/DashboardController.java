@@ -41,6 +41,9 @@ public class DashboardController {
     @Autowired
     ImportService importService;
 
+    @Autowired
+    ReturnService returnService;
+
     @RequestMapping("/info")
     public String info(Model model) {
         return "Info/information";
@@ -98,6 +101,14 @@ public class DashboardController {
         int countDeliveryRequestForSupplier = deliveryRequestService.getCountRequestThisMonth(supplierName);
         model.addAttribute("countDeliveryRequestForSupplier", countDeliveryRequestForSupplier);
 
+        //아직 처리하지 않은 납품 지시 건수(업체용)
+        int countDeliveryRequestForSupplierNotYet = deliveryRequestService.getCountRequestNotYet(supplierName);
+        model.addAttribute("countDeliveryRequestForSupplierNotYet", countDeliveryRequestForSupplierNotYet);
+
+        //불량품 재배송 건수(업체용)
+        int countReturnNotFinished = returnService.getCountReturnNotFinished(supplierName);
+        model.addAttribute("countReturnNotFinished", countReturnNotFinished);
+
         //입고 예정 건수
         int countImport= importService.getCountImportOnHold();
         model.addAttribute("countImport", countImport);
@@ -153,6 +164,7 @@ public class DashboardController {
         //발주 중인 목록(업체용 - 자기네 업체 관련 내용만 떠야함)
         List<OrdersDTO> ordersDTOSForSupplier = orderService.getRecentOrderListForSupplier(supplierName);
         model.addAttribute("ordersDTOSForSupplier", ordersDTOSForSupplier);
+
 
 
         return "Dashboard/Dashboard";

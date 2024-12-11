@@ -12,4 +12,6 @@ public interface ReturnService {
     ReturnDTO findByImportId(Long importId);
 
     List<ReturnDTO> findBySupplierNameOnHOLD(String supplierName);
+
+    int getCountReturnNotFinished(String supplierName);
 }

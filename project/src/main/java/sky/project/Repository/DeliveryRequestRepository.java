@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface DeliveryRequestRepository extends JpaRepository<DeliveryRequest, Long> {
 
-    @Query("select d from DeliveryRequest d where d.supplier.supplierName=:supplierName")
+    @Query("select d from DeliveryRequest d where d.supplier.supplierName=:supplierName order by d.status DESC ")
     Page<DeliveryRequest> findBySupplierName(String supplierName, Pageable pageable);
 
     @Query("select count(d) from DeliveryRequest d where d.createdDate>=:start and d.createdDate<=:end")
@@ -20,6 +20,9 @@ public interface DeliveryRequestRepository extends JpaRepository<DeliveryRequest
 
     @Query("select count(d) from DeliveryRequest d where d.createdDate>=:start and d.createdDate<=:end and d.supplier.supplierName=:supplierName")
     int countDeliveryRequestsThisMonth(LocalDateTime start, LocalDateTime end, String supplierName);
+
+    @Query("select count(d) from DeliveryRequest d where d.supplier.supplierName=:supplierName and d.status='IN_PROGRESS'")
+    int countDeliveryRequestsInProgress(String supplierName);
 
     @Query("select d from DeliveryRequest d where d.requestedDate<:requestedDate and d.status='IN_PROGRESS'")
     List<DeliveryRequest> findDeliveryRequestsByRequestedDateAndStatus(LocalDate requestedDate);

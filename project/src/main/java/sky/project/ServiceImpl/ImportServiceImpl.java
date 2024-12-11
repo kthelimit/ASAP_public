@@ -246,6 +246,7 @@ public class ImportServiceImpl implements ImportService {
                 .passedQuantity(importEntity.getPassedQuantity())
                 .importStatus(importEntity.getImportStatus())
                 .returnDTO(returnDTO)
+                .modifiedDate(importEntity.getModifiedDate())
                 .build();
     }
 

@@ -58,7 +58,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <h3>거래 내역 요약</h3>
+                            <h3 class="mb-10">거래 내역 요약</h3>
                             <p><strong>총 거래 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>
 
                             <!-- 연별 거래 요약 -->
@@ -110,7 +110,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <h3>취급 자재 품목</h3>
+                            <h3 class="mb-10">취급 자재 품목</h3>
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -163,7 +163,8 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
-                            <h3 class="table-title">발주 관리</h3>
+                            <span class="anchor" id="order"></span>
+                            <h3 class="table-title mb-10">발주 관리</h3>
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -263,7 +264,8 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <div id="inspectionTable">
-                                <h3 class="table-title">진척 검수</h3>
+                                <span class="anchor" id="inspection"></span>
+                                <h3 class="table-title mb-10">진척 검수</h3>
                                 <p class="text-sm mb-20">
                                     아직 완료되지 않은 진척 검수와 검수 요청 날짜가 3일 전인 완료 건수만 뜹니다.
                                 </p>
@@ -353,7 +355,11 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <div id="ExportTable">
-                                <h3 class="table-title">납품 지시 요청</h3>
+                                <span class="anchor" id="delivery"></span>
+                                <h3 class="table-title mb-10">납품 지시 요청</h3>
+                                <p class="text-sm mb-20">
+                                    현재 처리되지 않은 납품지시가 위쪽에 뜹니다.
+                                </p>
                                 <form method="post" th:action="@{/suppliers/importregisterbatch}"
                                       th:object="${ImportDTO}">
                                     <input name="supplierName" th:value="${supplierName}" type="hidden">
@@ -375,7 +381,8 @@
                                         <tbody>
                                         <tr th:each="request : ${deliveryRequests}">
                                             <td class="text-center">
-                                                <input name="selectedRequests" th:if="${request.status == 'IN_PROGRESS'}"
+                                                <input name="selectedRequests"
+                                                       th:if="${request.status == 'IN_PROGRESS'}"
                                                        th:value="${request.id}" type="checkbox">
                                             </td>
                                             <td class="text-center" th:text="${request.deliveryCode}"></td>
@@ -440,6 +447,7 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <div id="returnTable">
+                                <span class="anchor" id="returns"></span>
                                 <h3 class="table-title">불량품 재배송</h3>
                                 <p class="text-sm mb-20">
                                     상대업체에 도착했으나 불량으로 검수된 것들을 다시 보냅니다. 아직 완료되지 않은 건수만 뜹니다.
@@ -458,7 +466,8 @@
                                         <td class="min-width text-center"><p th:text="${return.importCode}"></td>
                                         <td class="min-width text-center"><p th:text="${return.materialName}"></td>
                                         <td class="min-width text-center"><p th:text="${return.quantity}"></td>
-                                        <td class="min-width text-center"><p th:text="${return.createdDate}"></td>
+                                        <td class="min-width text-center"><p
+                                                th:text="${#temporals.format(return.createdDate, 'yyyy-MM-dd')}"></td>
                                         <td class="min-width text-center">
                                             <form method="post" th:action="@{/suppliers/returnUpdate}">
                                                 <input name="returnId" th:value="${return.returnId}" type="hidden">

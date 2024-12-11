@@ -269,6 +269,10 @@
 
                 //선택한 조립공정에 따른 자재명과 자재코드 출력
                 function changeAssyMaterial() {
+                    // 최대치를 설정해두려고 했는데... 아직 고민중
+                    // let leftQuantity = $('#leftQuantity').val();
+                    // $('#quantity').prop("max",leftQuantity);
+
                     var assyMaterialSelect = document.getElementById("assyMaterial");
                     var selectedValue = assyMaterialSelect.options[assyMaterialSelect.selectedIndex].value;
 
@@ -309,7 +313,7 @@
                                 console.log(data[i]);
                                 str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
                                     + '</p><input type="hidden" name="materialCode" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
-                                    + data[i].quantity + '</p></td><td class="min-width"><p>' + data[i].stock + '<span class="text-danger">(' + data[i].availableStock + ')</span></p></td><td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
+                                    + data[i].quantity + '</p></td><td class="min-width text-align-right"><p>' + data[i].stock + '<span class="text-danger">(' + data[i].availableStock + ')</span></p></td><td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
                             })
                             $('#assyMaterialTable').append(str);
                         }

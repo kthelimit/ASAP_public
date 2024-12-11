@@ -101,6 +101,12 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     }
 
     @Override
+    public int getCountRequestNotYet(String supplierName){
+        return deliveryRequestRepository.countDeliveryRequestsInProgress(supplierName);
+    }
+
+
+    @Override
     public List<DeliveryRequest> findByDeliveredRequests(String orderCode){
         return deliveryRequestRepository.findDeliveryRequestsByOrderCodeDelivered(orderCode);
     }

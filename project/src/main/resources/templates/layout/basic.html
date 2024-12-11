@@ -5,7 +5,7 @@
         <meta charset="UTF-8"/>
         <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-        <link rel="shortcut icon" th:href="@{/assets/images/favicon.svg}" type="image/x-icon"/>
+        <link rel="shortcut icon" th:href="@{/assets/images/logo/asap.svg}" type="image/x-icon"/>
         <title>ASAP - 빠르고 정확한 조달 시스템</title>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <!-- ========== All CSS files linkup ========= -->
@@ -212,7 +212,7 @@
                             <a th:href="@{/material/import}"> 입고 관리 </a>
                         </li>
                         <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
-                            <a href="#0"> 입고 내역 </a>
+                            <a th:href="@{/material/import/history}"> 입고 내역 </a>
                         </li>
                         <li th:if="${user != null and (user.userType.name() == 'MATERIAL_DEPT' or user.userType.name() == 'ADMIN')}">
                             <a th:href="@{/material/export}"> 출고 관리 </a>
@@ -279,65 +279,6 @@
                     </div>
                     <div class="col-lg-7 col-md-7 col-6">
                         <div class="header-right">
-                            <!-- notification start -->
-                            <div class="notification-box ml-15 d-none d-md-flex">
-                                <button aria-expanded="false" class="dropdown-toggle" data-bs-toggle="dropdown"
-                                        id="notification"
-                                        type="button">
-                                    <svg fill="none" height="22" viewBox="0 0 22 22" width="22"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                                d="M11 20.1667C9.88317 20.1667 8.88718 19.63 8.23901 18.7917H13.761C13.113 19.63 12.1169 20.1667 11 20.1667Z"
-                                                fill=""/>
-                                        <path
-                                                d="M10.1157 2.74999C10.1157 2.24374 10.5117 1.83333 11 1.83333C11.4883 1.83333 11.8842 2.24374 11.8842 2.74999V2.82604C14.3932 3.26245 16.3051 5.52474 16.3051 8.24999V14.287C16.3051 14.5301 16.3982 14.7633 16.564 14.9352L18.2029 16.6342C18.4814 16.9229 18.2842 17.4167 17.8903 17.4167H4.10961C3.71574 17.4167 3.5185 16.9229 3.797 16.6342L5.43589 14.9352C5.6017 14.7633 5.69485 14.5301 5.69485 14.287V8.24999C5.69485 5.52474 7.60672 3.26245 10.1157 2.82604V2.74999Z"
-                                                fill=""/>
-                                    </svg>
-                                    <span></span>
-                                </button>
-                                <ul aria-labelledby="notification" class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a href="#0">
-                                            <div class="image">
-                                                <img alt="" th:src="@{/assets/images/lead/lead-6.png}"/>
-                                            </div>
-                                            <div class="content">
-                                                <h6>
-                                                    보완되어야할 진척 검수가 있습니다.
-                                                    <span class="text-regular">
-                              진척 검수
-                            </span>
-                                                </h6>
-                                                <p>
-                                                    25일에 예정이었던 납기일 조정이 필요합니다.
-                                                </p>
-                                                <span>10 mins ago</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#0">
-                                            <div class="image">
-                                                <img alt="" th:src="@{/assets/images/lead/lead-1.png}"/>
-                                            </div>
-                                            <div class="content">
-                                                <h6>
-                                                    Jonathon
-                                                    <span class="text-regular">
-                              like on a product.
-                            </span>
-                                                </h6>
-                                                <p>
-                                                    Lorem ipsum dolor sit amet, consect etur adipiscing
-                                                    elit Vivamus tortor.
-                                                </p>
-                                                <span>10 mins ago</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- notification end -->
                             <!-- profile start -->
                             <div class="profile-box ml-15">
                                 <button aria-expanded="false" class="dropdown-toggle bg-transparent border-0"
@@ -346,38 +287,43 @@
                                     <div class="profile-info">
                                         <div class="info">
                                             <div class="image">
-                                                <img alt="" th:src="@{/assets/images/profile/profile-image.png}"/>
+                                                <img alt="" th:src="@{/assets/images/profile/blank.png}"/>
                                             </div>
                                             <div>
-                                                <h6 class="fw-500"></h6>
-                                                <p></p>
+                                                <h6 class="fw-500">[[${user.username}]]</h6>
+                                                <p th:if="${user.userType.name()=='ADMIN'}">관리자</p>
+                                                <p th:if="${user.userType.name()=='PURCHASE_DEPT'}">구매부서</p>
+                                                <p th:if="${user.userType.name()=='MATERIAL_DEPT'}">자재부서</p>
+                                                <p th:if="${user.userType.name()=='PRODUCTION_DEPT'}">생산부서</p>
+                                                <p th:if="${user.userType.name()=='PARTNER'}">파트너</p>
+                                                <p th:if="${user.userType.name()=='SUPPLIER'}">공급업체</p>
                                             </div>
                                         </div>
                                     </div>
                                 </button>
                                 <ul aria-labelledby="profile" class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <div class="author-info flex items-center !p-1">
-                                            <div class="image">
-                                                <img alt="image" th:src="@{/assets/images/profile/profile-image.png}">
-                                            </div>
-                                            <div class="content">
-                                                <h4 class="text-sm">접속자 이름</h4>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href="#0">
-                                            <i class="lni lni-user"></i> 프로필 보기
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#0">
-                                            <i class="lni lni-alarm"></i> 알림
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
+<!--                                    <li>-->
+<!--                                        <div class="author-info flex items-center !p-1">-->
+<!--                                            <div class="image">-->
+<!--                                                <img alt="image" th:src="@{/assets/images/profile/gear.png}">-->
+<!--                                            </div>-->
+<!--                                            <div class="content">-->
+<!--                                                <h4 class="text-sm">[[${user.username}]]</h4>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </li>-->
+<!--                                    <li class="divider"></li>-->
+<!--                                    <li>-->
+<!--                                        <a href="#0">-->
+<!--                                            <i class="lni lni-user"></i> 프로필 보기-->
+<!--                                        </a>-->
+<!--                                    </li>-->
+<!--                                    <li>-->
+<!--                                        <a href="#0">-->
+<!--                                            <i class="lni lni-alarm"></i> 알림-->
+<!--                                        </a>-->
+<!--                                    </li>-->
+<!--                                    <li class="divider"></li>-->
                                     <li>
                                         <a href="/logout"> <i class="lni lni-exit"></i> 로그아웃 </a>
                                     </li>

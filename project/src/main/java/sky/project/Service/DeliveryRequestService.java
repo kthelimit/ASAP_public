@@ -29,6 +29,8 @@ public interface DeliveryRequestService {
     //대시보드 출력용 이번달 납품 지시 건수 업체용
     int getCountRequestThisMonth(String supplierName);
 
+    int getCountRequestNotYet(String supplierName);
+
     List<DeliveryRequest> findByDeliveredRequests(String orderCode);
 
     List<DeliveryRequest> findByFinishedRequests(String orderCode);

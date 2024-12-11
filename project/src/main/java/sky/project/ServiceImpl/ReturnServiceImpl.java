@@ -83,6 +83,11 @@ public class ReturnServiceImpl implements ReturnService {
         return returnRepository.findBySupplierNameOnHOLD(supplierName).stream().map(this::entityToDto).toList();
     }
 
+    @Override
+    public int getCountReturnNotFinished(String supplierName){
+        return returnRepository.countBySupplierNameOnHOLD(supplierName);
+    }
+
     private Returns dtoToEntity(ReturnDTO dto) {
 
         Import imp = importRepository.findById(dto.getImportId()).orElse(null);

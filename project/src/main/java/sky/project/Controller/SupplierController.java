@@ -255,11 +255,11 @@ public class SupplierController {
         Page<InspectionDTO> inspections = inspectionService.findBySupplierName(supplierName, inspectionPageable);
 
         // supplierName으로 OrdersDTO 가져오기
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId").descending());
         Page<OrdersDTO> orderRequests = orderService.findOrdersBySupplier(supplierName, pageable);
 
         // supplierName으로 DeliveryRequestDTO 가져오기
-        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id"));
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id").descending());
         Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findRequestsBySupplier(supplierName, deliveryPageable);
 
         // supplierName으로 InvoiceDTO 가져오기

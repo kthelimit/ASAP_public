@@ -104,7 +104,7 @@ public class MaterialController {
                                  @RequestParam(value = "keyword", required = false) String keyword) {
 
         // 페이징 처리
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("importId").descending());
 
         // 모든 데이터 가져오기
         Page<ImportDTO> imports = importService.getImportsByCriteria(type, keyword, pageable);
@@ -135,6 +135,31 @@ public class MaterialController {
             e.printStackTrace();
         }
         return "redirect:/material/import"; // 페이지 리다이렉트
+    }
+
+    @RequestMapping("/import/history")
+    public String importHistory(Model model, @RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "1000") int size,
+                                @RequestParam(value = "type", required = false) String type,
+                                @RequestParam(value = "keyword", required = false) String keyword) {
+
+        // 페이징 처리
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("importId").descending());
+
+        // 모든 데이터 가져오기
+        Page<ImportDTO> imports = importService.getImportsByCriteria(type, keyword, pageable);
+
+        // 모델에 데이터 추가
+        model.addAttribute("importList", imports.getContent());
+
+        // 페이지네이션 정보
+        model.addAttribute("totalPages", imports.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
+
+        return "/import/ImportHistory";
     }
 
     //자재 출고

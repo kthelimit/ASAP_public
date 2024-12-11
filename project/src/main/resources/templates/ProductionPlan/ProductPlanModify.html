@@ -31,57 +31,182 @@
                 <!-- 수정 폼 -->
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
-                        <form th:action="@{/plan/save}" th:object="${productionPlanDTO}" method="post">
-                            <input type="hidden" th:field="*{planId}">
-                            <input type="hidden" th:field="*{productionPlanCode}">
+                        <form method="post" th:action="@{/plan/save}" th:object="${productionPlanDTO}">
+                            <input th:field="*{planId}" type="hidden">
+                            <input th:field="*{productionPlanCode}" type="hidden">
                             <h3 class="mb-25">생산 계획 수정</h3>
-                            <div class="input-style-1">
-                                <label>생산 시작 일자</label>
-                                <input type="date" th:value="*{productionStartDate}" name="productionStartDate" required>
-                            </div>
-                            <div class="input-style-1">
-                                <label>생산 종료 일자</label>
-                                <input type="date" th:value="*{productionEndDate}"  name="productionEndDate"  required>
-                            </div>
-                            <div class="select-style-1">
-                                <label>생산 제품명</label>
-                                <div class="select-position">
-                                    <select id="productSelect" th:field="*{productName}" onchange="updateProductCode()">
-                                        <option value="전기자전거A">전기자전거A</option>
-                                        <option value="전기자전거B">전기자전거B</option>
-                                        <option value="전동킥보드">전동킥보드</option>
-                                    </select>
+                            <div class="row">
+                                <div class="col-lg-6 input-style-1">
+                                    <label>생산 시작 일자</label>
+                                    <input name="productionStartDate" required th:value="*{productionStartDate}"
+                                           type="date">
+                                </div>
+                                <div class="col-lg-6 input-style-1">
+                                    <label>생산 종료 일자</label>
+                                    <input name="productionEndDate" required th:value="*{productionEndDate}"
+                                           type="date">
                                 </div>
                             </div>
-                            <div class="input-style-1">
-                                <label>생산 제품 코드</label>
-                                <input type="text" id="productCode" th:field="*{productCode}" readonly>
-                            </div>
-                            <div class="input-style-1">
-                                <label>생산 수량</label>
-                                <input type="number" th:field="*{productionQuantity}" required>
+                            <div class="row">
+                                <div class="col-lg-5 select-style-1">
+                                    <label>생산 제품명</label>
+                                    <div class="select-position">
+                                        <select id="productSelect" onchange="updateProductCode()"
+                                                th:field="*{productName}">
+                                            <option value="전기자전거A">전기자전거A</option>
+                                            <option value="전기자전거B">전기자전거B</option>
+                                            <option value="전동킥보드">전동킥보드</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 input-style-1">
+                                    <label>생산 제품 코드</label>
+                                    <input id="productCode" readonly th:field="*{productCode}" type="text">
+                                </div>
+                                <div class="col-lg-2 input-style-1">
+                                    <label>생산 수량</label>
+                                    <input id="changedQuantity" onchange="changeQuantity()" required
+                                           th:field="*{productionQuantity}" type="number">
+                                </div>
                             </div>
                             <div style="text-align: right">
                                 <button class="main-btn primary-btn btn-hover">수정</button>
-                                <a th:href="@{/plan/list}" class="main-btn danger-btn btn-hover">취소</a>
+                                <a class="main-btn danger-btn btn-hover" th:href="@{/plan/list}">취소</a>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- 재고와 소모 자재량 보여주는 표 -->
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="row">
+                            <div class="col-lg-6 input-style-1">
+                                <h3 class="mb-25">소요 자재 변동</h3>
+                                <p class="text-sm mb-20">
+                                    생산 수량 변경에 의한 소요 자재 변동량을 보여줍니다.
+                                </p>
+                            </div>
+                            <div class="col-lg-3 input-style-1">
+                                <label>이전 수량</label>
+                                <input id="pastQuantity" readonly th:value="${productionPlanDTO.productionQuantity}"
+                                       type="number">
+                            </div>
+                            <div class="col-lg-3 input-style-1">
+                                <label>변경된 수량</label>
+                                <input id="newQuantity" onchange="changeQuantity2()"
+                                       th:value="${productionPlanDTO.productionQuantity}" type="number">
+                            </div>
+                        </div>
+                        <table class="table" id="needQuantity">
+                            <tr>
+                                <th class="text-center"><h6>부품 종류</h6></th>
+                                <th class="text-center"><h6>부품코드</h6></th>
+                                <th class="text-center"><h6>부품명</h6></th>
+                                <th class="text-center"><h6>상품당 필요 부품 수량</h6></th>
+                                <th class="text-center"><h6>재고</h6></th>
+                                <th class="text-center"><h6>이전 소요량</h6></th>
+                                <th class="text-center"><h6>변경된 소요량</h6></th>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
 
         <script>
+            //상품코드
+            const productCode = $('#productCode').val();
+            //이전 생산량
+            const pastQuantity = $('#pastQuantity').val();
+
+            let newQuantity;
+            loadBom(productCode)
+
             function updateProductCode() {
                 const productMapping = {
                     "전기자전거A": "MATB3FIN001",
                     "전기자전거B": "MATB3FIN002",
-                    "전동킥보드": "MATK2FIN001"
+                    "전동킥보드" : "MATK2FIN001"
                 };
 
                 const productSelect = document.getElementById("productSelect");
                 const productCodeInput = document.getElementById("productCode");
                 productCodeInput.value = productMapping[productSelect.value] || '';
+            }
+
+            function changeQuantity() {
+                changedQuantity = $('#changedQuantity').val();
+                $('#newQuantity').val(changedQuantity);
+
+                //테이블 비우기
+                $('#needQuantity').empty();
+                headerStr = '<tr> <th class="text-center"><h6>부품 종류</h6></th> <th class="text-center"><h6>부품코드</h6></th> <th class="text-center"><h6>부품명</h6></th> <th class="text-center"><h6>상품당 필요 부품 수량</h6></th> <th class="text-center"><h6>재고</h6></th> <th class="text-center"><h6>이전 소요량</h6></th> <th class="text-center"><h6>변경된 소요량</h6></th> </tr>';
+                $('#needQuantity').append(headerStr);
+                loadBom(productCode);
+            }
+
+            function changeQuantity2() {
+                newQuantity = $('#newQuantity').val();
+                $('#changedQuantity').val(newQuantity);
+
+                //테이블 비우기
+                $('#needQuantity').empty();
+                headerStr = '<tr> <th class="text-center"><h6>부품 종류</h6></th> <th class="text-center"><h6>부품코드</h6></th> <th class="text-center"><h6>부품명</h6></th> <th class="text-center"><h6>상품당 필요 부품 수량</h6></th> <th class="text-center"><h6>재고</h6></th> <th class="text-center"><h6>이전 소요량</h6></th> <th class="text-center"><h6>변경된 소요량</h6></th> </tr>';
+                $('#needQuantity').append(headerStr);
+                loadBom(productCode);
+            }
+
+            function loadBom(productCode) {
+                $.ajax({
+                    url        : "/api/load/bom/" + productCode,
+                    type       : "GET",
+                    dataType   : "JSON",
+                    contentType: 'application/json; charset=utf-8',
+                    data       : JSON.stringify(productCode),
+                    success    : function (data) {
+                        console.log(data);
+                        str = '';
+                        newQuantity = $('#newQuantity').val();
+                        $.each(data, function (i) {
+                            console.log(data[i]);
+
+                            let past = data[i].requireQuantity * pastQuantity;
+                            let current = data[i].requireQuantity * newQuantity;
+
+
+                            str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td>' +
+                                '<td class="min-width text-center"><p>' + data[i].materialCode + '</p></td>' +
+                                '<td class="min-width"><p>' + data[i].materialName + '</p></td>' +
+                                '<td class="text-align-right pr-30"><p>' + data[i].requireQuantity + '</p></td>';
+
+                            if (current > data[i].availableStock) {
+                                str +=
+                                    '<td class="min-width text-center"><p class="text-danger">' + data[i].availableStock + '('
+                                    + (data[i].availableStock - current) + ')</p></td>';
+                            } else {
+                                str +=
+                                    '<td class="min-width text-center"><p>' + data[i].availableStock + '</p></td>';
+                            }
+                            str +=
+                                '<td class="min-width text-center"><p>' + past + '</p></td>';
+
+                            if (newQuantity > pastQuantity) {
+                                str += '<td class="min-width text-center"><p>' + current + '<span class="text-danger">(+' +
+                                    (current - past) + ')</span></p></td>'
+                            } else if (newQuantity < pastQuantity) {
+                                str += '<td class="min-width text-center"><p>' + current +
+                                    '<span class="text-success">(' +
+                                    (current - past) + ')</span></p></td>'
+                            } else {
+                                str += '<td class="min-width text-center"><p>' + current + '(' + (current - past) +
+                                    ')</p></td>'
+                            }
+                        })
+                        $('#needQuantity').append(str);
+                    }
+                })
             }
         </script>
     </th:block>

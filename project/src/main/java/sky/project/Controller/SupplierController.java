@@ -159,9 +159,9 @@ public class SupplierController {
             supplierService.approveSupplier(supplierId);
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
-            return "redirect:/suppliers/pending";
+            return "redirect:/suppliers/pending#order";
         }
-        return "redirect:/suppliers/pending";
+        return "redirect:/suppliers/pending#order";
     }
 
     @PostMapping("/reject/{supplierId}")
@@ -205,7 +205,7 @@ public class SupplierController {
     @PostMapping("/stockUpdate")
     public String supplierStockUpdate(SupplierStockDTO dto) {
         supplierStockService.updateStock(dto);
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#stock";
     }
 
     @GetMapping("/page")
@@ -309,13 +309,13 @@ public class SupplierController {
     @PostMapping("/orders/approve")
     public String approveOrder(@RequestParam Long orderId) {
         orderService.updateOrderStatus(orderId, CurrentStatus.APPROVAL);
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#order";
     }
 
     @PostMapping("/orders/reject")
     public String rejectOrder(@RequestParam Long orderId) {
         orderService.updateOrderStatus(orderId, CurrentStatus.REJECT);
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#order";
     }
 
     //선택 출고
@@ -372,14 +372,14 @@ public class SupplierController {
             }
 
         }
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#delivery";
     }
 
     @PostMapping("/returnUpdate")
     public String returnUpdate(@RequestParam Long returnId) {
         //재출고를 누르면 상태를 변환시켜줄 것.
         returnService.returnUpdate(returnId);
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#returns";
     }
 
 

@@ -16,7 +16,7 @@ public class HomeController {
     private UserService userService;
 
     // 로그인 폼 표시
-    @GetMapping("/")
+    @GetMapping({"/",""})
     public String showLoginForm(Model model) {
         model.addAttribute("userDTO", new UserDTO());
         return "/UserForm/Login";

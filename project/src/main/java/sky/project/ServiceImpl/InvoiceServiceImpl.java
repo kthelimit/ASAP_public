@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sky.project.DTO.GraphDTO;
 import sky.project.DTO.InvoiceDTO;
 import sky.project.Entity.Invoice;
 import sky.project.Entity.Material;
@@ -11,7 +12,12 @@ import sky.project.Repository.InvoiceRepository;
 import sky.project.Repository.MaterialRepository;
 import sky.project.Service.InvoiceService;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -64,11 +70,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Map<Integer, Double> getYearlySummary(String supplierName) {
+    public Map<String, Double> getYearlySummary(String supplierName) {
         List<Invoice> invoices = findInvoicesBySupplier(supplierName);
         return invoices.stream()
                 .collect(Collectors.groupingBy(
-                        invoice -> invoice.getCreatedDate().getYear(),
+                        invoice -> String.format("%d년",
+                                invoice.getCreatedDate().getYear()),
                         Collectors.summingDouble(Invoice::getTotalPrice)
                 ));
     }
@@ -78,11 +85,32 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<Invoice> invoices = findInvoicesBySupplier(supplierName);
         return invoices.stream()
                 .collect(Collectors.groupingBy(
-                        invoice -> String.format("%d-%02d",
+                        invoice -> String.format("%d년 %02d월",
                                 invoice.getCreatedDate().getYear(),
                                 invoice.getCreatedDate().getMonthValue()),
                         Collectors.summingDouble(Invoice::getTotalPrice)
                 ));
+    }
+
+
+
+    @Override
+    public Map<String, GraphDTO> getWeeklySummary(String supplierName) {
+        List<Invoice> invoices = findInvoicesBySupplier(supplierName);
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault()); // 로케일에 따른 주 기준
+        Map<String, GraphDTO> map = new HashMap<>();
+        for(int i=0;i<invoices.size();i++) {
+            LocalDate date = LocalDate.from(invoices.get(i).getCreatedDate());
+            int weekOfMonth = date.get(weekFields.weekOfMonth());
+            String key= String.format("%s %d주차", date.format(DateTimeFormatter.ofPattern("yyyy년 MM월")), weekOfMonth);
+            GraphDTO graphDTO = new GraphDTO();
+            graphDTO.setQuantity(invoices.get(i).getQuantity());
+            graphDTO.setTotalPrice(invoices.get(i).getTotalPrice());
+            map.put(key, graphDTO);
+        }
+
+        return map;
     }
 
     @Override

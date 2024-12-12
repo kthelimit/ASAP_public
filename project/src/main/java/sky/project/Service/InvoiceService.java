@@ -2,6 +2,7 @@ package sky.project.Service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import sky.project.DTO.GraphDTO;
 import sky.project.DTO.InvoiceDTO;
 import sky.project.Entity.Invoice;
 
@@ -23,10 +24,13 @@ public interface InvoiceService {
     List<InvoiceDTO> findInvoicesBySupplierName(String supplierName);
 
     // 연도별 거래 금액 요약
-    Map<Integer, Double> getYearlySummary(String supplierName);
+    Map<String, Double> getYearlySummary(String supplierName);
 
     // 월별 거래 금액 요약
     Map<String, Double> getMonthlySummary(String supplierName);
+
+    // 주별 거래 금액 및 수량 요약
+    Map<String, GraphDTO> getWeeklySummary(String supplierName);
 
     // 총 거래 금액 계산
     double getTotalAmount(String supplierName);

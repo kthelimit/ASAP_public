@@ -294,12 +294,14 @@ public class SupplierController {
 
         // 거래 내역 요약 데이터 추가
         double totalAmount = invoiceService.getTotalAmount(supplierName);
-        Map<Integer, Double> yearlySummary = invoiceService.getYearlySummary(supplierName);
+        Map<String, Double> yearlySummary = invoiceService.getYearlySummary(supplierName);
         Map<String, Double> monthlySummary = invoiceService.getMonthlySummary(supplierName);
+        Map<String, GraphDTO> weeklySummary = invoiceService.getWeeklySummary(supplierName);
 
         model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("yearlySummary", yearlySummary);
         model.addAttribute("monthlySummary", monthlySummary);
+        model.addAttribute("weeklySummary", weeklySummary);
 
 
         return "Supplier/SupplierPage";

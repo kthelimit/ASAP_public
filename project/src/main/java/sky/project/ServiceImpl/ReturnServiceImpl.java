@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ReturnDTO;
 import sky.project.Entity.*;
-import sky.project.Repository.ImportRepository;
-import sky.project.Repository.MaterialRepository;
-import sky.project.Repository.OrderRepository;
-import sky.project.Repository.ReturnRepository;
+import sky.project.Repository.*;
 import sky.project.Service.DeliveryRequestService;
 import sky.project.Service.ReturnService;
 
@@ -31,6 +28,9 @@ public class ReturnServiceImpl implements ReturnService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private StockRepository stockRepository;
+
     @Override
     public Long register(ReturnDTO dto) {
 
@@ -47,8 +47,21 @@ public class ReturnServiceImpl implements ReturnService {
     public void returnUpdate(Long returnId) {
         Returns entity = returnRepository.findById(returnId).orElse(null);
         if (entity != null) {
-            //반품 완료
+            //불량품 재배송 완료
             entity.setStatus(CurrentStatus.FINISHED);
+
+            //재배송된 수량을 다시 창고에 넣는다.
+            // Stock 업데이트 로직
+            Material material = materialRepository.findFirstByMaterialName(entity.getMyImport().getMaterialName())
+                    .orElseThrow(() -> new RuntimeException("Material not found"));
+
+            Stock stock = stockRepository.findByMaterialCode(material.getMaterialCode());
+            if (stock == null) {
+                throw new RuntimeException("Stock not found for the given material");
+            }
+
+            stock.setQuantity(stock.getQuantity() + entity.getQuantity());
+            stockRepository.save(stock);
 
             //관련 납품지시 완료처리
             deliveryRequestService.updateRequestStatus(entity.getMyImport().getDeliveryRequest().getId(), "FINISHED");

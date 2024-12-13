@@ -19,7 +19,7 @@ public class HomeController {
     @GetMapping({"/",""})
     public String showLoginForm(Model model) {
         model.addAttribute("userDTO", new UserDTO());
-        return "/UserForm/Login";
+        return "UserForm/Login";
     }
 
     // 로그인 처리
@@ -28,7 +28,7 @@ public class HomeController {
         try {
             if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
                 model.addAttribute("error", "User ID is required");
-                return "/UserForm/Login";
+                return "UserForm/Login";
             }
 
             UserDTO authenticatedUser = userService.authenticate(userDTO.getUserId(), userDTO.getPassword(), userDTO.getUserType());
@@ -40,11 +40,11 @@ public class HomeController {
                 return "redirect:/main";
             } else {
                 model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
-                return "/UserForm/Login";
+                return "UserForm/Login";
             }
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "/UserForm/Login";
+            return "UserForm/Login";
         }
     }
 
@@ -64,7 +64,7 @@ public class HomeController {
     @GetMapping("/signup")
     public String showRegistrationForm(Model model) {
         model.addAttribute("userDTO", new UserDTO());
-        return "/UserForm/SignUp";
+        return "UserForm/SignUp";
     }
 
     // 회원가입 처리

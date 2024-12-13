@@ -138,7 +138,7 @@ public class ProductionPlanController {
         model.addAttribute("selectedBom", selectedBom);
         model.addAttribute("productCode", productCode);
 
-        return "/procure/ProcureIndex";
+        return "procure/ProcureIndex";
     }
 
 
@@ -162,11 +162,11 @@ public class ProductionPlanController {
         model.addAttribute("keyword", keyword);
 
 
-        return "/procure/ProcureHistory";
+        return "procure/ProcureHistory";
     }
 
     @GetMapping("/bomRegister")
     public String bomRegister() {
-        return "/ProductionPlan/BomRegister";
+        return "ProductionPlan/BomRegister";
     }
 }

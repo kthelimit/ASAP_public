@@ -6,18 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sky.project.DTO.InvoiceDTO;
-import sky.project.Entity.Invoice;
 import sky.project.Entity.Supplier;
 import sky.project.Service.InvoiceService;
-import org.springframework.ui.Model;
 import sky.project.Service.SupplierService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/invoice")
@@ -47,7 +44,7 @@ public class InvoiceController {
         model.addAttribute("totalPages", invoices.getTotalPages()); // 총 페이지 수
         model.addAttribute("currentPage", page); // 현재 페이지 번호
 
-        return "Invoice/InvoiceList"; // Thymeleaf 뷰 이름
+        return "Invoice/Invoicelist"; // Thymeleaf 뷰 이름
     }
 
 

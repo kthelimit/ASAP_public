@@ -119,7 +119,7 @@ public class MaterialController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("type", type);
 
-        return "/import/ImportIndex";
+        return "import/ImportIndex";
     }
 
     // 상태 변경 처리
@@ -159,7 +159,7 @@ public class MaterialController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("type", type);
 
-        return "/import/ImportHistory";
+        return "import/ImportHistory";
     }
 
     //자재 출고
@@ -227,7 +227,7 @@ public class MaterialController {
         model.addAttribute("type2", type2);
 
 
-        return "/Export/index";
+        return "Export/index";
     }
 
     //자재 출고요청
@@ -244,7 +244,7 @@ public class MaterialController {
         model.addAttribute("totalPages", exportDTOS.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
-        return "/Export/ExportRequest";
+        return "Export/ExportRequest";
     }
 
 
@@ -297,7 +297,7 @@ public class MaterialController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
         model.addAttribute("type", type);
-        return "/Export/ExportHistory";
+        return "Export/ExportHistory";
     }
 
 
@@ -332,7 +332,7 @@ public class MaterialController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("type", type);
 
-        return "/Stock/stocklist";
+        return "Stock/stocklist";
     }
 
     //창고 자재 등록

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+<th:block th:replace="~{layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
         <div class="container-fluid">
             <!-- ========== title-wrapper start ========== -->
@@ -19,7 +19,8 @@
                                     <li class="breadcrumb-item">
                                         <a href="#0">발주 관리</a>
                                     </li>
-                                    <li class="breadcrumb-item active"><a th:href="@{/sample/invoice}">거래 명세서 목록</a>
+                                    <li class="breadcrumb-item active">
+                                        <a href="#0">거래 명세서 목록</a>
                                     </li>
                                 </ol>
                             </nav>
@@ -80,14 +81,15 @@
                                         <p th:text="${invoice.quantity}"></p>
                                     </td>
                                     <td class="min-width">
-                                        <p th:text="${invoice.totalPrice}"></p>
+                                        <p th:text="${#numbers.formatInteger(invoice.totalPrice, 3,'COMMA')}"></p>
                                     </td>
                                     <td class="min-width">
                                         <p th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p>
                                     </td>
-                                    <td>
-                                        <a th:href="@{/invoice/detail/{id}(id=${invoice.invoiceId})}"
-                                           class="main-btn primary-btn btn-hover">상세보기</a>
+                                    <td class="text-center">
+                                        <a class="main-btn primary-btn btn-hover"
+                                           href="javascript:void(0);"
+                                           th:onclick="window.open('/invoice/detail/[[${invoice.invoiceId}]]', '거래 명세서', 'width=1200, height=600, resizable=yes')">상세보기</a>
                                     </td>
                                 </tr>
                                 <!-- end table row -->

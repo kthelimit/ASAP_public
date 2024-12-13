@@ -111,7 +111,7 @@ public class OrderController {
             model.addAttribute("id", id);
         }
 
-        return "/Order/Orderindex";
+        return "Order/Orderindex";
     }
 
     @GetMapping("/detail/{orderCode}")
@@ -122,7 +122,7 @@ public class OrderController {
 
         OrdersDTO ordersDTO = orderService.findByOrderCode(orderCode);
         model.addAttribute("ordersDTO", ordersDTO);
-        return "/Order/OrderDetail";
+        return "Order/OrderDetail";
     }
 
 
@@ -143,7 +143,7 @@ public class OrderController {
         model.addAttribute("totalPages", orders.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
-        return "/Order/OrderHistory";
+        return "Order/OrderHistory";
     }
 
 
@@ -163,7 +163,7 @@ public class OrderController {
 
     @RequestMapping("/procure")
     public String procure() {
-        return "/procure/Procureindex";
+        return "procure/Procureindex";
     }
 
 
@@ -220,7 +220,7 @@ public class OrderController {
             model.addAttribute("updatedOrder", updatedOrderDTO);
         }
 
-        return "/Order/DeliveryOrder";
+        return "Order/DeliveryOrder";
     }
 
     @PostMapping("/delivery/request")

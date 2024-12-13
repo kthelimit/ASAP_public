@@ -347,7 +347,7 @@
                                 materialCode      : materialCodesArray[j],
                                 assyMaterialCode  : $('#assyMaterialCode').val(),
                                 assyQuantity      : $('#quantity').val(),
-                                requiredQuantity  : requiredQuantitiesArray[j]
+                                requiredQuantity  : requiredQuantitiesArray[j++]
                             }
                             $.ajax({
                                 type       : 'POST',
@@ -357,7 +357,6 @@
                                 data       : JSON.stringify(data)
                             }).done(function () {
                                 console.log("출고요청이 등록되었습니다.")
-                                j++;
                                 if (j === materialCodesArray.length) {
                                     window.location.reload();
                                 }
@@ -368,7 +367,7 @@
                         } else {
                             clearInterval(it);
                         }
-                    }, 100);
+                    }, 200);
 
                     //결과 알려주기
                     alert(materialCodesArray.length + "개의 출고요청이 등록되었습니다.")

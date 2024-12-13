@@ -145,8 +145,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     @Override
     public List<ProductionPlanDTO> getProductionPlansWithDate() {
 
-        LocalDate today = LocalDate.now();
-        List<ProductionPlan> productionPlans = productionPlanRepository.findByPlanDate(today);
+        //내일 생산할 물건들을 오늘 요청할 수 있다.
+        LocalDate date = LocalDate.now().plusDays(1);
+        List<ProductionPlan> productionPlans = productionPlanRepository.findByPlanDate(date);
         List<ProductionPlanDTO> dtos = new ArrayList<>();
         for (ProductionPlan productionPlan : productionPlans) {
             dtos.add(toDTO(productionPlan));

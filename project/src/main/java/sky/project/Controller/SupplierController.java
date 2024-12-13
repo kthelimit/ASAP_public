@@ -131,7 +131,7 @@ public class SupplierController {
             }
             supplierDTO.setUserId(userId);
             supplierService.registerSupplier(supplierDTO);
-            return "redirect:/sample/admin";
+            return "redirect:/dashboard/index";
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("message", "파일 업로드에 실패했습니다.");
@@ -159,9 +159,9 @@ public class SupplierController {
             supplierService.approveSupplier(supplierId);
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "해당 ID를 가진 공급업체를 찾을 수 없습니다.");
-            return "redirect:/suppliers/pending#order";
+            return "redirect:/suppliers/pending";
         }
-        return "redirect:/suppliers/pending#order";
+        return "redirect:/suppliers/pending";
     }
 
     @PostMapping("/reject/{supplierId}")
@@ -184,8 +184,17 @@ public class SupplierController {
         model.addAttribute("supplierDTO", supplierDTO);
 
         // 거래 요약
-        double totalAmount = invoiceService.getTotalAmount(supplierDTO.getSupplierName());
+        String supplierName = supplierDTO.getSupplierName();
+        double totalAmount = invoiceService.getTotalAmount(supplierName);
         model.addAttribute("totalAmount", totalAmount);
+
+        // 거래 내역 요약 데이터 추가
+        Map<String, Double> yearlySummary = invoiceService.getYearlySummary(supplierName);
+        Map<String, Double> monthlySummary = invoiceService.getMonthlySummary(supplierName);
+        Map<String, GraphDTO> weeklySummary = invoiceService.getWeeklySummary(supplierName);
+        model.addAttribute("yearlySummary", yearlySummary);
+        model.addAttribute("monthlySummary", monthlySummary);
+        model.addAttribute("weeklySummary", weeklySummary);
 
         // 취급 자재 품목
         model.addAttribute("supplierStocks", supplierStockService.findBySupplierId(supplierDTO.getSupplierId()));
@@ -197,6 +206,7 @@ public class SupplierController {
         model.addAttribute("TotalPages", invoices.getTotalPages());
         model.addAttribute("CurrentPage", page);
         model.addAttribute("size", size);
+
 
         return "Supplier/SupplierDetail";
     }

@@ -51,12 +51,119 @@
 
 
                 <!-- 거래 내역 -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card-style mb-30">
-                            <div class="transaction-summary ">
-                                <h3 class="mb-10">거래 내역</h3>
+                <!-- 거래 내역 요약 -->
+                <div class="tables-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card-style mb-30">
+                                <h3 class="mb-10">거래 내역 요약</h3>
                                 <p><strong>총 거래 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>
+
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card-style mb-30">
+                                            <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                                                <div class="left">
+                                                    <h6 class="text-medium mb-2">재고</h6>
+                                                </div>
+                                                <div class="right">
+                                                    <div class="select-style-1 mb-2">
+                                                        <div class="select-position select-sm">
+                                                            <select class="light-bg">
+                                                                <option selected value="">이번 달</option>
+                                                                <option value="">저번 달</option>
+                                                                <option value="">지난 3개월</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end select -->
+                                                </div>
+                                            </div>
+                                            <!-- End Title -->
+                                            <div class="chart">
+                                                <div id="legend3">
+                                                </div>
+                                                <canvas id="Chart3"
+                                                        style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- 연별 거래 요약 -->
+                                <h4 class="mt-20">연별 거래 금액</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 50%"><h6>연도</h6></th>
+                                        <th class="text-center" style="width: 50%"><h6>거래 금액</h6></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="entry : ${yearlySummary}">
+                                        <td class="text-center">[[${entry.key}]]</td>
+                                        <td class="text-center">₩[[${#numbers.formatInteger(entry.value, 3,
+                                            'COMMA')}]]
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(yearlySummary)}">
+                                        <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- 월별 거래 요약 -->
+                                <h4 class="mt-20">월별 거래 금액</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 50%"><h6>월</h6></th>
+                                        <th class="text-center" style="width: 50%"><h6>거래 금액</h6></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="entry : ${monthlySummary}">
+                                        <td class="text-center">[[${entry.key}]]</td>
+                                        <td class="text-center">₩[[${#numbers.formatInteger(entry.value, 3,
+                                            'COMMA')}]]
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(monthlySummary)}">
+                                        <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- 주별 거래 요약 -->
+                                <h4 class="mt-20">주별 거래 금액</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 50%"><h6>주</h6></th>
+                                        <th class="text-center" style="width: 50%"><h6>거래 금액</h6></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="data-row" th:each="entry : ${weeklySummary}">
+                                        <td class="text-center">[[${entry.key}]]</td>
+
+                                        <td class="text-center price">
+                                            ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                            'COMMA')}]]
+                                        </td>
+                                        <td class="quantity">
+                                            <input th:value="${entry.value.quantity}" type="hidden"/>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(weeklySummary)}">
+                                        <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
                             </div>
                         </div>
                     </div>
@@ -112,10 +219,17 @@
                                     <tbody>
                                     <tr th:each="invoice : ${invoices}">
                                         <td class="min-width"><p th:text="${invoice.materialName}"></p></td>
-                                        <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(invoice.unitPrice, 3, 'COMMA')}"></p></td>
-                                        <td class="min-width text-align-right"><p th:text="${invoice.quantity}"></p></td>
-                                        <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(invoice.totalPrice, 3, 'COMMA')}"></p></td>
-                                        <td class="min-width text-center"><p th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p></td>
+                                        <td class="min-width text-align-right"><p
+                                                th:text="${#numbers.formatInteger(invoice.unitPrice, 3, 'COMMA')}"></p>
+                                        </td>
+                                        <td class="min-width text-align-right"><p th:text="${invoice.quantity}"></p>
+                                        </td>
+                                        <td class="min-width text-align-right"><p
+                                                th:text="${#numbers.formatInteger(invoice.totalPrice, 3, 'COMMA')}"></p>
+                                        </td>
+                                        <td class="min-width text-center"><p
+                                                th:text="${#temporals.format(invoice.createdDate, 'yyyy-MM-dd')}"></p>
+                                        </td>
                                         <td class="min-width text-center">
                                             <a class="main-btn primary-btn btn-hover"
                                                href="javascript:void(0);"
@@ -152,6 +266,178 @@
                 </div>
             </div>
         </div>
+        <script src="/assets/js/Chart.min.js"></script>
+
+        <script>
+            const ctx3 = document.getElementById("Chart3").getContext("2d");
+
+            // 데이터 수집 및 주차별 데이터 매핑
+            let rows = document.querySelectorAll('.data-row');
+            let weekPrices = [0, 0, 0, 0, 0]; // 1~5주차 초기화
+            let weekQuantities = [0, 0, 0, 0, 0]; // 1~5주차 초기화
+
+            rows.forEach(row => {
+                let priceCell = row.querySelector('.price');
+                let quantityInput = row.querySelector('.quantity input');
+                let weekCell = row.querySelector('td:first-child'); // 첫 번째 열은 주차
+
+                if (priceCell && quantityInput && weekCell) {
+                    // 주차 숫자 추출 (예: "2024년 12월 1주차" -> 1)
+                    let weekMatch = weekCell.innerText.match(/(\d+)주차/);
+                    if (weekMatch) {
+                        let week = parseInt(weekMatch[1]); // 매칭된 주차 숫자 추출
+                        if (week >= 1 && week <= 5) { // 1~5주차만 처리
+                            let price = parseInt(priceCell.innerText.replace(/[₩,]/g, ''));
+                            let quantity = parseInt(quantityInput.value);
+                            weekPrices[week - 1] = price; // 주차에 맞는 인덱스에 값 저장
+                            weekQuantities[week - 1] = quantity; // 주차에 맞는 인덱스에 값 저장
+                        }
+                    }
+                }
+            });
+
+            // Chart.js 생성
+            const chart3 = new Chart(ctx3, {
+                type   : "line",
+                data   : {
+                    labels  : [
+                        "1주차",
+                        "2주차",
+                        "3주차",
+                        "4주차",
+                        "5주차",
+                    ],
+                    datasets: [
+                        {
+                            label                    : "거래 금액 (₩)",
+                            backgroundColor          : "transparent",
+                            borderColor              : "#365CF5",
+                            data                     : weekPrices,
+                            yAxisID                  : "y2",
+                            pointBackgroundColor     : "#365CF5",
+                            pointHoverBackgroundColor: "#365CF5",
+                            pointBorderColor         : "transparent",
+                            pointHoverBorderColor    : "#365CF5",
+                            pointHoverBorderWidth    : 3,
+                            pointBorderWidth         : 5,
+                            pointRadius              : 5,
+                            pointHoverRadius         : 8,
+                            fill                     : false,
+                            tension                  : 0.4,
+                            pointStyle               : 'circle', // 범례 도형을 원으로 설정
+                        },
+                        {
+                            label                    : "거래 수량",
+                            backgroundColor          : "transparent",
+                            borderColor              : "#9b51e0",
+                            data                     : weekQuantities,
+                            yAxisID                  : "y",
+                            pointBackgroundColor     : "#9b51e0",
+                            pointHoverBackgroundColor: "#9b51e0",
+                            pointBorderColor         : "transparent",
+                            pointHoverBorderColor    : "#9b51e0",
+                            pointHoverBorderWidth    : 3,
+                            pointBorderWidth         : 5,
+                            pointRadius              : 5,
+                            pointHoverRadius         : 8,
+                            fill                     : false,
+                            tension                  : 0.4,
+                            pointStyle               : 'circle', // 범례 도형을 원으로 설정
+                        },
+                    ],
+                },
+                options: {
+                    plugins   : {
+                        tooltip: {
+                            intersect         : false,
+                            backgroundColor   : "#fbfbfb",
+                            titleColor        : "#8F92A1",
+                            bodyColor         : "#272727",
+                            titleFont         : {
+                                size  : 16,
+                                family: "Plus Jakarta Sans",
+                                weight: "400",
+                            },
+                            bodyFont          : {
+                                family: "Plus Jakarta Sans",
+                                size  : 16,
+                            },
+                            multiKeyBackground: "transparent",
+                            displayColors     : false,
+                            padding           : {
+                                x: 30,
+                                y: 15,
+                            },
+                            borderColor       : "rgba(143, 146, 161, .1)",
+                            borderWidth       : 1,
+                            enabled           : true,
+                        },
+                        legend : {
+                            display: true,
+                            labels : {
+                                usePointStyle: true, // 범례에서 도형을 데이터셋의 pointStyle로 변경
+                                padding      : 50, // 범례 항목 간 간격 설정
+                            },
+                        },
+                    },
+                    responsive: true,
+                    scales    : {
+                        y : {
+                            position: 'left',
+                            grid    : {
+                                display   : true,
+                                drawBorder: true,
+                            },
+                            ticks   : {
+                                stepSize: 100,
+                                callback: function (value) {
+                                    if (value >= 1000) {
+                                        return value.toLocaleString() + "개";
+                                    }
+                                    return value + "개";
+                                },
+                            },
+                            title   : {
+                                display: true
+                            },
+                        },
+                        y2: {
+                            position: 'right',
+                            grid    : {
+                                display: false,
+                            },
+                            ticks   : {
+                                stepSize: 50000000,
+                                callback: function (value) {
+                                    if (value === 0) {
+                                        return "₩0원";
+                                    } else if (value >= 100000000) {
+                                        let result = (value / 100000000).toFixed(1);
+                                        return "₩" + (result.endsWith(".0") ? parseInt(result) : result) + "억원";
+                                    } else {
+                                        return "₩" + (value / 10000000).toFixed(0) + "천만원";
+                                    }
+                                },
+                            },
+                            title   : {
+                                display: true
+                            },
+                        },
+                        x : {
+                            grid : {
+                                drawBorder   : false,
+                                color        : "rgba(143, 146, 161, .1)",
+                                drawTicks    : false,
+                                zeroLineColor: "rgba(143, 146, 161, .1)",
+                            },
+                            ticks: {
+                                padding: 20,
+                            },
+                        },
+                    },
+                },
+            });
+        </script>
     </th:block>
 </th:block>
 </html>

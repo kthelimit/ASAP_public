@@ -83,12 +83,15 @@ public class ProductionPlanController {
         //날짜 등록
 
         for (int i = 0; i < QuantityPerDays.size(); i++) {
-            ProductionPerDayDTO perDayDTO = ProductionPerDayDTO.builder()
-                    .productionPlanCode(productionPlanCode)
-                    .productionDate(productionDates.get(i))
-                    .productionQuantity(QuantityPerDays.get(i))
-                    .build();
-            productionPerDayService.register(perDayDTO);
+            //수량이 0보다 클 때만 등록(0일때는 등록되지 않는다)
+            if (QuantityPerDays.get(i) > 0) {
+                ProductionPerDayDTO perDayDTO = ProductionPerDayDTO.builder()
+                        .productionPlanCode(productionPlanCode)
+                        .productionDate(productionDates.get(i))
+                        .productionQuantity(QuantityPerDays.get(i))
+                        .build();
+                productionPerDayService.register(perDayDTO);
+            }
         }
 
 

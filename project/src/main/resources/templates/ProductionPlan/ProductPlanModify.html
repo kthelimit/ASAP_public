@@ -36,19 +36,17 @@
                             <input th:field="*{productionPlanCode}" type="hidden">
                             <h3 class="mb-25">생산 계획 수정</h3>
                             <div class="row">
-                                <div class="col-lg-6 input-style-1">
+                                <div class="col-lg-2 input-style-1">
                                     <label>생산 시작 일자</label>
                                     <input name="productionStartDate" required th:value="*{productionStartDate}"
                                            type="date">
                                 </div>
-                                <div class="col-lg-6 input-style-1">
+                                <div class="col-lg-2 input-style-1">
                                     <label>생산 종료 일자</label>
                                     <input name="productionEndDate" required th:value="*{productionEndDate}"
                                            type="date">
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-5 select-style-1">
+                                <div class="col-lg-2 select-style-1">
                                     <label>생산 제품명</label>
                                     <div class="select-position">
                                         <select id="productSelect" onchange="updateProductCode()"
@@ -59,11 +57,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-5 input-style-1">
+                                <div class="col-lg-3 input-style-1">
                                     <label>생산 제품 코드</label>
                                     <input id="productCode" readonly th:field="*{productCode}" type="text">
                                 </div>
-                                <div class="col-lg-2 input-style-1">
+                                <div class="col-lg-3 input-style-1">
                                     <label>생산 수량</label>
                                     <input id="changedQuantity" onchange="changeQuantity()" required
                                            th:field="*{productionQuantity}" type="number">

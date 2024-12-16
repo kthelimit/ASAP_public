@@ -152,6 +152,9 @@
                             <!-- Hidden field to determine register/update -->
                             <input id="planId" th:field="*{planId}" type="hidden">
                             <h3 class="mb-25">생산 계획 등록</h3>
+                            <p class="text-sm mb-20">
+                                시작일과 종료일의 차이는 일주일을 넘어가지 않게 해주세요.
+                            </p>
                             <div class="row">
                                 <div class="input-style-1 col-lg-6">
                                     <label>생산 시작 날짜</label>
@@ -183,11 +186,88 @@
                                 </div>
                             </div>
                             <div id="productionDate">
-
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 첫번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 두번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 세번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 네번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 다섯번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 여섯번째 줄-->
+                                <div class="row productionDateRow" style="display: none">
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>날짜</label>
+                                        <input name="productionDate" readonly type="date">
+                                    </div>
+                                    <div class="input-style-1 col-lg-6">
+                                        <label>수량</label>
+                                        <input name="quantityPerDay" onchange="sumQuantity()" type="number" value="0">
+                                    </div>
+                                </div>
+                                <!-- 일곱번째 줄-->
                             </div>
                             <div class="input-style-1">
                                 <label>총 생산 수량</label>
-                                <input id="quantity" readonly required th:field="*{productionQuantity}" type="number"
+                                <input id="quantity" readonly required th:field="*{productionQuantity}"
+                                       type="number"
                                        value="">
                             </div>
                             <div style="text-align: right">
@@ -228,24 +308,16 @@
 
                 //시작일보다 끝나는 날이 뒤일때
                 if (diffDate >= 0) {
-                    let str = '';
-                    for (var i = 0; i < (diffDate + 1); i++) {
+                    for (var j = 0; j < 7; j++) {
                         var currentDate = startDate;
-                        console.log(currentDate.toISOString().substring(0, 10));
-                        str += '<div class="row"> <div class="input-style-1 col-lg-6"> ';
-                        if (i === 0) {
-                            str += '<label>날짜</label>';
-                        }
-                        str += '<input name="productionDate" readonly type="date" ' +
-                            'value="' + currentDate.toISOString().substring(0, 10) + '"> </div> <div class="input-style-1 col-lg-6"> ';
-
-                        if (i === 0) {
-                            str += '<label>수량</label>';
-                        }
-                        str += '<input name="quantityPerDay" type="number" value="0" onchange="sumQuantity()"> </div> </div>';
+                        $('input[name=productionDate]').eq(j).val(currentDate.toISOString().substring(0, 10));
                         currentDate.setDate(startDate.getDate() + 1);
+                        $('.productionDateRow').eq(j).css("display" ,"none");
                     }
-                    $('#productionDate').append(str);
+
+                    for (var i = 0; i < (diffDate + 1); i++) {
+                        $('.productionDateRow').eq(i).css("display" ,"flex");
+                    }
                 }
             }
 

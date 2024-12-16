@@ -1900,6 +1900,7 @@ h6,
     border-collapse: inherit;
     border-spacing: 0px;
 }
+
 .table-bordered th,
 .table-bordered td {
     border: 1px solid #dee2e6 !important;
@@ -6558,7 +6559,7 @@ h6,
 
 .pagination a:hover {
     background-color: #cccccc;
-    cursor : pointer;
+    cursor: pointer;
 }
 
 .pagination a.active {
@@ -6606,7 +6607,7 @@ h6,
 
 #pagination a:hover {
     background-color: #cccccc;
-    cursor : pointer;
+    cursor: pointer;
 }
 
 #pagination a.active {
@@ -6615,19 +6616,27 @@ h6,
     background-color: #6173CF;
 }
 
-.text-align-right{
+.text-align-right {
     text-align: right;
 }
-.text-align-left{
+
+.text-align-left {
     text-align: left;
 }
-.text-align-center{
+
+.text-align-center {
     text-align: center;
 }
 
-.anchor{
+.anchor {
     display: block;
     height: 75px;
     margin-top: -75px;
     visibility: hidden;
+}
+
+.sticky {
+    position: sticky;
+    top: 65px;
+    background-color: #FFFFFF !important;
 }

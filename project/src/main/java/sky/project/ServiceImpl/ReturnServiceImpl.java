@@ -8,6 +8,7 @@ import sky.project.Entity.*;
 import sky.project.Repository.*;
 import sky.project.Service.DeliveryRequestService;
 import sky.project.Service.ReturnService;
+import sky.project.Service.StockTrailService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +31,8 @@ public class ReturnServiceImpl implements ReturnService {
 
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+    private StockTrailService stockTrailService;
 
     @Override
     public Long register(ReturnDTO dto) {
@@ -63,6 +66,15 @@ public class ReturnServiceImpl implements ReturnService {
             stock.setQuantity(stock.getQuantity() + entity.getQuantity());
             stockRepository.save(stock);
 
+            //추적용
+            StockTrail stockTrail = StockTrail.builder()
+                    .material(material)
+                    .quantity(entity.getQuantity())
+                    .stock(stock.getQuantity())
+                    .date(LocalDateTime.now())
+                    .build();
+            stockTrailService.register(stockTrail);
+
             //관련 납품지시 완료처리
             deliveryRequestService.updateRequestStatus(entity.getMyImport().getDeliveryRequest().getId(), "FINISHED");
 
@@ -74,8 +86,8 @@ public class ReturnServiceImpl implements ReturnService {
                 //납품지시들이 전부 완료된 경우 발주 완료 처리
                 List<DeliveryRequest> deliveryRequests = deliveryRequestService.findByOrderCode(orderCode);
                 List<DeliveryRequest> finishedRequests = deliveryRequestService.findByFinishedRequests(orderCode);
-                log.info("총 납품지시 건수 : "+deliveryRequests.size());
-                log.info("완료된 납품지시 건수 : "+finishedRequests.size());
+                log.info("총 납품지시 건수 : " + deliveryRequests.size());
+                log.info("완료된 납품지시 건수 : " + finishedRequests.size());
                 if (deliveryRequests.size() == finishedRequests.size()) {
                     order.setStatus(CurrentStatus.FINISHED);
                     orderRepository.save(order);
@@ -97,7 +109,7 @@ public class ReturnServiceImpl implements ReturnService {
     }
 
     @Override
-    public int getCountReturnNotFinished(String supplierName){
+    public int getCountReturnNotFinished(String supplierName) {
         return returnRepository.countBySupplierNameOnHOLD(supplierName);
     }
 

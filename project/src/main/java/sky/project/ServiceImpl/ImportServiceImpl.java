@@ -12,6 +12,7 @@ import sky.project.Repository.*;
 import sky.project.Service.DeliveryRequestService;
 import sky.project.Service.ImportService;
 import sky.project.Service.ReturnService;
+import sky.project.Service.StockTrailService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +41,8 @@ public class ImportServiceImpl implements ImportService {
     private DeliveryRequestRepository deliveryRequestRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private StockTrailService stockTrailService;
 
 
     @Override
@@ -126,6 +129,16 @@ public class ImportServiceImpl implements ImportService {
 
             stock.setQuantity(stock.getQuantity() + passedQuantity);
             stockRepository.save(stock);
+
+            //추적용
+            StockTrail stockTrail = StockTrail.builder()
+                    .material(material)
+                    .quantity(passedQuantity)
+                    .stock(stock.getQuantity())
+                    .date(LocalDateTime.now())
+                    .build();
+            stockTrailService.register(stockTrail);
+
         }
 
         importRepository.save(importEntity);

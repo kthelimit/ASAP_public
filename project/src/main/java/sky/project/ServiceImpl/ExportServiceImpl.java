@@ -12,6 +12,7 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.ProductionPlanRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.ExportService;
+import sky.project.Service.StockTrailService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,6 +33,7 @@ public class ExportServiceImpl implements ExportService {
     private final ProductionPlanRepository productionPlanRepository;
     private final ExportRepository exportRepository;
     private final StockRepository stockRepository;
+    private final StockTrailService stockTrailService;
 
     @Override
     public Long register(ExportDTO dto) {
@@ -58,6 +60,16 @@ public class ExportServiceImpl implements ExportService {
         Stock stock = stockRepository.findByMaterialCode(dto.getMaterialCode());
         stock.setQuantity(stock.getQuantity() - export.getRequiredQuantity());
         stockRepository.save(stock);
+
+
+        //추적용
+        StockTrail stockTrail = StockTrail.builder()
+                .material(stock.getMaterial())
+                .quantity(-export.getRequiredQuantity())
+                .stock(stock.getQuantity())
+                .date(LocalDateTime.now())
+                .build();
+        stockTrailService.register(stockTrail);
 
         return export.getExportId();
     }

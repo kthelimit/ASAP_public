@@ -14,11 +14,11 @@ public interface ProductionPlanService {
 
     Page<ProductionPlanDTO> searchProductionPlans(String keyword, Pageable pageable);
 
-    void registerProductionPlan(ProductionPlanDTO productionPlanDTO);
+    String registerProductionPlan(ProductionPlanDTO productionPlanDTO);
 
     ProductionPlanDTO getProductionPlanById(Long id); // ID로 계획 조회
 
-    void updateProductionPlan(ProductionPlanDTO productionPlanDTO); // 계획 수정
+    String updateProductionPlan(ProductionPlanDTO productionPlanDTO); // 계획 수정
 
     void deleteProductionPlan(Long id);
 

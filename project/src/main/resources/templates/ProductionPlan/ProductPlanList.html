@@ -36,7 +36,7 @@
                             가능합니다.
                         </p>
                         <form enctype="multipart/form-data" method="post" th:action="@{/excel/addProductPlan}">
-                            <input type="hidden" name="where" value="Plan">
+                            <input name="where" type="hidden" value="Plan">
                             <div class="row">
                                 <div class="input-style-1 col-lg-6" style="width: auto">
                                     <input name="file" type="file">
@@ -145,39 +145,50 @@
                     </div>
                 </div>
 
-                <!-- 등록/수정 폼 -->
+                <!-- 등록 폼 -->
                 <div class="col-lg-4">
                     <div class="card-style mb-30">
                         <form method="post" th:action="@{/plan/save}" th:object="${productionPlanDTO}">
                             <!-- Hidden field to determine register/update -->
                             <input id="planId" th:field="*{planId}" type="hidden">
-
                             <h3 class="mb-25">생산 계획 등록</h3>
-                            <div class="input-style-1">
-                                <label>생산 시작 날짜</label>
-                                <input id="startDate" required th:field="*{productionStartDate}" type="date">
-                            </div>
-                            <div class="input-style-1">
-                                <label>생산 종료 날짜</label>
-                                <input id="endDate" required th:field="*{productionEndDate}" type="date">
-                            </div>
-                            <div class="select-style-1">
-                                <label>생산 제품명</label>
-                                <div class="select-position" required>
-                                    <select id="productSelect" onchange="updateProductCode()" th:field="*{productName}">
-                                        <option value="전기자전거A">전기자전거A</option>
-                                        <option value="전기자전거B">전기자전거B</option>
-                                        <option value="전동킥보드">전동킥보드</option>
-                                    </select>
+                            <div class="row">
+                                <div class="input-style-1 col-lg-6">
+                                    <label>생산 시작 날짜</label>
+                                    <input id="startDate" onchange="addDate()" required
+                                           th:field="*{productionStartDate}"
+                                           type="date">
+                                </div>
+                                <div class="input-style-1 col-lg-6">
+                                    <label>생산 종료 날짜</label>
+                                    <input id="endDate" onchange="addDate()" required th:field="*{productionEndDate}"
+                                           type="date">
                                 </div>
                             </div>
-                            <div class="input-style-1">
-                                <label>생산 제품 코드</label>
-                                <input id="productCode" readonly th:field="*{productCode}" type="text">
+                            <div class="row">
+                                <div class="select-style-1 col-lg-6">
+                                    <label>생산 제품명</label>
+                                    <div class="select-position" required>
+                                        <select id="productSelect" onchange="updateProductCode()"
+                                                th:field="*{productName}">
+                                            <option value="전기자전거A">전기자전거A</option>
+                                            <option value="전기자전거B">전기자전거B</option>
+                                            <option value="전동킥보드">전동킥보드</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-style-1 col-lg-6">
+                                    <label>생산 제품 코드</label>
+                                    <input id="productCode" readonly th:field="*{productCode}" type="text">
+                                </div>
+                            </div>
+                            <div id="productionDate">
+
                             </div>
                             <div class="input-style-1">
-                                <label>생산 수량</label>
-                                <input id="quantity" required th:field="*{productionQuantity}" type="number">
+                                <label>총 생산 수량</label>
+                                <input id="quantity" readonly required th:field="*{productionQuantity}" type="number"
+                                       value="">
                             </div>
                             <div style="text-align: right">
                                 <button class="main-btn primary-btn btn-hover">등록</button>
@@ -196,7 +207,6 @@
                     "전기자전거B": "MATB3FIN002",
                     "전동킥보드" : "MATK2FIN001"
                 };
-
                 const productSelect = document.getElementById("productSelect");
                 const productCodeInput = document.getElementById("productCode");
                 productCodeInput.value = productMapping[productSelect.value] || '';
@@ -205,6 +215,53 @@
             document.addEventListener("DOMContentLoaded", function () {
                 updateProductCode();
             });
+
+
+            function addDate() {
+                var startDate = new Date($('#startDate').val());
+                var endDate = new Date($('#endDate').val());
+                console.log(startDate);
+                console.log(endDate);
+
+                var diffDate = endDate.getDate() - startDate.getDate();
+                console.log(diffDate);
+
+                //시작일보다 끝나는 날이 뒤일때
+                if (diffDate >= 0) {
+                    let str = '';
+                    for (var i = 0; i < (diffDate + 1); i++) {
+                        var currentDate = startDate;
+                        console.log(currentDate.toISOString().substring(0, 10));
+                        str += '<div class="row"> <div class="input-style-1 col-lg-6"> ';
+                        if (i === 0) {
+                            str += '<label>날짜</label>';
+                        }
+                        str += '<input name="productionDate" readonly type="date" ' +
+                            'value="' + currentDate.toISOString().substring(0, 10) + '"> </div> <div class="input-style-1 col-lg-6"> ';
+
+                        if (i === 0) {
+                            str += '<label>수량</label>';
+                        }
+                        str += '<input name="quantityPerDay" type="number" value="0" onchange="sumQuantity()"> </div> </div>';
+                        currentDate.setDate(startDate.getDate() + 1);
+                    }
+                    $('#productionDate').append(str);
+                }
+            }
+
+            function sumQuantity() {
+                var quantities = $('input[name=quantityPerDay]').length;
+                var quantitiesArray = new Array(quantities);
+                var sum = 0;
+                for (var i = 0; i < quantities; i++) {
+                    quantitiesArray[i] = $('input[name=quantityPerDay]').eq(i).val();
+                    if (!isNaN(quantitiesArray[i]))
+                        sum += parseInt(quantitiesArray[i]);
+                }
+                console.log(quantitiesArray);
+                console.log(sum);
+                $('#quantity').val(sum);
+            }
         </script>
     </th:block>
 </th:block>

@@ -9,16 +9,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import sky.project.DTO.BomDTO;
-import sky.project.DTO.ProcurementPlanDTO;
-import sky.project.DTO.ProductionPlanDTO;
-import sky.project.DTO.SupplierDTO;
-import sky.project.Service.BomService;
-import sky.project.Service.MaterialService;
-import sky.project.Service.ProductionPlanService;
-import sky.project.Service.SupplierService;
-import sky.project.ServiceImpl.ProcurementPlanServiceImpl;
+import sky.project.DTO.*;
+import sky.project.Service.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -39,7 +33,9 @@ public class ProductionPlanController {
     @Autowired
     private SupplierService supplierService;
     @Autowired
-    private ProcurementPlanServiceImpl procurementPlanServiceImpl;
+    private ProcurementPlanService procurementPlanService;
+    @Autowired
+    private ProductionPerDayService productionPerDayService;
 
 
     @GetMapping("/list")
@@ -71,14 +67,31 @@ public class ProductionPlanController {
 
 
     @PostMapping("/save")
-    public String saveProductionPlan(@ModelAttribute ProductionPlanDTO productionPlanDTO) {
+    public String saveProductionPlan(@ModelAttribute ProductionPlanDTO productionPlanDTO,
+                                     @RequestParam("productionDate") List<LocalDate> productionDates,
+                                     @RequestParam("quantityPerDay") List<Integer> QuantityPerDays) {
+
+        String productionPlanCode;
         if (productionPlanDTO.getPlanId() == null) {
             // 등록 동작
-            productionPlanService.registerProductionPlan(productionPlanDTO);
+            productionPlanCode = productionPlanService.registerProductionPlan(productionPlanDTO);
         } else {
             // 수정 동작
-            productionPlanService.updateProductionPlan(productionPlanDTO);
+            productionPlanCode = productionPlanService.updateProductionPlan(productionPlanDTO);
         }
+
+        //날짜 등록
+
+        for (int i = 0; i < QuantityPerDays.size(); i++) {
+            ProductionPerDayDTO perDayDTO = ProductionPerDayDTO.builder()
+                    .productionPlanCode(productionPlanCode)
+                    .productionDate(productionDates.get(i))
+                    .productionQuantity(QuantityPerDays.get(i))
+                    .build();
+            productionPerDayService.register(perDayDTO);
+        }
+
+
         return "redirect:/plan/list";
     }
 
@@ -150,9 +163,9 @@ public class ProductionPlanController {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("planId").descending());
         Page<ProcurementPlanDTO> procurementPlanDTOs;
         if (keyword != null && !keyword.isEmpty()) {
-            procurementPlanDTOs = procurementPlanServiceImpl.searchProcurementPlans(keyword, pageable);
+            procurementPlanDTOs = procurementPlanService.searchProcurementPlans(keyword, pageable);
         } else {
-            procurementPlanDTOs = procurementPlanServiceImpl.getProcurementPlans(pageable);
+            procurementPlanDTOs = procurementPlanService.getProcurementPlans(pageable);
         }
 
         model.addAttribute("procurementPlans", procurementPlanDTOs.getContent());

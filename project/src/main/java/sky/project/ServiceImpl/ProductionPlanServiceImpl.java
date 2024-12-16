@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ProductionPlanDTO;
+import sky.project.Entity.ProductionPerDay;
 import sky.project.Entity.ProductionPlan;
+import sky.project.Repository.ProductionPerDayRepository;
 import sky.project.Repository.ProductionPlanRepository;
 import sky.project.Service.ProductionPlanService;
 
@@ -19,6 +21,8 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
 
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
+    @Autowired
+    private ProductionPerDayRepository productionPerDayRepository;
 
     @Override
     public Page<ProductionPlanDTO> getProductionPlans(Pageable pageable) {
@@ -37,7 +41,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     }
 
     @Override
-    public void registerProductionPlan(ProductionPlanDTO productionPlanDTO) {
+    public String registerProductionPlan(ProductionPlanDTO productionPlanDTO) {
         ProductionPlan plan = toEntity(productionPlanDTO);
 
         //만약 생산계획 코드가 없는 경우(새로 입력된 것인 경우)
@@ -54,6 +58,8 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
             plan.setProductionEndDate(productionPlanDTO.getProductionEndDate());
         }
         productionPlanRepository.save(plan);
+
+        return plan.getProductionPlanCode();
     }
 
     @Override
@@ -64,7 +70,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     }
 
     @Override
-    public void updateProductionPlan(ProductionPlanDTO productionPlanDTO) {
+    public String updateProductionPlan(ProductionPlanDTO productionPlanDTO) {
         ProductionPlan plan = productionPlanRepository.findById(productionPlanDTO.getPlanId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + productionPlanDTO.getPlanId()));
 
@@ -77,6 +83,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         plan.setProductionQuantity(productionPlanDTO.getProductionQuantity());
 
         productionPlanRepository.save(plan);
+        return plan.getProductionPlanCode();
     }
 
     @Override
@@ -84,6 +91,12 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         if (!productionPlanRepository.existsById(id)) {
             throw new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + id);
         }
+
+        //먼저 해당 생산 계획으로 등록된 일자별 생산 내용을 지워야함
+        List<ProductionPerDay> perDays = productionPerDayRepository.findByProductionId(id);
+        productionPerDayRepository.deleteAll(perDays);
+
+        //삭제
         productionPlanRepository.deleteById(id);
     }
 

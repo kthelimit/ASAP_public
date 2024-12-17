@@ -55,26 +55,26 @@
                                         </div>
                                         <div class="col-lg-3 input-style-1">
                                             <label>생산 제품명</label>
-                                            <input type="text" th:field="*{productName}" readonly>
+                                            <input readonly th:field="*{productName}" type="text">
                                         </div>
-<!--                                        <div class="col-lg-3 select-style-1">-->
-<!--                                            <label>생산 제품명</label>-->
-<!--                                            <div class="select-position">-->
-<!--                                                <select id="productSelect" onchange="updateProductCode()" -->
-<!--                                                        th:field="*{productName}">-->
-<!--                                                    <option value="전기자전거A">전기자전거A</option>-->
-<!--                                                    <option value="전기자전거B">전기자전거B</option>-->
-<!--                                                    <option value="전동킥보드">전동킥보드</option>-->
-<!--                                                </select>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
+                                        <!--                                        <div class="col-lg-3 select-style-1">-->
+                                        <!--                                            <label>생산 제품명</label>-->
+                                        <!--                                            <div class="select-position">-->
+                                        <!--                                                <select id="productSelect" onchange="updateProductCode()" -->
+                                        <!--                                                        th:field="*{productName}">-->
+                                        <!--                                                    <option value="전기자전거A">전기자전거A</option>-->
+                                        <!--                                                    <option value="전기자전거B">전기자전거B</option>-->
+                                        <!--                                                    <option value="전동킥보드">전동킥보드</option>-->
+                                        <!--                                                </select>-->
+                                        <!--                                            </div>-->
+                                        <!--                                        </div>-->
                                         <div class="col-lg-3 input-style-1">
                                             <label>생산 제품 코드</label>
                                             <input id="productCode" readonly th:field="*{productCode}" type="text">
                                         </div>
                                         <div class="col-lg-2 input-style-1">
                                             <label>생산 수량</label>
-                                            <input id="changedQuantity" onchange="changeQuantity()" readonly required
+                                            <input id="changedQuantity" readonly required
                                                    th:field="*{productionQuantity}" type="number">
                                         </div>
 
@@ -89,12 +89,16 @@
                                         <div class="row productionDateRow">
                                             <div class="input-style-1 col-lg-6">
                                                 <label>날짜</label>
-                                                <input name="productionDate" readonly th:value="${perDay.getProductionDate()}"
+                                                <input name="productionDate" readonly
+                                                       th:value="${perDay.getProductionDate()}"
                                                        type="date">
                                             </div>
                                             <div class="input-style-1 col-lg-6">
                                                 <label>수량</label>
-                                                <input name="quantityPerDay" onchange="sumQuantity()" th:value="${perDay.productionQuantity}"
+                                                <input name="quantityPast" th:value="${perDay.productionQuantity}"
+                                                       type="hidden">
+                                                <input name="quantityPerDay" onchange="sumQuantity()"
+                                                       th:value="${perDay.productionQuantity}"
                                                        type="number">
                                             </div>
                                         </div>
@@ -190,6 +194,7 @@
                                     <button class="main-btn primary-btn btn-hover">수정</button>
                                     <a class="main-btn danger-btn btn-hover" th:href="@{/plan/list}">취소</a>
                                 </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -212,19 +217,86 @@
                             </div>
                             <div class="col-lg-3 input-style-1">
                                 <label>변경된 수량</label>
-                                <input id="newQuantity" onchange="changeQuantity2()"
-                                       th:value="${productionPlanDTO.productionQuantity}" type="number">
+                                <input id="newQuantity"
+                                       readonly th:value="${productionPlanDTO.productionQuantity}" type="number">
                             </div>
                         </div>
                         <table class="table" id="needQuantity">
-                            <tr>
+                            <tr id="table-head">
                                 <th class="text-center sticky"><h6>부품 종류</h6></th>
                                 <th class="text-center sticky"><h6>부품코드</h6></th>
                                 <th class="text-center sticky"><h6>부품명</h6></th>
-                                <th class="text-center sticky"><h6>상품당 필요 부품 수량</h6></th>
+                                <th class="text-center sticky"><h6>필요 수량</h6></th>
                                 <th class="text-center sticky"><h6>재고</h6></th>
+                                <th class="text-center sticky"><h6 id="day1"
+                                                                   th:text="${perDayDTOS[0].getProductionDate()}">
+                                    1일</h6></th>
+                                <th class="text-center sticky"><h6 id="day2" th:if="${#lists.size(perDayDTOS)>=2}"
+                                                                   th:text="${perDayDTOS[1].getProductionDate()}">
+                                    2일</h6></th>
+                                <th class="text-center sticky"><h6 id="day3" th:if="${#lists.size(perDayDTOS)>=3}"
+                                                                   th:text="${perDayDTOS[2].getProductionDate()}">
+                                    3일</h6></th>
+                                <th class="text-center sticky"><h6 id="day4" th:if="${#lists.size(perDayDTOS)>=4}"
+                                                                   th:text="${perDayDTOS[3].getProductionDate()}">
+                                    4일</h6></th>
+                                <th class="text-center sticky"><h6 id="day5" th:if="${#lists.size(perDayDTOS)>=5}"
+                                                                   th:text="${perDayDTOS[4].getProductionDate()}">
+                                    5일</h6></th>
                                 <th class="text-center sticky"><h6>이전 소요량</h6></th>
                                 <th class="text-center sticky"><h6>변경된 소요량</h6></th>
+                            </tr>
+                            <tr th:each="bomDTO:${bomDTOS}">
+                                <td class="min-width"><p th:text="${bomDTO.componentType}"></p></td>
+                                <td class="min-width text-center"><p th:text="${bomDTO.materialCode}"></p></td>
+                                <td class="min-width"><p th:text="${bomDTO.materialName}"></p></td>
+                                <td class="min-width text-center">
+                                    <input class="none-border" name="requireQuantity"
+                                           th:value="${bomDTO.requireQuantity}"></td>
+                                <td class="min-width text-align-right"><p>
+                                    <span title="현재 창고 내의 가용수량 = 창고 재고 - 현재 출고요청 중인 수량">[[${bomDTO.availableStock}]]</span>
+                                    <span class="text-success" title="발주 중인 수량 = 발주 수량 - 납품 지시 완료 수량">(+[[${bomDTO.remainedOrderQuantity}]])</span>
+                                    <input name="availableStock" th:value="${bomDTO.availableStock}" type="hidden">
+                                    <input name="remainedOrderQuantity" th:value="${bomDTO.remainedOrderQuantity}"
+                                           type="hidden">
+                                </p></td>
+                                <td class="min-width text-align-right">
+                                    <input class="none-border" name="day1" readonly
+                                           th:value="${perDayDTOS[0].productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
+                                <td class="min-width text-align-right">
+                                    <input class="none-border" name="day2" readonly
+                                           th:if="${#lists.size(perDayDTOS)>=2}"
+                                           th:value="${perDayDTOS[1].productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
+                                <td class="min-width text-align-right">
+                                    <input class="none-border" name="day3" readonly
+                                           th:if="${#lists.size(perDayDTOS)>=3}"
+                                           th:value="${perDayDTOS[2].productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
+                                <td class="min-width text-align-right">
+                                    <input class="none-border" name="day4" readonly
+                                           th:if="${#lists.size(perDayDTOS)>=4}"
+                                           th:value="${perDayDTOS[3].productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
+                                <td class="min-width text-align-right">
+                                    <input class="none-border" name="day5" readonly
+                                           th:if="${#lists.size(perDayDTOS)>=5}"
+                                           th:value="${perDayDTOS[4].productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
+                                <td class="min-width text-align-right">
+                                    <p th:text="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"></p>
+                                </td>
+                                <td class="min-width  text-center">
+                                    <input class="none-border" name="current" readonly
+                                           th:value="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"
+                                           type="text">
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -237,9 +309,9 @@
             const productCode = $('#productCode').val();
             //이전 생산량
             const pastQuantity = $('#pastQuantity').val();
-
             let newQuantity;
-            loadBom(productCode)
+
+            // loadBom(productCode)
 
             function updateProductCode() {
                 const productMapping = {
@@ -253,78 +325,70 @@
                 productCodeInput.value = productMapping[productSelect.value] || '';
             }
 
-            function changeQuantity() {
-                changedQuantity = $('#changedQuantity').val();
-                $('#newQuantity').val(changedQuantity);
+            // function loadTable() {
+            //     var currents = $('input[name=current]').length;
+            //     var newQuantity = $('#newQuantity').val();
+            //     for (var i = 0; i < currents; i++) {
+            //         $('input[name=current]').eq(i).val(newQuantity * $('input[name=requireQuantity]').eq(i).val());
+            //     }
 
-                //테이블 비우기
-                $('#needQuantity').empty();
-                headerStr = '<tr> <th class="text-center"><h6>부품 종류</h6></th> <th class="text-center"><h6>부품코드</h6></th> <th class="text-center"><h6>부품명</h6></th> <th class="text-center"><h6>상품당 필요 부품 수량</h6></th> <th class="text-center"><h6>재고</h6></th> <th class="text-center"><h6>이전 소요량</h6></th> <th class="text-center"><h6>변경된 소요량</h6></th> </tr>';
-                $('#needQuantity').append(headerStr);
-                loadBom(productCode);
-            }
+            // //테이블 비우기
+            // $('#needQuantity').empty();
+            // headerStr = '<tr> <th class="text-center"><h6>부품 종류</h6></th> <th class="text-center"><h6>부품코드</h6></th> <th class="text-center"><h6>부품명</h6></th> <th class="text-center"><h6>상품당 필요 부품 수량</h6></th> <th class="text-center"><h6>재고</h6></th> <th class="text-center"><h6>이전 소요량</h6></th> <th class="text-center"><h6>변경된 소요량</h6></th> </tr>';
+            // $('#needQuantity').append(headerStr);
+            // loadBom(productCode);
+            // }
 
-            function changeQuantity2() {
-                newQuantity = $('#newQuantity').val();
-                $('#changedQuantity').val(newQuantity);
-
-                //테이블 비우기
-                $('#needQuantity').empty();
-                headerStr = '<tr> <th class="text-center"><h6>부품 종류</h6></th> <th class="text-center"><h6>부품코드</h6></th> <th class="text-center"><h6>부품명</h6></th> <th class="text-center"><h6>상품당 필요 부품 수량</h6></th> <th class="text-center"><h6>재고</h6></th> <th class="text-center"><h6>이전 소요량</h6></th> <th class="text-center"><h6>변경된 소요량</h6></th> </tr>';
-                $('#needQuantity').append(headerStr);
-                loadBom(productCode);
-            }
-
-            function loadBom(productCode) {
-                $.ajax({
-                    url        : "/api/load/bom/" + productCode,
-                    type       : "GET",
-                    dataType   : "JSON",
-                    contentType: 'application/json; charset=utf-8',
-                    data       : JSON.stringify(productCode),
-                    success    : function (data) {
-                        console.log(data);
-                        str = '';
-                        newQuantity = $('#newQuantity').val();
-                        $.each(data, function (i) {
-                            console.log(data[i]);
-
-                            let past = data[i].requireQuantity * pastQuantity;
-                            let current = data[i].requireQuantity * newQuantity;
-
-
-                            str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td>' +
-                                '<td class="min-width text-center"><p>' + data[i].materialCode + '</p></td>' +
-                                '<td class="min-width"><p>' + data[i].materialName + '</p></td>' +
-                                '<td class="text-align-right pr-30"><p>' + data[i].requireQuantity + '</p></td>';
-
-                            if (current > data[i].availableStock) {
-                                str +=
-                                    '<td class="min-width text-center"><p class="text-danger">' + data[i].availableStock + '('
-                                    + (data[i].availableStock - current) + ')</p></td>';
-                            } else {
-                                str +=
-                                    '<td class="min-width text-center"><p>' + data[i].availableStock + '</p></td>';
-                            }
-                            str +=
-                                '<td class="min-width text-center"><p>' + past + '</p></td>';
-
-                            if (newQuantity > pastQuantity) {
-                                str += '<td class="min-width text-center"><p>' + current + '<span class="text-danger">(+' +
-                                    (current - past) + ')</span></p></td>'
-                            } else if (newQuantity < pastQuantity) {
-                                str += '<td class="min-width text-center"><p>' + current +
-                                    '<span class="text-success">(' +
-                                    (current - past) + ')</span></p></td>'
-                            } else {
-                                str += '<td class="min-width text-center"><p>' + current + '(' + (current - past) +
-                                    ')</p></td>'
-                            }
-                        })
-                        $('#needQuantity').append(str);
-                    }
-                })
-            }
+            // function loadBom(productCode) {
+            //     $.ajax({
+            //         url        : "/api/load/bom/" + productCode,
+            //         type       : "GET",
+            //         dataType   : "JSON",
+            //         contentType: 'application/json; charset=utf-8',
+            //         data       : JSON.stringify(productCode),
+            //         success    : function (data) {
+            //             console.log(data);
+            //             str = '';
+            //             newQuantity = $('#newQuantity').val();
+            //             $.each(data, function (i) {
+            //                 console.log(data[i]);
+            //
+            //                 let past = data[i].requireQuantity * pastQuantity;
+            //                 let current = data[i].requireQuantity * newQuantity;
+            //
+            //
+            //                 str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td>' +
+            //                     '<td class="min-width text-center"><p>' + data[i].materialCode + '</p></td>' +
+            //                     '<td class="min-width"><p>' + data[i].materialName + '</p></td>' +
+            //                     '<td class="text-align-right pr-30"><p>' + data[i].requireQuantity + '</p></td>';
+            //
+            //                 if (current > data[i].availableStock) {
+            //                     str +=
+            //                         '<td class="min-width text-center"><p class="text-danger">' + data[i].availableStock + '('
+            //                         + (data[i].availableStock - current) + ')</p></td>';
+            //                 } else {
+            //                     str +=
+            //                         '<td class="min-width text-center"><p>' + data[i].availableStock + '</p></td>';
+            //                 }
+            //                 str +=
+            //                     '<td class="min-width text-center"><p>' + past + '</p></td>';
+            //
+            //                 if (newQuantity > pastQuantity) {
+            //                     str += '<td class="min-width text-center"><p>' + current + '<span class="text-danger">(+' +
+            //                         (current - past) + ')</span></p></td>'
+            //                 } else if (newQuantity < pastQuantity) {
+            //                     str += '<td class="min-width text-center"><p>' + current +
+            //                         '<span class="text-success">(' +
+            //                         (current - past) + ')</span></p></td>'
+            //                 } else {
+            //                     str += '<td class="min-width text-center"><p>' + current + '(' + (current - past) +
+            //                         ')</p></td>'
+            //                 }
+            //             })
+            //             $('#needQuantity').append(str);
+            //         }
+            //     })
+            // }
 
             function addDate() {
                 var startDate = new Date($('#startDate').val());
@@ -349,22 +413,114 @@
             }
 
             function sumQuantity() {
+                //시작일과 종료일 값 가져오기
                 var startDate = new Date($('#startDate').val());
                 var endDate = new Date($('#endDate').val());
                 var diffDate = endDate.getDate() - startDate.getDate();
 
+                //수량 가져오기
                 var quantities = $('input[name=quantityPerDay]').length;
                 var quantitiesArray = new Array(quantities);
+
+                //합 구하기
                 var sum = 0;
-                for (var i = 0; i < diffDate+1; i++) {
+                for (var i = 0; i < diffDate + 1; i++) {
                     quantitiesArray[i] = $('input[name=quantityPerDay]').eq(i).val();
                     if (!isNaN(quantitiesArray[i]))
                         sum += parseInt(quantitiesArray[i]);
                 }
-                console.log(quantitiesArray);
-                console.log(sum);
+
+                //합을 넣어주기
                 $('#newQuantity').val(sum);
                 $('#changedQuantity').val(sum);
+
+                //변경된 소요량 칸 크기를 가져온다.
+                var currents = $('input[name=current]').length;
+
+                //칸에 합 * 필요수량 값을 넣어준다.
+                for (var i = 0; i < currents; i++) {
+                    $('input[name=current]').eq(i).val(sum * $('input[name=requireQuantity]').eq(i).val());
+                }
+
+                //각 칸에 필요수량 * 그날 생산량을 넣어준다.
+                for (var i = 0; i < currents; i++) {
+
+                    var cur = [];
+                    var pas = [];
+                    var curpas = [];
+
+                    //현재 갱신된 수량 계산
+                    cur[0] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPerDay]').eq(0).val();
+                    cur[1] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPerDay]').eq(1).val();
+                    cur[2] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPerDay]').eq(2).val();
+                    cur[3] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPerDay]').eq(3).val();
+                    cur[4] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPerDay]').eq(4).val();
+
+                    //기존 수량 계산
+                    pas[0] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPast]').eq(0).val();
+                    pas[1] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPast]').eq(1).val();
+                    pas[2] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPast]').eq(2).val();
+                    pas[3] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPast]').eq(3).val();
+                    pas[4] = $('input[name=requireQuantity]').eq(i).val() * $('input[name=quantityPast]').eq(4).val();
+
+                    //문자열 생성
+                    curpas[0] = cur[0] + '(' + (cur[0] - pas[0] > 0 ? '+' : '') + (cur[0] - pas[0]) + ')';
+                    curpas[1] = cur[1] + '(' + (cur[1] - pas[1] > 0 ? '+' : '') + (cur[1] - pas[1]) + ')';
+                    curpas[2] = cur[2] + '(' + (cur[2] - pas[2] > 0 ? '+' : '') + (cur[2] - pas[2]) + ')';
+                    curpas[3] = cur[3] + '(' + (cur[3] - pas[3] > 0 ? '+' : '') + (cur[3] - pas[3]) + ')';
+                    curpas[4] = cur[4] + '(' + (cur[4] - pas[4] > 0 ? '+' : '') + (cur[4] - pas[4]) + ')';
+
+                    //값 넣어주기
+                    $('input[name=day1]').eq(i).val(curpas[0]);
+                    $('input[name=day2]').eq(i).val(curpas[1]);
+                    $('input[name=day3]').eq(i).val(curpas[2]);
+                    $('input[name=day4]').eq(i).val(curpas[3]);
+                    $('input[name=day5]').eq(i).val(curpas[4]);
+
+                    //그 자재의 창고 재고 + 앞으로 들어올 수량
+                    var stock = parseInt($('input[name=availableStock]').eq(i).val()) + parseInt($('input[name=remainedOrderQuantity]').eq(i).val());
+                    console.log("stock : "+ stock);
+                    //일단 색깔 리셋
+                    $('input[name=day1]').eq(i).css("color", "#5d657b");
+                    $('input[name=day2]').eq(i).css("color", "#5d657b");
+                    $('input[name=day3]').eq(i).css("color", "#5d657b");
+                    $('input[name=day4]').eq(i).css("color", "#5d657b");
+                    $('input[name=day5]').eq(i).css("color", "#5d657b");
+
+
+                    for (var j = 0; j < diffDate+1; j++) {
+                        //각 날짜 별로 수량을 빼냄.
+                        stock -= cur[j];
+                        console.log(j+" : "+ stock);
+                        if (stock <= 0) {
+                            switch (j) {
+                                case 0:
+                                    $('input[name=day1]').eq(i).css("color", "red");
+                                    $('input[name=day1]').eq(i).attr("title", "수량이 부족합니다.");
+                                    break;
+                                case 1:
+                                    $('input[name=day2]').eq(i).css("color", "red");
+                                    $('input[name=day2]').eq(i).attr("title", "수량이 부족합니다.");
+                                    break;
+                                case 2:
+                                    $('input[name=day3]').eq(i).css("color", "red");
+                                    $('input[name=day3]').eq(i).attr("title", "수량이 부족합니다.");
+                                    break;
+                                case 3:
+                                    $('input[name=day4]').eq(i).css("color", "red");
+                                    $('input[name=day4]').eq(i).attr("title", "수량이 부족합니다.");
+                                    break;
+                                case 4:
+                                    $('input[name=day5]').eq(i).css("color", "red");
+                                    $('input[name=day5]').eq(i).attr("title", "수량이 부족합니다.");
+                                    break;
+                            }
+                        }
+
+                    }
+                }
+
+
             }
         </script>
     </th:block>

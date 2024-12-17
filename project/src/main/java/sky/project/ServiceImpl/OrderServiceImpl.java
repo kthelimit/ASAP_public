@@ -152,10 +152,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private OrdersDTO toDTO(Order order) {
-        if (order == null) return null;
-
-        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량)
+    // 남은 조달 수량 계산 ( 발주량 - 현재 납품지시 넣은 수량)
+    @Override
+    public int calculateRemainedQuantity(Order order) {
         int remainedQuantity = order.getOrderQuantity();
         List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findDeliveryRequestsByOrderCode(order.getOrderCode());
         int sumOfRequests = 0;
@@ -163,6 +162,27 @@ public class OrderServiceImpl implements OrderService {
             sumOfRequests += deliveryRequest.getRequestedQuantity();
         }
         remainedQuantity -= sumOfRequests;
+
+        return remainedQuantity;
+    }
+
+    //자재에 대한 총 남은 조달수량
+    @Override
+    public int calculateRemainedQuantityForBOMDTO(Material material) {
+        //업체에 발주넣어둔 남은 수량의 합을 더한다.
+        List<Order> orders = orderRepository.findByMaterialCodeNotFinished(material.getMaterialCode());
+        int remainedOrderQuantity = 0;
+        for (Order order : orders) {
+            remainedOrderQuantity += calculateRemainedQuantity(order);
+        }
+        return remainedOrderQuantity;
+    }
+
+    private OrdersDTO toDTO(Order order) {
+        if (order == null) return null;
+
+        // 남은 조달 수량 ( 발주량 - 현재 납품지시 넣은 수량)
+        int remainedQuantity = calculateRemainedQuantity(order);
 
         //업체의 가용 재고
         int availableStock = calculateAvailableStock(order);
@@ -174,8 +194,8 @@ public class OrderServiceImpl implements OrderService {
 
         //현재 납품지시 중이고 아직 도착하지 않은 수량
         List<DeliveryRequest> deliveryRequestsOnHOLD = deliveryRequestRepository.findDeliveryRequestsByOrderCodeInProgress(order.getOrderCode());
-        int deliveryQuantity=0;
-        for(DeliveryRequest deliveryRequest : deliveryRequestsOnHOLD) {
+        int deliveryQuantity = 0;
+        for (DeliveryRequest deliveryRequest : deliveryRequestsOnHOLD) {
             deliveryQuantity += deliveryRequest.getRequestedQuantity();
         }
 

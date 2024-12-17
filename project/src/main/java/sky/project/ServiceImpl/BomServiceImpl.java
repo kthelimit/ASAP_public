@@ -14,6 +14,7 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.ProductRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.BomService;
+import sky.project.Service.OrderService;
 import sky.project.Service.StockService;
 
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class BomServiceImpl implements BomService {
     private final StockRepository stockRepository;
     private final StockService stockService;
     private final BomRepository bomRepository;
+    private final OrderService orderService;
 
     //등록
     @Override
@@ -91,9 +93,11 @@ public class BomServiceImpl implements BomService {
 
     public BomDTO entityToDTO(Bom entity) {
 
-        //조달계획 출력용 가용재고 계산
+        //조달계획 출력용 가용재고 계산(현재 창고 재고 + 업체에 발주넣어둔 남은 수량의 합)
         Stock stock = stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode());
         int availableStock = stockService.calculateAvailableStock(stock);
+        int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
+
         LocalDate today = LocalDate.now();
         LocalDate date = today.plusDays(entity.getMaterial().getLeadTime());
         return BomDTO.builder()
@@ -105,6 +109,7 @@ public class BomServiceImpl implements BomService {
                 .requireQuantity(entity.getRequireQuantity())
                 .dayAfterLeadTime(date)
                 .availableStock(availableStock)
+                .remainedOrderQuantity(remainedOrderQuantity)
                 .build();
     }
 

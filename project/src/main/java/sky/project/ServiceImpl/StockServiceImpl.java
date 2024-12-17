@@ -5,13 +5,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.Entity.Export;
 import sky.project.Entity.Material;
-import sky.project.Entity.Order;
 import sky.project.Entity.Stock;
-import sky.project.Repository.*;
+import sky.project.Repository.ExportRepository;
+import sky.project.Repository.MaterialRepository;
+import sky.project.Repository.OrderRepository;
+import sky.project.Repository.StockRepository;
+import sky.project.Service.OrderService;
 import sky.project.Service.StockService;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class StockServiceImpl implements StockService {
     private final MaterialRepository materialRepository;
     private final ExportRepository exportRepository;
     private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
 
     @Override
@@ -46,7 +49,6 @@ public class StockServiceImpl implements StockService {
     }
 
 
-
     //목록 불러오기
     @Override
     public Page<StockDTO> getStocks(Pageable pageable) {
@@ -55,7 +57,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<Stock> getStocks(){
+    public List<Stock> getStocks() {
         return stockRepository.findAll();
     }
 
@@ -117,8 +119,11 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public int calculateAvailableStock(Stock stock){
+    public int calculateAvailableStock(Stock stock) {
+        //일단 창고 자재 수량을 불러온다
         int availableStock = stock.getQuantity();
+
+        //만약 출고요청 중인 것(ON_HOLD)이 있다면 합쳐서 뺀다
         if (exportRepository.findByMaterialCodeAndStatusOnHold(stock.getMaterial().getMaterialCode()) != null) {
             List<Export> exports = exportRepository.findByMaterialCodeAndStatusOnHold(stock.getMaterial().getMaterialCode());
             int exportQuantity = 0;
@@ -129,6 +134,7 @@ public class StockServiceImpl implements StockService {
         }
         return availableStock;
     }
+
 
     public List<StockDTO> getAllStocks() {
         return stockRepository.findAll().stream()

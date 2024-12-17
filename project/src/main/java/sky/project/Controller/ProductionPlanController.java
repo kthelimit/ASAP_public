@@ -93,8 +93,8 @@ public class ProductionPlanController {
         log.info(compareDay);
 
         for (int i = 0; i < compareDay + 1; i++) {
-            //수량이 0보다 클 때만 등록(0일때는 등록되지 않는다)
-            if (QuantityPerDays.get(i) > 0) {
+            //수량이 0이거나 그보다 클 때만 등록(마이너스일 때는 등록되지 않는다)
+            if (QuantityPerDays.get(i) >= 0) {
                 ProductionPerDayDTO perDayDTO = ProductionPerDayDTO.builder()
                         .productionPlanCode(productionPlanCode)
                         .productionDate(productionDates.get(i))
@@ -118,6 +118,9 @@ public class ProductionPlanController {
         List<ProductionPerDayDTO> perDayDTOS = productionPerDayService.findbyPlanId(id);
         log.info(perDayDTOS);
         model.addAttribute("perDayDTOS", perDayDTOS);
+
+        List<BomDTO> bomDTOS =  bomService.findWithProductCode(planDTO.getProductCode());
+        model.addAttribute("bomDTOS", bomDTOS);
 
         return "ProductionPlan/ProductPlanModify";
     }

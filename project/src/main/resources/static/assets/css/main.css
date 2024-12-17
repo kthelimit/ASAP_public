@@ -6640,3 +6640,14 @@ h6,
     top: 65px;
     background-color: #FFFFFF !important;
 }
+
+.none-border{
+    border: none;
+    width: 70px;
+    color: #5d657b;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 25px;
+    text-align: center;
+    margin: 0px;
+}

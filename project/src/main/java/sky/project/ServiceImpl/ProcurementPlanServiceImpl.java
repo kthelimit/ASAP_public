@@ -19,9 +19,11 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     @Autowired
     ProcurementPlanRepository procurementPlanRepository;
 
+    //검색 안했을 때 경우
     @Override
     public Page<ProcurementPlanDTO> getAllProcurementPlan(Pageable pageable) {
-        return procurementPlanRepository.findAll(pageable).map(this::toDTO);
+
+        return procurementPlanRepository.findAllOnHold(pageable).map(this::toDTO);
     }
 
 //    @Override
@@ -43,6 +45,15 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return toDTO(plan);
     }
 
+    @Override
+    public Page<ProcurementPlanDTO> searchProcurementPlansOnHold(String keyword, Pageable pageable) {
+        // 키워드로 supplierName 또는 materialName 검색
+        Page<ProcurementPlan> procurementPlansPage =
+                procurementPlanRepository.findBySupplierNameContainingOrMaterialNameContainingOnHold(keyword, pageable);
+        return procurementPlansPage.map(this::toDTO);
+    }
+
+    //검색했을때 경우
     @Override
     public Page<ProcurementPlanDTO> searchProcurementPlans(String keyword, Pageable pageable) {
         // 키워드로 supplierName 또는 materialName 검색

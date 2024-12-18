@@ -111,7 +111,7 @@
                                             th:text="${material.width} + 'x' + ${material.height} + 'x' + ${material.depth}"></p>
                                     </td>
                                     <td class="min-width text-align-right"><p th:text="${material.weight}"></p></td>
-                                    <td class="min-width text-align-right"><p th:text="${material.unitPrice}"></p>
+                                    <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(material.unitPrice, 3,  'COMMA')}"></p>
                                     </td>
                                     <td class="min-width text-align-right"><p th:text="${material.quantity}"></p>
                                     </td>

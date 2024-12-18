@@ -15,6 +15,8 @@ public interface ProcurementPlanService {
 
     Page<ProcurementPlanDTO> getAllProcurementPlan(Pageable pageable);
 
+    Page<ProcurementPlanDTO> searchProcurementPlansOnHold(String keyword, Pageable pageable);
+
     Page<ProcurementPlanDTO> searchProcurementPlans(String keyword, Pageable pageable);
 
     ProcurementPlan save(ProcurementPlan procurementPlan);

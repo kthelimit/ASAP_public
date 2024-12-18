@@ -451,7 +451,7 @@ public class InsertDataTest {
         IntStream.rangeClosed(1, 106).forEach(i -> {
             StockDTO stockDTO = StockDTO.builder()
                     .materialCode(materialCodes[i - 1])
-                    .quantity(100)
+                    .quantity(0)
                     .build();
             stockService.register(stockDTO);
         });

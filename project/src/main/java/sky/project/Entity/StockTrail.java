@@ -23,6 +23,7 @@ public class StockTrail {
     private int quantity;
 
     private int stock;
+    private double price;
 
     private LocalDateTime date;
 }

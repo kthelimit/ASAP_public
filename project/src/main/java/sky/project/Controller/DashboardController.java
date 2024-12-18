@@ -1,8 +1,10 @@
 package sky.project.Controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import sky.project.DTO.ExportDTO;
@@ -12,7 +14,9 @@ import sky.project.DTO.UserDTO;
 import sky.project.Service.*;
 
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
@@ -43,6 +47,9 @@ public class DashboardController {
 
     @Autowired
     ReturnService returnService;
+
+    @Autowired
+    StockTrailService stockTrailService;
 
     @RequestMapping("/info")
     public String info(Model model) {
@@ -166,7 +173,17 @@ public class DashboardController {
         model.addAttribute("ordersDTOSForSupplier", ordersDTOSForSupplier);
 
 
+        Map<String, GraphDTO> yearlySummary = stockTrailService.getYearlyStockSummary();
+        Map<String, GraphDTO> monthlySummary = stockTrailService.getMonthlyStockSummary();
+        Map<String, GraphDTO> weeklySummary = stockTrailService.getWeeklyStockSummary();
+
+
+        model.addAttribute("yearlySummary", yearlySummary);
+        model.addAttribute("monthlySummary", monthlySummary);
+        model.addAttribute("weeklySummary", weeklySummary);
+
 
         return "Dashboard/Dashboard";
     }
+
 }

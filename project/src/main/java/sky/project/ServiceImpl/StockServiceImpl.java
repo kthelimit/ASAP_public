@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sky.project.DTO.MaterialDTO;
 import sky.project.DTO.StockDTO;
 import sky.project.Entity.Export;
 import sky.project.Entity.Material;
@@ -14,8 +15,12 @@ import sky.project.Repository.MaterialRepository;
 import sky.project.Repository.OrderRepository;
 import sky.project.Repository.StockRepository;
 import sky.project.Service.OrderService;
+import sky.project.Entity.*;
+import sky.project.Repository.*;
 import sky.project.Service.StockService;
+import sky.project.Service.StockTrailService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +34,14 @@ public class StockServiceImpl implements StockService {
     private final ExportRepository exportRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
+    private final StockTrailService stockTrailService;
 
 
     @Override
     public Long register(StockDTO dto) {
         Stock entity = null;
+
+
         if (stockRepository.findByMaterialCode(dto.getMaterialCode()) != null) {
             entity = stockRepository.findByMaterialCode(dto.getMaterialCode());
             entity.setQuantity(dto.getQuantity());
@@ -45,6 +53,16 @@ public class StockServiceImpl implements StockService {
 
         }
         stockRepository.save(entity);
+
+        StockTrail stockTrail = StockTrail.builder()
+                .material(entity.getMaterial())
+                .quantity(entity.getQuantity())
+                .stock(entity.getQuantity())
+                .price(entity.getMaterial().getUnitPrice() * entity.getQuantity())
+                .date(LocalDateTime.now())
+                .build();
+        stockTrailService.register(stockTrail);
+
         return entity.getStockId();
     }
 

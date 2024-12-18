@@ -158,7 +158,7 @@
                                 <h3 class="text-bold mb-10">[[${countProductionPlan}]]</h3>
                                 <p class="text-sm text-success">
                                     <a th:if="${userType!='SUPPLIER'}" th:href="@{/plan/list}"><span class="text-gray">더 보기</span></a>
-                                    <span th:if="${userType=='SUPPLIER'}"  class="text-gray">아래의 달력을 참고해주세요.</span>
+                                    <span th:if="${userType=='SUPPLIER'}" class="text-gray">아래의 달력을 참고해주세요.</span>
                                 </p>
                             </div>
                         </div>
@@ -363,8 +363,117 @@
                             <h5>생산 계획 달력</h5>
                             <div id="calendar"></div>
                         </div>
+                        <!-- 달력 끝 -->
+
+                        <!-- 거래 내역 요약 -->
+                        <div class="card-style mb-30">
+                            <h4 class="mb-10">재고 내역 요약</h4>
+<!--                            <p><strong>총 재고 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>-->
+
+
+                            <div class="row">
+                                <div class="col-lg-13">
+                                    <div class="card-style mb-30">
+                                        <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                                            <div class="left">
+                                                <h6 class="text-medium mb-2">재고</h6>
+                                            </div>
+<!--                                            <div class="right">-->
+<!--                                                <div class="select-style-1 mb-2">-->
+<!--                                                    <div class="select-position select-sm">-->
+<!--                                                        <select class="light-bg">-->
+<!--                                                            <option value="" selected>이번 달</option>-->
+<!--                                                            <option value="">저번 달</option>-->
+<!--                                                            <option value="">지난 3개월</option>-->
+<!--                                                        </select>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                                &lt;!&ndash; end select &ndash;&gt;-->
+<!--                                            </div>-->
+                                        </div>
+                                        <!-- End Title -->
+                                        <div class="chart">
+                                            <div id="legend3">
+
+                                            </div>
+                                            <canvas id="Chart4"
+                                                    style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- 연별 재고 요약 -->
+                            <h4 class="mt-20">연별 재고</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50%"><h6>연도</h6></th>
+<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${yearlySummary}">
+                                    <td class="text-center">[[${entry.key}]]</td>
+<!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(yearlySummary)}">
+                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 월별 재고 요약 -->
+                            <h4 class="mt-20">월별 재고</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50%"><h6>월</h6></th>
+<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${monthlySummary}">
+                                    <td class="text-center">[[${entry.key}]]</td>
+<!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(monthlySummary)}">
+                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 주별 재고 요약 -->
+                            <h4 class="mt-20">주별 재고</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50%"><h6>주</h6></th>
+<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${weeklySummary}" class="data-row">
+                                    <td class="text-center">[[${entry.key}]]</td>
+<!--                                    <td class="text-center quantity">[[${entry.value.quantity}]]</td>-->
+                                    <td class="text-center price">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(weeklySummary)}">
+                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+
+                        </div>
                     </div>
-                    <!-- 달력 끝 -->
+
                     <div class="col-lg-5">
                         <!-- 구매부서 전용-->
                         <th:block th:if="${userType=='ADMIN' || userType=='PURCHASE_DEPT'}">
@@ -635,6 +744,7 @@
                             </div>
                             <!-- 발주 들어온 목록 끝-->
                         </th:block>
+
                     </div>
                 </div>
             </div>
@@ -671,6 +781,7 @@
 
         <script th:src="@{/assets/dist/index.global.js}"></script>
         <script th:src="@{/assets/dist/index.global.min.js}"></script>
+        <script src="/assets/js/Chart.min.js"></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -679,23 +790,23 @@
                 var calendar = new FullCalendar.Calendar(calendarEl, {
 
                     headerToolbar: {
-                        left  : 'title',
+                        left: 'title',
                         center: '',
-                        right : 'today prev, next'
+                        right: 'today prev, next'
                     },
-                    initialView  : "dayGridMonth",
-                    navLinks     : false, // can click day/week names to navigate views
-                    nowIndicator : true,
+                    initialView: "dayGridMonth",
+                    navLinks: false, // can click day/week names to navigate views
+                    nowIndicator: true,
 
-                    weekNumbers          : false,
+                    weekNumbers: false,
                     weekNumberCalculation: 'ISO',
-                    fixedWeekCount       : false,
+                    fixedWeekCount: false,
 
-                    editable    : false,
-                    selectable  : true,
+                    editable: false,
+                    selectable: true,
                     dayMaxEvents: true, // allow "more" link when too many events
-                    events      : "/api/calendar/events",
-                    eventClick  : function (info) {
+                    events: "/api/calendar/events",
+                    eventClick: function (info) {
                         // 이벤트 클릭 시 상세 정보 표시
                         alert(
                             `Event: ${info.event.title}\n` +
@@ -723,6 +834,176 @@
                 var day = date.getDate().toString().padStart(2, '0');
                 return year + '-' + month + '-' + day;
             }
+
+
+            //========== 막대 그래프 시작
+            const ctx4 = document.getElementById("Chart4").getContext("2d");
+
+            // 데이터 수집 및 주차별 데이터 매핑
+            let rows = document.querySelectorAll('.data-row');
+            let weekPrices = [0, 0, 0, 0, 0];  // 1~5주차 초기화
+            let weekQuantities = [0, 0, 0, 0, 0];  // 1~5주차 초기화
+
+            rows.forEach(row => {
+                let priceCell = row.querySelector('.price');
+                // let quantityCell = row.querySelector('.quantity');
+                let weekCell = row.querySelector('td:first-child'); // 첫 번째 열은 주차
+
+                if (priceCell && weekCell) {
+                    // 주차 숫자 추출 (예: "2024년 12월 1주차" -> 1)
+                    let weekMatch = weekCell.innerText.match(/(\d+)주차/);
+                    if (weekMatch) {
+                        let week = parseInt(weekMatch[1]); // 매칭된 주차 숫자 추출
+                        if (week >= 1 && week <= 5) { // 1~5주차만 처리
+                            let price = parseInt(priceCell.innerText.replace(/[₩,]/g, ''));
+                            // let quantity = parseInt(quantityCell.value);
+                            weekPrices[week - 1] = price; // 주차에 맞는 인덱스에 값 저장
+                            // weekQuantities[week - 1] = quantity; // 주차에 맞는 인덱스에 값 저장
+                        }
+                    }
+                }
+            });
+
+            // Chart.js 생성
+            const chart4 = new Chart(ctx4, {
+                type: "bar",
+                data: {
+                    labels: ["1주차", "2주차", "3주차", "4주차", "5주차"], // 주차별 라벨 설정
+                    datasets: [
+                        // {
+                        //     label: "수량", // 첫 번째 데이터셋: 거래 수량
+                        //     backgroundColor: "#365CF5", // 거래 수량 바 색상
+                        //     borderColor: "transparent", // 바의 경계 색상
+                        //     borderWidth: 5, // 막대 간 패딩
+                        //     barThickness: 30, // 각 막대의 기본 굵기
+                        //     maxBarThickness: 30, // 막대의 최대 굵기
+                        //     data: weekQuantities, // 거래 수량 데이터
+                        //     yAxisID: "y", // 왼쪽 축에 맞는 데이터셋
+                        // },
+                        {
+                            label: "금액 (₩)", // 두 번째 데이터셋: 거래 금액
+                            backgroundColor: "#9cd2ff", // 거래 금액 바 색상
+                            borderColor: "#9cd2ff", // 바의 경계 색상
+                            borderWidth: 1,
+                            borderRadius: 10, // 둥근 모서리 설정
+                            barThickness: 30, // 각 막대의 기본 굵기
+                            maxBarThickness: 30, // 막대의 최대 굵기
+                            data: weekPrices, // 거래 금액 데이터
+                            pointStyle: 'circle',
+                            yAxisID: "y2",
+                        },
+                        {
+                            label: "동향", // 두 번째 데이터셋: 꺾은선 그래프
+                            backgroundColor: "#007bff", // 동향 바 색상
+                            borderColor: "#007bff", // 꺾은선 그래프 색상
+                            borderWidth: 1,
+                            data: weekPrices, // 동일한 데이터 사용
+                            fill: false, // 그래프 채우기 비활성화
+                            type: "line", // 꺾은선 그래프 형식
+                            yAxisID: "y2",
+                            pointStyle: 'circle', // 점 스타일 설정
+                            pointRadius: 5, // 점의 크기 설정
+                            pointHoverRadius: 10, // 호버 시 점 크기 설정
+                        }
+                    ],
+                },
+                options: {
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: "#F3F6F8",
+                            titleColor: "#8F92A1",
+                            titleFontSize: 12,
+                            bodyColor: "#171717",
+                            bodyFont: {
+                                weight: "bold",
+                                size: 16,
+                            },
+                            multiKeyBackground: "transparent",
+                            displayColors: false,
+                            padding: {
+                                x: 30,
+                                y: 10,
+                            },
+                            bodyAlign: "center",
+                            titleAlign: "center",
+                            enabled: true,
+                        },
+                        legend: {
+                            display: true, // 범례 활성화
+                            labels: {
+                                boxWidth: 15, // 네모(박스)의 너비 조정
+                                boxHeight: 15,
+                                usePointStyle: true, // 범례에서 도형을 데이터셋의 pointStyle로 변경
+                                padding: 50, // 범례 항목 간 간격 설정
+                            },
+                        },
+                    },
+                    layout: {
+                        padding: {
+                            top: 0,
+                        },
+                    },
+                    responsive: true,
+                    title: {
+                        display: false,
+                    },
+                    scales: {
+                        // y: {
+                        //     position: 'left', // 왼쪽 축
+                        //     grid: {
+                        //         display: true,
+                        //         drawBorder: true,
+                        //     },
+                        //     ticks: {
+                        //         stepSize: 100, // 거래 수량 단위 설정
+                        //         callback: function (value) {
+                        //             if (value >= 1000) {
+                        //                 return value.toLocaleString() + "개"; // 천 단위로 구분
+                        //             }
+                        //             return value + "개"; // 기본적으로 개수로 표시
+                        //         },
+                        //     },
+                        //     title: {
+                        //         display: true,
+                        //     },
+                        // },
+                        y2: {
+                            position: 'left',
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                stepSize: 50000000, // 거래 금액 단위 설정
+                                callback: function (value) {
+                                    if (value === 0) {
+                                        return "₩0원"; // 0일 때 처리
+                                    } else if (value >= 100000000) {
+                                        let result = (value / 100000000).toFixed(1);
+                                        return "₩" + (result.endsWith(".0") ? parseInt(result) : result) + "억원"; // 억원 단위
+                                    } else {
+                                        return "₩" + (value / 10000000).toFixed(0) + "천만원"; // 천만원 단위
+                                    }
+                                },
+                            },
+                            title: {
+                                display: true,
+                            },
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false,
+                                color: "rgba(143, 146, 161, .1)",
+                                zeroLineColor: "rgba(143, 146, 161, .1)",
+                            },
+                            ticks: {
+                                padding: 20,
+                            },
+                        },
+                    },
+                },
+            });
+            //========== 막대 그래프 끝
         </script>
 
     </th:block>

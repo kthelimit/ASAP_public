@@ -50,29 +50,43 @@ public class ExportServiceImpl implements ExportService {
     //출고 요청 승인
     @Override
     public Long modify(ExportDTO dto) {
+        // Export 객체를 찾고 상태 변경
         Export export = exportRepository.findByExportCode(dto.getExportCode());
         log.info(export);
-        //상태 전환
+
+        // 상태 전환
         export.setExportStatus(CurrentStatus.APPROVAL);
         exportRepository.save(export);
 
-        //재고에서 분량만큼 빼기(사실 이걸 불출완료 때 해야하는 거긴 한데.... 여기서 처리하도록 하자.)
+        // Stock 객체를 찾고, 해당 물품의 Material 객체에서 unitPrice 가져오기
         Stock stock = stockRepository.findByMaterialCode(dto.getMaterialCode());
+        double unitPrice = stock.getMaterial().getUnitPrice(); // Material 엔티티에서 unitPrice 가져오기
+
+        // 재고에서 수량 차감
         stock.setQuantity(stock.getQuantity() - export.getRequiredQuantity());
         stockRepository.save(stock);
 
+        // 최종 재고 금액 계산: 재고 수량 * 유닛 가격
+        double finalPrice = stock.getQuantity() * unitPrice;
 
-        //추적용
+        // 추적용 StockTrail 생성
         StockTrail stockTrail = StockTrail.builder()
-                .material(stock.getMaterial())
-                .quantity(-export.getRequiredQuantity())
-                .stock(stock.getQuantity())
-                .date(LocalDateTime.now())
+                .material(stock.getMaterial())  // Material 정보 포함
+                .quantity(-export.getRequiredQuantity())  // 분량만큼 차감
+                .price(finalPrice)  // 누적된 최종 가격
+                .stock(stock.getQuantity())  // 남은 재고 수량
+                .date(LocalDateTime.now())  // 현재 시간
                 .build();
+
+        // StockTrail 서비스에 등록
         stockTrailService.register(stockTrail);
 
         return export.getExportId();
     }
+
+
+
+
 
 
     //불출 완료

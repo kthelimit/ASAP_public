@@ -218,11 +218,11 @@
                             <div class="table-wrapper table-responsive">
                                 <table class="table" id="bom-table">
                                     <tr>
-                                        <th class="text-center"><h6> 부품 종류 </h6></th>
-                                        <th class="text-center"><h6> 부품코드 </h6></th>
-                                        <th class="text-center"><h6> 부품명 </h6></th>
-                                        <th class="text-center"><h6> 부품 수량 </h6></th>
-                                        <th class="text-center"><h6> 삭제 </h6></th>
+                                        <th class="text-center sticky"><h6> 부품 종류 </h6></th>
+                                        <th class="text-center sticky"><h6> 부품코드 </h6></th>
+                                        <th class="text-center sticky"><h6> 부품명 </h6></th>
+                                        <th class="text-center sticky"><h6> 부품 수량 </h6></th>
+                                        <th class="text-center sticky"><h6> 삭제 </h6></th>
                                     </tr>
                                     <!-- 행 종료-->
 
@@ -307,9 +307,9 @@
 
                 //아래 테이블 출력 리셋
                 $('#bom-table').empty();
-                $('#bom-table').append('<tr><th class="text-center"><h6>부품 종류</h6></th><th class="text-center">' +
-                    '<h6>부품코드</h6></th><th class="text-center"><h6>부품명</h6></th><th class="text-center"><h6>부품 수량</h6>' +
-                    '</th><th class="text-center"><h6>삭제</h6></th></tr>')
+                $('#bom-table').append('<tr><th class="text-center sticky"><h6>부품 종류</h6></th><th class="text-center sticky">' +
+                    '<h6>부품코드</h6></th><th class="text-center sticky"><h6>부품명</h6></th><th class="text-center sticky"><h6>부품 수량</h6>' +
+                    '</th><th class="text-center sticky"><h6>삭제</h6></th></tr>')
 
                 //선택한 상품에 따른 BOM 불러오기
                 loadBom(selectValue);

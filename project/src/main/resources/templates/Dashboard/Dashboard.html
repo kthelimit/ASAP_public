@@ -851,9 +851,8 @@
                     eventClick: function (info) {
                         // 이벤트 클릭 시 상세 정보 표시
                         alert(
-                            `Event: ${info.event.title}\n` +
-                            `Start: ${changeDateFormat(info.event.start)}\n` +
-                            `End: ${changeEndDateFormat(info.event.end)}\n`
+                            `일정: ${info.event.title}\n` +
+                            `생산 일정: ${changeDateFormat(info.event.start)} ~ ${changeEndDateFormat(info.event.end)}\n`
                         );
                     }
                 });

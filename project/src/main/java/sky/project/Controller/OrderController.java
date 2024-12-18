@@ -63,7 +63,7 @@ public class OrderController {
 
         Page<ProcurementPlanDTO> procure;
         if (keyword != null && !keyword.isEmpty()) {
-            procure = procurementPlanService.searchProcurementPlans(keyword, pageable);
+            procure = procurementPlanService.searchProcurementPlansOnHold(keyword, pageable);
         } else {
             procure = procurementPlanService.getAllProcurementPlan(pageable);
         }
@@ -225,7 +225,7 @@ public class OrderController {
 
     @PostMapping("/delivery/request")
     public String requestDelivery(
-          DeliveryRequestDTO dto,
+          DeliveryRequestDTO dto, int page,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -243,6 +243,7 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
+        redirectAttributes.addAttribute("page", page);
         // 요청 후 리디렉션 처리 (DTO는 리디렉션 이후 갱신된 값 전달)
         return "redirect:/order/delivery";
     }
@@ -295,7 +296,7 @@ public class OrderController {
     @PostMapping("/inspectionUpdate")
     public String inspectionUpdate(InspectionDTO dto) {
         inspectionService.updateInspection(dto);
-        return "redirect:/suppliers/page";
+        return "redirect:/suppliers/page#inspection";
     }
 
 }

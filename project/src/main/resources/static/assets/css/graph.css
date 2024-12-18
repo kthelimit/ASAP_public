@@ -1,0 +1,55 @@
+/* 탭 스타일 */
+.tabs {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.tabs input[type="radio"] {
+    display: none;
+}
+
+.tabs .tab-menu {
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid #ddd;
+}
+
+.tabs .tab-menu li {
+    margin-right: 10px;
+}
+
+.tabs .tab-menu label {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    background: #f9f9f9;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+}
+
+.tabs input#tab-weekly:checked ~ .tab-menu label[for="tab-weekly"],
+.tabs input#tab-monthly:checked ~ .tab-menu label[for="tab-monthly"],
+.tabs input#tab-yearly:checked ~ .tab-menu label[for="tab-yearly"] {
+    background: #fff;
+    font-weight: bold;
+    color: #333;
+}
+
+.tabs .content section {
+    display: none;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+}
+
+.tabs input#tab-yearly:checked ~ .content #yearly-stock,
+.tabs input#tab-monthly:checked ~ .content #monthly-stock,
+.tabs input#tab-weekly:checked ~ .content #weekly-stock {
+    display: block;
+}

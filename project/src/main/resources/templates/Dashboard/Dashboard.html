@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
+        <link rel="stylesheet" th:href="@{/assets/css/graph.css}">
+
         <!-- 관리자 -->
         <!-- ========== section start ========== -->
         <section class="section">
@@ -365,10 +367,11 @@
                         </div>
                         <!-- 달력 끝 -->
 
+
                         <!-- 거래 내역 요약 -->
                         <div class="card-style mb-30">
                             <h4 class="mb-10">재고 내역 요약</h4>
-<!--                            <p><strong>총 재고 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>-->
+                            <!--                            <p><strong>총 재고 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>-->
 
 
                             <div class="row">
@@ -378,18 +381,18 @@
                                             <div class="left">
                                                 <h6 class="text-medium mb-2">재고</h6>
                                             </div>
-<!--                                            <div class="right">-->
-<!--                                                <div class="select-style-1 mb-2">-->
-<!--                                                    <div class="select-position select-sm">-->
-<!--                                                        <select class="light-bg">-->
-<!--                                                            <option value="" selected>이번 달</option>-->
-<!--                                                            <option value="">저번 달</option>-->
-<!--                                                            <option value="">지난 3개월</option>-->
-<!--                                                        </select>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                &lt;!&ndash; end select &ndash;&gt;-->
-<!--                                            </div>-->
+                                            <!--                                            <div class="right">-->
+                                            <!--                                                <div class="select-style-1 mb-2">-->
+                                            <!--                                                    <div class="select-position select-sm">-->
+                                            <!--                                                        <select class="light-bg">-->
+                                            <!--                                                            <option value="" selected>이번 달</option>-->
+                                            <!--                                                            <option value="">저번 달</option>-->
+                                            <!--                                                            <option value="">지난 3개월</option>-->
+                                            <!--                                                        </select>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                &lt;!&ndash; end select &ndash;&gt;-->
+                                            <!--                                            </div>-->
                                         </div>
                                         <!-- End Title -->
                                         <div class="chart">
@@ -404,72 +407,111 @@
                             </div>
 
 
-                            <!-- 연별 재고 요약 -->
-                            <h4 class="mt-20">연별 재고</h4>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 50%"><h6>연도</h6></th>
-<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="entry : ${yearlySummary}">
-                                    <td class="text-center">[[${entry.key}]]</td>
-<!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
-                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(yearlySummary)}">
-                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <!-- 탭 메뉴 -->
+                            <div class="tabs">
+                                <input type="radio" id="tab-weekly" name="tab-control" checked>
+                                <input type="radio" id="tab-monthly" name="tab-control">
+                                <input type="radio" id="tab-yearly" name="tab-control">
 
-                            <!-- 월별 재고 요약 -->
-                            <h4 class="mt-20">월별 재고</h4>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 50%"><h6>월</h6></th>
-<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="entry : ${monthlySummary}">
-                                    <td class="text-center">[[${entry.key}]]</td>
-<!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
-                                    <td class="text-center">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(monthlySummary)}">
-                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                </tr>
-                                </tbody>
-                            </table>
 
-                            <!-- 주별 재고 요약 -->
-                            <h4 class="mt-20">주별 재고</h4>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 50%"><h6>주</h6></th>
-<!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="entry : ${weeklySummary}" class="data-row">
-                                    <td class="text-center">[[${entry.key}]]</td>
-<!--                                    <td class="text-center quantity">[[${entry.value.quantity}]]</td>-->
-                                    <td class="text-center price">₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]</td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(weeklySummary)}">
-                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                <ul class="tab-menu">
+                                    <li><label for="tab-weekly" role="button">주간 재고</label></li>
+                                    <li><label for="tab-monthly" role="button">월간 재고</label></li>
+                                    <li><label for="tab-yearly" role="button">연간 재고</label></li>
+                                </ul>
 
+
+                                <div class="content">
+
+
+                                    <section id="weekly-stock">
+                                        <!-- 주간 재고 요약 -->
+                                        <h4 class="mt-20">주간 재고</h4>
+                                        <p class="text-sm mb-20">이번 달의 주간 기록만 표시됩니다.</p>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 50%"><h6>주</h6></th>
+                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="entry : ${weeklySummary}" class="data-row">
+                                                <td class="text-center">[[${entry.key}]]</td>
+                                                <!--                                    <td class="text-center quantity">[[${entry.value.quantity}]]</td>-->
+                                                <td class="text-center price">
+                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(weeklySummary)}">
+                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+
+                                    <section id="monthly-stock">
+                                        <!-- 월간 재고 요약 -->
+                                        <h4 class="mt-20">월간 재고</h4>
+                                        <p class="text-sm mb-20">올해의 월간 기록만 표시됩니다.</p>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 50%"><h6>월</h6></th>
+                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="entry : ${monthlySummary}">
+                                                <td class="text-center">[[${entry.key}]]</td>
+                                                <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                                <td class="text-center">
+                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                                    'COMMA')}]]
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(monthlySummary)}">
+                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+
+                                    <!-- 연간 재고 요약 -->
+                                    <section id="yearly-stock">
+                                        <h4 class="mt-20">연간 재고</h4>
+                                        <p class="text-sm mb-20">최근 5년간의 기록만 표시됩니다.</p>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 50%"><h6>연도</h6></th>
+                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="entry : ${yearlySummary}">
+                                                <td class="text-center">[[${entry.key}]]</td>
+                                                <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                                <td class="text-center">
+                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                                    'COMMA')}]]
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(yearlySummary)}">
+                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+
+                                </div>
+                            </div>
 
                         </div>
                     </div>

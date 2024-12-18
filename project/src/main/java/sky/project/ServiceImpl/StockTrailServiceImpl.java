@@ -15,10 +15,7 @@ import sky.project.Service.StockTrailService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,16 +45,20 @@ public class StockTrailServiceImpl implements StockTrailService {
     public Map<String, GraphDTO> getYearlyStockSummary() {
         List<StockTrail> stockTrails = stockTrailRepository.findAll();
 
-        // material_code별 최신 데이터 필터링
+        // 최신 5년 데이터만 필터링
+        int currentYear = LocalDate.now().getYear();
+        int fourYearsAgo = currentYear - 4;
+
         Map<String, StockTrail> latestStockTrails = stockTrails.stream()
+                .filter(stockTrail -> stockTrail.getDate().getYear() >= fourYearsAgo) // 최신 5년 데이터만 필터링
                 .collect(Collectors.toMap(
-                        stockTrail -> stockTrail.getMaterial().getMaterialCode(), // materialCode 접근
+                        stockTrail -> stockTrail.getMaterial().getMaterialCode(),
                         Function.identity(),
                         (existing, replacement) -> existing.getDate().isAfter(replacement.getDate()) ? existing : replacement
                 ));
 
         // 연도별 요약
-        Map<String, GraphDTO> yearlySummary = new HashMap<>();
+        Map<String, GraphDTO> yearlySummary = new TreeMap<>(Comparator.reverseOrder()); // 역순 정렬
         for (StockTrail stockTrail : latestStockTrails.values()) {
             String key = String.format("%d년", stockTrail.getDate().getYear());
 
@@ -71,20 +72,25 @@ public class StockTrailServiceImpl implements StockTrailService {
         return yearlySummary;
     }
 
+
     @Override
     public Map<String, GraphDTO> getMonthlyStockSummary() {
         List<StockTrail> stockTrails = stockTrailRepository.findAll();
 
-        // material_code별 최신 데이터 필터링
+        // 현재 연도 가져오기
+        int currentYear = LocalDate.now().getYear();
+
+        // 최신 월들만 필터링
         Map<String, StockTrail> latestStockTrails = stockTrails.stream()
+                .filter(stockTrail -> stockTrail.getDate().getYear() == currentYear)
                 .collect(Collectors.toMap(
-                        stockTrail -> stockTrail.getMaterial().getMaterialCode(), // materialCode 접근
+                        stockTrail -> stockTrail.getMaterial().getMaterialCode(),
                         Function.identity(),
                         (existing, replacement) -> existing.getDate().isAfter(replacement.getDate()) ? existing : replacement
                 ));
 
         // 월별 요약
-        Map<String, GraphDTO> monthlySummary = new HashMap<>();
+        Map<String, GraphDTO> monthlySummary = new TreeMap<>(Comparator.reverseOrder());
         for (StockTrail stockTrail : latestStockTrails.values()) {
             String key = String.format("%d년 %02d월",
                     stockTrail.getDate().getYear(),
@@ -105,8 +111,13 @@ public class StockTrailServiceImpl implements StockTrailService {
         List<StockTrail> stockTrails = stockTrailRepository.findAll();
         WeekFields weekFields = WeekFields.of(Locale.getDefault()); // 주 기준
 
+        // 현재 연도 가져오기
+        int currentYear = LocalDate.now().getYear();
+        int currentMonth = LocalDate.now().getMonthValue();
+
         // material_code별 최신 데이터 필터링
         Map<String, StockTrail> latestStockTrails = stockTrails.stream()
+                .filter(stockTrail -> stockTrail.getDate().getYear() == currentYear && stockTrail.getDate().getMonthValue() == currentMonth)
                 .collect(Collectors.toMap(
                         stockTrail -> stockTrail.getMaterial().getMaterialCode(), // materialCode 접근
                         Function.identity(),

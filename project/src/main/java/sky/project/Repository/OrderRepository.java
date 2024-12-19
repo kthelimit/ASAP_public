@@ -76,5 +76,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByOrderCode(String orderCode);
 
+
+        @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o WHERE o.material.materialCode = :materialCode")
+        Integer findTotalOrderQuantityByMaterialCode(@Param("materialCode") String materialCode);
 }
+
 

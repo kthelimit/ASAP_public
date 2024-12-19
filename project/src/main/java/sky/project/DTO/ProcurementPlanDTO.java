@@ -23,5 +23,8 @@ public class ProcurementPlanDTO {
     private LocalDate procurementDueDate; // 조달 완료 예정일
     private LocalDateTime createdDate;
     private String status; //조달계획 상태
+    private int requireQuantity; // 추가된 필드
+
+
 }
 

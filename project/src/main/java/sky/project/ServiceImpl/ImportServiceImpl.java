@@ -135,6 +135,7 @@ public class ImportServiceImpl implements ImportService {
                     .material(material)
                     .quantity(passedQuantity)
                     .stock(stock.getQuantity())
+                    .price(material.getUnitPrice() * stock.getQuantity())
                     .date(LocalDateTime.now())
                     .build();
             stockTrailService.register(stockTrail);

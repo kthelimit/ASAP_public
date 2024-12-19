@@ -10,6 +10,8 @@ import sky.project.Repository.ProductionPerDayRepository;
 import sky.project.Repository.ProductionPlanRepository;
 import sky.project.Service.ProductionPerDayService;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class ProductionPerDayServiceImpl implements ProductionPerDayService {
@@ -32,15 +34,36 @@ public class ProductionPerDayServiceImpl implements ProductionPerDayService {
         productionPlanRepository.deleteById(id);
     }
 
+    @Override
+    public List<ProductionPerDayDTO> findbyPlanId(Long planId) {
+        return productionPerDayRepository.findByProductionId(planId).stream().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public ProductionPerDayDTO findById(Long id){
+        ProductionPerDay entity = productionPerDayRepository.findById(id).orElse(null);
+        return entityToDto(entity);
+    }
+
 
     private ProductionPerDay dtoToEntity(ProductionPerDayDTO dto) {
 
         ProductionPlan plan = productionPlanRepository.findByProductionPlanCode(dto.getProductionPlanCode());
 
         return ProductionPerDay.builder()
+                .id(dto.getId())
                 .productionDate(dto.getProductionDate())
                 .productionQuantity(dto.getProductionQuantity())
                 .productionPlan(plan)
+                .build();
+    }
+
+    private ProductionPerDayDTO entityToDto(ProductionPerDay entity) {
+        return ProductionPerDayDTO.builder()
+                .id(entity.getId())
+                .productionDate(entity.getProductionDate())
+                .productionQuantity(entity.getProductionQuantity())
+                .productionPlanCode(entity.getProductionPlan().getProductionPlanCode())
                 .build();
     }
 }

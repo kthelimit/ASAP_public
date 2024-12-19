@@ -97,21 +97,24 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Map<String, GraphDTO> getWeeklySummary(String supplierName) {
         List<Invoice> invoices = findInvoicesBySupplier(supplierName);
-
         WeekFields weekFields = WeekFields.of(Locale.getDefault()); // 로케일에 따른 주 기준
+
         Map<String, GraphDTO> map = new HashMap<>();
-        for(int i=0;i<invoices.size();i++) {
+        for (int i = 0; i < invoices.size(); i++) {
             LocalDate date = LocalDate.from(invoices.get(i).getCreatedDate());
             int weekOfMonth = date.get(weekFields.weekOfMonth());
-            String key= String.format("%s %d주차", date.format(DateTimeFormatter.ofPattern("yyyy년 MM월")), weekOfMonth);
-            GraphDTO graphDTO = new GraphDTO();
-            graphDTO.setQuantity(invoices.get(i).getQuantity());
-            graphDTO.setTotalPrice(invoices.get(i).getTotalPrice());
-            map.put(key, graphDTO);
+            String key = String.format("%s %d주차", date.format(DateTimeFormatter.ofPattern("yyyy년 MM월")), weekOfMonth);
+
+            GraphDTO graphDTO = map.getOrDefault(key, new GraphDTO()); // 기존 값 가져오기, 없으면 새로 생성
+            graphDTO.setQuantity(graphDTO.getQuantity() + invoices.get(i).getQuantity()); // 수량 합산
+            graphDTO.setTotalPrice(graphDTO.getTotalPrice() + invoices.get(i).getTotalPrice()); // 금액 합산
+
+            map.put(key, graphDTO); // 맵에 다시 저장
         }
 
         return map;
     }
+
 
     @Override
     public double getTotalAmount(String supplierName) {

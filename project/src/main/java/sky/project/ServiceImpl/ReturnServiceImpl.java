@@ -70,6 +70,7 @@ public class ReturnServiceImpl implements ReturnService {
             StockTrail stockTrail = StockTrail.builder()
                     .material(material)
                     .quantity(entity.getQuantity())
+                    .price(material.getUnitPrice() * stock.getQuantity())
                     .stock(stock.getQuantity())
                     .date(LocalDateTime.now())
                     .build();

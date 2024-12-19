@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.*;
+import sky.project.Entity.ProductionPerDay;
+import sky.project.Repository.ProductionPerDayRepository;
 import sky.project.Service.*;
 
 import java.time.LocalDate;
@@ -36,6 +38,8 @@ public class ProductionPlanController {
     private ProcurementPlanService procurementPlanService;
     @Autowired
     private ProductionPerDayService productionPerDayService;
+    @Autowired
+    private ProductionPerDayRepository productionPerDayRepository;
 
 
     @GetMapping("/list")
@@ -78,18 +82,25 @@ public class ProductionPlanController {
         } else {
             // 수정 동작
             productionPlanCode = productionPlanService.updateProductionPlan(productionPlanDTO);
+            //먼저 해당 생산 계획으로 등록된 일자별 생산 내용을 지워야함
+            List<ProductionPerDay> perDays = productionPerDayRepository.findByProductionId(productionPlanDTO.getPlanId());
+            productionPerDayRepository.deleteAll(perDays);
+
         }
 
         //날짜 등록
+        int compareDay = productionPlanDTO.getProductionEndDate().compareTo(productionPlanDTO.getProductionStartDate());
+        log.info(compareDay);
 
-        for (int i = 0; i < QuantityPerDays.size(); i++) {
-            //수량이 0보다 클 때만 등록(0일때는 등록되지 않는다)
-            if (QuantityPerDays.get(i) > 0) {
+        for (int i = 0; i < compareDay + 1; i++) {
+            //수량이 0이거나 그보다 클 때만 등록(마이너스일 때는 등록되지 않는다)
+            if (QuantityPerDays.get(i) >= 0) {
                 ProductionPerDayDTO perDayDTO = ProductionPerDayDTO.builder()
                         .productionPlanCode(productionPlanCode)
                         .productionDate(productionDates.get(i))
                         .productionQuantity(QuantityPerDays.get(i))
                         .build();
+
                 productionPerDayService.register(perDayDTO);
             }
         }
@@ -98,10 +109,19 @@ public class ProductionPlanController {
         return "redirect:/plan/list";
     }
 
+    //수정하는 페이지
     @GetMapping("/edit/{id}")
     public String editProductionPlan(@PathVariable("id") Long id, Model model) {
         ProductionPlanDTO planDTO = productionPlanService.getProductionPlanById(id);
         model.addAttribute("productionPlanDTO", planDTO);
+
+        List<ProductionPerDayDTO> perDayDTOS = productionPerDayService.findbyPlanId(id);
+        log.info(perDayDTOS);
+        model.addAttribute("perDayDTOS", perDayDTOS);
+
+        List<BomDTO> bomDTOS =  bomService.findWithProductCode(planDTO.getProductCode());
+        model.addAttribute("bomDTOS", bomDTOS);
+
         return "ProductionPlan/ProductPlanModify";
     }
 

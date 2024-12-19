@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import sky.project.DTO.OrdersDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
+import sky.project.Entity.Order;
 
 import java.util.List;
 
@@ -28,6 +29,11 @@ public interface OrderService {
     Page<OrdersDTO> findByStatuses(List<String> statuses, Pageable pageable);
 
     OrdersDTO findByOrderCode(String orderCode);
+
+    // 남은 조달 수량 계산 ( 발주량 - 현재 납품지시 넣은 수량)
+    int calculateRemainedQuantity(Order order);
+
+    int calculateRemainedQuantityForBOMDTO(Material material);
 
     //대시 보드 출력용 이번달 발주 건 수
     int getCountOrderThisMonth();

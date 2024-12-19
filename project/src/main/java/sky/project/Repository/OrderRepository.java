@@ -40,6 +40,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.status IN :statuses")
     Page<Order> findByStatuses(@Param("statuses") List<CurrentStatus> statuses, Pageable pageable);
 
+    @Query("select o from Order o where o.material.materialCode=:materialCode and o.status !='FINISHED'")
+    List<Order> findByMaterialCodeNotFinished(String materialCode);
+
     //대시보드 출력용 이번달 발주 건수
     @Query("select count(o) from Order o where o.createdDate>=:start and o.createdDate<=:end")
     int countOrderThisMonth(LocalDateTime start, LocalDateTime end);

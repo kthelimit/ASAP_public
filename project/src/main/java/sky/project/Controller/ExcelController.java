@@ -44,6 +44,7 @@ public class ExcelController {
     private final SupplierService supplierService;
     private final SupplierRepository supplierRepository;
     private final UserRepository userRepository;
+    private final ProductionPerDayService productionPerDayService;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
 
     //상품 등록
@@ -293,7 +294,21 @@ public class ExcelController {
             entity.setProductionEndDate(productionEndDate);
             entity.setProductionQuantity(productionQuantity);
 
-            productionPlanService.registerProductionPlan(entity);
+            String productionPlanCode = productionPlanService.registerProductionPlan(entity);
+
+            //6에서부터 10까지는 일별 생산량이다.
+            for (int j = 0; j < 5; j++) {
+                if (row.getCell(6 + j, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null) {
+                    int quantity = Integer.parseInt(formatter.formatCellValue(row.getCell(6 + j)));
+                    ProductionPerDayDTO productionPerDayDTO = new ProductionPerDayDTO();
+                    productionPerDayDTO.setProductionQuantity(quantity);
+                    productionPerDayDTO.setProductionDate(productionStartDate.plusDays(j));
+                    productionPerDayDTO.setProductionPlanCode(productionPlanCode);
+                    productionPerDayService.register(productionPerDayDTO);
+                }
+            }
+
+
         }
     }
 
@@ -342,6 +357,13 @@ public class ExcelController {
         headerRow.createCell(4).setCellValue("※생산종료일");
         headerRow.createCell(5).setCellValue("※생산수량");
 
+        //최대 5일자까지 등록이 된다.
+        headerRow.createCell(6).setCellValue("※1일자 생산수량");
+        headerRow.createCell(7).setCellValue("※2일자 생산수량");
+        headerRow.createCell(8).setCellValue("※3일자 생산수량");
+        headerRow.createCell(9).setCellValue("※4일자 생산수량");
+        headerRow.createCell(10).setCellValue("※5일자 생산수량");
+
         if (!template) {
             //Body 설정
             List<ProductionPlan> planList = productionPlanService.getProductionPlans();
@@ -360,6 +382,14 @@ public class ExcelController {
                 bodyRow.createCell(4).setCellValue(Date.valueOf(planList.get(i).getProductionEndDate()));
                 bodyRow.getCell(4).setCellStyle(cellStyle);
                 bodyRow.createCell(5).setCellValue(planList.get(i).getProductionQuantity());
+
+                //생산 수량 출력
+                List<ProductionPerDayDTO> perDays = productionPerDayService.findbyPlanId(planList.get(i).getPlanId());
+                for (int j = 0; j < perDays.size(); j++) {
+                    bodyRow.createCell(6 + j).setCellValue(perDays.get(j).getProductionQuantity());
+                }
+
+
             }
         }
     }

@@ -29,6 +29,9 @@ public class BomDTO {
     //가용재고 불러오기용
     private int availableStock;
 
+    //남은 조달 수량 불러오기용
+    private int remainedOrderQuantity;
+
     //조달 납기일 불러오기용
     private LocalDate dayAfterLeadTime;
 

@@ -243,32 +243,28 @@
                                     <tbody id="bomData">
 
 
-                                    <tr th:classappend="${bom.isRegister ? 'registered' : ''}"
+                                    <tr
                                         th:each="bom : ${selectedBom}">
 
                                         <!-- 생산계획이 많다보니 미래에 필요한 양도 계산할 수 있어야할 것으로 보임.... 일단은 전부 출력하게 바꿔둠-->
                                         <!-- 출력할 가용재고의 양을 계산하는 수식을 바꿔야할지도....        -->
                                         <!--                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">-->
                                         <td class="text-center">
-                                            <th:block th:if="${!bom.register}">
-                                                <p class="text-danger">미등록</p>
-                                            </th:block>
-                                            <th:block th:if="${bom.register}">
-                                                <p class="text-success">등록완료</p>
-                                            </th:block>
                                             <input
                                                     name="selectedRegister"
                                                     th:attr="
                             data-bom-id=${bom.bomId},
-                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure : 0},
+                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock : 0},
                             data-material-name=${bom.materialName},
                             data-required-quantity=${bom.requireQuantity * selectedPlan.productionQuantity},
                             data-product-code=${bom.productCode},
-                            data-available-stock=${bom.availavbleStockProcure},
+                            data-available-stock=${bom.availableStock},
                             data-product-name=${selectedPlan.productName},
                             data-production-plan-code=${selectedPlan.productionPlanCode},
                             data-material-code=${bom.materialCode}"
-                                                    type="checkbox">
+                                                    type="checkbox"
+                                                    th:checked="${bom.register}"
+                                                    th:disabled="${bom.register}">
                                         </td>
                                         <td style="width: 130px">
                                             <div class="select-style-1" style="width: 120px; height: 10px">
@@ -328,7 +324,29 @@
         <script>
 
             document.addEventListener('DOMContentLoaded', () => {
-                groupBomByCategory();
+                groupBomByCategory(); // 초기 그룹화 작업 실행
+
+                // 초기 상태 동기화
+                const parentCheckboxes = document.querySelectorAll('#bomData tr[style*="colspan"] input[type="checkbox"]');
+                parentCheckboxes.forEach(parentCheckbox => {
+                    updateParentCheckboxState(parentCheckbox); // 상위 체크박스 초기 상태 설정
+                });
+
+                // 체크박스 상태 변경 시 상위 부품 상태 업데이트
+                document.querySelectorAll('#bomData input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        parentCheckboxes.forEach(parentCheckbox => {
+                            updateParentCheckboxState(parentCheckbox); // 상위 체크박스 상태 동기화
+                        });
+                    });
+
+                    // 하위 부품의 disabled 상태 변경 시 상위 부품 상태 업데이트
+                    new MutationObserver(() => {
+                        parentCheckboxes.forEach(parentCheckbox => {
+                            updateParentCheckboxState(parentCheckbox); // 상위 체크박스 상태 동기화
+                        });
+                    }).observe(checkbox, { attributes: true, attributeFilter: ['disabled'] });
+                });
             });
 
             function groupBomByCategory() {
@@ -432,6 +450,9 @@
                         childRow.style.display = 'none'; // 초기 표시
                         tableBody.appendChild(childRow);
                     });
+                    // 동적으로 생성된 상위 체크박스 초기화
+                    const parentCheckbox = categoryRow.querySelector('input[type="checkbox"]');
+                    updateParentCheckboxState(parentCheckbox); // 상태 동기화
                 }
             }
 
@@ -450,31 +471,77 @@
                     row.style.display = isHidden ? '' : 'none';
                 });
             }
+            function updateParentCheckboxState(parentCheckbox) {
+                let nextRow = parentCheckbox.closest('tr').nextElementSibling;
+                const childCheckboxes = [];
 
+                // 하위 부품 체크박스 수집
+                while (nextRow && !nextRow.innerHTML.includes('colspan')) {
+                    const childCheckbox = nextRow.querySelector('input[type="checkbox"]');
+                    if (childCheckbox) {
+                        childCheckboxes.push(childCheckbox);
+                    }
+                    nextRow = nextRow.nextElementSibling;
+                }
+
+                // 하위 부품 상태 검사
+                const allDisabled = childCheckboxes.every(checkbox => checkbox.disabled);
+                const allChecked = childCheckboxes.every(checkbox => checkbox.checked);
+
+                // 상위 부품 상태 업데이트
+                if (allDisabled) {
+                    parentCheckbox.disabled = true;
+                    parentCheckbox.checked = true; // 모든 하위 부품이 `disabled` 상태라면 자동으로 체크
+                } else {
+                    parentCheckbox.disabled = false;
+                    parentCheckbox.checked = childCheckboxes.some(checkbox => checkbox.checked);
+                }
+            }
             function toggleCategoryCheckbox(categoryCheckbox) {
+                const rows = [];
                 let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
 
                 // 하위 부품 체크박스 상태 변경
                 while (nextRow && !nextRow.innerHTML.includes('colspan')) {
                     const childCheckbox = nextRow.querySelector('input[type="checkbox"]');
-                    if (childCheckbox) childCheckbox.checked = categoryCheckbox.checked;
+                    if (childCheckbox && !childCheckbox.disabled) {
+                        childCheckbox.checked = categoryCheckbox.checked;
+                    }
                     nextRow = nextRow.nextElementSibling;
                 }
             }
 
 
             function toggleAllCheckboxes(selectAll) {
-                // 모든 체크박스 찾기 (상위 부품 및 하위 부품 체크박스)
                 const allCheckboxes = document.querySelectorAll('#bomData input[type="checkbox"]');
 
-                // 체크 상태 동기화
                 allCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
+                    if (selectAll.checked) {
+                        // 전체 선택 시 이미 체크된 항목은 유지
+                        if (!checkbox.checked) {
+                            checkbox.checked = true;
+                        }
+                    } else {
+                        // 전체 해제 시 이미 체크된 항목은 유지
+                        if (!checkbox.disabled) {
+                            checkbox.checked = false;
+                        }
+                    }
+                });
+
+                // 상위 부품 상태 업데이트
+                const parentCheckboxes = document.querySelectorAll('#bomData tr[style*="colspan"] input[type="checkbox"]');
+                parentCheckboxes.forEach(parentCheckbox => {
+                    toggleCategoryCheckbox(parentCheckbox);
                 });
             }
 
+
             function processSelectedItems() {
+                // 선택된 체크박스를 모두 가져옵니다.
                 const selectedCheckboxes = document.querySelectorAll('input[name="selectedRegister"]:checked');
+
+                // 체크박스가 없으면 경고 메시지
                 if (selectedCheckboxes.length === 0) {
                     alert("선택된 항목이 없습니다.");
                     return;
@@ -483,6 +550,11 @@
                 const procurementDataList = []; // 데이터를 담을 배열
 
                 selectedCheckboxes.forEach(checkbox => {
+                    // disabled 상태 체크박스는 제외
+                    if (checkbox.disabled) {
+                        return; // 무시하고 다음 체크박스로 진행
+                    }
+
                     const row = checkbox.closest('tr'); // 체크박스가 속한 행
                     const dueDateInput = row.querySelector('input[type="date"]'); // 날짜 입력 필드 찾기
                     const procurementDueDate = dueDateInput ? dueDateInput.value : null;
@@ -506,17 +578,17 @@
 
                     // JSON 객체 생성
                     const procurementData = {
-                        productionPlanCode : checkbox.getAttribute('data-production-plan-code'),
-                        productCode        : checkbox.getAttribute('data-product-code'),
-                        productName        : checkbox.getAttribute('data-product-name'),
-                        supplierId         : supplierId, // 공급업체 ID 추가
-                        supplierName       : supplierName, // 공급업체 이름 추가
-                        materialName       : checkbox.getAttribute('data-material-name'),
-                        materialCode       : checkbox.getAttribute('data-material-code'),
+                        productionPlanCode: checkbox.getAttribute('data-production-plan-code'),
+                        productCode: checkbox.getAttribute('data-product-code'),
+                        productName: checkbox.getAttribute('data-product-name'),
+                        supplierId: supplierId, // 공급업체 ID 추가
+                        supplierName: supplierName, // 공급업체 이름 추가
+                        materialName: checkbox.getAttribute('data-material-name'),
+                        materialCode: checkbox.getAttribute('data-material-code'),
                         procurementQuantity: parseInt(checkbox.getAttribute('data-procurement-quantity')),
-                        requireQuantity    : parseInt(checkbox.getAttribute('data-required-quantity')),
-                        procurementDueDate : procurementDueDate,
-                        createDate         : new Date().toISOString()
+                        requireQuantity: parseInt(checkbox.getAttribute('data-required-quantity')),
+                        procurementDueDate: procurementDueDate,
+                        createDate: new Date().toISOString()
                     };
 
                     procurementDataList.push(procurementData); // 배열에 추가
@@ -527,6 +599,7 @@
                 // 일괄 등록 요청
                 registerProcurement(procurementDataList);
             }
+
 
             function registerProcurement(dataList) {
                 fetch('/procure/register', {
@@ -578,6 +651,11 @@
                     } else {
                         console.log(`No checkbox found in Row ${index + 1}`);
                     }
+                });
+                // 상위 체크박스 상태 업데이트
+                const parentCheckboxes = document.querySelectorAll('#bomData tr[style*="colspan"] input[type="checkbox"]');
+                parentCheckboxes.forEach(parentCheckbox => {
+                    updateParentCheckboxState(parentCheckbox); // 상태 동기화
                 });
             }
 

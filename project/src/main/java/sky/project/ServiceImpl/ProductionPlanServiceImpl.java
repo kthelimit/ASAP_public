@@ -30,6 +30,11 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         return productionPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
+    public Page<ProductionPlanDTO> getProductionPlansByStatus(List<String> statuses, Pageable pageable) {
+        return productionPlanRepository.findByStatusIn(statuses, pageable)
+                .map(this::toDTO); // 기존 toDTO 메서드 활용
+    }
+
     @Override
     public List<ProductionPlan> getProductionPlans() {
         return productionPlanRepository.findAll();
@@ -91,6 +96,15 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     public String updateProductionPlanInProgress(String productionPlanCode){
         ProductionPlan plan = productionPlanRepository.findByProductionPlanCode(productionPlanCode);
         plan.setStatus(CurrentStatus.IN_PROGRESS);
+        productionPlanRepository.save(plan);
+        return plan.getProductionPlanCode();
+    }
+
+    @Override
+    public String updateProductionPlanFinshed(String productionPlanCode){
+        System.out.println("Updating Production Plan to FINISHED for code: " + productionPlanCode);
+        ProductionPlan plan = productionPlanRepository.findByProductionPlanCode(productionPlanCode);
+        plan.setStatus(CurrentStatus.FINISHED);
         productionPlanRepository.save(plan);
         return plan.getProductionPlanCode();
     }

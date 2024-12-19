@@ -50,7 +50,7 @@
                                     </thead>
                                     <tbody>
                                     <!-- 처리 중인 주문 리스트 -->
-                                    <tr th:each="orderP : ${purchaseOrders}">
+                                    <tr th:each="orderP : ${purchaseOrders}" th:if="${orderP.remainedQuantity>1}">
                                         <td class="min-width text-center"><p th:text="${orderP.orderCode}"></p></td>
                                         <td class="min-width text-center"><p th:text="${orderP.supplierName}"></p></td>
                                         <td class="min-width text-center"><p th:text="${orderP.materialType}"></p></td>

@@ -127,6 +127,7 @@
                     <div class="col-lg-12">
                         <div class="card-style mb-30">
                             <div class="search_tab">
+                                <span class="anchor" id="inspection"></span>
                                 <h3 class="mb-10">입고 검수</h3>
                                 <div class="row" style="justify-content: flex-end">
                                     <div class="input-style-1 col-lg-4">
@@ -203,7 +204,7 @@
                                             <td class="text-center">
                                                 <!-- passedQuantity 값을 입력 -->
                                                 <input class="how-ea" name="passedQuantity" style="width: 80px"
-                                                       th:value="${import.passedQuantity}"
+                                                       th:value="${import.quantity}"
                                                        type="number"/>
                                             </td>
                                             <td class="min-width text-center">

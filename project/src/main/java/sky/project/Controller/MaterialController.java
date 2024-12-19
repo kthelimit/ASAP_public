@@ -134,7 +134,13 @@ public class MaterialController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/material/import"; // 페이지 리다이렉트
+
+        if(status.equals(CurrentStatus.UNDER_INSPECTION.name())){
+            return "redirect:/material/import"; // 페이지 리다이렉트
+        }else{
+            return "redirect:/material/import#inspection"; // 페이지 리다이렉트
+        }
+
     }
 
     @RequestMapping("/import/history")

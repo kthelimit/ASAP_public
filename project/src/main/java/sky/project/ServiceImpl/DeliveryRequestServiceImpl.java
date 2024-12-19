@@ -9,6 +9,7 @@ import sky.project.DTO.DeliveryRequestDTO;
 import sky.project.Entity.*;
 import sky.project.Repository.*;
 import sky.project.Service.DeliveryRequestService;
+import sky.project.Service.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,6 +33,8 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     private MaterialRepository materialRepository;
     @Autowired
     private SupplierStockRepository supplierStockRepository;
+    @Autowired
+    private OrderService orderService;
 
     @Override
     public Long createRequest(DeliveryRequestDTO dto) {
@@ -43,6 +46,14 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
         deliveryRequest.setDeliveryCode(generateDeliveryCode(dto));
 
         deliveryRequestRepository.save(deliveryRequest);
+
+        //남은 수량을 확인하고 발주 상태를 변경
+        Order order = deliveryRequest.getOrder();
+        int remainedQuantity =  orderService.calculateRemainedQuantity(order);
+        if(remainedQuantity ==0 && order.getStatus()==CurrentStatus.APPROVAL) {
+            order.setStatus(CurrentStatus.NOT_REMAINING);
+            orderRepository.save(order);
+        }
 
         return deliveryRequest.getId();
     }

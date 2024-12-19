@@ -32,4 +32,7 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
     @Query("SELECT COALESCE(SUM(p.requireQuantity), 0) FROM ProcurementPlan p WHERE p.materialCode = :materialCode")
     Integer findTotalRequireQuantityByMaterialCode(@Param("materialCode") String materialCode);
 
+
+    @Query("select p from ProcurementPlan  p where p.materialCode=:materialCode and p.productionPlanCode=:productionPlanCode")
+    ProcurementPlan findByMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode);
 }

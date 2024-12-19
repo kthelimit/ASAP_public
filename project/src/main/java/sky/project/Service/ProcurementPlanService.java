@@ -25,6 +25,8 @@ public interface ProcurementPlanService {
 
     int getCountProcurementPlanOnHold();
 
+    boolean ProcurementCheckWithMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode);
+
     String generateProcurementPlanCode(ProcurementPlanDTO dto);
 
 //    List<ProcurementPlan> findAll();

@@ -24,6 +24,8 @@ public interface ProductionPlanService {
 
     List<ProductionPlanDTO> getProductionPlansWithDate();
 
+    List<ProductionPlan> getProductionPlanInProgress(String productCode);
+
     //대시보드의 생산 계획 수
     int getCountProductionPlan();
 }

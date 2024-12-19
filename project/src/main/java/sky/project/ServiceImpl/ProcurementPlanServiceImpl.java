@@ -99,14 +99,22 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
 //    }
 
     @Override
-    public Page<ProcurementPlanDTO> getProcurementPlans(Pageable pageable){
+    public Page<ProcurementPlanDTO> getProcurementPlans(Pageable pageable) {
         return procurementPlanRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override
-    public int getCountProcurementPlanOnHold(){
+    public int getCountProcurementPlanOnHold() {
         return procurementPlanRepository.countProcurementPlanByStatusOnHold();
     }
+
+    @Override
+    public boolean ProcurementCheckWithMaterialCodeAndProductionPlanCode(String materialCode, String productionPlanCode) {
+        ProcurementPlan plan = procurementPlanRepository.findByMaterialCodeAndProductionPlanCode(materialCode, productionPlanCode);
+        return plan != null;
+
+    }
+
 
     public String generateProcurementPlanCode(ProcurementPlanDTO dto) {
         // 제품명에 따른 접두어 설정
@@ -137,8 +145,6 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
     }
 
 
-
-
     // Entity to DTO 변환
     private ProcurementPlanDTO toDTO(ProcurementPlan plan) {
         if (plan == null) return null;
@@ -155,7 +161,7 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         dto.setProcurementQuantity(plan.getProcurementQuantity());
         dto.setProcurementDueDate(plan.getProcurementDueDate());
         dto.setCreatedDate(plan.getCreatedDate());
-        dto.setStatus(plan.getStatus() !=null? plan.getStatus().name() : CurrentStatus.ON_HOLD.name());
+        dto.setStatus(plan.getStatus() != null ? plan.getStatus().name() : CurrentStatus.ON_HOLD.name());
         return dto;
     }
 

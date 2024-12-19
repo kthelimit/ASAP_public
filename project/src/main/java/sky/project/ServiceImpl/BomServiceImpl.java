@@ -3,18 +3,11 @@ package sky.project.ServiceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.BomDTO;
-import sky.project.Entity.Bom;
-import sky.project.Entity.Material;
-import sky.project.Entity.Product;
-import sky.project.Entity.Stock;
+import sky.project.Entity.*;
 import sky.project.Repository.*;
-import sky.project.Service.BomService;
-import sky.project.Service.MaterialService;
-import sky.project.Service.OrderService;
-import sky.project.Service.StockService;
+import sky.project.Service.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +27,8 @@ public class BomServiceImpl implements BomService {
     private final OrderRepository orderRepository;
     private final ProcurementPlanRepository procurementPlanRepository;
     private final OrderService orderService;
+    private final ProductionPlanService productionPlanService;
+    private final ExportRepository exportRepository;
 
     //등록
     @Override
@@ -94,31 +89,55 @@ public class BomServiceImpl implements BomService {
     }
 
 
-
-
     public BomDTO entityToDTO(Bom entity) {
-        // 가용 재고 계산
-        Stock stock = stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode());
+
+        String materialCode = entity.getMaterial().getMaterialCode();
+
+        // 재고 계산
+        Stock stock = stockRepository.findByMaterialCode(materialCode);
         int stockQuantity = (stock != null) ? stock.getQuantity() : 0;
 
-        // 주문 수량 가져오기
-        Integer orderQuantity = orderRepository.findTotalOrderQuantityByMaterialCode(entity.getMaterial().getMaterialCode());
-        int totalOrderQuantity = (orderQuantity != null) ? orderQuantity : 0;
+//        // 주문 수량 가져오기
+//        Integer orderQuantity = orderRepository.findTotalOrderQuantityByMaterialCode(materialCode);
+//        int totalOrderQuantity = (orderQuantity != null) ? orderQuantity : 0;
+//
+//
+//        // requireQuantity 가져오기
+//        Integer requireQuantity = procurementPlanRepository.findTotalRequireQuantityByMaterialCode(materialCode);
+//        int totalRequireQuantity = (requireQuantity != null) ? requireQuantity : 0;
+//
+//
+//        // 가용재고 계산
+//        int availableStock = stockQuantity + totalOrderQuantity - totalRequireQuantity;
+//        availableStock = Math.max(0, availableStock);
 
 
-        // requireQuantity 가져오기
-        Integer requireQuantity = procurementPlanRepository.findTotalRequireQuantityByMaterialCode(entity.getMaterial().getMaterialCode());
-        int totalRequireQuantity = (requireQuantity != null) ? requireQuantity : 0;
+        //출고 요청용 가용재고 계산 (현재 창고 재고 - 출고 요청중인 수량)
+        int availableStock = stockService.calculateAvailableStock(stock);
 
+        //업체에 발주 넣어둔 남은 수량의 합
+        int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
 
-        // 가용재고 계산
-        int availableStock = stockQuantity + totalOrderQuantity -totalRequireQuantity;
-        availableStock = Math.max(0, availableStock);
+        //생산 계획의 남은 소모량 계산하기
+        //발주중인 생산계획 리스트를 가져온다.
+        List<ProductionPlan> planList = productionPlanService.getProductionPlanInProgress(entity.getProduct().getProductCode());
+        int leftQuantityForProduction = 0;
+        for (int i = 0; i < planList.size(); i++) {
+            String productionPlanCode = planList.get(i).getProductionPlanCode();
+            int requiredQuantity = planList.get(i).getProductionQuantity() * entity.getRequireQuantity();
+            int totalExportRequestQuantity;
+            //해당 생산 계획에 대해서 출고 요청해둔 수량
+            if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, materialCode) == 0) {
+                totalExportRequestQuantity = 0;
+            } else {
+                totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode);
+            }
+            requiredQuantity -= totalExportRequestQuantity;
+            leftQuantityForProduction += requiredQuantity;
+        }
 
-                // //조달계획 출력용 가용재고 계산(현재 창고 재고 + 업체에 발주넣어둔 남은 수량의 합)
-                // Stock stock = stockRepository.findByMaterialCode(entity.getMaterial().getMaterialCode());
-                // int availableStock = stockService.calculateAvailableStock(stock);
-                int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
+        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 업체에 발주넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
+        int availavbleStockProcure = availableStock + remainedOrderQuantity -leftQuantityForProduction;
 
 
         // 리드타임에 따른 날짜 계산
@@ -135,6 +154,7 @@ public class BomServiceImpl implements BomService {
                 .dayAfterLeadTime(date)
                 .availableStock(availableStock)
                 .remainedOrderQuantity(remainedOrderQuantity)
+                .availavbleStockProcure(availavbleStockProcure)
                 .build();
     }
 

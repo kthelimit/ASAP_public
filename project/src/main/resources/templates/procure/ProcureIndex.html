@@ -31,7 +31,6 @@
             <!-- ========== title-wrapper end ========== -->
 
 
-
             <!-- ========== 생산 계획 조회 ========== -->
 
 
@@ -43,10 +42,10 @@
                             <form method="get" th:action="@{/plan/procureRegister}">
                                 <div class="select-style-1">
 
-                                    <input style="text-align:right"
-                                           class="select-style-1 search"
+                                    <input class="select-style-1 search"
                                            name="keyword"
                                            placeholder=" 제품명 및 생산 계획 코드를 입력하세요."
+                                           style="text-align:right"
                                            th:value="${keyword}"
                                            type="text"
                                     />
@@ -81,6 +80,7 @@
                                     <td><p th:text="${plan.productName}"></p></td>
                                     <td><p th:text="${plan.productionQuantity}"></p></td>
                                     <td>
+                                        <th:block th:if="${selectedBom.isEmpty()}">
                                         <a class="main-btn active-btn btn-hover" style="padding: 6px"
                                            th:href="@{/plan/procureRegister(
                                            id=${plan.planId},
@@ -90,6 +90,32 @@
                                            productCode=${plan.productCode})}">
                                             선택
                                         </a>
+                                        </th:block>
+                                        <th:block th:if="${selectedPlan!=null}">
+                                            <a class="main-btn success-btn btn-hover"
+                                               style="padding: 6px"
+                                               th:href="@{/plan/procureRegister(
+                                           id=${plan.planId},
+                                           page=${currentPage},
+                                           size=${pageSize},
+                                           keyword=${keyword},
+                                           productCode=${plan.productCode})}"
+                                               th:if="${selectedPlan.productionPlanCode==plan.productionPlanCode}">
+                                                선택
+                                            </a>
+                                            <a class="main-btn active-btn btn-hover"
+                                               style="padding: 6px"
+                                               th:href="@{/plan/procureRegister(
+                                           id=${plan.planId},
+                                           page=${currentPage},
+                                           size=${pageSize},
+                                           keyword=${keyword},
+                                           productCode=${plan.productCode})}"
+                                               th:if="${selectedPlan.productionPlanCode!=plan.productionPlanCode}">
+                                                선택
+                                            </a>
+                                        </th:block>
+
 
                                     </td>
                                 </tr>
@@ -130,10 +156,10 @@
                             <form method="get" th:action="@{/plan/procureRegister}">
                                 <div class="select-style-1">
 
-                                    <input style="text-align:right"
-                                           class="select-style-1 search"
+                                    <input class="select-style-1 search"
                                            name="keyword"
                                            placeholder=" 제품명 및 생산 계획 코드를 입력하세요."
+                                           style="text-align:right"
                                            th:value="${keyword}"
                                            type="text"
                                     />
@@ -199,34 +225,40 @@
                             </table>
 
 
-                                <div class="scrollable-tbody">
-                                    <table class="table striped-table">
-                                        <thead class="sticky">
-                                        <tr>
-                                            <th  style="width:10%">
+                            <div class="scrollable-tbody">
+                                <table class="table striped-table">
+                                    <thead class="sticky">
+                                    <tr>
+                                        <th style="width:10%">
                                             <input id="selectAll" onclick="toggleAllCheckboxes(this)" type="checkbox">
-                                            </th>
-                                            <th style="width: 130px"><h5>공급업체</h5></th>
-                                            <th style="width: 180px"><h5>자재명</h5></th>
-                                            <th style="width: 70px"><h5>필요수량</h5></th>
-                                            <th style="width: 70px"><h5>가용재고</h5></th>
-                                            <th style="width: 70px"><h5>조달수량</h5></th>
-                                            <th style="width: 105px"><h5>조달납기일</h5></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="bomData">
+                                        </th>
+                                        <th style="width: 130px"><h5>공급업체</h5></th>
+                                        <th style="width: 180px"><h5>자재명</h5></th>
+                                        <th style="width: 70px"><h5>필요수량</h5></th>
+                                        <th style="width: 70px"><h5>가용재고</h5></th>
+                                        <th style="width: 70px"><h5>조달수량</h5></th>
+                                        <th style="width: 105px"><h5>조달납기일</h5></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="bomData">
 
 
-                                        <tr th:each="bom : ${selectedBom}" th:classappend="${bom.isRegister ? 'registered' : ''}">
-                                            >
-                                            <!-- 생산계획이 많다보니 미래에 필요한 양도 계산할 수 있어야할 것으로 보임.... 일단은 전부 출력하게 바꿔둠-->
-                                            <!-- 출력할 가용재고의 양을 계산하는 수식을 바꿔야할지도....        -->
-<!--                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">-->
-                                            <td class="text-center">
-                                                <input
-                                                        type="checkbox"
-                                                        name="selectedRegister"
-                                                        th:attr="
+                                    <tr th:classappend="${bom.isRegister ? 'registered' : ''}"
+                                        th:each="bom : ${selectedBom}">
+
+                                        <!-- 생산계획이 많다보니 미래에 필요한 양도 계산할 수 있어야할 것으로 보임.... 일단은 전부 출력하게 바꿔둠-->
+                                        <!-- 출력할 가용재고의 양을 계산하는 수식을 바꿔야할지도....        -->
+                                        <!--                                            th:if="${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0}">-->
+                                        <td class="text-center">
+                                            <th:block th:if="${!bom.register}">
+                                                <p class="text-danger">미등록</p>
+                                            </th:block>
+                                            <th:block th:if="${bom.register}">
+                                                <p class="text-success">등록완료</p>
+                                            </th:block>
+                                            <input
+                                                    name="selectedRegister"
+                                                    th:attr="
                             data-bom-id=${bom.bomId},
                             data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock : 0},
                             data-material-name=${bom.materialName},
@@ -235,352 +267,353 @@
                             data-available-stock=${bom.availableStock},
                             data-product-name=${selectedPlan.productName},
                             data-production-plan-code=${selectedPlan.productionPlanCode},
-                            data-material-code=${bom.materialCode}">
-                                            </td>
-                                            <td style="width: 130px" >
-                                                <div class="select-style-1" style="width: 120px; height: 10px">
-                                                    <div class="select-position">
-                                                        <select style="font-size: 13px; height: 55px"
-                                                                name="componentType"
-                                                                required>
-                                                            <option value="공급업체 목록" disabled selected>공급업체 목록</option>
-                                                            <option th:each="supplier : ${bom.suppliers}"
-                                                                    th:value="${supplier.supplierId}"
-                                                                    th:text="${supplier.supplierName}"
-                                                                    th:selected="${#lists.size(bom.suppliers) > 0}">
-                                                            </option>
-                                                        </select>
-                                                    </div>
+                            data-material-code=${bom.materialCode}"
+                                                    type="checkbox">
+                                        </td>
+                                        <td style="width: 130px">
+                                            <div class="select-style-1" style="width: 120px; height: 10px">
+                                                <div class="select-position">
+                                                    <select name="componentType"
+                                                            required
+                                                            style="font-size: 13px; height: 55px">
+                                                        <option disabled selected value="공급업체 목록">공급업체 목록</option>
+                                                        <option th:each="supplier : ${bom.suppliers}"
+                                                                th:selected="${#lists.size(bom.suppliers) > 0}"
+                                                                th:text="${supplier.supplierName}"
+                                                                th:value="${supplier.supplierId}">
+                                                        </option>
+                                                    </select>
                                                 </div>
-                                            </td>
-                                            <td style="width: 180px" th:text="${bom.materialName}" ></td>
-                                            <td style="width: 70px" th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
-                                            <td style="width: 70px" th:text="${bom.availableStock}"></td>
-                                            <td style="width: 70px" th:text="${
-                                            (bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ?
-                                            bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock
+                                            </div>
+                                        </td>
+                                        <td style="width: 180px" th:text="${bom.materialName}"></td>
+                                        <td style="width: 70px"
+                                            th:text="${bom.requireQuantity * selectedPlan.productionQuantity}"></td>
+                                        <td style="width: 70px" th:text="${bom.availavbleStockProcure}"></td>
+                                        <td style="width: 70px" th:text="${
+                                            (bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure) > 0 ?
+                                            bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure
                                             : 0
                                             }">
-                                            </td>
-                                            <td style="width: 70px">
-                                                <input style="width: 110px" id="startDate" required type="date" th:value="${bom.dayAfterLeadTime}">
-                                            </td>
+                                        </td>
+                                        <td style="width: 70px">
+                                            <input id="startDate" required style="width: 110px"
+                                                   th:value="${bom.dayAfterLeadTime}"
+                                                   type="date">
+                                        </td>
 
 
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <div>
                                 <button
                                         class="main-btn active-btn btn-hover register"
-                                        type="button"
-                                        onclick="processSelectedItems()">일괄 등록
+                                        onclick="processSelectedItems()"
+                                        type="button">일괄 등록
 
                                 </button>
-                                </div>
                             </div>
-
                         </div>
+
                     </div>
                 </div>
-
             </div>
+
+        </div>
         </div>
 
 
+        <script>
 
-<script>
+            document.addEventListener('DOMContentLoaded', () => {
+                groupBomByCategory();
+            });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        groupBomByCategory();
-    });
+            function groupBomByCategory() {
+                const rows = document.querySelectorAll('#bomData tr');
+                const groupedData = {};
 
-    function groupBomByCategory() {
-        const rows = document.querySelectorAll('#bomData tr');
-        const groupedData = {};
+                // 하위 부품 데이터를 임의로 그룹화 (상위 부품 카테고리 예시)
+                rows.forEach(row => {
+                    const materialName = row.querySelector('[data-material-name]').getAttribute('data-material-name');
 
-        // 하위 부품 데이터를 임의로 그룹화 (상위 부품 카테고리 예시)
-        rows.forEach(row => {
-            const materialName = row.querySelector('[data-material-name]').getAttribute('data-material-name');
+                    // 상위 부품 카테고리 지정 (예: '앞바퀴A', '뒷바퀴A' 등)
+                    let parentCategory;
+                    if (
+                        materialName.includes("스테인리스 스포크 2.0mm") ||
+                        materialName.includes("시마노HB-M6010 허브") ||
+                        materialName.includes("알루미늄 더블림 29인치") ||
+                        materialName.includes("맥시스 자전거 엠티비타이어 크로스마크 CROSSMARK") ||
+                        materialName.includes("슈발베 29인치[27.5겸용] 프리라이드 광폭 튜브 (40mm) 폭 2.1~3.0") ||
+                        materialName.includes("프레스타 밸브 60mm") ||
+                        materialName.includes("시마노SM-RT66 로터") ||
+                        materialName.includes("시마노 10단 디오레티아그라 스프라켓") ||
+                        materialName.includes("모터 휠 전면 후면 브러시리스 기어드 허브 Ebike 변환 키트용 48V 500w") ||
+                        materialName.includes("스테인리스 스포크 1.8mm") ||
+                        materialName.includes("시마노 HB-M6000 허브") ||
+                        materialName.includes("알루미늄 싱글림 29인치") ||
+                        materialName.includes("벨로또 세띠아 디펜더(29 x 1.75)") ||
+                        materialName.includes("벨로또 29인치 1.5~1.75 프레스타 튜브 40mm") ||
+                        materialName.includes("프레스타 밸브 48mm") ||
+                        materialName.includes("시마노 SM-RT56 로터") ||
+                        materialName.includes("시마노 9단 카세트 스프라켓") || -
+                            materialName.includes("브러시리스 기어드 허브 모터 방수 9 핀 36V 250W")
+                    ) {
+                        parentCategory = "바퀴";
+                    } else if (
+                        materialName.includes("제로2 RHM V2 드롭바") ||
+                        materialName.includes("에르고노믹 핸들 그립") ||
+                        materialName.includes("시마노BL-MT201 브레이크 레버 (좌)") ||
+                        materialName.includes("시마노BL-MT201 브레이크 레버 (우)") ||
+                        materialName.includes("훔페르트 컨테스트 핸들바") ||
+                        materialName.includes("스탠다드 핸들 그립") ||
+                        materialName.includes("시마노 BL-MT200 브레이크 레버 (좌)") ||
+                        materialName.includes("시마노 BL-MT200 브레이크 레버 (우)")
+                    ) {
+                        parentCategory = "핸들";
+                    } else if (
+                        materialName.includes("BTR 무통증 스프링 쿠션 자전거") ||
+                        materialName.includes("서스펜션 시트포스트 pm-705") ||
+                        materialName.includes("LOOBON 고탄성 스프링 쿠션") ||
+                        materialName.includes("sp242 시트포스트[레일식]")
+                    ) {
+                        parentCategory = "안장";
+                    } else if (
+                        materialName.includes("시마노XT PD-M8100 페달 (XC용, SPD 클릿 포함)") ||
+                        materialName.includes("페달 보조 센서 용 12 마그네틱 듀얼 홀 통합 전원 Ebike") ||
+                        materialName.includes("시마노PD-M520L 페달")
+                    ) {
+                        parentCategory = "페달";
+                    } else if (
+                        materialName.includes("8인치 200×50 통타이어 3번") ||
+                        materialName.includes("8인치 에어바퀴 휠") ||
+                        materialName.includes("8인치 허브모터 36v 450w 8×2.00-5") ||
+                        materialName.includes("140mm 로터")
+                    ) {
+                        parentCategory = "킥보드 바퀴";
+                    } else if (
+                        materialName.includes("접이식 핸들 일자형 660") ||
+                        materialName.includes("AU테크 레드윙 전동킥보드 전용 계기판/속도계 일반형")
+                    ) {
+                        parentCategory = "킥보드 핸들";
+                    } else if (
+                        materialName.includes("8인치 전면 기둥 프레임") ||
+                        materialName.includes("8인치 킥보드 쇼바 튜닝용 발판")
+                    ) {
+                        parentCategory = "킥보드 바디";
+                    } else {
+                        parentCategory = "기타";
+                    }
 
-            // 상위 부품 카테고리 지정 (예: '앞바퀴A', '뒷바퀴A' 등)
-            let parentCategory;
-            if (
-                materialName.includes("스테인리스 스포크 2.0mm") ||
-                materialName.includes("시마노HB-M6010 허브") ||
-                materialName.includes("알루미늄 더블림 29인치") ||
-                materialName.includes("맥시스 자전거 엠티비타이어 크로스마크 CROSSMARK") ||
-                materialName.includes("슈발베 29인치[27.5겸용] 프리라이드 광폭 튜브 (40mm) 폭 2.1~3.0") ||
-                materialName.includes("프레스타 밸브 60mm") ||
-                materialName.includes("시마노SM-RT66 로터") ||
-                materialName.includes("시마노 10단 디오레티아그라 스프라켓") ||
-                materialName.includes("모터 휠 전면 후면 브러시리스 기어드 허브 Ebike 변환 키트용 48V 500w") ||
-                materialName.includes("스테인리스 스포크 1.8mm") ||
-                materialName.includes("시마노 HB-M6000 허브") ||
-                materialName.includes("알루미늄 싱글림 29인치") ||
-                materialName.includes("벨로또 세띠아 디펜더(29 x 1.75)") ||
-                materialName.includes("벨로또 29인치 1.5~1.75 프레스타 튜브 40mm") ||
-                materialName.includes("프레스타 밸브 48mm") ||
-                materialName.includes("시마노 SM-RT56 로터") ||
-                materialName.includes("시마노 9단 카세트 스프라켓") ||-
-                materialName.includes("브러시리스 기어드 허브 모터 방수 9 핀 36V 250W")
-            ) {
-                parentCategory = "바퀴";
-            } else if (
-                materialName.includes("제로2 RHM V2 드롭바") ||
-                materialName.includes("에르고노믹 핸들 그립") ||
-                materialName.includes("시마노BL-MT201 브레이크 레버 (좌)") ||
-                materialName.includes("시마노BL-MT201 브레이크 레버 (우)") ||
-                materialName.includes("훔페르트 컨테스트 핸들바") ||
-                materialName.includes("스탠다드 핸들 그립") ||
-                materialName.includes("시마노 BL-MT200 브레이크 레버 (좌)") ||
-                materialName.includes("시마노 BL-MT200 브레이크 레버 (우)")
-            ) {
-                parentCategory = "핸들";
-            } else if (
-                materialName.includes("BTR 무통증 스프링 쿠션 자전거") ||
-                materialName.includes("서스펜션 시트포스트 pm-705") ||
-                materialName.includes("LOOBON 고탄성 스프링 쿠션") ||
-                materialName.includes("sp242 시트포스트[레일식]")
-            ) {
-                parentCategory = "안장";
-            } else if (
-                materialName.includes("시마노XT PD-M8100 페달 (XC용, SPD 클릿 포함)") ||
-                materialName.includes("페달 보조 센서 용 12 마그네틱 듀얼 홀 통합 전원 Ebike") ||
-                materialName.includes("시마노PD-M520L 페달")
-            ) {
-                parentCategory = "페달";
-            } else if (
-                materialName.includes("8인치 200×50 통타이어 3번") ||
-                materialName.includes("8인치 에어바퀴 휠") ||
-                materialName.includes("8인치 허브모터 36v 450w 8×2.00-5") ||
-                materialName.includes("140mm 로터")
-            ) {
-                parentCategory = "킥보드 바퀴";
-            } else if (
-                materialName.includes("접이식 핸들 일자형 660") ||
-                materialName.includes("AU테크 레드윙 전동킥보드 전용 계기판/속도계 일반형")
-            ) {
-                parentCategory = "킥보드 핸들";
-            } else if (
-                materialName.includes("8인치 전면 기둥 프레임") ||
-                materialName.includes("8인치 킥보드 쇼바 튜닝용 발판")
-            ) {
-                parentCategory = "킥보드 바디";
-            } else {
-                parentCategory = "기타";
-            }
+                    if (!groupedData[parentCategory]) {
+                        groupedData[parentCategory] = [];
+                    }
+                    groupedData[parentCategory].push(row);
+                });
+                const tableBody = document.getElementById('bomData');
+                tableBody.innerHTML = ''; // 기존 테이블 초기화
 
-            if (!groupedData[parentCategory]) {
-                groupedData[parentCategory] = [];
-            }
-            groupedData[parentCategory].push(row);
-        });
-        const tableBody = document.getElementById('bomData');
-        tableBody.innerHTML = ''; // 기존 테이블 초기화
-
-        // 그룹화된 데이터 출력
-        for (const parent in groupedData) {
-            // 상위 부품 카테고리 행 추가
-            const categoryRow = document.createElement('tr');
-            categoryRow.innerHTML = `
+                // 그룹화된 데이터 출력
+                for (const parent in groupedData) {
+                    // 상위 부품 카테고리 행 추가
+                    const categoryRow = document.createElement('tr');
+                    categoryRow.innerHTML = `
               <td colspan="7" style="background-color: #f0f0f0; font-weight: bold; cursor: pointer; text-align: left;">
                 <input type="checkbox" onclick="toggleCategoryCheckbox(this)" style="margin-right: 10px;">
                 <span onclick="toggleCategory(this)" style="cursor: pointer;">${parent}</span>
             </td>
         `;
-            tableBody.appendChild(categoryRow);
+                    tableBody.appendChild(categoryRow);
 
-            // 하위 부품 출력
-            groupedData[parent].forEach(childRow => {
-                childRow.style.display = 'none'; // 초기 표시
-                tableBody.appendChild(childRow);
-            });
-        }
-    }
-
-    function toggleCategory(categoryCheckbox) {
-        const rows = [];
-        let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
-
-        // 카테고리에 속한 하위 부품 찾기
-        while (nextRow && !nextRow.innerHTML.includes('colspan')) {
-            rows.push(nextRow);
-            nextRow = nextRow.nextElementSibling;
-        }
-        // 접기/펼치기 상태 전환
-        const isHidden = rows[0]?.style.display === 'none';
-        rows.forEach(row => {
-            row.style.display = isHidden ? '' : 'none';
-        });
-    }
-
-    function toggleCategoryCheckbox(categoryCheckbox) {
-        let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
-
-        // 하위 부품 체크박스 상태 변경
-        while (nextRow && !nextRow.innerHTML.includes('colspan')) {
-            const childCheckbox = nextRow.querySelector('input[type="checkbox"]');
-            if (childCheckbox) childCheckbox.checked = categoryCheckbox.checked;
-            nextRow = nextRow.nextElementSibling;
-        }
-    }
-
-
-    function toggleAllCheckboxes(selectAll) {
-        // 모든 체크박스 찾기 (상위 부품 및 하위 부품 체크박스)
-        const allCheckboxes = document.querySelectorAll('#bomData input[type="checkbox"]');
-
-        // 체크 상태 동기화
-        allCheckboxes.forEach(checkbox => {
-            checkbox.checked = selectAll.checked;
-        });
-    }
-
-    function processSelectedItems() {
-        const selectedCheckboxes = document.querySelectorAll('input[name="selectedRegister"]:checked');
-        if (selectedCheckboxes.length === 0) {
-            alert("선택된 항목이 없습니다.");
-            return;
-        }
-
-        const procurementDataList = []; // 데이터를 담을 배열
-
-        selectedCheckboxes.forEach(checkbox => {
-            const row = checkbox.closest('tr'); // 체크박스가 속한 행
-            const dueDateInput = row.querySelector('input[type="date"]'); // 날짜 입력 필드 찾기
-            const procurementDueDate = dueDateInput ? dueDateInput.value : null;
-
-            // 해당 행의 select 요소에서 공급업체 정보 가져오기
-            const supplierSelect = row.querySelector('select[name="componentType"]');
-            const supplierId = supplierSelect ? supplierSelect.value : null;  // 선택된 공급업체 ID
-            const supplierName = supplierSelect ? supplierSelect.options[supplierSelect.selectedIndex].text : null;  // 선택된 공급업체 이름
-
-            // 납기일 유효성 검사
-            if (!procurementDueDate) {
-                alert("조달납기일을 입력해 주세요.");
-                return;
-            }
-
-            // 공급업체 정보 유효성 검사
-            if (!supplierId || supplierId === "공급업체 목록") {
-                alert("공급업체를 선택해 주세요.");
-                return;
-            }
-
-            // JSON 객체 생성
-            const procurementData = {
-                productionPlanCode: checkbox.getAttribute('data-production-plan-code'),
-                productCode: checkbox.getAttribute('data-product-code'),
-                productName: checkbox.getAttribute('data-product-name'),
-                supplierId: supplierId, // 공급업체 ID 추가
-                supplierName: supplierName, // 공급업체 이름 추가
-                materialName: checkbox.getAttribute('data-material-name'),
-                materialCode: checkbox.getAttribute('data-material-code'),
-                procurementQuantity: parseInt(checkbox.getAttribute('data-procurement-quantity')),
-                requireQuantity: parseInt(checkbox.getAttribute('data-required-quantity')),
-                procurementDueDate: procurementDueDate,
-                createDate: new Date().toISOString()
-            };
-
-            procurementDataList.push(procurementData); // 배열에 추가
-        });
-
-        console.log("전송할 데이터:", procurementDataList); // 확인용 로그
-
-        // 일괄 등록 요청
-        registerProcurement(procurementDataList);
-    }
-
-    function registerProcurement(dataList) {
-        fetch('/procure/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataList)
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("등록 실패");
-                return response.json();
-            })
-            .then(updatedBomList => {
-                console.log("등록 성공:", updatedBomList);
-                alert("조달 계획이 성공적으로 등록되었습니다.");
-                updateUIAfterRegistration(updatedBomList); // UI 업데이트
-                loadProcurementPlans(currentPage); // 새로고침으로 최신 데이터 불러오기
-            })
-            .catch(error => {
-                console.error('등록 오류:', error);
-                alert("조달 계획 등록 중 오류가 발생했습니다.");
-            });
-    }
-
-    function updateUIAfterRegistration(updatedBomList) {
-        console.log("updatedBomList:", updatedBomList); // 서버에서 반환된 BOM 리스트 확인
-
-        const rows = document.querySelectorAll('#bomData tr');
-        console.log("DOM Rows:", rows); // DOM에 있는 행들 확인
-
-        rows.forEach((row, index) => {
-            console.log(`Processing Row ${index + 1}:`, row); // 현재 처리 중인 행 확인
-
-            const checkbox = row.querySelector('input[type="checkbox"]');
-            if (checkbox) {
-                const materialName = checkbox.getAttribute('data-material-name');
-                console.log(`Material Name from DOM (Row ${index + 1}):`, materialName);
-
-                const updatedBom = updatedBomList.find(bom => bom.materialName === materialName);
-                console.log(`Matched BOM for Row ${index + 1}:`, updatedBom);
-
-                if(updatedBom && updatedBom["register"] === true) {
-                    console.log(`Row ${index + 1} is registered. Disabling checkbox.`);
-                    checkbox.disabled = true; // 체크박스 비활성화
-                    console.log(`Checkbox disabled status: ${checkbox.disabled}`); // 비활성화 확인
-                    row.classList.add('registered'); // 등록된 행 스타일 추가
-                } else {
-                    console.log(`Row ${index + 1} is not registered or no match found.`);
+                    // 하위 부품 출력
+                    groupedData[parent].forEach(childRow => {
+                        childRow.style.display = 'none'; // 초기 표시
+                        tableBody.appendChild(childRow);
+                    });
                 }
-            } else {
-                console.log(`No checkbox found in Row ${index + 1}`);
             }
-        });
-    }
+
+            function toggleCategory(categoryCheckbox) {
+                const rows = [];
+                let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
+
+                // 카테고리에 속한 하위 부품 찾기
+                while (nextRow && !nextRow.innerHTML.includes('colspan')) {
+                    rows.push(nextRow);
+                    nextRow = nextRow.nextElementSibling;
+                }
+                // 접기/펼치기 상태 전환
+                const isHidden = rows[0]?.style.display === 'none';
+                rows.forEach(row => {
+                    row.style.display = isHidden ? '' : 'none';
+                });
+            }
+
+            function toggleCategoryCheckbox(categoryCheckbox) {
+                let nextRow = categoryCheckbox.closest('tr').nextElementSibling;
+
+                // 하위 부품 체크박스 상태 변경
+                while (nextRow && !nextRow.innerHTML.includes('colspan')) {
+                    const childCheckbox = nextRow.querySelector('input[type="checkbox"]');
+                    if (childCheckbox) childCheckbox.checked = categoryCheckbox.checked;
+                    nextRow = nextRow.nextElementSibling;
+                }
+            }
 
 
+            function toggleAllCheckboxes(selectAll) {
+                // 모든 체크박스 찾기 (상위 부품 및 하위 부품 체크박스)
+                const allCheckboxes = document.querySelectorAll('#bomData input[type="checkbox"]');
+
+                // 체크 상태 동기화
+                allCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+            }
+
+            function processSelectedItems() {
+                const selectedCheckboxes = document.querySelectorAll('input[name="selectedRegister"]:checked');
+                if (selectedCheckboxes.length === 0) {
+                    alert("선택된 항목이 없습니다.");
+                    return;
+                }
+
+                const procurementDataList = []; // 데이터를 담을 배열
+
+                selectedCheckboxes.forEach(checkbox => {
+                    const row = checkbox.closest('tr'); // 체크박스가 속한 행
+                    const dueDateInput = row.querySelector('input[type="date"]'); // 날짜 입력 필드 찾기
+                    const procurementDueDate = dueDateInput ? dueDateInput.value : null;
+
+                    // 해당 행의 select 요소에서 공급업체 정보 가져오기
+                    const supplierSelect = row.querySelector('select[name="componentType"]');
+                    const supplierId = supplierSelect ? supplierSelect.value : null;  // 선택된 공급업체 ID
+                    const supplierName = supplierSelect ? supplierSelect.options[supplierSelect.selectedIndex].text : null;  // 선택된 공급업체 이름
+
+                    // 납기일 유효성 검사
+                    if (!procurementDueDate) {
+                        alert("조달납기일을 입력해 주세요.");
+                        return;
+                    }
+
+                    // 공급업체 정보 유효성 검사
+                    if (!supplierId || supplierId === "공급업체 목록") {
+                        alert("공급업체를 선택해 주세요.");
+                        return;
+                    }
+
+                    // JSON 객체 생성
+                    const procurementData = {
+                        productionPlanCode : checkbox.getAttribute('data-production-plan-code'),
+                        productCode        : checkbox.getAttribute('data-product-code'),
+                        productName        : checkbox.getAttribute('data-product-name'),
+                        supplierId         : supplierId, // 공급업체 ID 추가
+                        supplierName       : supplierName, // 공급업체 이름 추가
+                        materialName       : checkbox.getAttribute('data-material-name'),
+                        materialCode       : checkbox.getAttribute('data-material-code'),
+                        procurementQuantity: parseInt(checkbox.getAttribute('data-procurement-quantity')),
+                        requireQuantity    : parseInt(checkbox.getAttribute('data-required-quantity')),
+                        procurementDueDate : procurementDueDate,
+                        createDate         : new Date().toISOString()
+                    };
+
+                    procurementDataList.push(procurementData); // 배열에 추가
+                });
+
+                console.log("전송할 데이터:", procurementDataList); // 확인용 로그
+
+                // 일괄 등록 요청
+                registerProcurement(procurementDataList);
+            }
+
+            function registerProcurement(dataList) {
+                fetch('/procure/register', {
+                    method : 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body   : JSON.stringify(dataList)
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("등록 실패");
+                        return response.json();
+                    })
+                    .then(updatedBomList => {
+                        console.log("등록 성공:", updatedBomList);
+                        alert("조달 계획이 성공적으로 등록되었습니다.");
+                        updateUIAfterRegistration(updatedBomList); // UI 업데이트
+                        loadProcurementPlans(currentPage); // 새로고침으로 최신 데이터 불러오기
+                    })
+                    .catch(error => {
+                        console.error('등록 오류:', error);
+                        alert("조달 계획 등록 중 오류가 발생했습니다.");
+                    });
+            }
+
+            function updateUIAfterRegistration(updatedBomList) {
+                console.log("updatedBomList:", updatedBomList); // 서버에서 반환된 BOM 리스트 확인
+
+                const rows = document.querySelectorAll('#bomData tr');
+                console.log("DOM Rows:", rows); // DOM에 있는 행들 확인
+
+                rows.forEach((row, index) => {
+                    console.log(`Processing Row ${index + 1}:`, row); // 현재 처리 중인 행 확인
+
+                    const checkbox = row.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        const materialName = checkbox.getAttribute('data-material-name');
+                        console.log(`Material Name from DOM (Row ${index + 1}):`, materialName);
+
+                        const updatedBom = updatedBomList.find(bom => bom.materialName === materialName);
+                        console.log(`Matched BOM for Row ${index + 1}:`, updatedBom);
+
+                        if (updatedBom && updatedBom["register"] === true) {
+                            console.log(`Row ${index + 1} is registered. Disabling checkbox.`);
+                            checkbox.disabled = true; // 체크박스 비활성화
+                            console.log(`Checkbox disabled status: ${checkbox.disabled}`); // 비활성화 확인
+                            row.classList.add('registered'); // 등록된 행 스타일 추가
+                        } else {
+                            console.log(`Row ${index + 1} is not registered or no match found.`);
+                        }
+                    } else {
+                        console.log(`No checkbox found in Row ${index + 1}`);
+                    }
+                });
+            }
 
 
-    let currentPage = 1;
-    let totalPages = 1;
+            let currentPage = 1;
+            let totalPages = 1;
 
-    function loadProcurementPlans(page = 1) {
-        fetch(`/procure/list?page=1&size=1000`)
-            .then(response => response.json())
-            .then(data => {
-                const allPlans = data.plans.reverse();
+            function loadProcurementPlans(page = 1) {
+                fetch(`/procure/list?page=1&size=1000`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const allPlans = data.plans.reverse();
 
-                const startIndex = (page - 1) * 5;
-                const endIndex = page * 5;
-                const currentPagePlans = allPlans.slice(startIndex, endIndex);
+                        const startIndex = (page - 1) * 5;
+                        const endIndex = page * 5;
+                        const currentPagePlans = allPlans.slice(startIndex, endIndex);
 
-                updateTable(currentPagePlans);
+                        updateTable(currentPagePlans);
 
-                totalPages = Math.ceil(allPlans.length / 5);
-                currentPage = page;
+                        totalPages = Math.ceil(allPlans.length / 5);
+                        currentPage = page;
 
-                updatePagination();
-            })
-            .catch(error => {
-                console.error('Error loading procurement plans:', error);
-            });
-    }
+                        updatePagination();
+                    })
+                    .catch(error => {
+                        console.error('Error loading procurement plans:', error);
+                    });
+            }
 
-    function updateTable(plans) {
-        const tableBody = document.querySelector('#checkProcurementPlan tbody');
-        tableBody.innerHTML = '';
+            function updateTable(plans) {
+                const tableBody = document.querySelector('#checkProcurementPlan tbody');
+                tableBody.innerHTML = '';
 
-        plans.forEach(plan => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+                plans.forEach(plan => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
             <td>${plan.productionPlanCode}</td>
             <td>${plan.productName}</td>
             <td>${plan.supplierName}</td>
@@ -588,45 +621,45 @@
             <td>${plan.procurementQuantity}</td>
             <td>${plan.procurementDueDate}</td>
         `;
-            tableBody.appendChild(row);
-        });
-    }
-
-    function updatePagination() {
-        const paginationContainer = document.querySelector('#pagination');
-        paginationContainer.innerHTML = '';
-
-        if (currentPage > 1) {
-            const prevButton = document.createElement('a');
-            prevButton.textContent = '«';
-            prevButton.onclick = () => loadProcurementPlans(currentPage - 1);
-            paginationContainer.appendChild(prevButton);
-        }
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('a');
-            pageButton.textContent = i;
-            pageButton.onclick = () => loadProcurementPlans(i);
-            if (i === currentPage) {
-                pageButton.classList.add('active');
-                pageButton.disabled = true;
+                    tableBody.appendChild(row);
+                });
             }
-            paginationContainer.appendChild(pageButton);
-        }
 
-        if (currentPage < totalPages) {
-            const nextButton = document.createElement('a');
-            nextButton.textContent = '»';
-            nextButton.onclick = () => loadProcurementPlans(currentPage + 1);
-            paginationContainer.appendChild(nextButton);
-        }
-    }
+            function updatePagination() {
+                const paginationContainer = document.querySelector('#pagination');
+                paginationContainer.innerHTML = '';
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadProcurementPlans(1);
-    });
+                if (currentPage > 1) {
+                    const prevButton = document.createElement('a');
+                    prevButton.textContent = '«';
+                    prevButton.onclick = () => loadProcurementPlans(currentPage - 1);
+                    paginationContainer.appendChild(prevButton);
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement('a');
+                    pageButton.textContent = i;
+                    pageButton.onclick = () => loadProcurementPlans(i);
+                    if (i === currentPage) {
+                        pageButton.classList.add('active');
+                        pageButton.disabled = true;
+                    }
+                    paginationContainer.appendChild(pageButton);
+                }
+
+                if (currentPage < totalPages) {
+                    const nextButton = document.createElement('a');
+                    nextButton.textContent = '»';
+                    nextButton.onclick = () => loadProcurementPlans(currentPage + 1);
+                    paginationContainer.appendChild(nextButton);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                loadProcurementPlans(1);
+            });
 
 
-</script>
+        </script>
     </th:block>
 </th:block>

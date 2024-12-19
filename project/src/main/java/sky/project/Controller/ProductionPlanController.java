@@ -119,7 +119,7 @@ public class ProductionPlanController {
         log.info(perDayDTOS);
         model.addAttribute("perDayDTOS", perDayDTOS);
 
-        List<BomDTO> bomDTOS =  bomService.findWithProductCode(planDTO.getProductCode());
+        List<BomDTO> bomDTOS = bomService.findWithProductCode(planDTO.getProductCode());
         model.addAttribute("bomDTOS", bomDTOS);
 
         return "ProductionPlan/ProductPlanModify";
@@ -156,10 +156,12 @@ public class ProductionPlanController {
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
 
+        String productPlanCode = null;
         // 선택된 생산 계획 처리
         if (id != null) {
             ProductionPlanDTO selectedPlan = productionPlanService.getProductionPlanById(id);
             model.addAttribute("selectedPlan", selectedPlan);
+            productPlanCode = selectedPlan.getProductionPlanCode();
         }
 
 
@@ -169,6 +171,9 @@ public class ProductionPlanController {
             // 각 BOM의 자재에 맞는 공급업체 조회
             List<SupplierDTO> suppliers = supplierService.findSuppliersByMaterialCode(bom.getMaterialCode());
             bom.setSuppliers(suppliers);
+
+            //각 봄의 등록 여부를 체크
+            bom.setRegister(procurementPlanService.ProcurementCheckWithMaterialCodeAndProductionPlanCode(bom.getMaterialCode(), productPlanCode));
         }
 
         model.addAttribute("selectedBom", selectedBom);

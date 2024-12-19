@@ -81,7 +81,7 @@ public class APIController {
         return assyService.findByAssyMaterialCode(assyMaterialCode);
     }
 
-    //
+    //남은 조립 수량을 가져온다.
     @RequestMapping("/load/AssyLeft/{productionPlanCode}/{assyMaterialCode}")
     public int loadAssyMaterialLeftQuantityByProductCode(@PathVariable String productionPlanCode, @PathVariable String assyMaterialCode) {
         return assyService.findLeftQuantityByAssyMaterialCode(productionPlanCode, assyMaterialCode);

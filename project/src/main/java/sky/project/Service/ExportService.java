@@ -41,6 +41,8 @@ public interface ExportService {
 
     Page<ExportDTO> getCurrentExportsWithSearchInProductName(String keyword, Pageable pageable);
 
+    int findSumByProductionPlanCodeAndMaterialCode(String productionPlanCode, String materialCode);
+
     //대시보드 출력용 출고 요청 건수
     int getCountCurrentRequest();
 

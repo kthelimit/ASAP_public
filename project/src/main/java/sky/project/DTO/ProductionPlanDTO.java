@@ -18,4 +18,5 @@ public class ProductionPlanDTO {
     private LocalDate productionEndDate;
     private Integer productionQuantity;
     private String productionPlanCode;
+    private String status;
 }

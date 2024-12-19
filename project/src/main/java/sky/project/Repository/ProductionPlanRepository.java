@@ -23,6 +23,8 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
     @Query("select pp from ProductionPlan pp where pp.productionStartDate<=:planDate and pp.productionEndDate>=:planDate")
     List<ProductionPlan> findByPlanDate(LocalDate planDate);
 
+    @Query("select pp from ProductionPlan pp where pp.status='IN_PROGRESS' and pp.productCode=:productCode")
+    List<ProductionPlan> findPlanInProgress(String productCode);
 
     //대시 보드 출력용 현재 계획
     @Query("select count(pp) from ProductionPlan pp where pp.productionStartDate<=:planDate and pp.productionEndDate>=:planDate")

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sky.project.DTO.ProductionPlanDTO;
+import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.ProductionPerDay;
 import sky.project.Entity.ProductionPlan;
 import sky.project.Repository.ProductionPerDayRepository;
@@ -111,6 +112,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         dto.setProductionEndDate(plan.getProductionEndDate());
         dto.setProductionQuantity(plan.getProductionQuantity());
         dto.setProductionPlanCode(plan.getProductionPlanCode()); // 코드 추가
+        dto.setStatus(plan.getStatus().name());
         return dto;
     }
 
@@ -124,6 +126,7 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
         plan.setProductionStartDate(dto.getProductionStartDate());
         plan.setProductionEndDate(dto.getProductionEndDate());
         plan.setProductionQuantity(dto.getProductionQuantity());
+        plan.setStatus(CurrentStatus.ON_HOLD);
         return plan;
     }
 
@@ -166,6 +169,11 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
             dtos.add(toDTO(productionPlan));
         }
         return dtos;
+    }
+
+    @Override
+    public List<ProductionPlan> getProductionPlanInProgress(String productCode) {
+        return productionPlanRepository.findPlanInProgress(productCode);
     }
 
 

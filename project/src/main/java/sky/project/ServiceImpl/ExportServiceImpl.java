@@ -368,6 +368,12 @@ public class ExportServiceImpl implements ExportService {
         return result.map(this::entityToDto);
     }
 
+    @Override
+    public int findSumByProductionPlanCodeAndMaterialCode(String productionPlanCode, String materialCode)
+    {
+        return exportRepository.findSumByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode);
+    }
+
     //대시보드 출력용 출고 요청 건수
     @Override
     public int getCountCurrentRequest(){

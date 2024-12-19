@@ -26,11 +26,14 @@ public class BomDTO {
     @Builder.Default
     private List<MaterialDTO> Materials = new ArrayList<>();
 
-    //가용재고 불러오기용
+    //출고요청용 가용재고 불러오기용
     private int availableStock;
 
-    //남은 조달 수량 불러오기용
+    //발주서의 남은 수량 불러오기용
     private int remainedOrderQuantity;
+
+    //조달계획 출력용 가용재고
+    private int availavbleStockProcure;
 
     //조달 납기일 불러오기용
     private LocalDate dayAfterLeadTime;

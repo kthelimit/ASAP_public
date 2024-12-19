@@ -47,6 +47,10 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
             "where e.productionPlan.productionPlanCode=:productionPlanCode and e.assyMaterial.materialCode=:assyMaterialCode ")
     Integer findCountByProductionPlanCodeAndAssyMaterialCode(String productionPlanCode, String assyMaterialCode);
 
+    @Query("select count(e.requiredQuantity) from Export e where e.productionPlan.productionPlanCode=:productionPlanCode "
+            + "and e.material.materialCode=:materialCode")
+    Integer findSumByProductionPlanCodeAndMaterialCode(String productionPlanCode, String materialCode);
+
     //검색용
     @Query("select e from Export e where e.exportCode like %:exportCode%")
     Page<Export> findByExportCode(String exportCode, Pageable pageable);

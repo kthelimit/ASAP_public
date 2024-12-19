@@ -135,6 +135,7 @@ public class BomServiceImpl implements BomService {
             requiredQuantity -= totalExportRequestQuantity;
             leftQuantityForProduction += requiredQuantity;
         }
+        log.info("남은 소모량: "+leftQuantityForProduction);
 
         //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 업체에 발주넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
         int availavbleStockProcure = availableStock + remainedOrderQuantity -leftQuantityForProduction;

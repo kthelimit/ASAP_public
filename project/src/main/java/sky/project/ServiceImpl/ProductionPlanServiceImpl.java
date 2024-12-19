@@ -88,6 +88,14 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     }
 
     @Override
+    public String updateProductionPlanInProgress(String productionPlanCode){
+        ProductionPlan plan = productionPlanRepository.findByProductionPlanCode(productionPlanCode);
+        plan.setStatus(CurrentStatus.IN_PROGRESS);
+        productionPlanRepository.save(plan);
+        return plan.getProductionPlanCode();
+    }
+
+    @Override
     public void deleteProductionPlan(Long id) {
         if (!productionPlanRepository.existsById(id)) {
             throw new IllegalArgumentException("해당 ID의 생산 계획을 찾을 수 없습니다: " + id);

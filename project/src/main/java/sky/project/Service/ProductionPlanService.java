@@ -20,6 +20,8 @@ public interface ProductionPlanService {
 
     String updateProductionPlan(ProductionPlanDTO productionPlanDTO); // 계획 수정
 
+    String updateProductionPlanInProgress(String productionPlanCode);
+
     void deleteProductionPlan(Long id);
 
     List<ProductionPlanDTO> getProductionPlansWithDate();

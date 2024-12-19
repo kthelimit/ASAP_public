@@ -6655,6 +6655,7 @@ table {
     z-index: 1; /* 다른 내용 위에 표시 */
     background-color: #FFFFFF; /* 배경색 설정 */
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* 고정 상태에서 그림자 효과 */
+}
 
 .sticky {
     position: sticky;

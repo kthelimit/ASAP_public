@@ -11,8 +11,8 @@ import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.ProcurementPlan;
 import sky.project.Service.BomService;
 import sky.project.Service.ProcurementPlanService;
+import sky.project.Service.ProductionPlanService;
 import sky.project.response.CustomErrorResponse;
-import sky.project.response.SuccessResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +26,9 @@ public class ProcurementPlanController {
 
     @Autowired
     private ProcurementPlanService procurementPlanService;
+
+    @Autowired
+    private ProductionPlanService productionPlanService;
 
     @Autowired
     private BomService bomService;
@@ -60,6 +63,11 @@ public class ProcurementPlanController {
                 procurementPlan.setStatus(CurrentStatus.ON_HOLD);
 
                 procurementPlanService.save(procurementPlan);
+
+                //조달계획에 해당하는 생산계획을 IN_PROGRESS로 바꾸기
+                String productionPlanCode = procurementPlan.getProductionPlanCode();
+                productionPlanService.updateProductionPlanInProgress(productionPlanCode);
+
             }
 
             // DTO의 isRegister 업데이트

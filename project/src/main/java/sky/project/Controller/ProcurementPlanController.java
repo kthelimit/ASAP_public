@@ -5,14 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sky.project.DTO.BomDTO;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.ProcurementPlan;
+import sky.project.Service.BomService;
 import sky.project.Service.ProcurementPlanService;
 import sky.project.response.CustomErrorResponse;
 import sky.project.response.SuccessResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,44 +27,60 @@ public class ProcurementPlanController {
     @Autowired
     private ProcurementPlanService procurementPlanService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerProcurement(@RequestBody ProcurementPlanDTO procurementPlanDTO) {
-        try {
+    @Autowired
+    private BomService bomService;
 
-            if (procurementPlanDTO.getProcurePlanCode() == null || procurementPlanDTO.getProcurePlanCode().isEmpty()) {
-                // 조달 계획 코드가 없을 때만 생성
-                if (procurementPlanDTO.getProductName() == null || procurementPlanDTO.getProductName().isEmpty()) {
-                    throw new IllegalArgumentException("Product name is required to generate a procurement plan code.");
+    @PostMapping("/register")
+    public ResponseEntity<?> registerProcurement(@RequestBody List<ProcurementPlanDTO> procurementPlanDTOs) {
+        System.out.println("prcurementPlanController register 메서드 실행.");
+
+        try {
+            for (ProcurementPlanDTO procurementPlanDTO : procurementPlanDTOs) {
+                if (procurementPlanDTO.getProcurePlanCode() == null || procurementPlanDTO.getProcurePlanCode().isEmpty()) {
+                    if (procurementPlanDTO.getProductName() == null || procurementPlanDTO.getProductName().isEmpty()) {
+                        throw new IllegalArgumentException("Product name is required to generate a procurement plan code.");
+                    }
+
+                    String generatedCode = procurementPlanService.generateProcurementPlanCode(procurementPlanDTO);
+                    procurementPlanDTO.setProcurePlanCode(generatedCode);
                 }
 
-                // 조달 계획 코드 생성
-                String generatedCode = procurementPlanService.generateProcurementPlanCode(procurementPlanDTO);
-                procurementPlanDTO.setProcurePlanCode(generatedCode);
+                // ProcurementPlan 객체 생성 및 저장
+                ProcurementPlan procurementPlan = new ProcurementPlan();
+                procurementPlan.setSupplierName(procurementPlanDTO.getSupplierName());
+                procurementPlan.setMaterialName(procurementPlanDTO.getMaterialName());
+                procurementPlan.setProcurementQuantity(procurementPlanDTO.getProcurementQuantity());
+                procurementPlan.setProcurementDueDate(procurementPlanDTO.getProcurementDueDate());
+                procurementPlan.setProductName(procurementPlanDTO.getProductName());
+                procurementPlan.setMaterialCode(procurementPlanDTO.getMaterialCode());
+                procurementPlan.setProductCode(procurementPlanDTO.getProductCode());
+                procurementPlan.setProductionPlanCode(procurementPlanDTO.getProductionPlanCode());
+                procurementPlan.setProcurePlanCode(procurementPlanDTO.getProcurePlanCode());
+                procurementPlan.setRequireQuantity(procurementPlanDTO.getRequireQuantity());
+                procurementPlan.setStatus(CurrentStatus.ON_HOLD);
+
+                procurementPlanService.save(procurementPlan);
             }
 
-            // ProcurementPlan 객체 생성 및 DTO 값 할당
-            ProcurementPlan procurementPlan = new ProcurementPlan();
-            procurementPlan.setSupplierName(procurementPlanDTO.getSupplierName());
-            procurementPlan.setMaterialName(procurementPlanDTO.getMaterialName());
-            procurementPlan.setProcurementQuantity(procurementPlanDTO.getProcurementQuantity());
-            procurementPlan.setProcurementDueDate(procurementPlanDTO.getProcurementDueDate());
-            procurementPlan.setProductName(procurementPlanDTO.getProductName());
-            procurementPlan.setMaterialCode(procurementPlanDTO.getMaterialCode());
-            procurementPlan.setProductCode(procurementPlanDTO.getProductCode());
-            procurementPlan.setProductionPlanCode(procurementPlanDTO.getProductionPlanCode());
-            procurementPlan.setProcurePlanCode(procurementPlanDTO.getProcurePlanCode());
-            procurementPlan.setStatus(CurrentStatus.ON_HOLD);
+            // DTO의 isRegister 업데이트
+            List<BomDTO> updatedBomList = bomService.findWithProductCode(procurementPlanDTOs.get(0).getProductCode());
+            for (BomDTO bom : updatedBomList) {
+                for (ProcurementPlanDTO procurementPlanDTO : procurementPlanDTOs) {
+                    if (bom.getMaterialCode().equals(procurementPlanDTO.getMaterialCode())) {
+                        bom.setRegister(true); // isRegister 값 업데이트
+                        System.out.println("Updated BOM: " + bom.getMaterialName() + " isRegister=" + bom.isRegister());
+                    }
+                }
+            }
 
-            // DB에 저장
-            procurementPlanService.save(procurementPlan);
-
-            return ResponseEntity.ok(new SuccessResponse("조달 계획이 등록되었습니다."));
+            return ResponseEntity.ok(updatedBomList);
         } catch (Exception e) {
-            // 예외 발생 시 에러 응답 반환
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new CustomErrorResponse("조달 계획 등록 중 오류가 발생했습니다."));
         }
     }
+
+
 
 //    // 조달 계획 조회 (목록)
 //    @GetMapping("/list")

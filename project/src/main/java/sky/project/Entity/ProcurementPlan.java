@@ -15,6 +15,7 @@ public class ProcurementPlan  extends Base{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
     private Long planId;
+    private int requireQuantity;
     private String productionPlanCode;
     private String productCode;
     private String procurePlanCode;

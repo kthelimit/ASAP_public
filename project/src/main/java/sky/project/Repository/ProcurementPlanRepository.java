@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sky.project.Entity.ProcurementPlan;
 
@@ -21,4 +22,8 @@ public interface ProcurementPlanRepository extends JpaRepository<ProcurementPlan
 
     @Query("select count (p) from ProcurementPlan p where p.status='ON_HOLD'")
     int countProcurementPlanByStatusOnHold();
+
+    @Query("SELECT COALESCE(SUM(p.requireQuantity), 0) FROM ProcurementPlan p WHERE p.materialCode = :materialCode")
+    Integer findTotalRequireQuantityByMaterialCode(@Param("materialCode") String materialCode);
+
 }

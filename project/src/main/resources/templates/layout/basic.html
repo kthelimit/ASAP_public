@@ -61,6 +61,10 @@
                         <span>업체 관리</span>
                     </a>
                     <ul class="collapse dropdown-nav" id="ddmenu_2">
+                        <li th:if="${user != null and user.userType.name() == 'ADMIN'}">
+                            <a href="/usertype">회원 부서 변경 </a>
+                        </li>
+
                         <li th:if="${user != null and user.userType.name() == 'PARTNER' }">
                             <a href="/suppliers/register"> 업체 등록 </a>
                         </li>

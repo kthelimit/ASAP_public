@@ -3,23 +3,24 @@ package sky.project.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sky.project.DTO.UserDTO;
-import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
-import java.util.Optional;
+import java.util.Map;
 
 @Controller
 public class HomeController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     // 로그인 폼 표시
     @GetMapping({"/",""})
@@ -97,39 +98,48 @@ public class HomeController {
         return "redirect:/";
     }
 
-    // 개인 프로필 보기
-    @GetMapping("/profile/{id}")
-    public String showUserProfile(@PathVariable String id, HttpSession session, Model model) {
-        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+    @GetMapping("/usertype")
+    public String usertype(
+            Model model,
+            @RequestParam(defaultValue = "1") int page, // 기본 페이지: 1
+            @RequestParam(defaultValue = "30") int size, // 기본 페이지 크기: 12
+            @RequestParam(value = "keyword", required = false) String keyword // 검색 키워드
+    ) {
+        // 페이지는 0부터 시작하므로 1을 빼줌
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdDate").ascending());
 
-        if (userDTO != null) {
-            model.addAttribute("userDTO", userDTO); // 수정된 데이터 추가
+        // 검색어가 있는 경우와 없는 경우 처리
+        Page<UserDTO> users;
+        if (keyword != null && !keyword.isEmpty()) {
+            users = userService.searchUsers(keyword, pageable); // 검색 메소드 호출
         } else {
-            model.addAttribute("error", "사용자를 찾을 수 없습니다.");
+            users = userService.findAllUsers(pageable); // 전체 사용자 조회
         }
 
+        // 모델에 데이터 추가
+        model.addAttribute("users", users);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", users.getTotalPages());
+        model.addAttribute("keyword", keyword);
 
-        model.addAttribute("userDTO", userDTO);
-        return "UserForm/UserProfile";
-    }
-
-    @PostMapping("/update")
-    public String updateProfile(@ModelAttribute("userDTO") UserDTO userDTO, Model model, HttpSession session) {
-
-
-
-        try {
-            userService.updateProfile(userDTO);
-            model.addAttribute("message", "프로필이 성공적으로 수정되었습니다.");
-            // 세션을 통해 사용자 데이터 갱신
-            session.setAttribute("user", userDTO);
-        } catch (Exception e) {
-            model.addAttribute("error", "프로필 수정 중 오류가 발생했습니다.");
-        }
-
-
-        return "redirect:/profile/" + userDTO.getUserId();
+        return "UserForm/UserTypeModify";
     }
 
 
+    @PostMapping("/{userId}/updateUserType")
+    public ResponseEntity<String> updateUserType(
+            @PathVariable String userId,
+            @RequestBody Map<String, String> request) {
+
+        String newUserType = request.get("userType");
+
+        if (newUserType == null || newUserType.isEmpty()) {
+            return ResponseEntity.badRequest().body("유저타입이 유효하지 않습니다.");
+        }
+
+        userService.updateUserType(userId, newUserType);
+        return ResponseEntity.ok("유저타입이 변경되었습니다.");
+    }
 }
+
+

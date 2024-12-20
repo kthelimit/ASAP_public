@@ -215,16 +215,17 @@
                             <p class="text-sm mb-20">
                                 현재 선택된 제품의 BOM 리스트입니다.
                             </p>
-                            <div class="table-wrapper table-responsive">
+                            <div class="table-wrapper table-responsive scrollable-tbody">
                                 <table class="table" id="bom-table">
+                                    <thead class="sticky">
                                     <tr>
-                                        <th class="text-center sticky"><h6> 부품 종류 </h6></th>
-                                        <th class="text-center sticky"><h6> 부품코드 </h6></th>
-                                        <th class="text-center sticky"><h6> 부품명 </h6></th>
-                                        <th class="text-center sticky"><h6> 부품 수량 </h6></th>
-                                        <th class="text-center sticky"><h6> 삭제 </h6></th>
+                                        <th class="text-center"><h6> 부품 종류 </h6></th>
+                                        <th class="text-center"><h6> 부품코드 </h6></th>
+                                        <th class="text-center"><h6> 부품명 </h6></th>
+                                        <th class="text-center"><h6> 부품 수량 </h6></th>
+                                        <th class="text-center"><h6> 삭제 </h6></th>
                                     </tr>
-                                    <!-- 행 종료-->
+                                    </thead>
 
                                 </table>
                             </div>
@@ -306,11 +307,18 @@
                 $('#productCode2').val(selectValue);
 
                 //아래 테이블 출력 리셋
-                $('#bom-table').empty();
-                $('#bom-table').append('<tr><th class="text-center sticky"><h6>부품 종류</h6></th><th class="text-center sticky">' +
-                    '<h6>부품코드</h6></th><th class="text-center sticky"><h6>부품명</h6></th><th class="text-center sticky"><h6>부품 수량</h6>' +
-                    '</th><th class="text-center sticky"><h6>삭제</h6></th></tr>')
-
+                $('#bom-table tbody').remove(); // tbody만 삭제
+                let theadHTML = `
+    <thead class="sticky">
+        <tr>
+            <th class="text-center"><h6>부품 종류</h6></th>
+            <th class="text-center"><h6>부품코드</h6></th>
+            <th class="text-center"><h6>부품명</h6></th>
+            <th class="text-center"><h6>부품 수량</h6></th>
+            <th class="text-center"><h6>삭제</h6></th>
+        </tr>
+    </thead>`;
+                $('#bom-table').html(theadHTML);
                 //선택한 상품에 따른 BOM 불러오기
                 loadBom(selectValue);
 
@@ -387,7 +395,7 @@
                     data       : JSON.stringify(productCode),
                     success    : function (data) {
                         console.log(data);
-                        str = '';
+                        let str = '<tbody>'; // 반복문 바깥에서 시작하는 <tbody> 태그 추가
 
                         $.each(data, function (i) {
                             console.log(data[i]);
@@ -397,7 +405,10 @@
                                 + '</p></td><td class="text-center">'
                                 + '<a class="text-danger" href="#0" onclick="bomDelete(' + data[i].bomId + ')">'
                                 + '<i class="lni lni-trash-can"></i></a></td></tr>';
-                        })
+                        });
+
+                        str += '</tbody>'; // 반복문 바깥에서 끝나는 </tbody> 태그 추가
+
                         $('#bom-table').append(str);
                     }
                 })

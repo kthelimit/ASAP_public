@@ -75,7 +75,6 @@ public class InsertDataTest {
                 .userId("user1")
                 .username("user")
                 .userAddress("주소")
-                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.PARTNER)
@@ -86,7 +85,6 @@ public class InsertDataTest {
                 .userId("admin")
                 .username("admin")
                 .userAddress("주소")
-                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.ADMIN)
@@ -110,7 +108,6 @@ public class InsertDataTest {
                 .userId("dept1")
                 .username("구매부서 직원")
                 .userAddress("주소")
-                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.PURCHASE_DEPT)
@@ -121,7 +118,6 @@ public class InsertDataTest {
                 .userId("dept2")
                 .username("자재부서 직원")
                 .userAddress("주소")
-                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.MATERIAL_DEPT)
@@ -132,7 +128,6 @@ public class InsertDataTest {
                 .userId("dept3")
                 .username("생산부서 직원")
                 .userAddress("주소")
-                .email("email@gmail.com")
                 .password(passwordEncoder.encode("1234"))
                 .phone("000-0000-0000")
                 .userType(UserType.PRODUCTION_DEPT)
@@ -181,10 +176,25 @@ public class InsertDataTest {
                     .userId("supplier" + i)
                     .username(supplierName[i - 1])
                     .userAddress("주소")
-                    .email("email@gmail.com")
                     .password(passwordEncoder.encode("1234"))
                     .phone("000-0000-0000")
                     .userType(UserType.SUPPLIER)
+                    .build();
+            userRepository.save(user);
+        });
+    }
+
+    @Test
+    public void insertUserTest() {
+
+        IntStream.rangeClosed(1, 30).forEach(i -> {
+            User user = User.builder()
+                    .userId("user0" + i)
+                    .username("user0" + i)
+                    .userAddress("주소")
+                    .password(passwordEncoder.encode("1234"))
+                    .phone("000-0000-0000")
+                    .userType(UserType.PARTNER)
                     .build();
             userRepository.save(user);
         });

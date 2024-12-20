@@ -1,6 +1,8 @@
 package sky.project.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +95,13 @@ public class UserServiceImpl implements UserService {
         return toDTO(savedUser);
     }
 
+    @Override
+    public Page<UserDTO> searchUsers(String keyword, Pageable pageable){
 
+        Page<User> users = userRepository.findByUserIdContaining(keyword, pageable);
+
+        return users.map(this::toDTO);
+    }
 
     @Override
     public UserDTO authenticate(String userId, String password, UserType userType) {
@@ -130,6 +138,28 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 잘못되었습니다.");
         }
+    }
+
+    @Override
+    public void updateUserType(String userId, String newUserType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다: " + userId));
+
+        try {
+            UserType userType = UserType.valueOf(newUserType.toUpperCase()); // String -> Enum 변환
+            user.setUserType(userType); // Enum 값을 설정
+            userRepository.save(user); // 변경 사항 저장
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 유저타입입니다: " + newUserType);
+        }
+    }
+
+
+    @Override
+    public Page<UserDTO> findAllUsers(Pageable pageable) {
+
+        Page<User> users = userRepository.findByUserTypeNot(UserType.SUPPLIER, pageable);
+       return users.map(this::toDTO);
     }
 
     private User toEntity(UserDTO userDTO) { //DTO를 Entity로 변경
@@ -194,6 +224,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         userRepository.save(userDEPT3);
     }
+
 
 
 }

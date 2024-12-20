@@ -33,8 +33,7 @@ public interface ExportRepository extends JpaRepository<Export, Long> {
 
 
     //승인 완료된 건 전부 띄우고, 종료된 것은 정해진 기간 내의 것만 출력한다.
-    @Query("select e from Export e where (e.exportStatus =5 and e.modifiedDate <=:today and e.modifiedDate>=:start) or e.exportStatus=1 " +
-            "order by e.exportStatus")
+    @Query("select e from Export e where (e.exportStatus =5 and e.modifiedDate <=:today and e.modifiedDate>=:start) or e.exportStatus=1")
     Page<Export> findByStatusNotFinished(Pageable pageable, LocalDateTime start , LocalDateTime today);
 
 

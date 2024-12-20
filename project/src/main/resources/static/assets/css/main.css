@@ -6641,7 +6641,9 @@ table {
 .scrollable-tbody {
     max-height: 755px; /* 스크롤 가능 영역 높이 */
     overflow-y: auto; /* 세로 스크롤 활성화 */
+    position: relative; /* 추가 */
 }
+
 
 .scrollable-tbody table {
     width: 100%; /* 테이블 크기 맞춤 */

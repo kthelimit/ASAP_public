@@ -14,4 +14,11 @@ public interface AssyRepository extends JpaRepository<Assy, Long> {
 
     @Query("select a from Assy a where a.assemblyMaterial.materialCode=:assyMaterialCode")
     List<Assy> findByAssyMaterialCode(String assyMaterialCode);
+
+    @Query("select a from Assy a where a.material.materialCode=:materialCode")
+    List<Assy> findByMaterialCode(String materialCode);
+
+    @Query("select count(a) from Assy  a where a.assemblyMaterial.materialCode=:assyMaterialCode")
+    int findCountByAssyMaterialCode(String assyMaterialCode);
+
 }

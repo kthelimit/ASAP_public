@@ -165,6 +165,7 @@
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
                                         <a th:classappend="${i == currentPage2 ? 'active' : ''}"
+                                           th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                            th:href="@{/material/export(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}"
                                            th:text="${i}"></a>
                                     </li>
@@ -263,6 +264,7 @@
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                         <a th:classappend="${i == currentPage ? 'active' : ''}"
+                                           th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                            th:href="@{/material/export(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2}, size2=${pageSize2}, keyword2=${keyword2}, type2=${type2})}"
                                            th:text="${i}"></a>
                                     </li>

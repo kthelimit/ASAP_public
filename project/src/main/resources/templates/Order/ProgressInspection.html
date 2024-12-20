@@ -110,6 +110,7 @@
                                     <!-- 페이지 번호 버튼 -->
                                     <li th:each="i : ${#numbers.sequence(1, manufacturingTotalPages)}">
                                         <a th:classappend="${i == manufacturingCurrentPage ? 'active' : ''}"
+                                           th:if="${(manufacturingCurrentPage/10)*10 <= i and i<=(manufacturingCurrentPage/10 +1)*10  and i!=0}"
                                            th:href="@{/order/inspection(page=${i}, size=${size})}"
                                            th:text="${i}"></a>
                                     </li>

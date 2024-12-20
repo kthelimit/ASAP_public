@@ -208,6 +208,7 @@
                                         <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                             <a th:classappend="${i == currentPage ? 'active' : ''}"
                                                th:href="@{/material/export/request(page=${i})}"
+                                               th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                                th:text="${i}"></a>
                                         </li>
                                         <li th:if="${currentPage < totalPages}">
@@ -314,7 +315,7 @@
                             $.each(data, function (i) {
                                 console.log(data[i]);
                                 str += '<tr><td class="min-width"><p>' + data[i].componentType + '</p></td> <td class="min-width text-center"><p>' + data[i].materialCode
-                                    + '</p><input type="hidden" name="materialCode" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
+                                    + '</p><input type="hidden" name="materialCode2" value="' + data[i].materialCode + '"></td> <td class="min-width"><p>' + data[i].materialName + '</p></td> <td class="min-width text-align-right"><p>'
                                     + data[i].quantity + '</p></td><td class="min-width text-align-right"><p>' + data[i].stock + '<span class="text-danger">(' + data[i].availableStock + ')</span></p></td><td class="min-width text-align-right" ><p>' + data[i].quantity * quantity + '</p><input type="hidden" name="requiredQuantity" value="' + data[i].quantity * quantity + '"></td></tr>';
                             })
                             $('#assyMaterialTable').append(str);
@@ -327,14 +328,14 @@
                     var productPlanCode = $("#productionPlanSelect").find("option:selected").data("name");
                     console.log(productPlanCode);
 
-                    var materialCodes = $('input[name=materialCode]').length;
+                    var materialCodes = $('input[name=materialCode2]').length;
                     var materialCodesArray = new Array(materialCodes);
 
                     var requiredQuantities = $('input[name=requiredQuantity]').length;
                     var requiredQuantitiesArray = new Array(requiredQuantities);
 
                     for (var i = 0; i < materialCodes; i++) {
-                        materialCodesArray[i] = $('input[name=materialCode]').eq(i).val();
+                        materialCodesArray[i] = $('input[name=materialCode2]').eq(i).val();
                         requiredQuantitiesArray[i] = $('input[name=requiredQuantity]').eq(i).val();
                     }
                     console.log(materialCodesArray);

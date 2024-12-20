@@ -58,8 +58,11 @@ public class AssyServiceImpl implements AssyService {
         if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode) == 0) {
             totalExportRequestQuantity = 0;
         } else {
+
+            //여기 수식을 바꿔야할 거 같음... 나누는 수량을 잘못한 것이다. 나누는 수량은 해당 조립품의 구성 품목 갯수여야함.
+            int assyCount = assyRepository.findCountByAssyMaterialCode(assyMaterialCode);
             totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode)
-                    / exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, assyMaterialCode);
+                    / assyCount;
         }
         return requiredQuantityForAssy - totalExportRequestQuantity;
     }

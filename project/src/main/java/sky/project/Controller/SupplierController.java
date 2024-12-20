@@ -394,5 +394,20 @@ public class SupplierController {
         return "redirect:/suppliers/page#returns";
     }
 
+    @RequestMapping("totalPage")
+    public String totalPageForMe(Model model,
+                                 @RequestParam(defaultValue = "1") int deliveryPage,
+                                 @RequestParam(defaultValue = "100") int deliverySize) {
+
+        Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id").descending());
+        Page<DeliveryRequestDTO> deliveryRequests = deliveryRequestService.findAll(deliveryPageable);
+        log.info("리스트 길이" + deliveryRequests.getSize());
+        model.addAttribute("deliveryRequests", deliveryRequests.getContent());
+        model.addAttribute("deliveryTotalPages", deliveryRequests.getTotalPages());
+        model.addAttribute("deliveryCurrentPage", deliveryPage);
+
+        return "Supplier/totalPage";
+    }
+
 
 }

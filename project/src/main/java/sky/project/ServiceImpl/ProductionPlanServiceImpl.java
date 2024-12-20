@@ -194,10 +194,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
     }
 
     @Override
-    public List<ProductionPlan> getProductionPlanInProgress(String productCode) {
-        return productionPlanRepository.findPlanInProgress(productCode);
+    public List<ProductionPlan> getProductionPlanFinished(String productCode) {
+        return productionPlanRepository.findPlanFinished(productCode);
     }
-
 
     //대시보드의 생산 계획 수
     @Override

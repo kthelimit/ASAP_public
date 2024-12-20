@@ -37,10 +37,11 @@
                         <div class="card-style mb-30">
                             <h3 class="mb-10">자재 품목 일괄 등록</h3>
                             <p class="text-sm mb-20">
-                                엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도 가능합니다.
+                                엑셀 파일로 일괄 등록하는 경우, 템플릿을 받아 내용을 기입한 뒤 해당 파일을 선택하고 데이터 업로드를 눌러주세요. 이미 등록된 데이터들을 다운로드 받는 것도
+                                가능합니다.
                             </p>
                             <form enctype="multipart/form-data" method="post" th:action="@{/excel/addMaterial}">
-                                <input type="hidden" name="where" value="Material">
+                                <input name="where" type="hidden" value="Material">
                                 <div class="row">
                                     <div class="input-style-1 col-lg-6" style="width: auto">
                                         <input name="file" type="file">
@@ -51,13 +52,15 @@
                                         </button>
                                     </div>
                                     <div class="col-lg-1" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadMaterial/true'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadMaterial/true'"
                                                 style="padding: 18px"
                                                 type="button">템플릿 다운로드
                                         </button>
                                     </div>
                                     <div class="col-lg-1" style="min-width: 155px">
-                                        <button class="main-btn primary-btn btn-hover" onclick="location.href='/excel/downloadMaterial/false'"
+                                        <button class="main-btn primary-btn btn-hover"
+                                                onclick="location.href='/excel/downloadMaterial/false'"
                                                 style="padding: 18px"
                                                 type="button">데이터 다운로드
                                         </button>
@@ -111,7 +114,8 @@
                                             th:text="${material.width} + 'x' + ${material.height} + 'x' + ${material.depth}"></p>
                                     </td>
                                     <td class="min-width text-align-right"><p th:text="${material.weight}"></p></td>
-                                    <td class="min-width text-align-right"><p th:text="${#numbers.formatInteger(material.unitPrice, 3,  'COMMA')}"></p>
+                                    <td class="min-width text-align-right"><p
+                                            th:text="${#numbers.formatInteger(material.unitPrice, 3,  'COMMA')}"></p>
                                     </td>
                                     <td class="min-width text-align-right"><p th:text="${material.quantity}"></p>
                                     </td>
@@ -139,6 +143,7 @@
                                     <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                                         <a th:classappend="${i == currentPage ? 'active' : ''}"
                                            th:href="@{/material/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                                           th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10}"
                                            th:text="${i}"></a>
                                     </li>
 

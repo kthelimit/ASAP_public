@@ -74,6 +74,7 @@
                         <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                             <a th:classappend="${i == currentPage ? 'active' : ''}"
                                th:href="@{/suppliers/list(page=${i}, size=${pageSize}, keyword=${keyword})}"
+                               th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                                th:text="${i}"></a>
                         </li>
 

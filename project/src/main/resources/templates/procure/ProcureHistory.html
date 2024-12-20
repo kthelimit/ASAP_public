@@ -121,6 +121,7 @@
                 </li>
                 <li th:each="i : ${#numbers.sequence(1, totalPages)}">
                   <a th:classappend="${i == currentPage ? 'active' : ''}"
+                     th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
                      th:href="@{/plan/procureHistory(page=${i}, size=${pageSize}, keyword=${keyword}, type=${type})}"
                      th:text="${i}"></a>
                 </li>

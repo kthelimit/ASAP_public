@@ -76,7 +76,8 @@
                                                     <div class="input-style-1 col-lg-3 mb-0">
                                                         <input min="1" name="requestedQuantity" required
                                                                th:attr="max=${orderP.availableStock > 0 ? orderP.availableStock : 0}"
-                                                               type="number">
+                                                               type="number"
+                                                        th:value="${orderP.remainedQuantity}">
                                                     </div>
                                                     <div class="input-style-1 col-lg-3 mb-0">
                                                         <button type="submit" class="main-btn primary-btn btn-hover" style="padding: 12px">납입 요청</button>
@@ -100,6 +101,7 @@
                                         </li>
                                         <li th:each="i : ${#numbers.sequence(1, purchaseTotalPages)}">
                                             <a th:classappend="${i == purchaseCurrentPage ? 'active' : ''}"
+                                               th:if="${(purchaseCurrentPage/10)*10 <= i and i<=(purchaseCurrentPage/10 +1)*10 and i!=0}"
                                                th:href="@{/order/delivery(page=${i}, size=${size})}"
                                                th:text="${i}"></a>
                                         </li>
@@ -175,6 +177,7 @@
                                     <li th:each="i : ${#numbers.sequence(1, deliveryTotalPages)}">
                                         <a th:classappend="${i == deliveryCurrentPage ? 'active' : ''}"
                                            th:href="@{/order/delivery(deliveryPage=${i}, deliverySize=${size})}"
+                                           th:if="${(deliveryCurrentPage/10)*10 <= i and i<=(deliveryCurrentPage/10 +1)*10 and i!=0}"
                                            th:text="${i}"></a>
                                     </li>
                                     <li th:if="${deliveryCurrentPage < deliveryTotalPages}">
@@ -251,6 +254,7 @@
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, completedTotalPages)}">
                                         <a th:classappend="${i == completedCurrentPage ? 'active' : ''}"
+                                           th:if="${(completedCurrentPage/10)*10 <= i and i<=(completedCurrentPage/10 +1)*10 and i!=0}"
                                            th:href="@{/order/delivery(completedPage=${i}, completedSize=${size})}"
                                            th:text="${i}"></a>
                                     </li>

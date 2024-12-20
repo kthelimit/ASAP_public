@@ -12,7 +12,6 @@ import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.UserService;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -42,6 +41,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+
+        
         // 업데이트 필드 설정
         user.setUserId(userDTO.getUserId());
         user.setEmail(userDTO.getEmail());
@@ -52,6 +53,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user); // 저장
     }
 
+    @Override
+    public UserDTO findUserById(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
+        return new UserDTO(user);
+    }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {

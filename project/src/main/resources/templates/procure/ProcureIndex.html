@@ -284,7 +284,7 @@
                                                     name="selectedRegister"
                                                     th:attr="
                             data-bom-id=${bom.bomId},
-                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availableStock : 0},
+                            data-procurement-quantity=${(bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure) > 0 ? bom.requireQuantity * selectedPlan.productionQuantity - bom.availavbleStockProcure : 0},
                             data-material-name=${bom.materialName},
                             data-required-quantity=${bom.requireQuantity * selectedPlan.productionQuantity},
                             data-product-code=${bom.productCode},

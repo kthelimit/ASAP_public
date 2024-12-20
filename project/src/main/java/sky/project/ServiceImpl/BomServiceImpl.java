@@ -29,6 +29,8 @@ public class BomServiceImpl implements BomService {
     private final OrderService orderService;
     private final ProductionPlanService productionPlanService;
     private final ExportRepository exportRepository;
+    private final AssyRepository assyRepository;
+    private final ProcurementPlanService procurementPlanService;
 
     //등록
     @Override
@@ -115,33 +117,56 @@ public class BomServiceImpl implements BomService {
         //출고 요청용 가용재고 계산 (현재 창고 재고 - 출고 요청중인 수량)
         int availableStock = stockService.calculateAvailableStock(stock);
 
-        log.info("창고 재고 - 출고 요청중인 수량 : "+availableStock);
+        log.info("창고 재고 - 출고 요청중인 수량 : " + availableStock);
+
+
         //업체에 발주 넣어둔 남은 수량의 합
         int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
-        log.info("업체에 발주 넣어둔 남은 수량 : "+remainedOrderQuantity);
-        //생산 계획의 남은 소모량 계산하기
+        log.info("업체에 발주 넣어둔 남은 수량 : " + remainedOrderQuantity);
 
-        //발주 중인 생산계획 리스트를 가져온다.
-        List<ProductionPlan> planList = productionPlanService.getProductionPlanInProgress(entity.getProduct().getProductCode());
-        int leftQuantityForProduction = 0;
-        for (int i = 0; i < planList.size(); i++) {
-            String productionPlanCode = planList.get(i).getProductionPlanCode();
-            int requiredQuantity = planList.get(i).getProductionQuantity() * entity.getRequireQuantity();
-            int totalExportRequestQuantity;
-
-            //해당 생산 계획에 대해서 출고 요청해둔 수량
-            if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, materialCode) == 0) {
-                totalExportRequestQuantity = 0;
-            } else {
-                totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode);
-            }
-            requiredQuantity -= totalExportRequestQuantity;
-            leftQuantityForProduction += requiredQuantity;
+        //발주를 아직 안 넣은 수량을 계산
+        int NotProcuredYetQuantity = 0;
+        List<ProcurementPlan> plansNotProcured = procurementPlanService.findPlanNotOrdered(materialCode);
+        for (int i = 0; i < plansNotProcured.size(); i++) {
+            NotProcuredYetQuantity += plansNotProcured.get(i).getProcurementQuantity();
         }
-        log.info("남은 소모량: "+leftQuantityForProduction);
+        log.info("발주를 아직 안 넣은 수량(이제 넣을 것임) : " + NotProcuredYetQuantity);
 
-        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 업체에 발주 넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
-        int availavbleStockProcure = availableStock + remainedOrderQuantity -leftQuantityForProduction;
+        //생산 계획의 남은 소모량 계산하기
+        //발주 중인 생산계획 리스트를 가져온다.(2상품 이상에 들어가는 친구도 있음)
+        //materialCode로 검색해서 Assy를 찾아보고, 최종 상품들을 가져와야겠음
+        List<Assy> assyList = assyRepository.findByMaterialCode(materialCode);
+
+        int leftQuantityForProduction = 0;
+        String productCode = "";
+        for (int j = 0; j < assyList.size(); j++) {
+            if (productCode.isEmpty() || !productCode.equals(assyList.get(j).getProduct().getProductCode())) {
+                productCode = assyList.get(j).getProduct().getProductCode();
+
+                List<ProductionPlan> planList = productionPlanService.getProductionPlanFinished(productCode);
+
+                for (int i = 0; i < planList.size(); i++) {
+                    String productionPlanCode = planList.get(i).getProductionPlanCode();
+                    int requiredQuantity = planList.get(i).getProductionQuantity() * entity.getRequireQuantity();
+                    int totalExportRequestQuantity;
+
+                    //해당 생산 계획에 대해서 출고 요청해둔 수량
+                    if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, materialCode) == 0) {
+                        totalExportRequestQuantity = 0;
+                    } else {
+                        totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode);
+                    }
+                    requiredQuantity -= totalExportRequestQuantity;
+                    log.info("이번 요구량: " + productCode + " " + productionPlanCode + " " + j + " " + i + " " + requiredQuantity);
+                    leftQuantityForProduction += requiredQuantity;
+                }
+            }
+        }
+
+        log.info("남은 소모량: " + leftQuantityForProduction);
+
+        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 아직 발주 안넣은 수량(넣을거라는 가정이 되어 있음)  + 업체에 발주 넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
+        int availavbleStockProcure = availableStock + NotProcuredYetQuantity + remainedOrderQuantity - leftQuantityForProduction;
 
 
         // 리드타임에 따른 날짜 계산

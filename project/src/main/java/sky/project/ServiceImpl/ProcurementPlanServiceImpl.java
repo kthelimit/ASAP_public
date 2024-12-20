@@ -115,6 +115,18 @@ public class ProcurementPlanServiceImpl implements ProcurementPlanService {
         return plans != null && !plans.isEmpty();
     }
 
+
+    @Override
+    public List<ProcurementPlan> findPlanNotOrdered(String materialCode){
+        return procurementPlanRepository.findPlanNotOrderedWithMaterialCode(materialCode);
+    }
+
+    @Override
+    public int findSumProcuredQuantityPlanNotOrdered(String materialCode){
+        return procurementPlanRepository.findSumProcuredQuantityOnHold(materialCode);
+    }
+
+
     public String generateProcurementPlanCode(ProcurementPlanDTO dto) {
         // 제품명에 따른 접두어 설정
         String prefix;

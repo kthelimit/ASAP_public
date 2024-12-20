@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import sky.project.Entity.ProductionPlan;
 
 import java.time.LocalDate;
@@ -24,8 +23,8 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
     @Query("select pp from ProductionPlan pp where pp.productionStartDate<=:planDate and pp.productionEndDate>=:planDate")
     List<ProductionPlan> findByPlanDate(LocalDate planDate);
 
-    @Query("select pp from ProductionPlan pp where pp.status='IN_PROGRESS' and pp.productCode=:productCode")
-    List<ProductionPlan> findPlanInProgress(String productCode);
+    @Query("select pp from ProductionPlan pp where pp.status='FINISHED' and pp.productCode=:productCode")
+    List<ProductionPlan> findPlanFinished(String productCode);
 
     //대시 보드 출력용 현재 계획
     @Query("select count(pp) from ProductionPlan pp where pp.productionStartDate<=:planDate and pp.productionEndDate>=:planDate")

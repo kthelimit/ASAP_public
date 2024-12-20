@@ -10,9 +10,6 @@ public interface UserService {
     UserDTO authenticate(String userId, String password, UserType userType);
     boolean isUserIdExists(String userId);
     String encodePassword(String password);
-
-    UserDTO findUserById(String userId);
-
     UserDTO createUser(UserDTO userDTO);
 
     @Transactional

@@ -151,7 +151,7 @@ public class BomServiceImpl implements BomService {
                     int totalExportRequestQuantity;
 
                     //해당 생산 계획에 대해서 출고 요청해둔 수량
-                    if (exportRepository.findCountByProductionPlanCodeAndAssyMaterialCode(productionPlanCode, materialCode) == 0) {
+                    if (exportRepository.findCountByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode) == 0) {
                         totalExportRequestQuantity = 0;
                     } else {
                         totalExportRequestQuantity = exportRepository.findSumByProductionPlanCodeAndMaterialCode(productionPlanCode, materialCode);

@@ -47,8 +47,8 @@
                                         <div class="profile-meta">
                                             <h5 class="text-bold text-dark mb-10" th:text="'ID : ' + ${userDTO.userId}"></h5>
                                             <input type="hidden" name="userId" th:value="${userDTO.userId}">
-                                            <p class="small created-date" th:text="'계정 가입일 : ' + ${userDTO.createdDate}"></p>
-                                            <p class="small modified-date" th:text="'마지막 정보 수정일 : ' + ${userDTO.modifiedDate}"></p>
+                                            <p class="small" th:text="'계정 가입일 : ' + ${userDTO.createdDate}"></p>
+                                            <p class="small" th:text="'마지막 정보 수정일 : ' + ${userDTO.modifiedDate}"></p>
                                         </div>
                                     </div>
                                     <div class="input-style-1">
@@ -63,9 +63,9 @@
                                     </div>
 
                                     <div class="col-12" style="display: flex; justify-content: center;">
-                                        <a href="/password/{id}" type="button" class="main-btn primary-btn btn-hover">
+                                        <button type="button" class="main-btn primary-btn btn-hover">
                                             비밀번호 변경
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -91,13 +91,13 @@
                                         <div class="input-style-1">
                                             <label>연락처</label>
                                             <div style="display: flex; gap: 5px;">
-                                                <input type="tel" id="phone1" maxlength="3" th:value="*{phone}" required
+                                                <input type="tel" id="phone1" maxlength="3" th:field="*{phone}" required
                                                        style="width: 25%; text-align: center;" pattern="\d{3}">
                                                 <span style="align-self: center;">-</span>
-                                                <input type="tel" id="phone2" maxlength="4" th:value="*{phone}" required
+                                                <input type="tel" id="phone2" maxlength="4" th:field="*{phone}" required
                                                        style="width: 37.5%; text-align: center;" pattern="\d{4}">
                                                 <span style="align-self: center;">-</span>
-                                                <input type="tel" id="phone3" maxlength="4" th:value="*{phone}" required
+                                                <input type="tel" id="phone3" maxlength="4" th:field="*{phone}" required
                                                        style="width: 37.5%; text-align: center;" pattern="\d{4}">
                                             </div>
                                             <input type="hidden" name="phone" id="phone" th:field="*{phone}">
@@ -150,7 +150,7 @@
         <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
         <script>
 
-            // 페이지 로드 시 실행 ( 데이터 파싱 )
+            // 페이지 로드 시 실행
             window.onload = function () {
                 // userAddress 값을 가져옴
                 const userAddress = document.getElementById("sample3_postcode").value;
@@ -159,7 +159,7 @@
                 const parts1 = userAddress.split(',');
 
                 // 각 입력 필드에 값 설정
-                if (parts1.length > 0) document.getElementById("sample3_postcode").value = parts1[0].trim(); // 우편번호
+                if (parts1.length > 0) document.getElementById("sample3_postcode").value = parts1[0].trim() + "(우편번호)"; // 우편번호
                 if (parts1.length > 1) document.getElementById("sample3_address").value = parts1[1].trim(); // 주소
                 if (parts1.length > 2) document.getElementById("sample3_detailAddress").value = parts1[2].trim(); // 상세주소
                 if (parts1.length > 3) document.getElementById("sample3_extraAddress").value = parts1[3].trim(); // 참고항목
@@ -175,20 +175,6 @@
                 if (parts2.length > 0)document.getElementById("phone1").value = parts2[0].trim();
                 if (parts2.length > 1)document.getElementById("phone2").value = parts2[1].trim();
                 if (parts2.length > 2)document.getElementById("phone3").value = parts2[2].trim();
-
-                // 계정 가입일과 마지막 수정일 포맷팅
-                const createdDateElement = document.querySelector(".created-date");
-                const modifiedDateElement = document.querySelector(".modified-date");
-
-                if (createdDateElement) {
-                    const parts3 = createdDateElement.textContent.trim().split('T')[0].split('-');
-                    createdDateElement.textContent = `${parts3[0]}년 ${parts3[1]}월 ${parts3[2]}일`;
-                }
-
-                if (modifiedDateElement) {
-                    const parts4 = modifiedDateElement.textContent.trim().split('T')[0].split('-');
-                    modifiedDateElement.textContent = `${parts4[0]}년 ${parts4[1]}월 ${parts4[2]}일`;
-                }
 
             };
 

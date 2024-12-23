@@ -136,6 +136,7 @@
                                     <td class="text-center">
                                         <p th:if="${export.exportStatus!='대기 중'}"
                                            th:text="${#temporals.format(export.modifiedDate, 'yyyy-MM-dd')}"></p>
+                                        <p th:if="${export.exportStatus=='대기 중'}"> - </p>
                                     </td>
                                     <td class="text-center">
                                         <span class="status-btn success-btn" th:if="${export.exportStatus=='대기 중'}" th:text="${export.exportStatus}"/>

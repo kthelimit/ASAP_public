@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface DeliveryRequestService {
 
+    int getQuantityByMaterialCode(String materialCode);
+
     // 공급사 이름으로 요청 조회
     void updateRequestStatus(Long id, String status);              // 요청 상태 변경
 

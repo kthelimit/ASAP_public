@@ -31,6 +31,8 @@ public class BomServiceImpl implements BomService {
     private final ExportRepository exportRepository;
     private final AssyRepository assyRepository;
     private final ProcurementPlanService procurementPlanService;
+    private final DeliveryRequestService deliveryRequestService;
+    private final DeliveryRequestRepository deliveryRequestRepository;
 
     //등록
     @Override
@@ -116,14 +118,17 @@ public class BomServiceImpl implements BomService {
 
         //출고 요청용 가용재고 계산 (현재 창고 재고 - 출고 요청중인 수량)
         int availableStock = stockService.calculateAvailableStock(stock);
-
         log.info("창고 재고 - 출고 요청중인 수량 : " + availableStock);
-
 
         //업체에 발주 넣어둔 남은 수량의 합
         int remainedOrderQuantity = orderService.calculateRemainedQuantityForBOMDTO(stock.getMaterial());
         log.info("업체에 발주 넣어둔 남은 수량 : " + remainedOrderQuantity);
 
+        //현재 납품 지시중인 수량
+        int deliveryingQuantity =0;
+        if(deliveryRequestRepository.countByMaterialCodeAndNotFinished(materialCode)>0) {
+            deliveryingQuantity = deliveryRequestService.getQuantityByMaterialCode(materialCode);
+        }
         //발주를 아직 안 넣은 수량을 계산
         int NotProcuredYetQuantity = 0;
         List<ProcurementPlan> plansNotProcured = procurementPlanService.findPlanNotOrdered(materialCode);
@@ -165,8 +170,8 @@ public class BomServiceImpl implements BomService {
 
         log.info("남은 소모량: " + leftQuantityForProduction);
 
-        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 아직 발주 안넣은 수량(넣을거라는 가정이 되어 있음)  + 업체에 발주 넣어둔 남은 수량의 합 - 생산 계획의 남은 소모량)
-        int availavbleStockProcure = availableStock + NotProcuredYetQuantity + remainedOrderQuantity - leftQuantityForProduction;
+        //조달계획 출력용 가용재고 계산(현재 창고 재고  - 출고 요청중인 수량 + 아직 발주 안넣은 수량(넣을거라는 가정이 되어 있음)  + 업체에 발주 넣어둔 남은 수량의 합 + 납품 지시 중인 수량- 생산 계획의 남은 소모량)
+        int availavbleStockProcure = availableStock + NotProcuredYetQuantity + remainedOrderQuantity + deliveryingQuantity - leftQuantityForProduction;
 
 
         // 리드타임에 따른 날짜 계산
@@ -184,6 +189,7 @@ public class BomServiceImpl implements BomService {
                 .availableStock(availableStock)
                 .remainedOrderQuantity(remainedOrderQuantity)
                 .availavbleStockProcure(availavbleStockProcure)
+                .deliveryingQuantity(deliveryingQuantity)
                 .build();
     }
 

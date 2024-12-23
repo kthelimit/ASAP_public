@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("select o from Order o where o.supplier.supplierName=:supplierName and o.material.materialName=:materialName")
+    @Query("select o from Order o where o.supplier.supplierName like %:supplierName% or o.material.materialName like %:materialName%")
     Page<Order> findBySupplierNameContainingOrMaterialNameContaining(String supplierName, String materialName, Pageable pageable);
 
     @Query("select o from Order o where o.supplier.supplierName=:supplierName")
@@ -77,8 +77,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderCode(String orderCode);
 
 
-        @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o WHERE o.material.materialCode = :materialCode")
-        Integer findTotalOrderQuantityByMaterialCode(@Param("materialCode") String materialCode);
+    @Query("SELECT COALESCE(SUM(o.orderQuantity), 0) FROM Order o WHERE o.material.materialCode = :materialCode")
+    Integer findTotalOrderQuantityByMaterialCode(@Param("materialCode") String materialCode);
 }
 
 

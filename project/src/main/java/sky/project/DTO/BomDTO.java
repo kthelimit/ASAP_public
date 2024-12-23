@@ -38,4 +38,6 @@ public class BomDTO {
     //조달 납기일 불러오기용
     private LocalDate dayAfterLeadTime;
 
+    private int deliveryingQuantity;
+
 }

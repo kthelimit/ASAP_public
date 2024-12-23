@@ -81,6 +81,12 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
                 .map(this::toDTO);
     }
 
+    //납품지시중인 수량
+    @Override
+    public int getQuantityByMaterialCode(String materialCode){
+        return deliveryRequestRepository.findSumByMaterialCodeAndNotFinished(materialCode);
+    }
+
 
     @Override
     public void updateRequestStatus(Long id, String status) {

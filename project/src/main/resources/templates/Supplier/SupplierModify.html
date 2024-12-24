@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout/basic :: setContent(~{this::content})}">
+  <th:block th:fragment="content">
+    <div class="container-fluid">
+      <!-- ========== title-wrapper start ========== -->
+      <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="title">
+              <h2>업체 정보 수정</h2>
+            </div>
+          </div>
+          <!-- end col -->
+          <div class="col-md-6">
+            <div class="breadcrumb-wrapper">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#0">업체관리</a>
+                  </li>
+                  <li class="breadcrumb-item active"><a href="#0">업체 정보 수정</a></li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== title-wrapper end ========== -->
+
+      <form enctype="multipart/form-data" method="post" th:action="@{/suppliers/modify}"
+            th:object="${supplier}">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card-style mb-30">
+              <h3 class="mb-25">업체 수정 정보 입력</h3>
+
+              <div class="input-style-1">
+                <label for="supplierName">업체 이름</label>
+                <input id="supplierName" required th:field="*{supplierName}" type="text"/>
+              </div>
+
+              <div class="input-style-1">
+                <label for="businessRegistrationNumber">사업자 등록 번호</label>
+                <input id="businessRegistrationNumber" required
+                       th:field="*{businessRegistrationNumber}" type="text"/>
+              </div>
+
+              <div class="input-style-1">
+                <label for="contactInfo">연락처 정보</label>
+                <input id="contactInfo" required th:field="*{contactInfo}" type="text"/>
+              </div>
+
+              <div class="input-style-1">
+                <label for="address">주소</label>
+                <input id="address" required th:field="*{address}" type="text"/>
+              </div>
+
+              <div class="input-style-1">
+                <label for="businessType">업태</label>
+                <input id="businessType" required th:field="*{businessType}" type="text"/>
+              </div>
+
+              <div class="input-style-1">
+                <label for="businessItem">종목</label>
+                <input id="businessItem" required th:field="*{businessItem}" type="text"/>
+              </div>
+
+              <div style="text-align: right">
+                <button class="btn-submit btn-hover main-btn primary-btn"
+                        onclick="alert('업체 정보가 수정되었습니다.')"
+                        type="submit">수정하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </th:block>
+</th:block>

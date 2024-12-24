@@ -179,4 +179,24 @@ public class SupplierServiceImpl implements SupplierService {
         return list;
     }
 
+
+    @Override
+    public void updateSupplier(SupplierDTO supplierDTO) {
+        // supplierName을 사용해 기존 Supplier 엔티티를 조회
+        Supplier existingSupplier = supplierRepository.findBySupplierName(supplierDTO.getSupplierName());
+        if (existingSupplier == null) {
+            throw new IllegalArgumentException("Supplier not found with name: " + supplierDTO.getSupplierName());
+        }
+
+        // DTO 데이터를 기존 엔티티에 매핑
+        existingSupplier.setBusinessRegistrationNumber(supplierDTO.getBusinessRegistrationNumber());
+        existingSupplier.setAddress(supplierDTO.getAddress());
+        existingSupplier.setBusinessType(supplierDTO.getBusinessType());
+        existingSupplier.setBusinessItem(supplierDTO.getBusinessItem());
+
+        // 데이터베이스에 저장
+        supplierRepository.save(existingSupplier);
+    }
+
+
 }

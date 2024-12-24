@@ -410,4 +410,63 @@ public class SupplierController {
     }
 
 
+    @GetMapping("/modifyform/{id}")
+    public String modify(@SessionAttribute(name = "user", required = false) UserDTO user,
+                         Model model) {
+
+        if (user == null) {
+            model.addAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/";
+        }
+        // userId로 supplierName 가져오기
+        String userId = user.getUserId();
+        String supplierName = supplierService.findSupplierNameByUserId(userId);
+        if (supplierName == null || supplierName.isEmpty()) {
+            model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
+            return "redirect:/";
+        }
+
+
+        // supplierName으로 SupplierDTO 가져오기
+        Supplier supplier = supplierService.getSupplierByName(supplierName);
+
+        model.addAttribute("supplier", supplier);
+return "Supplier/SupplierModify";
+    }
+
+    @PostMapping("/modify")
+    public String modifySupplier(@SessionAttribute(name = "user", required = false) UserDTO user,
+                                 @ModelAttribute SupplierDTO supplierDTO,
+                                 Model model, RedirectAttributes redirectAttributes) {
+
+        // 사용자 인증 확인
+        if (user == null) {
+            model.addAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        }
+
+        String userId = user.getUserId();
+
+        // userId로 supplierName 가져오기
+        String supplierName = supplierService.findSupplierNameByUserId(userId);
+        if (supplierName == null || supplierName.isEmpty()) {
+            model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
+            return "redirect:/suppliers/modifyform";
+        }
+
+        // supplierName으로 Supplier 가져오기
+        Supplier supplier = supplierService.getSupplierByName(supplierName);
+        if (supplier == null) {
+            model.addAttribute("message", "공급자 정보를 찾을 수 없습니다.");
+            return "redirect:/suppliers/modifyform";
+        }
+
+
+        // 수정된 데이터를 데이터베이스에 저장
+        supplierService.updateSupplier(supplierDTO);
+
+
+        return "redirect:/suppliers/page";
+    }
+
 }

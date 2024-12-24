@@ -37,4 +37,8 @@ public interface SupplierService {
     int getCountSupplierWhoWaitApproval();
 
     List<Supplier> getSuppliers();
+
+    void updateSupplier(SupplierDTO supplierDTO);
 }
+
+

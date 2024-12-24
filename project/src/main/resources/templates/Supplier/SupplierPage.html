@@ -44,9 +44,12 @@
                                 <p><strong>종목:</strong> [[${supplierDTO.businessItem}]]</p>
                                 <div class="row" style="justify-content: flex-end">
                                     <div class="col-lg-1" style="min-width: 144px">
-                                        <button class="btn-approve main-btn btn-hover primary-btn">수정</button>
+                                        <!-- 수정 버튼 -->
+                                        <a th:href="@{/suppliers/modifyform/{id}(id=${supplier.supplierId})}"
+                                           class="btn-approve main-btn btn-hover primary-btn">
+                                            수정
+                                        </a>
                                     </div>
-                                </div>
 
                             </div>
                         </div>

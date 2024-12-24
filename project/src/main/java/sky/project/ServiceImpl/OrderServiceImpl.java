@@ -247,11 +247,19 @@ public class OrderServiceImpl implements OrderService {
         return totalStock - totalApprovedQuantity;
     }
 
-    // OrdersDTO -> Order 변환
     private Order toEntity(OrdersDTO dto) {
-        if (dto == null) return null;
+        if (dto == null) throw new IllegalArgumentException("OrdersDTO is null.");
+
         Supplier supplier = supplierRepository.findBySupplierName(dto.getSupplierName());
-        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).isEmpty() ? null : materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
+        if (supplier == null) {
+            throw new IllegalArgumentException("Supplier not found with name: " + dto.getSupplierName());
+        }
+
+        List<Material> materials = materialRepository.findByMaterialName(dto.getMaterialName());
+        if (materials.isEmpty()) {
+            throw new IllegalArgumentException("Material not found with name: " + dto.getMaterialName());
+        }
+        Material material = materials.get(0);
 
         // DTO -> 엔티티 변환
         Order order = new Order();
@@ -265,14 +273,21 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderQuantity(dto.getOrderQuantity());
         order.setTotalPrice(dto.getTotalPrice());
         order.setRemarks(dto.getRemarks());
-        order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD); // String -> Enum 변환
+        order.setStatus(dto.getStatus() != null ? CurrentStatus.valueOf(dto.getStatus().toUpperCase()) : CurrentStatus.ON_HOLD);
         return order;
     }
 
     private String generateOrderCode(OrdersDTO dto) {
         // 매터리얼 코드에 따른 접두어 설정
         String prefix = "ORD";
-        Material material = materialRepository.findByMaterialName(dto.getMaterialName()).get(0);
+
+        // 자재 조회 및 검증
+        List<Material> materials = materialRepository.findByMaterialName(dto.getMaterialName());
+        if (materials.isEmpty()) {
+            throw new IllegalArgumentException("Material not found with name: " + dto.getMaterialName());
+        }
+        Material material = materials.get(0);
+
         switch (material.getMaterialCode().substring(3, 5)) {
             case "WH":
                 prefix += "WH";

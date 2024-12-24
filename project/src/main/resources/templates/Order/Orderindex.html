@@ -30,7 +30,7 @@
             <!-- ========== title-wrapper end ========== -->
             <!-- 발주 품목 선택-->
             <div class="row mt-20">
-                <div class="col-lg-7">
+                <div class="col-lg-12">
                     <div class="card-style mb-30">
                         <h3 class="mb-10">발주 품목 선택</h3>
                         <p class="text-sm mb-20">
@@ -38,7 +38,7 @@
                         </p>
                         <form method="get" th:action="@{/order/list}">
                             <div class="row" style="justify-content: flex-end">
-                                <div class="input-style-1 col-lg-7">
+                                <div class="input-style-1 col-lg-12">
                                     <input id="searchKeyword" name="keyword"
                                            placeholder="업체명 또는 부품명 입력"
                                            th:value="${keyword}"
@@ -53,51 +53,75 @@
                             </div>
                         </form>
                         <table class="table">
-                            <thead>
-                            <tr>
-                                <th class="text-center"><h6>조달계획번호</h6></th>
-                                <th class="text-center"><h6>업체명</h6></th>
-                                <th class="text-center"><h6>품목명</h6></th>
-                                <th class="text-center"><h6>조달 납기일</h6></th>
-                                <th class="text-center"><h6>조달수량</h6></th>
-                                <th class="text-center"><h6>선택</h6></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="procure : ${procure}">
-                                <td class="min-width">
-                                    <p th:text="${procure.procurePlanCode}"></p>
-                                </td>
-                                <td class="min-width">
-                                    <p th:text="${procure.supplierName}"></p>
-                                </td>
-                                <td class="min-width">
-                                    <p th:text="${procure.materialName}"></p>
-                                </td>
-                                <td class="min-width">
-                                    <p th:text="${procure.procurementDueDate}"></p>
-                                </td>
-                                <td class="min-width">
-                                    <p th:text="${procure.procurementQuantity}"></p>
-                                </td>
-                                <td>
-                                    <a class="main-btn success-btn btn-hover" style="padding: 12px" th:if="${id==procure.planId}"
-                                       th:href="@{/order/list(
-                                            id=${procure.planId},
-                                            page=${currentPage},
-                                            size=${pageSize},
-                                            keyword=${keyword})}">
-                                        선택</a>
-                                    <a class="main-btn primary-btn btn-hover" style="padding: 12px" th:if="${id!=procure.planId || id ==null}"
-                                       th:href="@{/order/list(
-                                            id=${procure.planId},
-                                            page=${currentPage},
-                                            size=${pageSize},
-                                            keyword=${keyword})}">
-                                        선택</a>
-                                </td>
-                            </tr>
-                            </tbody>
+                            <form method="post" th:action="@{/order/register}">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+                                    <th class="text-center"><h6>조달계획번호</h6></th>
+                                    <th class="text-center"><h6>업체명</h6></th>
+                                    <th class="text-center"><h6>품목명</h6></th>
+                                    <th class="text-center"><h6>단 가</h6></th>
+                                    <th class="text-center"><h6>조달수량</h6></th>
+                                    <th class="text-center"><h6>공급가</h6></th>
+                                    <th class="text-center"><h6>조달 납기일</h6></th>
+                                    <th class="text-center"><h6>발주일</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="procure : ${procure}">
+                                    <td><input type="checkbox" class="selectCheckbox" name="selectedOrders" th:value="${procure.procurePlanCode}"></td>
+
+                                    <td class="min-width">
+                                        <p th:text="${procure.procurePlanCode}"></p>
+                                        <input type="hidden" name="procurePlanCode" th:value="${procure.procurePlanCode}">
+                                    </td>
+                                    <!-- 업체명 -->
+                                    <td class="min-width">
+                                        <p th:text="${procure.supplierName}"></p>
+                                        <input type="hidden" name="supplierName" th:value="${procure.supplierName}">
+                                    </td>
+                                    <!-- 품목명 -->
+                                    <td class="min-width">
+                                        <p th:text="${procure.materialName}"></p>
+                                        <input type="hidden" name="materialName" th:value="${procure.materialName}">
+                                    </td>
+
+                                    <td class="min-width">
+                                        <p th:text="${procure.unitPrice}"></p>
+                                        <input type="hidden" name="unitPrice" th:value="${procure.unitPrice != null ? procure.unitPrice : 0}">
+                                    </td>
+                                    <td>
+                                        <input id="procurementQuantity" name="orderQuantity"
+                                               onchange="updateTotalPrice()"
+                                               th:value="${procure.procurementQuantity}"
+                                               type="number">
+                                    </td>
+                                    <td class="text-align-right" id="totalPriceSet">
+                                        <p th:text="${#numbers.formatInteger(procure.unitPrice * procure.procurementQuantity, 3, 'COMMA')}"></p>
+                                        <input id="totalPrice" name="totalPrice"
+                                               th:value="${procure.unitPrice * procure.procurementQuantity}" type="hidden">
+                                    </td>
+                                    </td>
+                                    </td>
+                                    <td class="min-width">
+                                        <p th:text="${procure.procurementDueDate}"></p>
+                                        <input type="hidden" name="expectedDate" th:value="${procure.procurementDueDate}">
+                                    </td>
+                                    <td>
+                                        <p th:text="${orderDate}"></p>
+                                        <input name="orderDate" th:value="${orderDate}" type="hidden">
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="9" style="text-align: right;">
+                                        <!-- 일괄 등록 버튼 -->
+                                        <button type="submit" class="main-btn primary-btn btn-hover">일괄 발주서 등록</button>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </form>
                         </table>
                         <div class="pagination-wrapper">
                             <ul class="pagination">
@@ -126,225 +150,106 @@
                 </div>
 
 
-                <!-- 발주서 작성-->
-                <div class="col-lg-5">
-                    <div class="card-style mb-30">
-                        <h3 class="mb-10">발주서 작성</h3>
-                        <p class="text-sm mb-20">
-                            발주서 작성 후 버튼을 누르시면 발주서가 등록됩니다.
-                        </p>
-                        <form method="post" th:action="@{/order/register}">
-                            <table class="table">
-                                <tr>
-                                    <th colspan="4"
-                                        style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
-                                        공급자 정보
-                                    </th>
-                                </tr>
-                                <tr th:if="${selectedOrder != null}">
-                                    <th style="width:15%"><h6>업체명</h6></th>
-                                    <td style="width:35%">
-                                        <p th:text="${selectedOrder.supplierName}"></p>
-                                        <input name="supplierName" th:value="${selectedOrder.supplierName}"
-                                               type="hidden">
-                                    </td>
-                                    <th style="width:15%"><h6>사업자 번호</h6></th>
-                                    <td style="width:35%">
-                                        <p th:text="${businessRegistrationNumber}"></p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><h6>주소</h6></th>
-                                    <td colspan="3">
-                                        <p th:text="${supplierAddress}"></p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><h6>발주일</h6></th>
-                                    <td>
-                                        <p th:text="${orderDate}"></p>
-                                        <input name="orderDate" th:value="${orderDate}" type="hidden">
-                                    </td>
-                                    <th><h6>담당자</h6></th>
-                                    <td>
-                                        <p th:text="${userName}"></p>
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table" th:if="${selectedOrder != null}">
-                                <tr>
-                                    <th colspan="6"
-                                        style="text-align: center; background-color: lightgrey; padding-top: 5px; padding-bottom: 5px">
-                                        품목 정보
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th style="width: 20%"><h6>조달계획 번호</h6></th>
-                                    <td colspan="3">
-                                        <p th:text="${selectedOrder.procurePlanCode}"></p>
-                                        <input name="procurePlanCode" th:value="${selectedOrder.procurePlanCode}"
-                                               type="hidden">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="width: 15%"><h6>품목명</h6></th>
-
-                                    <td colspan="3">
-                                        <p th:text="${selectedOrder.materialName}"></p>
-                                        <input name="materialName" th:value="${selectedOrder.materialName}"
-                                               type="hidden">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><h6>단가</h6></th>
-                                    <th class="text-center col-lg-3"><h6>수량</h6></th>
-                                    <th class="text-center"><h6>공급가</h6></th>
-                                    <th class="text-center"><h6>입고 예정일</h6></th>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <p>[[${#numbers.formatInteger(unitPrice, 3, 'COMMA')}]]</p>
-                                        <input id="unitPrice" name="unitPrice" th:value="${unitPrice}"
-                                               type="hidden">
-                                    </td>
-                                    <td class="text-align-right">
-                                        <div class="input-style-1 mb-0">
-                                            <input id="procurementQuantity" name="orderQuantity"
-                                                   onchange="updateTotalPrice()"
-                                                   th:value="${selectedOrder.procurementQuantity}"
-                                                   type="number">
-                                        </div>
-                                    </td>
-                                    <td class="text-align-right" id="totalPriceSet">
-                                        <p>[[${#numbers.formatInteger(totalPrice, 3, 'COMMA')}]]</p>
-                                        <input id="totalPrice" name="totalPrice" th:value="${totalPrice}"
-                                               type="hidden">
-                                    </td>
-                                    <td class="text-center">
-                                        <p th:text="${selectedOrder.procurementDueDate}"></p>
-                                        <input name="expectedDate" th:value="${selectedOrder.procurementDueDate}"
-                                               type="hidden">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><h6>비고</h6></th>
-                                    <td class="text-align-right" colspan="3">
-                                        <div class="input-style-1 mb-0">
-                                            <input name="remarks" style="width: 90%" type="text">
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><h6>합계</h6></th>
-                                    <td class="text-align-right" colspan="3" id="totalPriceSet2">
-                                        <p th:text="'₩' + ${#numbers.formatInteger(totalPrice, 3, 'COMMA')}"></p>
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="mt-4" style="text-align: right">
-                                <button class="main-btn primary-btn btn-hover" type="submit">발주서 등록</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
-            <!-- 구매 발주서 관리-->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-style mb-30">
-                        <h3 class="mb-10">구매 발주서 목록</h3>
-                        <p class="text-sm mb-20">
-                            발주가 완료되어 진행중인 목록입니다.
-                        </p>
-                        <form method="get" th:action="@{/order/list}">
-                            <!-- Hidden field to pass the type -->
-                            <input name="type" th:value="orders" type="hidden"/>
-                            <div class="row" style="justify-content: flex-end">
-                                <div class="input-style-1 col-lg-4">
-                                    <input id="searchKeyword2" name="keyword2"
-                                           placeholder="업체명 또는 부품명 입력"
-                                           th:value="${keyword2}"
-                                           type="text"/>
-                                </div>
-                                <div class="col-lg-1" style="min-width: 144px">
-                                    <button class="main-btn primary-btn btn-hover ml-10" type="submit">
-                                        검색
-                                    </button>
-                                </div>
+        </div>
+        </div>
+        <!-- 구매 발주서 관리-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h3 class="mb-10">구매 발주서 목록</h3>
+                    <p class="text-sm mb-20">
+                        발주가 완료되어 진행중인 목록입니다.
+                    </p>
+                    <form method="get" th:action="@{/order/list}">
+                        <!-- Hidden field to pass the type -->
+                        <input name="type" th:value="orders" type="hidden"/>
+                        <div class="row" style="justify-content: flex-end">
+                            <div class="input-style-1 col-lg-4">
+                                <input id="searchKeyword2" name="keyword2"
+                                       placeholder="업체명 또는 부품명 입력"
+                                       th:value="${keyword2}"
+                                       type="text"/>
                             </div>
-                        </form>
-                        <table class="table">
-                            <tr>
-                                <th class="text-center">
-                                    <h6>발주서번호</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>조달계획번호</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>업체명</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>품목명</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>발주 수량</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>합계 금액</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>발주일</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>입고 예정일</h6>
-                                </th>
-                                <th class="text-center">
-                                    <h6>발주 상태</h6>
-                                </th>
-                            </tr>
-                            <!-- end table row-->
-
-                            <tr th:each="orders : ${orders}">
-                                <td class="text-center"><p>[[${orders.orderCode}]]</p></td>
-                                <td class="text-center"><p>[[${orders.procurePlanCode}]]</p></td>
-                                <td class="text-center"><p>[[${orders.supplierName}]]</p></td>
-                                <td><p>[[${orders.materialName}]]</p></td>
-                                <td class="text-align-right"><p>[[${orders.orderQuantity}]]</p></td>
-                                <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3,
-                                    'COMMA')}]]</p></td>
-                                <td class="text-center"><p>[[${orders.orderDate}]]</p></td>
-                                <td class="text-center"><p>[[${orders.expectedDate}]]</p></td>
-                                <td class="text-center">
-                                    <span class="status-btn success-btn" th:if="${orders.status=='ON_HOLD'}">대기 중</span>
-                                    <span class="status-btn active-btn"
-                                          th:if="${orders.status=='APPROVAL'}">승인 완료</span>
-                                    <span class="status-btn active-btn"
-                                          th:if="${orders.status=='DELIVERED'}">배송 완료</span>
-                                    <span class="status-btn close-btn" th:if="${orders.status=='FINISHED'}">종료</span>
-                                </td>
-                            </tr>
-                            <!-- end table row -->
-                        </table>
-                        <div class="pagination-wrapper">
-                            <ul class="pagination">
-                                <li th:if="${currentPage2 > 1}">
-                                    <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&laquo;</a>
-                                </li>
-                                <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
-                                    <a th:classappend="${i == currentPage2 ? 'active' : ''}"
-                                       th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
-                                       th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}"
-                                       th:text="${i}"></a>
-                                </li>
-                                <li th:if="${currentPage2 < totalPages2}">
-                                    <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&raquo;</a>
-                                </li>
-                            </ul>
+                            <div class="col-lg-1" style="min-width: 144px">
+                                <button class="main-btn primary-btn btn-hover ml-10" type="submit">
+                                    검색
+                                </button>
+                            </div>
                         </div>
+                    </form>
+                    <table class="table">
+                        <tr>
+                            <th class="text-center">
+                                <h6>발주서번호</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>조달계획번호</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>업체명</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>품목명</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>발주 수량</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>합계 금액</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>발주일</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>입고 예정일</h6>
+                            </th>
+                            <th class="text-center">
+                                <h6>발주 상태</h6>
+                            </th>
+                        </tr>
+                        <!-- end table row-->
+
+                        <tr th:each="orders : ${orders}">
+                            <td class="text-center"><p>[[${orders.orderCode}]]</p></td>
+                            <td class="text-center"><p>[[${orders.procurePlanCode}]]</p></td>
+                            <td class="text-center"><p>[[${orders.supplierName}]]</p></td>
+                            <td><p>[[${orders.materialName}]]</p></td>
+                            <td class="text-align-right"><p>[[${orders.orderQuantity}]]</p></td>
+                            <td class="text-align-right"><p>[[${#numbers.formatInteger(orders.totalPrice, 3,
+                                'COMMA')}]]</p></td>
+                            <td class="text-center"><p>[[${orders.orderDate}]]</p></td>
+                            <td class="text-center"><p>[[${orders.expectedDate}]]</p></td>
+                            <td class="text-center">
+                                <span class="status-btn success-btn" th:if="${orders.status=='ON_HOLD'}">대기 중</span>
+                                <span class="status-btn active-btn"
+                                      th:if="${orders.status=='APPROVAL'}">승인 완료</span>
+                                <span class="status-btn active-btn"
+                                      th:if="${orders.status=='DELIVERED'}">배송 완료</span>
+                                <span class="status-btn close-btn" th:if="${orders.status=='FINISHED'}">종료</span>
+                            </td>
+                        </tr>
+                        <!-- end table row -->
+                    </table>
+                    <div class="pagination-wrapper">
+                        <ul class="pagination">
+                            <li th:if="${currentPage2 > 1}">
+                                <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 - 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&laquo;</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence(1, totalPages2)}">
+                                <a th:classappend="${i == currentPage2 ? 'active' : ''}"
+                                   th:if="${(currentPage/10)*10 <= i and i<=(currentPage/10 +1)*10  and i!=0}"
+                                   th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${i}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}"
+                                   th:text="${i}"></a>
+                            </li>
+                            <li th:if="${currentPage2 < totalPages2}">
+                                <a th:href="@{/order/list(page=${currentPage}, size=${pageSize}, keyword=${keyword}, type=${type}, page2=${currentPage2 + 1}, size2=${pageSize2}, keyword2=${keyword2}, id=${id})}">&raquo;</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
 
         <script>
@@ -361,6 +266,14 @@
 
             function addCommas(num) {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+
+            function toggleSelectAll(selectAllCheckbox) {
+                const checkboxes = document.querySelectorAll('.selectCheckbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
             }
 
         </script>

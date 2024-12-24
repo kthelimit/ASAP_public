@@ -31,7 +31,23 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
-                                <!-- 처리 중인 주문 테이블 -->
+                        <form method="get" th:action="@{/order/delivery}" style="text-align:right">
+                            <div class="select-style-1">
+
+                                <input class="select-style-1 search"
+                                       name="keyword1"
+                                       placeholder=" 자재명을 입력하세요."
+                                       style="text-align:right"
+                                       th:value="${keyword1}"
+                                       type="text"
+                                />
+                                <button class="main-btn active-btn btn-hover blue_botton" type="submit">
+                                    검색
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- 처리 중인 주문 테이블 -->
                                 <h4 class="mb-10">진행 중인 발주 목록</h4>
                                 <table class="table">
                                     <thead>
@@ -118,6 +134,21 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
+                        <form method="get" th:action="@{/order/delivery}" style="text-align:right">
+                            <div class="select-style-1">
+
+                                <input class="select-style-1 search"
+                                       name="keyword2"
+                                       placeholder=" 자재명을 입력하세요."
+                                       style="text-align:right"
+                                       th:value="${keyword2}"
+                                       type="text"
+                                />
+                                <button class="main-btn active-btn btn-hover blue_botton" type="submit">
+                                    검색
+                                </button>
+                            </div>
+                        </form>
                         <!-- 출고 요청 테이블 -->
                         <h4 class="mb-10">납입 지시 요청 목록</h4>
                         <div class="table-wrapper table-responsive">
@@ -193,6 +224,21 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-style mb-30">
+                        <form method="get" th:action="@{/order/delivery}" style="text-align:right">
+                            <div class="select-style-1">
+
+                                <input class="select-style-1 search"
+                                       name="keyword3"
+                                       placeholder=" 자재명을 입력하세요."
+                                       style="text-align:right"
+                                       th:value="${keyword}"
+                                       type="text"
+                                />
+                                <button class="main-btn active-btn btn-hover blue_botton" type="submit">
+                                    검색
+                                </button>
+                            </div>
+                        </form>
                         <!-- 처리 완료된 주문 테이블 -->
                         <h4 class="mb-10">처리 완료된 발주 목록</h4>
                         <div class="table-wrapper table-responsive">

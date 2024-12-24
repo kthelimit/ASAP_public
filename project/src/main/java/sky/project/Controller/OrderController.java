@@ -20,8 +20,7 @@ import sky.project.Entity.Supplier;
 import sky.project.Service.*;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @Log4j2
@@ -49,7 +48,7 @@ public class OrderController {
     @GetMapping("/list")
     public String getProductionPlanList(Model model,
                                         @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "6") int size,
+                                        @RequestParam(defaultValue = "12") int size,
                                         @RequestParam(defaultValue = "1") int page2,
                                         @RequestParam(defaultValue = "5") int size2,
                                         @RequestParam(value = "id", required = false) Long id,
@@ -90,29 +89,24 @@ public class OrderController {
         model.addAttribute("pageSize2", size2);
         model.addAttribute("keyword2", keyword2);
 
-
-        if (id != null) {
-            ProcurementPlanDTO selectedOrder = procurementPlanService.getProcurementPlanById(id);
-            Supplier supplier = supplierService.getSupplierByName(selectedOrder.getSupplierName());
-            Material material = materialService.getMaterialByName(selectedOrder.getMaterialName());
-
-            double unitPrice = material.getUnitPrice();
-            int quantity = selectedOrder.getProcurementQuantity();
-            double totalPrice = unitPrice * quantity;
-
-            model.addAttribute("selectedOrder", selectedOrder);
-            model.addAttribute("businessRegistrationNumber", supplier.getBusinessRegistrationNumber());
-            model.addAttribute("supplierAddress", supplier.getAddress());
-            model.addAttribute("orderDate", LocalDate.now());
-            model.addAttribute("userName", supplier.getUser().getUsername());
-            model.addAttribute("unitPrice", unitPrice);
-            model.addAttribute("totalPrice", totalPrice);
-            model.addAttribute("orderDTO", new OrdersDTO());
-            model.addAttribute("id", id);
+        for (ProcurementPlanDTO plan : procure.getContent()) {
+            try {
+                Material material = materialService.getMaterialByName(plan.getMaterialName());
+                plan.setUnitPrice(material.getUnitPrice()); // DTO에 단가 설정
+            } catch (RuntimeException e) {
+                System.out.println("Material not found for name: " + plan.getMaterialName());
+                plan.setUnitPrice(0); // 기본값 설정
+            }
         }
 
-        return "Order/Orderindex";
-    }
+            model.addAttribute("orderDate", LocalDate.now());
+            model.addAttribute("orderDTO", new OrdersDTO());
+            model.addAttribute("id", id);
+
+
+            return "Order/Orderindex";
+        }
+
 
     @GetMapping("/detail/{orderCode}")
     public String getOrderDetail(Model model, @PathVariable String orderCode) {
@@ -148,18 +142,38 @@ public class OrderController {
 
 
     @PostMapping("/register")
-    public String OrderRegister(@ModelAttribute OrdersDTO ordersDTO) {
+    public String OrderRegister(
+            @RequestParam("selectedOrders") List<String> selectedOrders,
+            @RequestParam("procurePlanCode") List<String> procurePlanCodes,
+            @RequestParam("supplierName") List<String> supplierNames,
+            @RequestParam("materialName") List<String> materialNames,
+            @RequestParam("unitPrice") List<Double> unitPrices,
+            @RequestParam("orderQuantity") List<Integer> orderQuantities,
+            @RequestParam("totalPrice") List<Double> totalPrices,
+            @RequestParam("orderDate") List<String> orderDates,
+            @RequestParam("expectedDate") List<LocalDate> expectedDate
+    ) {
         // 데이터 확인
-        System.out.println("Received OrdersDTO: " + ordersDTO);
-        System.out.println("supplierName: " + ordersDTO.getSupplierName());
-        System.out.println("totalPrice : " + ordersDTO.getTotalPrice());
+        for (int i = 0; i < selectedOrders.size(); i++) {
+            OrdersDTO ordersDTO = new OrdersDTO();
+            ordersDTO.setProcurePlanCode(procurePlanCodes.get(i));
+            ordersDTO.setSupplierName(supplierNames.get(i));
+            ordersDTO.setMaterialName(materialNames.get(i));
+            ordersDTO.setUnitPrice(unitPrices.get(i));
+            ordersDTO.setOrderQuantity(orderQuantities.get(i));
+            ordersDTO.setTotalPrice(totalPrices.get(i));
+            ordersDTO.setExpectedDate(expectedDate.get(i));
+            ordersDTO.setOrderDate(LocalDate.parse(orderDates.get(i)));
 
-        // 여기서 orderDTO를 저장하거나 처리하는 로직 추가
-        orderService.registerOrder(ordersDTO);
+            // 개별 DTO 처리
+            System.out.println("Processing OrdersDTO: " + ordersDTO);
+            orderService.registerOrder(ordersDTO);
+        }
 
         // 등록 완료 후 목록 페이지로 리다이렉트
         return "redirect:/order/list";
     }
+
 
     @RequestMapping("/procure")
     public String procure() {
@@ -176,15 +190,38 @@ public class OrderController {
             @RequestParam(defaultValue = "10") int completedSize,
             @RequestParam(defaultValue = "1") int deliveryPage,
             @RequestParam(defaultValue = "10") int deliverySize,
+            @RequestParam(value = "keyword1", required = false) String keyword1,
+            @RequestParam(value = "keyword2", required = false) String keyword2,
+            @RequestParam(value = "keyword3", required = false) String keyword3,
             @ModelAttribute("updatedOrder") OrdersDTO updatedOrderDTO) {
 
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
         Pageable completedPageable = PageRequest.of(completedPage - 1, completedSize, Sort.by("orderId").descending());
         Pageable deliveryPageable = PageRequest.of(deliveryPage - 1, deliverySize, Sort.by("id").descending());
 
-        // 처리 중인 주문 조회
-        Page<OrdersDTO> purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);
+        // 처리 중인 주문 조회 (keyword1)
+        Page<OrdersDTO> purchaseOrders;
+        if (keyword1 != null && !keyword1.isEmpty()) {
+            purchaseOrders = orderService.searchOrders(keyword1, pageable);
+        } else {
+            purchaseOrders = orderService.findByStatus(CurrentStatus.APPROVAL.name(), pageable);
+        }
 
+        // 추가 검색 조건 (keyword2)
+        Page<OrdersDTO> additionalOrders1;
+        if (keyword2 != null && !keyword2.isEmpty()) {
+            additionalOrders1 = orderService.searchOrders(keyword2, pageable);
+        } else {
+            additionalOrders1 = Page.empty(pageable);
+        }
+
+        // 추가 검색 조건 (keyword3)
+        Page<OrdersDTO> additionalOrders2;
+        if (keyword3 != null && !keyword3.isEmpty()) {
+            additionalOrders2 = orderService.searchOrders(keyword3, pageable);
+        } else {
+            additionalOrders2 = Page.empty(pageable);
+        }
 
         List<String> statuses = Arrays.asList(
                 CurrentStatus.IN_PROGRESS.name(),
@@ -205,6 +242,10 @@ public class OrderController {
         model.addAttribute("purchaseTotalPages", purchaseOrders.getTotalPages());
         model.addAttribute("purchaseCurrentPage", page);
 
+        // 추가 검색 결과 전달
+        model.addAttribute("additionalOrders1", additionalOrders1.getContent());
+        model.addAttribute("additionalOrders2", additionalOrders2.getContent());
+
         // 처리 완료된 주문 데이터 전달
         model.addAttribute("completedOrders", completedOrders.getContent());
         model.addAttribute("completedTotalPages", completedOrders.getTotalPages());
@@ -215,13 +256,14 @@ public class OrderController {
         model.addAttribute("deliveryTotalPages", deliveryRequests.getTotalPages());
         model.addAttribute("deliveryCurrentPage", deliveryPage);
 
-        // 갱신된 주문 전달
-        if (updatedOrderDTO != null) {
-            model.addAttribute("updatedOrder", updatedOrderDTO);
-        }
+        // 검색 키워드 전달
+        model.addAttribute("keyword1", keyword1);
+        model.addAttribute("keyword2", keyword2);
+        model.addAttribute("keyword3", keyword3);
 
         return "Order/DeliveryOrder";
     }
+
 
     @PostMapping("/delivery/request")
     public String requestDelivery(

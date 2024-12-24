@@ -159,6 +159,7 @@ public class ProductionPlanController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("keyword2", keyword2);
 
         String productionPlanCode = null;
 

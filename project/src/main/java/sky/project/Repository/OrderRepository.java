@@ -16,8 +16,8 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("select o from Order o where o.supplier.supplierName=:supplierName and o.material.materialName=:materialName")
-    Page<Order> findBySupplierNameContainingOrMaterialNameContaining(String supplierName, String materialName, Pageable pageable);
+    @Query("select o from Order o where o.supplier.supplierName like %:supplierName% or o.material.materialName like %:materialName%")
+    Page<Order> findBySupplierNameContainingOrMaterialNameContaining(@Param("supplierName") String supplierName, @Param("materialName") String materialName, Pageable pageable);
 
     @Query("select o from Order o where o.supplier.supplierName=:supplierName")
     Page<Order> findBySupplierName(String supplierName, Pageable pageable);

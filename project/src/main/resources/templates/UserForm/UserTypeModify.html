@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout/basic :: setContent(~{this::content})}">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-
-        <h2 style="margin-top:200px;">User Type 변경</h2>
-
-        <body style="text-align:center">
-        <div style="width:70%; margin: 0 auto; text-align: center;">
-            <!-- 검색창 -->
-            <form method="get" th:action="@{/usertype}">
-                <div class="row" style="justify-content: flex-end; margin-bottom: 20px; text-align:right; ">
-                    <div class="input-style-1 col-lg-5">
-                        <input style="width: 200px" id="searchKeyword" name="keyword"
-                               placeholder="아이디를 입력하세요"
-                               th:value="${keyword}" type="text"/>
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                        <h2>회원 부서 변경</h2>
+                        </div>
                     </div>
-                    <div style="width: 144px;">
-                        <button class="main-btn primary-btn btn-hover " type="submit" style="text-align:right">검색
-                        </button>
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">업체관리</a>
+                                    </li>
+                                    <li class="breadcrumb-item active"><a href="#0">회원 부서 변경</a></li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
+                    <!-- end col -->
                 </div>
-            </form>
+                <!-- end row -->
+            </div>
+            <!-- ========== title-wrapper end ========== -->
 
-            <!-- 유저 리스트 테이블 -->
+            <div style="width:70%; margin: 0 auto; text-align: center;">
+                <!-- 검색창 -->
+                <form method="get" th:action="@{/usertype}">
+                    <div class="row" style="justify-content: flex-end; margin-bottom: 20px; text-align:right; ">
+                        <div class="input-style-1 col-lg-5">
+                            <input id="searchKeyword" name="keyword" placeholder="아이디를 입력하세요"
+                                   style="width: 200px; background-color: white"
+                                   th:value="${keyword}" type="text"/>
+                        </div>
+                        <div style="width: 144px;">
+                            <button class="main-btn primary-btn btn-hover " style="text-align:right" type="submit">검색
+                            </button>
+                        </div>
+                    </div>
+                </form>
 
-
-
+                <!-- 유저 리스트 테이블 -->
                 <div class="card-style mb-30 right-div">
                     <h3 class="mb-10">부서 변경</h3>
                     <div class="table-wrapper table-responsive">
@@ -40,14 +60,14 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="user : ${users.content}">
+                                <tr th:each="user : ${users.content}" th:if="${user.userType!='ADMIN'}">
                                     <td class="text-center"><p th:text="${user.username}"></p></td>
                                     <td class="text-center"><p th:text="${user.userId}"></p></td>
                                     <td class="text-center">
                                         <select class="form-select" th:id="'userType-' + ${user.userId}"
                                                 th:value="${user.userType}">
-                                            <option th:value="${user.userType}" th:text="${user.userType}"
-                                                    selected="selected"></option>
+                                            <option selected="selected" th:text="${user.userType}"
+                                                    th:value="${user.userType}"></option>
                                             <option value="PURCHASE_DEPT">구매부서</option>
                                             <option value="MATERIAL_DEPT">자재부서</option>
                                             <option value="PRODUCTION_DEPT">생산부서</option>
@@ -67,63 +87,64 @@
                 </div>
 
 
-            <!-- 페이지네이션 -->
-            <div class="pagination-wrapper" th:if="${totalPages > 1}" style="margin-top: 200px;">
-                <ul class="pagination">
-                    <!-- 이전 페이지 버튼 -->
-                    <li th:if="${currentPage > 1}">
-                        <a th:href="@{/usertype(page=${currentPage - 1}, size=${users.size}, keyword=${keyword})}">&laquo;</a>
-                    </li>
+                <!-- 페이지네이션 -->
+                <div class="pagination-wrapper" style="margin-top: 200px;" th:if="${totalPages > 1}">
+                    <ul class="pagination">
+                        <!-- 이전 페이지 버튼 -->
+                        <li th:if="${currentPage > 1}">
+                            <a th:href="@{/usertype(page=${currentPage - 1}, size=${users.size}, keyword=${keyword})}">&laquo;</a>
+                        </li>
 
-                    <!-- 페이지 번호 버튼 -->
-                    <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                        <a th:classappend="${i == currentPage ? 'active' : ''}"
-                           th:href="@{/usertype(page=${i}, size=${users.size}, keyword=${keyword})}"
-                           th:text="${i}"></a>
-                    </li>
+                        <!-- 페이지 번호 버튼 -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                            <a th:classappend="${i == currentPage ? 'active' : ''}"
+                               th:href="@{/usertype(page=${i}, size=${users.size}, keyword=${keyword})}"
+                               th:text="${i}"></a>
+                        </li>
 
-                    <!-- 다음 페이지 버튼 -->
-                    <li th:if="${currentPage < totalPages}">
-                        <a th:href="@{/usertype(page=${currentPage + 1}, size=${users.size}, keyword=${keyword})}">&raquo;</a>
-                    </li>
-                </ul>
+                        <!-- 다음 페이지 버튼 -->
+                        <li th:if="${currentPage < totalPages}">
+                            <a th:href="@{/usertype(page=${currentPage + 1}, size=${users.size}, keyword=${keyword})}">&raquo;</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        </body>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                // 모든 수정 버튼에 클릭 이벤트 추가
-                document.querySelectorAll('.modifybtn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const userId = this.getAttribute('data-user-id'); // data-user-id 속성에서 값 가져오기
-                        updateUserType(userId);
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // 모든 수정 버튼에 클릭 이벤트 추가
+                    document.querySelectorAll('.modifybtn').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const userId = this.getAttribute('data-user-id'); // data-user-id 속성에서 값 가져오기
+                            updateUserType(userId);
+                        });
                     });
                 });
-            });
 
-            function updateUserType(userId) {
-                const selectedType = document.getElementById(`userType-${userId}`).value;
+                function updateUserType(userId) {
+                    const selectedType = document.getElementById(`userType-${userId}`).value;
 
-                fetch(`/${userId}/updateUserType`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({userType: selectedType}),
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('유저타입이 성공적으로 변경되었습니다.');
-                            location.reload(); // 페이지 새로고침
-                        } else {
-                            alert('유저타입 변경에 실패했습니다.');
-                        }
+                    fetch(`/${userId}/updateUserType`, {
+                        method : 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body   : JSON.stringify({userType: selectedType}),
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('오류가 발생했습니다.');
-                    });
-            }
-        </script>
+                        .then(response => {
+                            if (response.ok) {
+                                alert('유저타입이 성공적으로 변경되었습니다.');
+                                location.reload(); // 페이지 새로고침
+                            } else {
+                                alert('유저타입 변경에 실패했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('오류가 발생했습니다.');
+                        });
+                }
+            </script>
+        </div>
     </th:block>
 </th:block>

@@ -32,8 +32,14 @@ public class HomeController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // 로그인 폼 표시
+    //시작 화면
     @GetMapping({"/",""})
+    public String home(Model model) {
+        return "intro";
+    }
+
+    // 로그인 폼 표시
+    @GetMapping("loginForm")
     public String showLoginForm(Model model) {
         model.addAttribute("userDTO", new UserDTO());
         return "UserForm/Login";
@@ -88,7 +94,7 @@ public class HomeController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute UserDTO userDTO) {
         userService.createUser(userDTO); // 사용자 생성 로직
-        return "redirect:/"; // 회원가입 성공 시 로그인 페이지로 이동
+        return "redirect:/loginForm"; // 회원가입 성공 시 로그인 페이지로 이동
     }
 
     // ID 중복 확인 처리
@@ -105,7 +111,7 @@ public class HomeController {
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/";
+        return "redirect:/loginForm";
     }
 
     // 개인 프로필 보기
@@ -173,7 +179,7 @@ public class HomeController {
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
         if (userDTO == null) {
             model.addAttribute("error", "사용자가 찾을 수 없습니다.");
-            return "redirect:/";
+            return "redirect:/loginForm";
         }
 
         // 1. 현재 비밀번호가 DB의 비밀번호와 일치하는지 확인

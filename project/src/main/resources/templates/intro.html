@@ -5,17 +5,17 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>ASAP - 빠르고 정확한 조달 시스템</title>
     <style>
-        body {
-            margin: 0;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5)), url('../static/assets/images/bg/chart.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+        /*body {*/
+        /*    margin: 0;*/
+        /*    background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5)), url('../static/assets/images/bg/chart.jpg');*/
+        /*    background-size: cover;*/
+        /*    background-position: center;*/
+        /*    display: flex;*/
+        /*    justify-content: center;*/
+        /*    align-items: center;*/
+        /*    height: 100vh;*/
+        /*    overflow: hidden;*/
+        /*}*/
 
         .container {
             text-align: center;
@@ -62,13 +62,15 @@
     <link rel="stylesheet" th:href="@{/assets/css/materialdesignicons.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
 </head>
-<body>
+<body th:style="|background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5)), url('@{/assets/images/bg/chart.jpg}'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;|">
+
+
 
 <div class="container">
-    <img alt="ASAP Logo" class="logo" src="../static/assets/images/logo/asap.png">
+    <img alt="ASAP Logo" class="logo" th:src="@{/assets/images/logo/asap.png}">
     <h1>빠르고 정확한 조달 시스템</h1>
     <p>효율적이고 신속한 조달을 위한 최고의 솔루션</p>
-    <a class="intro-button main-btn btn-hover primary-btn" href="#">시작하기</a>
+    <a class="intro-button main-btn btn-hover primary-btn" href="/loginForm">시작하기</a>
 </div>
 <!-- particles.js container -->
 <div id="particles-js" style="position: absolute; width: 100%; height: 100%"></div>
@@ -79,7 +81,7 @@
 <!-- stats.js lib -->
 <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
 
-<script src="../static/assets/js/particles.js"></script>
-<script src="../static/assets/js/particles.min.js"></script>
+<script th:src="@{/assets/js/particles.js}"></script>
+<script th:src="@{/assets/js/particles.min.js}"></script>
 </body>
 </html>

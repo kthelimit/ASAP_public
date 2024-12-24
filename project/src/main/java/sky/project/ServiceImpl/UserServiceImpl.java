@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder; // PasswordEncoder 주입
+
     @Autowired
     private SupplierRepository supplierRepository;
 
@@ -54,6 +55,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user); // 저장
     }
 
+    @Override
+    public UserDTO findUserById(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
+        return new UserDTO(user);
+    }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {

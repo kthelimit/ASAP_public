@@ -16,6 +16,7 @@ public interface UserService {
     Page<UserDTO> findAllUsers(Pageable pageable);
     Page<UserDTO> searchUsers(String keyword, Pageable pageable);
     void updateUserType(String userId, String newUserType);
+    UserDTO findUserById(String userId);
 
     @Transactional
     void updateProfile(UserDTO userDTO);

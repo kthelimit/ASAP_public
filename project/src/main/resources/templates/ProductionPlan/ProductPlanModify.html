@@ -222,88 +222,89 @@
                             </div>
                         </div>
                         <div class="scrollable-tbody">
-                        <table class="table" id="needQuantity">
-                            <thead class="sticky">
-                            <tr >
-                                <th class="text-center "><h6>부품 종류</h6></th>
-                                <th class="text-center "><h6>부품코드</h6></th>
-                                <th class="text-center "><h6>부품명</h6></th>
-                                <th class="text-center "><h6>필요 수량</h6></th>
-                                <th class="text-center "><h6>재고</h6></th>
-                                <th class="text-center "><h6 id="day1"
-                                                                   th:text="${perDayDTOS[0].getProductionDate()}">
-                                    1일</h6></th>
-                                <th class="text-center "><h6 id="day2" th:if="${#lists.size(perDayDTOS)>=2}"
-                                                                   th:text="${perDayDTOS[1].getProductionDate()}">
-                                    2일</h6></th>
-                                <th class="text-center "><h6 id="day3" th:if="${#lists.size(perDayDTOS)>=3}"
-                                                                   th:text="${perDayDTOS[2].getProductionDate()}">
-                                    3일</h6></th>
-                                <th class="text-center "><h6 id="day4" th:if="${#lists.size(perDayDTOS)>=4}"
-                                                                   th:text="${perDayDTOS[3].getProductionDate()}">
-                                    4일</h6></th>
-                                <th class="text-center "><h6 id="day5" th:if="${#lists.size(perDayDTOS)>=5}"
-                                                                   th:text="${perDayDTOS[4].getProductionDate()}">
-                                    5일</h6></th>
-                                <th class="text-center "><h6>이전 소요량</h6></th>
-                                <th class="text-center "><h6>변경된 소요량</h6></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="bomDTO:${bomDTOS}">
-                                <td class="min-width"><p th:text="${bomDTO.componentType}"></p></td>
-                                <td class="min-width text-center"><p th:text="${bomDTO.materialCode}"></p></td>
-                                <td class="min-width"><p th:text="${bomDTO.materialName}"></p></td>
-                                <td class="min-width text-center">
-                                    <input class="none-border" name="requireQuantity"
-                                           th:value="${bomDTO.requireQuantity}"></td>
-                                <td class="min-width text-align-right"><p>
-                                    <span title="현재 창고 내의 가용수량 = 창고 재고 - 현재 출고요청 중인 수량">[[${bomDTO.availableStock}]]</span>
-                                    <span class="text-success" title="발주 중인 수량 = 발주 수량 - 납품 지시 완료 수량">(+[[${bomDTO.remainedOrderQuantity}]])</span>
-                                    <input name="availableStock" th:value="${bomDTO.availableStock}" type="hidden">
-                                    <input name="remainedOrderQuantity" th:value="${bomDTO.remainedOrderQuantity}"
-                                           type="hidden">
-                                </p></td>
-                                <td class="min-width text-align-right">
-                                    <input class="none-border" name="day1" readonly
-                                           th:value="${perDayDTOS[0].productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                                <td class="min-width text-align-right">
-                                    <input class="none-border" name="day2" readonly
-                                           th:if="${#lists.size(perDayDTOS)>=2}"
-                                           th:value="${perDayDTOS[1].productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                                <td class="min-width text-align-right">
-                                    <input class="none-border" name="day3" readonly
-                                           th:if="${#lists.size(perDayDTOS)>=3}"
-                                           th:value="${perDayDTOS[2].productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                                <td class="min-width text-align-right">
-                                    <input class="none-border" name="day4" readonly
-                                           th:if="${#lists.size(perDayDTOS)>=4}"
-                                           th:value="${perDayDTOS[3].productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                                <td class="min-width text-align-right">
-                                    <input class="none-border" name="day5" readonly
-                                           th:if="${#lists.size(perDayDTOS)>=5}"
-                                           th:value="${perDayDTOS[4].productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                                <td class="min-width text-align-right">
-                                    <p th:text="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"></p>
-                                </td>
-                                <td class="min-width  text-center">
-                                    <input class="none-border" name="current" readonly
-                                           th:value="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"
-                                           type="text">
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <table class="table" id="needQuantity">
+                                <thead class="sticky">
+                                <tr>
+                                    <th class="text-center "><h6>부품 종류</h6></th>
+                                    <th class="text-center "><h6>부품코드</h6></th>
+                                    <th class="text-center "><h6>부품명</h6></th>
+                                    <th class="text-center "><h6>필요 수량</h6></th>
+                                    <th class="text-center "><h6>재고</h6></th>
+                                    <th class="text-center "><h6 id="day1"
+                                                                 th:text="${perDayDTOS[0].getProductionDate()}">
+                                        1일</h6></th>
+                                    <th class="text-center "><h6 id="day2" th:if="${#lists.size(perDayDTOS)>=2}"
+                                                                 th:text="${perDayDTOS[1].getProductionDate()}">
+                                        2일</h6></th>
+                                    <th class="text-center "><h6 id="day3" th:if="${#lists.size(perDayDTOS)>=3}"
+                                                                 th:text="${perDayDTOS[2].getProductionDate()}">
+                                        3일</h6></th>
+                                    <th class="text-center "><h6 id="day4" th:if="${#lists.size(perDayDTOS)>=4}"
+                                                                 th:text="${perDayDTOS[3].getProductionDate()}">
+                                        4일</h6></th>
+                                    <th class="text-center "><h6 id="day5" th:if="${#lists.size(perDayDTOS)>=5}"
+                                                                 th:text="${perDayDTOS[4].getProductionDate()}">
+                                        5일</h6></th>
+                                    <th class="text-center "><h6>이전 소요량</h6></th>
+                                    <th class="text-center "><h6>변경된 소요량</h6></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="bomDTO:${bomDTOS}">
+                                    <td class="min-width"><p th:text="${bomDTO.componentType}"></p></td>
+                                    <td class="min-width text-center"><p th:text="${bomDTO.materialCode}"></p></td>
+                                    <td class="min-width"><p th:text="${bomDTO.materialName}"></p></td>
+                                    <td class="min-width text-center">
+                                        <input class="none-border" name="requireQuantity"
+                                               th:value="${bomDTO.requireQuantity}"></td>
+                                    <td class="min-width text-align-right"><p>
+                                        <span th:text="${bomDTO.availavbleStockProcure}"
+                                              th:title="${'현재 창고 내의 가용수량 ' + (bomDTO.availavbleStockProcure - (bomDTO.remainedOrderQuantity+bomDTO.deliveryingQuantity)) + ' + 발주 및 납품 지시 중인 수량 ' +(bomDTO.remainedOrderQuantity+bomDTO.deliveryingQuantity)}"></span>
+                                        <input name="availableStock" th:value="${bomDTO.availavbleStockProcure}"
+                                               type="hidden">
+                                    </p></td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="day1" readonly
+                                               th:value="${perDayDTOS[0].productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="day2" readonly
+                                               th:if="${#lists.size(perDayDTOS)>=2}"
+                                               th:value="${perDayDTOS[1].productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="day3" readonly
+                                               th:if="${#lists.size(perDayDTOS)>=3}"
+                                               th:value="${perDayDTOS[2].productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="day4" readonly
+                                               th:if="${#lists.size(perDayDTOS)>=4}"
+                                               th:value="${perDayDTOS[3].productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="day5" readonly
+                                               th:if="${#lists.size(perDayDTOS)>=5}"
+                                               th:value="${perDayDTOS[4].productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width text-align-right">
+                                        <input class="none-border" name="lastQuantity" readonly
+                                               th:value="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                    <td class="min-width  text-center">
+                                        <input class="none-border" name="current" readonly
+                                               th:value="${productionPlanDTO.productionQuantity * bomDTO.requireQuantity}"
+                                               type="text">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -484,8 +485,11 @@
                     $('input[name=day5]').eq(i).val(curpas[4]);
 
                     //그 자재의 창고 재고 + 앞으로 들어올 수량
-                    var stock = parseInt($('input[name=availableStock]').eq(i).val()) + parseInt($('input[name=remainedOrderQuantity]').eq(i).val());
-                    console.log("stock : "+ stock);
+                    var stock = parseInt($('input[name=availableStock]').eq(i).val());
+
+                    //이 생산계획에서 본래 쓰려고 했던 이전 소요량을 더해준다.
+                    stock += parseInt($('input[name=lastQuantity]').eq(i).val());
+                    console.log("stock : " + stock);
                     //일단 색깔 리셋
                     $('input[name=day1]').eq(i).css("color", "#5d657b");
                     $('input[name=day2]').eq(i).css("color", "#5d657b");
@@ -494,10 +498,10 @@
                     $('input[name=day5]').eq(i).css("color", "#5d657b");
 
 
-                    for (var j = 0; j < diffDate+1; j++) {
+                    for (var j = 0; j < diffDate + 1; j++) {
                         //각 날짜 별로 수량을 빼냄.
                         stock -= cur[j];
-                        console.log(j+" : "+ stock);
+                        console.log(j + " : " + stock);
                         if (stock <= 0) {
                             switch (j) {
                                 case 0:

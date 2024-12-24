@@ -24,6 +24,12 @@ public interface DeliveryRequestRepository extends JpaRepository<DeliveryRequest
     @Query("select count(d) from DeliveryRequest d where d.supplier.supplierName=:supplierName and d.status='IN_PROGRESS'")
     int countDeliveryRequestsInProgress(String supplierName);
 
+    @Query("select count(d) from DeliveryRequest d where d.material.materialCode=:materialCode and d.status!='FINISHED'")
+    int countByMaterialCodeAndNotFinished(String materialCode);
+
+    @Query("select sum(d.requestedQuantity) from DeliveryRequest d where d.material.materialCode=:materialCode and d.status!='FINISHED'")
+    int findSumByMaterialCodeAndNotFinished(String materialCode);
+
     @Query("select d from DeliveryRequest d where d.requestedDate<:requestedDate and d.status='IN_PROGRESS'")
     List<DeliveryRequest> findDeliveryRequestsByRequestedDateAndStatus(LocalDate requestedDate);
 

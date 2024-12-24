@@ -159,8 +159,8 @@
                                 <h6 class="mb-10">진행 중인 생산 계획 수</h6>
                                 <h3 class="text-bold mb-10">[[${countProductionPlan}]]</h3>
                                 <p class="text-sm text-success">
-                                    <a th:if="${userType!='SUPPLIER'}" th:href="@{/plan/list}"><span class="text-gray">더 보기</span></a>
-                                    <span th:if="${userType=='SUPPLIER'}" class="text-gray">아래의 달력을 참고해주세요.</span>
+                                    <a th:href="@{/plan/list}" th:if="${userType!='SUPPLIER'}"><span class="text-gray">더 보기</span></a>
+                                    <span class="text-gray" th:if="${userType=='SUPPLIER'}">아래의 달력을 참고해주세요.</span>
                                 </p>
                             </div>
                         </div>
@@ -367,153 +367,156 @@
                         </div>
                         <!-- 달력 끝 -->
 
+                        <!-- 협력업체에게는 그래프가 보이지않아야한다 -->
+                        <th:block  th:if="${userType!='SUPPLIER'}">
+                            <!-- 거래 내역 요약 -->
+                            <div class="card-style mb-30">
+                                <h4 class="mb-10">재고 내역 요약</h4>
+                                <!--                            <p><strong>총 재고 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>-->
 
-                        <!-- 거래 내역 요약 -->
-                        <div class="card-style mb-30">
-                            <h4 class="mb-10">재고 내역 요약</h4>
-                            <!--                            <p><strong>총 재고 금액:</strong> ₩[[${#numbers.formatInteger(totalAmount, 3, 'COMMA')}]]</p>-->
 
-
-                            <div class="row">
-                                <div class="col-lg-13">
-                                    <div class="card-style mb-30">
-                                        <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                                            <div class="left">
-                                                <h6 class="text-medium mb-2">재고</h6>
+                                <div class="row">
+                                    <div class="col-lg-13">
+                                        <div class="card-style mb-30">
+                                            <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                                                <div class="left">
+                                                    <h6 class="text-medium mb-2">재고</h6>
+                                                </div>
+                                                <!--                                            <div class="right">-->
+                                                <!--                                                <div class="select-style-1 mb-2">-->
+                                                <!--                                                    <div class="select-position select-sm">-->
+                                                <!--                                                        <select class="light-bg">-->
+                                                <!--                                                            <option value="" selected>이번 달</option>-->
+                                                <!--                                                            <option value="">저번 달</option>-->
+                                                <!--                                                            <option value="">지난 3개월</option>-->
+                                                <!--                                                        </select>-->
+                                                <!--                                                    </div>-->
+                                                <!--                                                </div>-->
+                                                <!--                                                &lt;!&ndash; end select &ndash;&gt;-->
+                                                <!--                                            </div>-->
                                             </div>
-                                            <!--                                            <div class="right">-->
-                                            <!--                                                <div class="select-style-1 mb-2">-->
-                                            <!--                                                    <div class="select-position select-sm">-->
-                                            <!--                                                        <select class="light-bg">-->
-                                            <!--                                                            <option value="" selected>이번 달</option>-->
-                                            <!--                                                            <option value="">저번 달</option>-->
-                                            <!--                                                            <option value="">지난 3개월</option>-->
-                                            <!--                                                        </select>-->
-                                            <!--                                                    </div>-->
-                                            <!--                                                </div>-->
-                                            <!--                                                &lt;!&ndash; end select &ndash;&gt;-->
-                                            <!--                                            </div>-->
-                                        </div>
-                                        <!-- End Title -->
-                                        <div class="chart">
-                                            <div id="legend3">
+                                            <!-- End Title -->
+                                            <div class="chart">
+                                                <div id="legend3">
 
+                                                </div>
+                                                <canvas id="Chart4"
+                                                        style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
                                             </div>
-                                            <canvas id="Chart4"
-                                                    style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
 
-                            <!-- 탭 메뉴 -->
-                            <div class="tabs">
-                                <input type="radio" id="tab-weekly" name="tab-control" checked>
-                                <input type="radio" id="tab-monthly" name="tab-control">
-                                <input type="radio" id="tab-yearly" name="tab-control">
+                                <!-- 탭 메뉴 -->
+                                <div class="tabs">
+                                    <input checked id="tab-weekly" name="tab-control" type="radio">
+                                    <input id="tab-monthly" name="tab-control" type="radio">
+                                    <input id="tab-yearly" name="tab-control" type="radio">
 
 
-                                <ul class="tab-menu">
-                                    <li><label for="tab-weekly" role="button">주간 재고</label></li>
-                                    <li><label for="tab-monthly" role="button">월간 재고</label></li>
-                                    <li><label for="tab-yearly" role="button">연간 재고</label></li>
-                                </ul>
+                                    <ul class="tab-menu">
+                                        <li><label for="tab-weekly" role="button">주간 재고</label></li>
+                                        <li><label for="tab-monthly" role="button">월간 재고</label></li>
+                                        <li><label for="tab-yearly" role="button">연간 재고</label></li>
+                                    </ul>
 
 
-                                <div class="content">
+                                    <div class="content">
 
 
-                                    <section id="weekly-stock">
-                                        <!-- 주간 재고 요약 -->
-                                        <h4 class="mt-20">주간 재고</h4>
-                                        <p class="text-sm mb-20">이번 달의 주간 기록만 표시됩니다.</p>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center" style="width: 50%"><h6>주</h6></th>
-                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="entry : ${weeklySummary}" class="data-row">
-                                                <td class="text-center">[[${entry.key}]]</td>
-                                                <!--                                    <td class="text-center quantity">[[${entry.value.quantity}]]</td>-->
-                                                <td class="text-center price">
-                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3, 'COMMA')}]]
-                                                </td>
-                                            </tr>
-                                            <tr th:if="${#lists.isEmpty(weeklySummary)}">
-                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
+                                        <section id="weekly-stock">
+                                            <!-- 주간 재고 요약 -->
+                                            <h4 class="mt-20">주간 재고</h4>
+                                            <p class="text-sm mb-20">이번 달의 주간 기록만 표시됩니다.</p>
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width: 50%"><h6>주</h6></th>
+                                                    <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr class="data-row" th:each="entry : ${weeklySummary}">
+                                                    <td class="text-center">[[${entry.key}]]</td>
+                                                    <!--                                    <td class="text-center quantity">[[${entry.value.quantity}]]</td>-->
+                                                    <td class="text-center price">
+                                                        ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                                        'COMMA')}]]
+                                                    </td>
+                                                </tr>
+                                                <tr th:if="${#lists.isEmpty(weeklySummary)}">
+                                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </section>
 
 
-                                    <section id="monthly-stock">
-                                        <!-- 월간 재고 요약 -->
-                                        <h4 class="mt-20">월간 재고</h4>
-                                        <p class="text-sm mb-20">올해의 월간 기록만 표시됩니다.</p>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center" style="width: 50%"><h6>월</h6></th>
-                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="entry : ${monthlySummary}">
-                                                <td class="text-center">[[${entry.key}]]</td>
-                                                <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
-                                                <td class="text-center">
-                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
-                                                    'COMMA')}]]
-                                                </td>
-                                            </tr>
-                                            <tr th:if="${#lists.isEmpty(monthlySummary)}">
-                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
+                                        <section id="monthly-stock">
+                                            <!-- 월간 재고 요약 -->
+                                            <h4 class="mt-20">월간 재고</h4>
+                                            <p class="text-sm mb-20">올해의 월간 기록만 표시됩니다.</p>
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width: 50%"><h6>월</h6></th>
+                                                    <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="entry : ${monthlySummary}">
+                                                    <td class="text-center">[[${entry.key}]]</td>
+                                                    <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                                    <td class="text-center">
+                                                        ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                                        'COMMA')}]]
+                                                    </td>
+                                                </tr>
+                                                <tr th:if="${#lists.isEmpty(monthlySummary)}">
+                                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </section>
 
 
-                                    <!-- 연간 재고 요약 -->
-                                    <section id="yearly-stock">
-                                        <h4 class="mt-20">연간 재고</h4>
-                                        <p class="text-sm mb-20">최근 5년간의 기록만 표시됩니다.</p>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center" style="width: 50%"><h6>연도</h6></th>
-                                                <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
-                                                <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="entry : ${yearlySummary}">
-                                                <td class="text-center">[[${entry.key}]]</td>
-                                                <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
-                                                <td class="text-center">
-                                                    ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
-                                                    'COMMA')}]]
-                                                </td>
-                                            </tr>
-                                            <tr th:if="${#lists.isEmpty(yearlySummary)}">
-                                                <td class="text-center" colspan="2">데이터가 없습니다.</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
+                                        <!-- 연간 재고 요약 -->
+                                        <section id="yearly-stock">
+                                            <h4 class="mt-20">연간 재고</h4>
+                                            <p class="text-sm mb-20">최근 5년간의 기록만 표시됩니다.</p>
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width: 50%"><h6>연도</h6></th>
+                                                    <!--                                    <th class="text-center" style="width: 33%"><h6>재고 수량</h6></th>-->
+                                                    <th class="text-center" style="width: 50%"><h6>재고 금액</h6></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="entry : ${yearlySummary}">
+                                                    <td class="text-center">[[${entry.key}]]</td>
+                                                    <!--                                    <td class="text-center">[[${entry.value.quantity}]]</td>-->
+                                                    <td class="text-center">
+                                                        ₩[[${#numbers.formatInteger(entry.value.totalPrice, 3,
+                                                        'COMMA')}]]
+                                                    </td>
+                                                </tr>
+                                                <tr th:if="${#lists.isEmpty(yearlySummary)}">
+                                                    <td class="text-center" colspan="2">데이터가 없습니다.</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </section>
 
 
+                                    </div>
                                 </div>
-                            </div>
 
-                        </div>
+                            </div>
+                        </th:block>
                     </div>
 
                     <div class="col-lg-5">
@@ -571,6 +574,8 @@
                                                   th:if="${order.status=='ON_HOLD'}">대기 중</span>
                                                 <span class="status-btn active-btn"
                                                       th:if="${order.status=='APPROVAL'}">승인 완료</span>
+                                                <span class="status-btn active-btn"
+                                                      th:if="${order.status=='NOT_REMAINING'}">지시 완료</span>
                                                 <span class="status-btn active-btn"
                                                       th:if="${order.status=='DELIVERED'}">전부 배송됨</span>
                                                 <span class="status-btn close-btn"
@@ -832,23 +837,23 @@
                 var calendar = new FullCalendar.Calendar(calendarEl, {
 
                     headerToolbar: {
-                        left: 'title',
+                        left  : 'title',
                         center: '',
-                        right: 'today prev, next'
+                        right : 'today prev, next'
                     },
-                    initialView: "dayGridMonth",
-                    navLinks: false, // can click day/week names to navigate views
-                    nowIndicator: true,
+                    initialView  : "dayGridMonth",
+                    navLinks     : false, // can click day/week names to navigate views
+                    nowIndicator : true,
 
-                    weekNumbers: false,
+                    weekNumbers          : false,
                     weekNumberCalculation: 'ISO',
-                    fixedWeekCount: false,
+                    fixedWeekCount       : false,
 
-                    editable: false,
-                    selectable: true,
+                    editable    : false,
+                    selectable  : true,
                     dayMaxEvents: true, // allow "more" link when too many events
-                    events: "/api/calendar/events",
-                    eventClick: function (info) {
+                    events      : "/api/calendar/events",
+                    eventClick  : function (info) {
                         // 이벤트 클릭 시 상세 정보 표시
                         alert(
                             `일정: ${info.event.title}\n` +
@@ -907,9 +912,9 @@
 
             // Chart.js 생성
             const chart4 = new Chart(ctx4, {
-                type: "bar",
-                data: {
-                    labels: ["1주차", "2주차", "3주차", "4주차", "5주차"], // 주차별 라벨 설정
+                type   : "bar",
+                data   : {
+                    labels  : ["1주차", "2주차", "3주차", "4주차", "5주차"], // 주차별 라벨 설정
                     datasets: [
                         // {
                         //     label: "수량", // 첫 번째 데이터셋: 거래 수량
@@ -922,73 +927,73 @@
                         //     yAxisID: "y", // 왼쪽 축에 맞는 데이터셋
                         // },
                         {
-                            label: "금액 (₩)", // 두 번째 데이터셋: 거래 금액
+                            label          : "금액 (₩)", // 두 번째 데이터셋: 거래 금액
                             backgroundColor: "#9cd2ff", // 거래 금액 바 색상
-                            borderColor: "#9cd2ff", // 바의 경계 색상
-                            borderWidth: 1,
-                            borderRadius: 0, // 둥근 모서리 설정
-                            barThickness: 30, // 각 막대의 기본 굵기
+                            borderColor    : "#9cd2ff", // 바의 경계 색상
+                            borderWidth    : 1,
+                            borderRadius   : 0, // 둥근 모서리 설정
+                            barThickness   : 30, // 각 막대의 기본 굵기
                             maxBarThickness: 30, // 막대의 최대 굵기
-                            data: weekPrices, // 거래 금액 데이터
-                            pointStyle: 'circle',
-                            yAxisID: "y2",
+                            data           : weekPrices, // 거래 금액 데이터
+                            pointStyle     : 'circle',
+                            yAxisID        : "y2",
                         },
                         {
-                            label: "동향", // 두 번째 데이터셋: 꺾은선 그래프
-                            backgroundColor: "#007bff", // 동향 바 색상
-                            borderColor: "#007bff", // 꺾은선 그래프 색상
-                            borderWidth: 1,
-                            data: weekPrices, // 동일한 데이터 사용
-                            fill: false, // 그래프 채우기 비활성화
-                            type: "line", // 꺾은선 그래프 형식
-                            yAxisID: "y2",
-                            pointStyle: 'circle', // 점 스타일 설정
-                            pointRadius: 5, // 점의 크기 설정
+                            label           : "동향", // 두 번째 데이터셋: 꺾은선 그래프
+                            backgroundColor : "#007bff", // 동향 바 색상
+                            borderColor     : "#007bff", // 꺾은선 그래프 색상
+                            borderWidth     : 1,
+                            data            : weekPrices, // 동일한 데이터 사용
+                            fill            : false, // 그래프 채우기 비활성화
+                            type            : "line", // 꺾은선 그래프 형식
+                            yAxisID         : "y2",
+                            pointStyle      : 'circle', // 점 스타일 설정
+                            pointRadius     : 5, // 점의 크기 설정
                             pointHoverRadius: 10, // 호버 시 점 크기 설정
                         }
                     ],
                 },
                 options: {
-                    plugins: {
+                    plugins   : {
                         tooltip: {
-                            backgroundColor: "#F3F6F8",
-                            titleColor: "#8F92A1",
-                            titleFontSize: 12,
-                            bodyColor: "#171717",
-                            bodyFont: {
+                            backgroundColor   : "#F3F6F8",
+                            titleColor        : "#8F92A1",
+                            titleFontSize     : 12,
+                            bodyColor         : "#171717",
+                            bodyFont          : {
                                 weight: "bold",
-                                size: 16,
+                                size  : 16,
                             },
                             multiKeyBackground: "transparent",
-                            displayColors: false,
-                            padding: {
+                            displayColors     : false,
+                            padding           : {
                                 x: 30,
                                 y: 10,
                             },
-                            bodyAlign: "center",
-                            titleAlign: "center",
-                            enabled: true,
+                            bodyAlign         : "center",
+                            titleAlign        : "center",
+                            enabled           : true,
                         },
-                        legend: {
+                        legend : {
                             display: true, // 범례 활성화
-                            labels: {
-                                boxWidth: 15, // 네모(박스)의 너비 조정
-                                boxHeight: 15,
+                            labels : {
+                                boxWidth     : 15, // 네모(박스)의 너비 조정
+                                boxHeight    : 15,
                                 usePointStyle: true, // 범례에서 도형을 데이터셋의 pointStyle로 변경
-                                padding: 50, // 범례 항목 간 간격 설정
+                                padding      : 50, // 범례 항목 간 간격 설정
                             },
                         },
                     },
-                    layout: {
+                    layout    : {
                         padding: {
                             top: 0,
                         },
                     },
                     responsive: true,
-                    title: {
+                    title     : {
                         display: false,
                     },
-                    scales: {
+                    scales    : {
                         // y: {
                         //     position: 'left', // 왼쪽 축
                         //     grid: {
@@ -1010,10 +1015,10 @@
                         // },
                         y2: {
                             position: 'left',
-                            grid: {
+                            grid    : {
                                 display: false,
                             },
-                            ticks: {
+                            ticks   : {
                                 stepSize: 50000000, // 거래 금액 단위 설정
                                 callback: function (value) {
                                     if (value === 0) {
@@ -1026,15 +1031,15 @@
                                     }
                                 },
                             },
-                            title: {
+                            title   : {
                                 display: true,
                             },
                         },
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false,
-                                color: "rgba(143, 146, 161, .1)",
+                        x : {
+                            grid : {
+                                display      : false,
+                                drawBorder   : false,
+                                color        : "rgba(143, 146, 161, .1)",
                                 zeroLineColor: "rgba(143, 146, 161, .1)",
                             },
                             ticks: {

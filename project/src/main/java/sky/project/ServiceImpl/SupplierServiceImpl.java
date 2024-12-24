@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sky.project.DTO.SupplierDTO;
 import sky.project.Entity.Supplier;
 import sky.project.Entity.User;
+import sky.project.Entity.UserType;
 import sky.project.Repository.SupplierRepository;
 import sky.project.Repository.UserRepository;
 import sky.project.Service.SupplierService;
@@ -117,6 +118,7 @@ public class SupplierServiceImpl implements SupplierService {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new NoSuchElementException("No supplier found with ID: " + supplierId));
         supplier.setApproved(true);
+        supplier.getUser().setUserType(UserType.SUPPLIER);
         supplierRepository.save(supplier);
         System.out.println("Supplier approved with ID: " + supplierId);
     }

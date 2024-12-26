@@ -138,7 +138,7 @@ public class ExcelController {
         if (where.equals("dataUpload")) {
             return "redirect:/dashboard/dataUpload";
         } else {
-            return "redirect:/plan/bomRegister";
+            return "redirect:/material/list";
         }
     }
 

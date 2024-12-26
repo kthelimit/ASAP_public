@@ -33,6 +33,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, Long> {
     List<Inspection> findByOrderCode(String orderCode);
 
     //협력사 페이지에 띄워주는 진척검수 목록
-    @Query("select i from Inspection i where i.supplier.supplierName=:supplierName and (i.status='ON_HOLD' or (i.status='FINISHED' and i.inspectionDate >:limitDate))")
+    @Query("select i from Inspection i where i.supplier.supplierName=:supplierName and (i.status='ON_HOLD' or (i.status='FINISHED' and i.inspectionDate >:limitDate)) " +
+            "order by i.status desc ")
     Page<Inspection> findBySupplierName(String supplierName, LocalDate limitDate, Pageable pageable);
 }

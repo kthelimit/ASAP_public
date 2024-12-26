@@ -16,11 +16,11 @@ import sky.project.DTO.OrdersDTO;
 import sky.project.DTO.ProcurementPlanDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Entity.Material;
-import sky.project.Entity.Supplier;
 import sky.project.Service.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @Log4j2
@@ -297,7 +297,7 @@ public class OrderController {
                                     @RequestParam(defaultValue = "10") int size,
                                     @RequestParam(value = "orderCode", required = false) String orderCode) {
 
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId"));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("orderId").descending());
 
         // 제조품 조회
         Page<OrdersDTO> manufacturingOrders = orderService.findByMaterialTypeAndStatus(

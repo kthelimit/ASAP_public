@@ -8,9 +8,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sky.project.DTO.*;
+import sky.project.DTO.ExportDTO;
+import sky.project.DTO.ImportDTO;
+import sky.project.DTO.MaterialDTO;
+import sky.project.DTO.StockDTO;
 import sky.project.Entity.CurrentStatus;
 import sky.project.Service.*;
 
@@ -90,9 +92,8 @@ public class MaterialController {
 
 
     @PostMapping("/register")
-    public String registerMaterial(@ModelAttribute MaterialDTO materialDTO,
-                                   @RequestParam("imageFile") MultipartFile imageFile) {
-        materialService.registerMaterial(materialDTO, imageFile);
+    public String registerMaterial(@ModelAttribute MaterialDTO materialDTO) {
+        materialService.registerMaterial(materialDTO, null);
         return "redirect:/material/list";
     }
 
